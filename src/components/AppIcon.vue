@@ -17,6 +17,10 @@ export type IconName =
   | 'crown'
   | 'chat'
   | 'pause'
+  | 'home'
+  | 'live'
+  | 'grid'
+  | 'menu'
 
 defineProps<{ name: IconName }>()
 
@@ -35,6 +39,10 @@ const paths: Record<IconName, string> = {
   crown: 'M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z',
   chat: 'M4 5h16v11H9l-5 4zM8 9h8M8 12h5',
   pause: 'M9 5v14M15 5v14',
+  home: 'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',
+  live: 'M12 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14',
+  grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  menu: 'M4 6h16M4 12h16M4 18h16',
 }
 </script>
 

@@ -56,7 +56,8 @@ const kindStyle = {
         role="dialog"
         aria-modal="false"
         aria-labelledby="pitch-drawer-title"
-        class="fixed inset-x-4 bottom-4 z-[60] mx-auto max-w-lg rounded-xl bg-raised p-4 text-sm shadow-2xl ring-1 ring-white/15 sm:p-5"
+        :style="{ bottom: 'calc(var(--tabbar-h) + 1rem)' }"
+        class="fixed inset-x-4 z-[60] mx-auto max-w-lg rounded-xl bg-raised p-4 text-sm shadow-2xl ring-1 ring-white/15 sm:p-5"
       >
         <div class="flex items-start justify-between gap-3">
           <div class="flex flex-wrap items-center gap-2">

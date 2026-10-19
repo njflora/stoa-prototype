@@ -10,6 +10,8 @@ import { useViewer } from '@/composables/useViewer'
 // One top bar replaces the long side navigation.
 // Left:  Stoa · Live · Home · Shows · Articles · Courses · Search
 // Right: Shop · Upgrade (not members) · bell (members) · account or sign in
+// On phones (below 768px) only Stoa, Upgrade and the bell stay here; the
+// links move to the bottom tab bar (MobileTabBar.vue).
 
 const { isMember, isLive, user } = useViewer()
 
@@ -74,14 +76,6 @@ const activeClass = '!text-white font-semibold'
 
       <div class="ml-auto flex items-center gap-2 sm:gap-3">
         <RouterLink
-          to="/search"
-          class="grid size-9 place-items-center rounded-full text-white/80 hover:bg-white/10 hover:text-white md:hidden"
-          aria-label="Search"
-        >
-          <AppIcon name="search" />
-        </RouterLink>
-
-        <RouterLink
           to="/shop"
           class="hidden items-center gap-1.5 rounded-lg bg-accent px-4 py-1.5 text-sm font-semibold whitespace-nowrap text-white transition hover:bg-accent-bright md:inline-flex [&>svg]:size-4"
         >
@@ -100,40 +94,16 @@ const activeClass = '!text-white font-semibold'
 
         <NotificationBell v-if="isMember" />
 
-        <UserBadge v-if="user" :user="user" />
+        <UserBadge v-if="user" :user="user" class="hidden md:flex" />
         <RouterLink
           v-else
           to="/sign-in"
-          class="rounded-lg px-3 py-1.5 text-sm font-semibold whitespace-nowrap ring-1 ring-white/25 transition hover:bg-white/10"
+          class="hidden rounded-lg px-3 py-1.5 text-sm font-semibold whitespace-nowrap ring-1 ring-white/25 transition hover:bg-white/10 md:inline-block"
         >
           <span class="hidden lg:inline">Sign in / Sign up</span>
           <span class="lg:hidden">Sign in</span>
         </RouterLink>
       </div>
     </div>
-
-    <!-- Small screens: the links in one swipeable strip. -->
-    <nav aria-label="Main" class="no-scrollbar overflow-x-auto md:hidden">
-      <ul class="flex gap-5 px-4 pb-2.5 text-sm whitespace-nowrap">
-        <li v-for="link in links" :key="link.to">
-          <RouterLink :to="link.to" :class="linkClass" :exact-active-class="activeClass">
-            <span
-              v-if="link.to === '/live' && isLive"
-              class="size-2 animate-pulse rounded-full bg-live motion-reduce:animate-none"
-            />
-            {{ link.label }}
-          </RouterLink>
-        </li>
-        <li>
-          <RouterLink
-            to="/shop"
-            class="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-white [&>svg]:size-3.5"
-          >
-            <AppIcon name="shop" />
-            Shop
-          </RouterLink>
-        </li>
-      </ul>
-    </nav>
   </header>
 </template>

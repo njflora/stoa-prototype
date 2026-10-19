@@ -20,6 +20,22 @@
   --font-serif: "PT Serif", ui-serif, Georgia, serif;
 }
 
+/*
+  Height of the phone tab bar (MobileTabBar.vue), including the iPhone
+  home-indicator area. Zero on larger screens, where there is no tab bar.
+  Pages pad by it, and fixed elements sit above it.
+*/
+:root {
+  /* 3.5rem of tabs plus the bar's 1px top border. */
+  --tabbar-h: calc(3.5rem + 1px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --tabbar-h: 0px;
+  }
+}
+
 @layer base {
   html {
     color-scheme: dark;
@@ -27,6 +43,7 @@
 
   body {
     @apply bg-ink font-sans text-white antialiased;
+    padding-bottom: var(--tabbar-h);
   }
 }
 

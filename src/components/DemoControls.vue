@@ -42,7 +42,8 @@ const off = 'text-white/70 hover:text-white'
 </script>
 
 <template>
-  <div class="fixed bottom-4 left-4 z-50 text-sm">
+  <!-- Sits above the phone tab bar (--tabbar-h is 0 on larger screens). -->
+  <div class="fixed left-4 z-50 text-sm" :style="{ bottom: 'calc(var(--tabbar-h) + 1rem)' }">
     <div
       v-if="open"
       id="demo-panel"
