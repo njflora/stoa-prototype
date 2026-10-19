@@ -2,6 +2,16 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Comments
+
+### Added
+- Comments section on the live page, under "Coming up live". Comments stay with the episode after the show.
+- Everyone can read. Members can post, like and reply. Free accounts see "Upgrade to comment" with a lock. Signed-out visitors see a sign-in prompt.
+- Each comment shows initials, username, tier badge, time posted and likes, with replies one level deep.
+- Sort by Newest or Top, and "Show more comments" five at a time.
+- A dozen placeholder comments. Members' own posts last until the page reloads, since the prototype has no server.
+- Reusable comment components, ready for episode pages.
+
 ## 2026-10-19: Shop and Upgrade buttons
 
 ### Changed

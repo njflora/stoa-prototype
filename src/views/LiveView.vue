@@ -2,6 +2,7 @@
 import { computed, ref, watch, watchEffect } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
+import CommentSection from '@/components/CommentSection.vue'
 import LiveChat from '@/components/LiveChat.vue'
 import LiveCountdown from '@/components/LiveCountdown.vue'
 import LivePlayer from '@/components/LivePlayer.vue'
@@ -233,5 +234,7 @@ const schedule = computed<ScheduleItem[]>(() => [
         </li>
       </ul>
     </section>
+
+    <CommentSection thread-id="stoa-podcast-1432" class="max-w-3xl px-4 pt-10 lg:px-8" />
   </main>
 </template>
