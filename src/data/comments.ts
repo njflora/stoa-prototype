@@ -41,7 +41,7 @@ export const commentThreads: Record<string, Comment[]> = {
       comment('c1r1', 'GrumpyHistorian', 'silver', 8, [3, 0], 'Agreed. Tom had the figures ready, which helps.'),
     ]),
     comment('c2', 'bookish_bill', 'gold', 25, [31, 2], 'Thanks for taking my question on the energy price cap. Answered better than I expected.', [
-      comment('c2r1', 'Stoa_Producer', 'staff', 20, [9, 0], 'Glad it helped. The reading list with the sources goes up tonight.'),
+      comment('c2r1', 'Stoa_Producer', 'staff', 20, [9, 0], 'Glad it helped. The sources are in the reading list next to the comments.'),
       comment('c2r2', 'Wessex_Walker', 'gold', 18, [2, 0], 'Same question was on my list, so thank you both.'),
     ]),
     comment('c3', 'teabreak_tim', 'bronze', 40, [9, 8], 'Could we get a follow-up on the housing figures? Felt like there was more to say.'),
