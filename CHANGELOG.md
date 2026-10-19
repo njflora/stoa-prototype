@@ -2,6 +2,16 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Reading list and footer
+
+### Added
+- Reading list beside the comments on the live page. On phones it comes first. On large screens it sits on the right, under the chat column.
+- Each source shows its type (Book, Article, Report or Data), title, author or publisher, year and when it came up in the show. Sources Stoa published link to the article; invented sources have no links.
+- Free for everyone, and reusable on episode and article pages.
+
+### Changed
+- The footer no longer names the author. It reads: "Stoa is an unofficial concept. Every show, host and episode is a placeholder."
+
 ## 2026-10-19: Comments
 
 ### Added

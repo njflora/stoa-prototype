@@ -7,6 +7,7 @@ import LiveChat from '@/components/LiveChat.vue'
 import LiveCountdown from '@/components/LiveCountdown.vue'
 import LivePlayer from '@/components/LivePlayer.vue'
 import MemberHandoff from '@/components/MemberHandoff.vue'
+import ReadingList from '@/components/ReadingList.vue'
 import ReminderButton from '@/components/ReminderButton.vue'
 import TitleCard from '@/components/TitleCard.vue'
 import { getShow, hostNames } from '@/data/catalogue'
@@ -235,6 +236,13 @@ const schedule = computed<ScheduleItem[]>(() => [
       </ul>
     </section>
 
-    <CommentSection thread-id="stoa-podcast-1432" class="max-w-3xl px-4 pt-10 lg:px-8" />
+    <!-- Phones: reading list first, then comments. Large screens: comments
+         on the left, reading list on the right under the chat column. -->
+    <div
+      class="flex flex-col gap-10 px-4 pt-10 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-x-6 lg:px-8"
+    >
+      <ReadingList list-id="stoa-podcast-1432" class="lg:col-start-2 lg:row-start-1" />
+      <CommentSection thread-id="stoa-podcast-1432" class="lg:col-start-1 lg:row-start-1" />
+    </div>
   </main>
 </template>
