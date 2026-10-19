@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref, useId } from 'vue'
 import AppIcon from './AppIcon.vue'
 import PitchNote from './PitchNote.vue'
+import { provideRowPreview } from '@/composables/usePreview'
 
 // A horizontal row of cards. Swipe or scroll on any device; on larger
 // screens, arrow buttons page through it. Cards snap into place.
@@ -15,6 +16,9 @@ defineProps<{
 
 // useId gives a unique id, used to link the heading to the section for screen readers.
 const headingId = useId()
+
+// On phones, the first card fully in view previews. The row keeps track.
+provideRowPreview()
 const track = ref<HTMLElement>()
 const canGoBack = ref(false)
 const canGoForward = ref(false)

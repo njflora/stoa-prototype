@@ -80,9 +80,9 @@ export const pitchNotes: PitchNote[] = [
     id: 'card-previews',
     kind: 'fix',
     source: 'Finding 12',
-    title: 'Previews on cards',
+    title: 'Hover to preview',
     today: 'Still thumbnails. Whether members get hover previews is still to check.',
-    here: 'Cards move gently, standing in for short preview clips.',
+    here: 'Cards stay still until you hover, then play a preview with a themed animation per show. On phones, the card in view plays. Free viewers preview free content; members preview everything.',
     page: home,
   },
   {

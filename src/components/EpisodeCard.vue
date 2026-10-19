@@ -6,6 +6,7 @@ import TitleCard from './TitleCard.vue'
 import { episodeLabel, getShow, hostNames, isNew, seriesOf } from '@/data/catalogue'
 import type { Episode } from '@/types/content'
 import { artForEpisode } from '@/data/media'
+import { usePreview } from '@/composables/usePreview'
 import { formatRelativeDate, toRoman } from '@/utils/format'
 
 const props = withDefaults(
@@ -51,11 +52,15 @@ const to = computed(() => {
 const label = computed(() =>
   props.locked ? `${caption.value}. Members only. Join to watch.` : undefined,
 )
+
+// Still at rest; plays a preview on hover, focus, or (on phones) when it
+// is the card in view. Locked cards never preview.
+const { root, previewing, handlers } = usePreview(() => !props.locked)
 </script>
 
 <template>
   <!-- A wrapper, so the series link can sit beside the main link rather than inside it. -->
-  <div class="w-60 flex-none snap-start sm:w-72">
+  <div ref="root" class="w-60 flex-none snap-start sm:w-72" v-on="handlers">
     <RouterLink :to="to" :aria-label="label" class="group block outline-none">
       <div
         class="relative aspect-video overflow-hidden rounded-lg bg-surface ring-1 ring-white/10 transition duration-300 group-hover:ring-white/30 group-focus-visible:ring-2 group-focus-visible:ring-accent-bright"
@@ -64,7 +69,8 @@ const label = computed(() =>
           :show="show"
           :art="artForEpisode(episode)"
           :label="variant === 'show' ? '' : episodeLabel(episode)"
-          :animated="!locked"
+          :animated="previewing"
+          :preview="previewing"
           class="transition duration-500"
           :class="locked ? 'scale-110 blur-md brightness-75' : 'group-hover:scale-105'"
         />
@@ -78,7 +84,7 @@ const label = computed(() =>
             <span
               class="rounded-full bg-gold px-3 py-0.5 text-[11px] font-semibold text-ink opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100"
             >
-              Join to watch
+              Members preview every episode
             </span>
           </div>
         </div>
@@ -91,7 +97,7 @@ const label = computed(() =>
           {{ badge.text }}
         </span>
 
-        <div v-if="progress > 0 && !locked" class="absolute inset-x-0 bottom-0 h-1 bg-white/20">
+        <div v-if="progress > 0 && !locked && !previewing" class="absolute inset-x-0 bottom-0 h-1 bg-white/20">
           <div class="h-full bg-accent-bright" :style="{ width: `${Math.round(progress * 100)}%` }" />
         </div>
       </div>

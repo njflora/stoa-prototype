@@ -2,6 +2,18 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Hover previews
+
+### Added
+- YouTube-style previews. Cards show a still painting until you hover for a moment or focus them with the keyboard, then they "play": a faster pan, a themed animation, a progress bar and a "Preview" chip. Moving away stops it. One card plays at a time.
+- A simple themed animation per show: audio levels (The Stoa Podcast), a sunrise (Morning Brief), two voices taking turns (Conversations), candlelight and dust (Chronos), routes drawing on a map (Statecraft), a price line (Ledger) and stage spotlights (The Forum).
+- On phones, which have no hover, the first fully visible card in each row plays, and the next takes over after a swipe.
+- Signed-out visitors and free accounts preview free episodes and free previews. Members preview everything. Locked cards never play, and on hover say "Members preview every episode".
+
+### Changed
+- Cards no longer drift at rest. With "reduce motion" on, nothing previews.
+- Pitch note "Previews on cards" is now "Hover to preview".
+
 ## 2026-10-19: Pitch mode
 
 ### Added

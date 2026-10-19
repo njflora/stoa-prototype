@@ -1,10 +1,10 @@
 # Prototype progress report
 
-Status as of 19 October 2026, updated after steps 1 and 2 of the second brief (real-feeling media, pitch mode). Written as a self-contained progress report.
+Status as of 19 October 2026, updated after steps 1 and 2 of the second brief (real-feeling media with hover previews, pitch mode). Written as a self-contained progress report.
 
 ## In one paragraph
 
-The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. There are 27 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
+The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. There are 28 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
 
 ## Context
 
@@ -24,7 +24,7 @@ The pitch prototype is built and working locally. All three priority sections fr
   - Free account: Upgrade and the username.
   - Member (Gold in the demo): a reminders bell and the username with a tier badge.
 - **Locked content looks the same everywhere.** Free viewers see members' episodes blurred and still, behind a lock, with an upgrade prompt.
-- **Real-feeling media.** Thumbnails, heroes and players show public-domain paintings and engravings (Hogarth, Turner, Monet, Raphael, Vermeer and others) with a slow pan and zoom. The homepage hero and the live player play a short CC0 ocean-waves loop on arrival. Everything pauses off screen, has a pause button where it is video, and stays still with "reduce motion" on.
+- **Real-feeling media.** Thumbnails, heroes and players show public-domain paintings and engravings (Hogarth, Turner, Monet, Raphael, Vermeer and others). The homepage hero and the live player play a short CC0 ocean-waves loop on arrival. Cards stay still until hovered (or, on phones, scrolled into view), then play a YouTube-style preview with a themed animation per show. Free viewers preview free content; members preview everything. Everything pauses off screen, has a pause button where it is video, and stays still with "reduce motion" on.
 - **Credits.** Every file was checked against its licence on Wikimedia Commons by a script that refuses anything not public domain or CC0. CREDITS.md and a /credits page list each one with its source. Images total about 2 MB; the video is 0.7 MB.
 - **Footer newsletter.** An email form for visitors and free accounts; a single button for members. Nothing is sent or stored.
 - **Pitch mode.** Off by default. When on, small labels name the finding each improvement answers, mark proposals clearly, and credit what the real site already does well ("Kept"). Each opens a panel comparing the real site today with the prototype. /pitch lists all 22 notes. Any link with ?pitch=1 opens annotated.

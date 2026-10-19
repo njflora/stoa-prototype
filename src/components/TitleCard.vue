@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import AppIcon from './AppIcon.vue'
+import PreviewAnimation from './PreviewAnimation.vue'
 import { artForShow, mediaUrl, type Artwork } from '@/data/media'
 import type { Show } from '@/types/content'
 import { hashString } from '@/utils/random'
@@ -16,11 +18,13 @@ const props = withDefaults(
     /** Small line under the show name, such as "#212" or a series part. */
     label?: string
     animated?: boolean
+    /** Hover preview: the show's themed animation, a progress bar and a "Preview" chip. */
+    preview?: boolean
     /** Hide the text when the parent overlays its own, as the hero does. */
     showText?: boolean
     size?: 'card' | 'hero'
   }>(),
-  { art: undefined, label: '', animated: true, showText: true, size: 'card' },
+  { art: undefined, label: '', animated: true, preview: false, showText: true, size: 'card' },
 )
 
 const root = ref<HTMLElement>()
@@ -58,7 +62,7 @@ const tint = computed(() => props.show.palette[0])
   <div
     ref="root"
     class="title-card absolute inset-0 isolate overflow-hidden"
-    :class="{ 'is-animated': animated, 'is-paused': !onScreen }"
+    :class="{ 'is-animated': animated || preview, 'is-previewing': preview, 'is-paused': !onScreen }"
     :style="{ backgroundColor: base }"
     aria-hidden="true"
   >
@@ -71,11 +75,24 @@ const tint = computed(() => props.show.palette[0])
       :loading="size === 'hero' ? 'eager' : 'lazy'"
       decoding="async"
       class="art absolute inset-0 size-full object-cover"
-      :style="{ animationDelay: delay }"
+      :style="{ animationDelay: preview ? '0s' : delay }"
     />
     <!-- A wash of the show's colour keeps each show recognisable. -->
     <div class="absolute inset-0 opacity-25 mix-blend-soft-light" :style="{ backgroundColor: tint }" />
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/5" />
+
+    <template v-if="preview">
+      <PreviewAnimation :show-id="show.id" />
+      <span
+        class="absolute top-2 right-2 inline-flex items-center gap-1 rounded bg-black/65 px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase [&>svg]:size-3"
+      >
+        <AppIcon name="volume-off" />
+        Preview
+      </span>
+      <div class="absolute inset-x-0 bottom-0 z-10 h-1 bg-white/20">
+        <div class="preview-progress h-full bg-white" />
+      </div>
+    </template>
 
     <div v-if="showText" class="absolute inset-x-0 bottom-0" :class="size === 'hero' ? 'p-8' : 'p-3'">
       <p
@@ -94,6 +111,8 @@ const tint = computed(() => props.show.palette[0])
 <style scoped>
 .art {
   transform-origin: 50% 40%;
+  /* Same zoom the pan starts from, so a preview starts without a jump. */
+  transform: scale(1.04);
   will-change: transform;
 }
 
@@ -101,7 +120,27 @@ const tint = computed(() => props.show.palette[0])
   animation: ken-burns 20s ease-in-out infinite alternate;
 }
 
-.is-paused .art {
+/* Previewing: a livelier pan while the card "plays". */
+.is-previewing .art {
+  animation-duration: 8s;
+}
+
+.preview-progress {
+  transform-origin: left;
+  animation: preview-progress 8s linear infinite;
+}
+
+@keyframes preview-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.is-paused .art,
+.is-paused :deep(*) {
   animation-play-state: paused;
 }
 
@@ -115,7 +154,8 @@ const tint = computed(() => props.show.palette[0])
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .title-card .art {
+  .title-card .art,
+  .title-card :deep(*) {
     animation: none !important;
   }
 }

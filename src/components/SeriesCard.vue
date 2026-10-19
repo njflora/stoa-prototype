@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import TitleCard from './TitleCard.vue'
 import { getShow, hostNames } from '@/data/catalogue'
+import { usePreview } from '@/composables/usePreview'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import type { Series } from '@/types/content'
@@ -20,19 +21,26 @@ const { isWatched } = useWatchProgress()
 
 const show = computed(() => getShow(props.series.showId))
 const locked = computed(() => show.value.access === 'premium' && !isMember.value)
+const { root, previewing, handlers } = usePreview(() => !locked.value)
 const watched = computed(() => props.series.episodes.filter((e) => isWatched(e.id)).length)
 </script>
 
 <template>
-  <RouterLink :to="`/series/${series.slug}`" class="group block w-60 flex-none snap-start outline-none sm:w-72">
+  <RouterLink
+    :to="`/series/${series.slug}`"
+    class="group block w-60 flex-none snap-start outline-none sm:w-72"
+    v-on="handlers"
+  >
     <div
+      ref="root"
       class="relative aspect-video overflow-hidden rounded-lg ring-1 ring-white/10 transition duration-300 group-hover:ring-white/30 group-focus-visible:ring-2 group-focus-visible:ring-accent-bright"
     >
       <TitleCard
         :show="show"
         :art="artForSeries(series.name)"
         :label="`${series.episodes.length} parts · ${formatDuration(series.totalMin)}`"
-        :animated="!locked"
+        :animated="previewing"
+        :preview="previewing"
         class="transition duration-500 group-hover:scale-105"
       />
       <span
@@ -47,7 +55,7 @@ const watched = computed(() => props.series.episodes.filter((e) => isWatched(e.i
       >
         <AppIcon name="lock" />
       </span>
-      <div v-if="watched" class="absolute inset-x-0 bottom-0 h-1 bg-white/20">
+      <div v-if="watched && !previewing" class="absolute inset-x-0 bottom-0 h-1 bg-white/20">
         <div class="h-full bg-accent-bright" :style="{ width: `${(watched / series.episodes.length) * 100}%` }" />
       </div>
     </div>
