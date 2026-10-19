@@ -2,6 +2,16 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Comments and reading lists on every episode
+
+### Added
+- Every episode page has the same comments section and reading list as the live show. Live chat is now the only thing unique to the live page.
+- Same rules everywhere: anyone can read comments and see votes; members comment, vote and reply. Reading lists are free for everyone, including on members' episodes.
+- Placeholder comments and sources for every episode, drawn from pools that fit each show. Each Chronos series cites its own period. The mix is seeded by the episode id, so it is stable on every visit.
+- Comment times fall after the episode's release, and "Mentioned at" times fall within its running time.
+- The live show keeps its hand-written thread and reading list.
+- One lookup each for comments and reading lists, so real data can replace the placeholders without changing the pages.
+
 ## 2026-10-19: Members' preview
 
 ### Added

@@ -2,8 +2,10 @@
 import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
+import CommentSection from '@/components/CommentSection.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import EpisodeCard from '@/components/EpisodeCard.vue'
+import ReadingList from '@/components/ReadingList.vue'
 import SeriesQueue from '@/components/SeriesQueue.vue'
 import TitleCard from '@/components/TitleCard.vue'
 import { episodesForShow, getEpisode, getSeries, getShow, hostNames, seriesOf } from '@/data/catalogue'
@@ -219,6 +221,16 @@ watchEffect(() => {
         :current-id="episode.id"
         class="mt-6 lg:mt-0"
       />
+    </div>
+
+    <!-- Same as the live page: phones get the reading list first, large
+         screens put comments on the left and the reading list on the right.
+         Keyed by episode, so both refresh when autoplay moves on. -->
+    <div
+      class="flex flex-col gap-10 px-4 pt-10 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-x-6 lg:px-8"
+    >
+      <ReadingList :key="`reading-${episode.id}`" :list-id="episode.id" class="lg:col-start-2 lg:row-start-1" />
+      <CommentSection :key="`comments-${episode.id}`" :thread-id="episode.id" class="lg:col-start-1 lg:row-start-1" />
     </div>
 
     <ContentRow v-if="moreFromShow.length" :title="`More from ${show.name}`" class="pt-10">

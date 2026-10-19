@@ -3,7 +3,8 @@ import { computed, ref, useId } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import CommentItem from './CommentItem.vue'
-import { commentThreads, countComments, type Comment } from '@/data/comments'
+import { countComments, type Comment } from '@/data/comments'
+import { commentsForThread } from '@/data/episodeExtras'
 import { useViewer } from '@/composables/useViewer'
 import { controversy, useVotes } from '@/composables/useVotes'
 
@@ -21,7 +22,7 @@ const sortOptions: { id: Sort; label: string }[] = [
 ]
 
 const props = defineProps<{
-  /** Which thread to show, such as "stoa-podcast-1432". */
+  /** Which thread to show: an episode id, or a hand-written thread such as "stoa-podcast-1432". */
   threadId: string
 }>()
 
@@ -31,7 +32,7 @@ const { isMember, isSignedIn, user } = useViewer()
 const headingId = useId()
 
 // A copy, so posting here never changes the placeholder data.
-const comments = ref<Comment[]>(structuredClone(commentThreads[props.threadId] ?? []))
+const comments = ref<Comment[]>(structuredClone(commentsForThread(props.threadId)))
 const sort = ref<Sort>('newest')
 const shown = ref(PAGE_SIZE)
 const { vote, voteFor, totals } = useVotes()

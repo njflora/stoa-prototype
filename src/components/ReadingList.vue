@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
 import { RouterLink } from 'vue-router'
-import { readingLists, type SourceType } from '@/data/readingLists'
+import { readingListForThread } from '@/data/episodeExtras'
+import type { SourceType } from '@/data/readingLists'
 import { formatClock } from '@/utils/format'
 
 // The sources behind an episode, in the order they came up. The same
@@ -9,14 +10,14 @@ import { formatClock } from '@/utils/format'
 // everywhere. Free for everyone.
 
 const props = defineProps<{
-  /** Which list to show, such as "stoa-podcast-1432". */
+  /** Which list to show: an episode id, or a hand-written list such as "stoa-podcast-1432". */
   listId: string
 }>()
 
 const headingId = useId()
 
 const items = computed(() =>
-  [...(readingLists[props.listId] ?? [])].sort((a, b) => (a.at ?? 0) - (b.at ?? 0)),
+  [...readingListForThread(props.listId)].sort((a, b) => (a.at ?? 0) - (b.at ?? 0)),
 )
 
 const typeStyles: Record<SourceType, string> = {
