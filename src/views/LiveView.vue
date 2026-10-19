@@ -6,12 +6,12 @@ import LiveChat from '@/components/LiveChat.vue'
 import LiveCountdown from '@/components/LiveCountdown.vue'
 import LivePlayer from '@/components/LivePlayer.vue'
 import MemberHandoff from '@/components/MemberHandoff.vue'
+import ReminderButton from '@/components/ReminderButton.vue'
 import TitleCard from '@/components/TitleCard.vue'
 import { getShow, hostNames } from '@/data/catalogue'
 import { useLiveStatus } from '@/composables/useLiveStatus'
 import { useViewer } from '@/composables/useViewer'
 import type { Show } from '@/types/content'
-import { downloadCalendarEvent } from '@/utils/calendar'
 import { formatCountdown, formatLongDate, formatTime } from '@/utils/format'
 
 // One page for the whole live show: countdown, the free stream, the break
@@ -80,21 +80,31 @@ function nextWeekday(day: number, hour: number): Date {
   return date
 }
 
-const schedule = computed<{ show: Show; title: string; start: Date; members: boolean }[]>(() => [
-  { show, title: 'The Stoa Podcast', start: nextStart.value, members: false },
-  { show: getShow('the-forum'), title: 'The Forum, live', start: nextWeekday(4, 19), members: true },
-  { show: getShow('statecraft'), title: 'Statecraft, live', start: nextWeekday(5, 15), members: true },
-])
-
-function addToCalendar(item: { title: string; start: Date }) {
-  downloadCalendarEvent({
-    title: item.title,
-    start: item.start,
-    durationMin: 90,
-    description: 'Watch live on Stoa.',
-    url: `${window.location.origin}/live`,
-  })
+interface ScheduleItem {
+  id: string
+  show: Show
+  title: string
+  start: Date
+  members: boolean
 }
+
+const schedule = computed<ScheduleItem[]>(() => [
+  { id: show.id, show, title: 'The Stoa Podcast', start: nextStart.value, members: false },
+  {
+    id: 'the-forum',
+    show: getShow('the-forum'),
+    title: 'The Forum',
+    start: nextWeekday(4, 19),
+    members: true,
+  },
+  {
+    id: 'statecraft',
+    show: getShow('statecraft'),
+    title: 'Statecraft',
+    start: nextWeekday(5, 15),
+    members: true,
+  },
+])
 </script>
 
 <template>
@@ -114,13 +124,7 @@ function addToCalendar(item: { title: string; start: Date }) {
           :countdown="countdown"
           :note="`The Stoa Podcast, ${startsLabel(nextStart)}`"
         >
-          <button
-            type="button"
-            class="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-ink hover:brightness-95"
-            @click="addToCalendar(schedule[0]!)"
-          >
-            Add to calendar
-          </button>
+          <ReminderButton :target="schedule[0]!" size="large" />
         </LiveCountdown>
 
         <LiveCountdown
@@ -203,7 +207,21 @@ function addToCalendar(item: { title: string; start: Date }) {
           class="flex items-center gap-3 rounded-lg bg-surface p-3 ring-1 ring-white/10"
         >
           <div class="relative aspect-video w-24 shrink-0 overflow-hidden rounded">
-            <TitleCard :show="item.show" :show-text="false" :animated="false" />
+            <TitleCard
+              :show="item.show"
+              :show-text="false"
+              :animated="false"
+              :class="item.members && !isMember ? 'scale-110 blur-sm brightness-75' : ''"
+            />
+            <span
+              v-if="item.members && !isMember"
+              class="absolute inset-0 grid place-items-center"
+              aria-label="Members only"
+            >
+              <span class="grid size-7 place-items-center rounded-full bg-black/55 ring-1 ring-white/20 [&>svg]:size-4">
+                <AppIcon name="lock" />
+              </span>
+            </span>
           </div>
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-semibold">{{ item.title }}</p>
@@ -211,14 +229,7 @@ function addToCalendar(item: { title: string; start: Date }) {
               {{ startsLabel(item.start) }}{{ item.members ? ' · Members' : ' · Free' }}
             </p>
           </div>
-          <button
-            type="button"
-            class="shrink-0 rounded-lg bg-raised px-3 py-1.5 text-xs font-medium hover:bg-line"
-            :aria-label="`Add ${item.title} to calendar`"
-            @click="addToCalendar(item)"
-          >
-            Add to calendar
-          </button>
+          <ReminderButton :target="item" />
         </li>
       </ul>
     </section>

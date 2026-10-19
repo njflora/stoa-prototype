@@ -11,6 +11,8 @@ export type IconName =
   | 'volume-off'
   | 'volume-on'
   | 'info'
+  | 'bell'
+  | 'check'
 
 defineProps<{ name: IconName }>()
 
@@ -23,6 +25,8 @@ const paths: Record<IconName, string> = {
   'volume-off': 'M4 9v6h4l5 4V5L8 9zM16 9l5 6M21 9l-5 6',
   'volume-on': 'M4 9v6h4l5 4V5L8 9zM16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12',
   info: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 11v6M12 7.5v.5',
+  bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0',
+  check: 'M5 12l5 5L20 7',
 }
 </script>
 

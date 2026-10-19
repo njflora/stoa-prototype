@@ -2,6 +2,19 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Live reminders and chat format
+
+### Added
+- Live reminders through browser notifications, as a members' perk. "Notify me" asks for permission, confirms with a notification, and shows "Reminder on". Switching the demo to Live fires the "live now" notification.
+- Free viewers see "Upgrade for reminders" with a lock in the same places. Members-only shows in "Coming up live" have locked, blurred thumbnails.
+
+### Changed
+- Chat shows a colon and a space between the username and the message.
+- The mock chat loops without repeating the opening welcome or the closing sign-off.
+
+### Removed
+- "Add to calendar" and its .ics file.
+
 ## 2026-10-19: Live page
 
 ### Added

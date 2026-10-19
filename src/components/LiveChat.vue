@@ -27,18 +27,26 @@ const MAX_LIVE_MESSAGES = 150
 const list = ref<HTMLElement>()
 
 // Live mode: start part-way into the show, then add one message at a time.
+// The first pass stops before the closing sign-off. After that the mock
+// feed loops, skipping the opening welcome and the sign-off so it still
+// reads like the middle of a show.
+const firstPass = chatMessages.slice(0, -1)
+const loop = chatMessages.slice(1, -1)
 const liveMessages = ref<ChatMessage[]>(chatMessages.filter((m) => m.at <= LIVE_START_SECONDS))
 let nextIndex = liveMessages.value.length
-let cycle = 0
+let sent = 0
 let liveTimer: ReturnType<typeof setInterval> | undefined
 
 function addLiveMessage() {
-  const source = chatMessages[nextIndex % chatMessages.length]!
-  if (nextIndex > 0 && nextIndex % chatMessages.length === 0) cycle++
+  const source =
+    nextIndex < firstPass.length
+      ? firstPass[nextIndex]!
+      : loop[(nextIndex - firstPass.length) % loop.length]!
   nextIndex++
+  sent++
   liveMessages.value = [
     ...liveMessages.value.slice(-MAX_LIVE_MESSAGES + 1),
-    { ...source, id: `${source.id}-${cycle}` },
+    { ...source, id: `${source.id}-${sent}` },
   ]
 }
 
@@ -149,10 +157,9 @@ onUnmounted(() => {
             >
               {{ tierStyles[m.tier].label }}
             </span>
-            <span class="font-semibold" :class="m.tier === 'staff' ? 'text-accent-bright' : 'text-white/90'">
-              {{ m.user }}
-            </span>
-            <span class="text-white/80"> {{ m.text }}</span>
+            <span class="font-semibold" :class="m.tier === 'staff' ? 'text-accent-bright' : 'text-white/90'"
+              >{{ m.user }}:</span
+            >{{ ' ' }}<span class="text-white/80">{{ m.text }}</span>
           </p>
         </li>
       </ol>

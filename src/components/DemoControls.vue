@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { livePhases, useViewer } from '@/composables/useViewer'
+// Loaded here so the demo's "live now" notification works from any page.
+import '@/composables/useReminders'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 
 // Demo-only panel for pitching. It switches between a free viewer and a
