@@ -2,7 +2,25 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
-## 2026-10-19
+## 2026-10-19: Homepage
+
+### Added
+- Placeholder outlet name, Stoa, with invented shows, hosts and episodes.
+- Design tokens from the reference site's dark palette, plus Poppins and PT Serif.
+- Animated title cards that stand in for preview clips. They pause off screen and respect "reduce motion".
+- Hero built from an enlarged title card. When live, the live show holds the hero and plays on arrival. Otherwise it rotates through featured episodes with a countdown to the next show.
+- Netflix-style rows that scroll sideways, with arrows on larger screens.
+- "Continue watching", "Start here", "Latest" and one row per members' show.
+- Free and member views. Free viewers see premium episodes blurred and locked, with a prompt to join. Free previews stay watchable.
+- A "what free gets" panel for free viewers.
+- One top bar in place of the side navigation. Articles and Courses sit beside Upgrade.
+- Demo panel to switch between free and member, and between on air and off air.
+- Placeholder pages for sections still to build.
+
+### Changed
+- Upgrade button uses dark text on gold for better contrast.
+
+## 2026-10-19: Setup
 
 ### Added
 - Project setup with Vue 3, TypeScript and Vite.

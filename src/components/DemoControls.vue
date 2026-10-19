@@ -1,0 +1,67 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useViewer } from '@/composables/useViewer'
+import { useWatchProgress } from '@/composables/useWatchProgress'
+
+// Demo-only panel for pitching. It switches between a free viewer and a
+// member, turns the live show on or off, and resets watch progress.
+// It is not part of the site design.
+
+const { isMember, isLive, setMembership, setLive } = useViewer()
+const { reset } = useWatchProgress()
+const open = ref(false)
+
+const segment = 'rounded-md px-3 py-1 text-xs font-medium transition'
+const on = 'bg-white text-ink'
+const off = 'text-white/70 hover:text-white'
+</script>
+
+<template>
+  <div class="fixed bottom-4 left-4 z-50 text-sm">
+    <div
+      v-if="open"
+      id="demo-panel"
+      class="mb-2 w-64 space-y-3 rounded-xl bg-raised/95 p-4 shadow-2xl ring-1 ring-white/10 backdrop-blur"
+    >
+      <p class="text-xs text-muted">Demo controls. Not part of the design.</p>
+
+      <div>
+        <p class="mb-1 text-xs font-semibold">Viewing as</p>
+        <div class="inline-flex rounded-lg bg-black/40 p-1" role="group" aria-label="Viewing as">
+          <button type="button" :class="[segment, !isMember ? on : off]" :aria-pressed="!isMember" @click="setMembership('free')">
+            Free viewer
+          </button>
+          <button type="button" :class="[segment, isMember ? on : off]" :aria-pressed="isMember" @click="setMembership('member')">
+            Member
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <p class="mb-1 text-xs font-semibold">Live show</p>
+        <div class="inline-flex rounded-lg bg-black/40 p-1" role="group" aria-label="Live show">
+          <button type="button" :class="[segment, isLive ? on : off]" :aria-pressed="isLive" @click="setLive(true)">
+            On air
+          </button>
+          <button type="button" :class="[segment, !isLive ? on : off]" :aria-pressed="!isLive" @click="setLive(false)">
+            Off air
+          </button>
+        </div>
+      </div>
+
+      <button type="button" class="text-xs text-muted underline hover:text-white" @click="reset">
+        Reset watch progress
+      </button>
+    </div>
+
+    <button
+      type="button"
+      class="rounded-full bg-raised px-4 py-2 text-xs font-semibold shadow-lg ring-1 ring-white/15 hover:bg-line"
+      :aria-expanded="open"
+      aria-controls="demo-panel"
+      @click="open = !open"
+    >
+      {{ open ? 'Close demo' : 'Demo' }}
+    </button>
+  </div>
+</template>
