@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Progress report
+
+### Added
+- PROGRESS.md: a self-contained summary of what is built, decisions made, what is untested and open questions, as a self-contained progress report.
+
 ## 2026-10-19: Chat replay on recordings, and demo progress controls
 
 ### Added
