@@ -2,6 +2,14 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Newsletter
+
+### Added
+- Newsletter sign-up on the right of the footer. On phones it comes before the disclaimer.
+- Signed-out visitors and free accounts enter an email address. The browser checks it looks valid, then a thank-you message shows.
+- Members already have an email on file, so they get a single "Subscribe to the newsletter" button that toggles to "Subscribed".
+- Nothing is sent or stored, and the form says so.
+
 ## 2026-10-19: Reading list and footer
 
 ### Added
