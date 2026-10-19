@@ -43,6 +43,7 @@ export const shows: Show[] = [
     access: 'free',
     hostIds: ['andrew', 'richard', 'tom'],
     palette: ['#c04d93', '#2a0f22', '#f0a6ca'],
+    streamedLive: true,
   },
   {
     id: 'morning-brief',
@@ -51,6 +52,7 @@ export const shows: Show[] = [
     access: 'free',
     hostIds: ['danny'],
     palette: ['#d5b720', '#2a2205', '#f6e7a1'],
+    streamedLive: true,
   },
   {
     id: 'conversations',

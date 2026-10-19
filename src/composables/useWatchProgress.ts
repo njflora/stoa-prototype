@@ -61,9 +61,15 @@ export function useWatchProgress() {
     setProgress(id, 1)
   }
 
-  function reset() {
+  /** Forget everything, as for a brand-new visitor. */
+  function clear() {
+    progress.value = {}
+  }
+
+  /** Put back the sample progress the demo starts with. */
+  function restoreSample() {
     progress.value = seed()
   }
 
-  return { inProgress, progressFor, isWatched, setProgress, markWatched, reset }
+  return { inProgress, progressFor, isWatched, setProgress, markWatched, clear, restoreSample }
 }

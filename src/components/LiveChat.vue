@@ -20,6 +20,12 @@ const props = defineProps<{
   opensAt?: string
   /** Signed-in viewers see a message box instead of "Sign in to chat". */
   signedIn?: boolean
+  /** Replay only: where the timeline starts, in seconds. */
+  startAt?: number
+  /** Replay only: the recording's length. The mock chat is stretched to fit it. */
+  lengthSeconds?: number
+  /** Replay only: start playing straight away, as the recording does. */
+  autoplay?: boolean
 }>()
 
 const LIVE_START_SECONDS = 1800
@@ -56,12 +62,20 @@ function addLiveMessage() {
 }
 
 // Replay mode: a position in the recording, in seconds.
-const position = ref(LIVE_START_SECONDS)
-const playing = ref(false)
+const length = computed(() => props.lengthSeconds ?? showLengthSeconds)
+const position = ref(props.startAt ?? LIVE_START_SECONDS)
+const playing = ref(props.autoplay ?? false)
+
+// The mock chat was written for a 90 minute show. Stretch or squeeze its
+// timings to fit the recording being replayed.
+const replaySource = computed(() => {
+  const scale = length.value / showLengthSeconds
+  return chatMessages.map((m) => ({ ...m, at: Math.round(m.at * scale) }))
+})
 const fast = ref(false)
 let replayTimer: ReturnType<typeof setInterval> | undefined
 
-const replayMessages = computed(() => chatMessages.filter((m) => m.at <= position.value))
+const replayMessages = computed(() => replaySource.value.filter((m) => m.at <= position.value))
 const messages = computed(() => (props.mode === 'replay' ? replayMessages.value : liveMessages.value))
 
 function togglePlay() {
@@ -91,8 +105,8 @@ onMounted(() => {
   }, LIVE_INTERVAL_MS)
   replayTimer = setInterval(() => {
     if (props.mode !== 'replay' || !playing.value) return
-    position.value = Math.min(showLengthSeconds, position.value + (fast.value ? 10 : 1))
-    if (position.value >= showLengthSeconds) playing.value = false
+    position.value = Math.min(length.value, position.value + (fast.value ? 10 : 1))
+    if (position.value >= length.value) playing.value = false
   }, 1000)
 })
 onUnmounted(() => {
@@ -143,6 +157,9 @@ onUnmounted(() => {
         :aria-live="mode === 'live' ? 'polite' : undefined"
         @scroll.passive="onScroll"
       >
+        <li v-if="mode === 'replay' && !messages.length" class="py-6 text-center text-sm text-muted">
+          Messages appear here as the recording plays.
+        </li>
         <li
           v-for="m in messages"
           :key="m.id"
@@ -195,7 +212,7 @@ onUnmounted(() => {
             v-model.number="position"
             type="range"
             min="0"
-            :max="showLengthSeconds"
+            :max="length"
             step="1"
             class="min-w-0 flex-1 accent-accent-bright"
             aria-label="Position in the recording"

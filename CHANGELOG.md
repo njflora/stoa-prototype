@@ -2,6 +2,15 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Chat replay on recordings, and demo progress controls
+
+### Added
+- "Live chat replay" button on episodes of shows streamed live: The Stoa Podcast and Morning Brief. It opens the chat replay beside the player, or under the episode details on phones. The replay starts at the beginning, plays along, and its timeline matches the episode's length.
+- Shows can be marked as streamed live in the data.
+
+### Changed
+- Demo panel: "Reset watch progress" did work, but it restored the same sample progress a fresh visit shows, so it looked like nothing happened. It is now two buttons with a short confirmation: "Clear watch progress" (as for a brand-new visitor) and "Restore sample progress".
+
 ## 2026-10-19: Comments and reading lists on every episode
 
 ### Added

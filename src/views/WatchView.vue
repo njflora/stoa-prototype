@@ -5,6 +5,7 @@ import AppIcon from '@/components/AppIcon.vue'
 import CommentSection from '@/components/CommentSection.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import EpisodeCard from '@/components/EpisodeCard.vue'
+import LiveChat from '@/components/LiveChat.vue'
 import ReadingList from '@/components/ReadingList.vue'
 import SeriesQueue from '@/components/SeriesQueue.vue'
 import TitleCard from '@/components/TitleCard.vue'
@@ -23,7 +24,7 @@ const UP_NEXT_SECONDS = 8
 
 const route = useRoute()
 const router = useRouter()
-const { canWatch } = useViewer()
+const { canWatch, isSignedIn } = useViewer()
 const { progressFor, setProgress, markWatched } = useWatchProgress()
 const { autoplay, finishSignal } = usePlayback()
 
@@ -39,6 +40,12 @@ const partIndex = computed(() =>
   series.value && episode.value ? series.value.episodes.findIndex((e) => e.id === episode.value!.id) : -1,
 )
 const nextPart = computed(() => (series.value ? series.value.episodes[partIndex.value + 1] : undefined))
+
+// Shows streamed live keep their chat: a replay beside the recording.
+const chatOpen = ref(false)
+const hasChatReplay = computed(() => !!show.value?.streamedLive && !locked.value)
+const showQueue = computed(() => !!series.value && partIndex.value >= 0)
+const sideColumn = computed(() => showQueue.value || (hasChatReplay.value && chatOpen.value))
 
 const moreFromShow = computed(() =>
   show.value ? episodesForShow(show.value.id).filter((e) => e.id !== episode.value?.id).slice(0, 10) : [],
@@ -90,6 +97,7 @@ watch(
   () => {
     stopCountdown()
     ended.value = false
+    chatOpen.value = false
     const current = episode.value
     if (current && !locked.value && progressFor(current.id) === 0) setProgress(current.id, 0.05)
   },
@@ -107,7 +115,7 @@ watchEffect(() => {
   <main v-if="episode && show">
     <div
       class="lg:grid lg:items-start lg:gap-x-6 lg:px-8 lg:pt-6"
-      :class="series && partIndex >= 0 ? 'lg:grid-cols-[minmax(0,1fr)_360px]' : 'lg:grid-cols-1'"
+      :class="sideColumn ? 'lg:grid-cols-[minmax(0,1fr)_360px]' : 'lg:grid-cols-1'"
     >
       <div>
         <!-- The player. -->
@@ -212,8 +220,33 @@ watchEffect(() => {
           >
             Part {{ toRoman(partIndex + 1) }} of {{ toRoman(series.episodes.length) }} · {{ series.name }}
           </RouterLink>
+          <div v-if="hasChatReplay">
+            <button
+              type="button"
+              class="mt-3 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold ring-1 transition [&>svg]:size-4"
+              :class="chatOpen ? 'bg-accent text-white ring-accent' : 'bg-surface ring-white/10 hover:bg-raised'"
+              :aria-expanded="chatOpen"
+              aria-controls="chat-replay"
+              @click="chatOpen = !chatOpen"
+            >
+              <AppIcon name="chat" />
+              {{ chatOpen ? 'Hide chat replay' : 'Live chat replay' }}
+            </button>
+          </div>
         </div>
       </div>
+
+      <LiveChat
+        v-if="hasChatReplay && chatOpen && !showQueue"
+        id="chat-replay"
+        :key="`chat-${episode.id}`"
+        mode="replay"
+        :start-at="0"
+        :length-seconds="episode.durationMin * 60"
+        autoplay
+        :signed-in="isSignedIn"
+        class="mx-4 mt-6 h-[440px] rounded-xl ring-1 ring-white/10 lg:sticky lg:top-[calc(var(--header-h,4rem)+1.5rem)] lg:mx-0 lg:mt-0 lg:h-[calc(100svh-var(--header-h,4rem)-3rem)]"
+      />
 
       <SeriesQueue
         v-if="series && partIndex >= 0"

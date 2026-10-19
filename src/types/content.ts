@@ -19,6 +19,8 @@ export interface Show {
   hostIds: string[]
   /** Three colours for the generated title card: glow, base, highlight. */
   palette: [string, string, string]
+  /** Streamed live, so recordings come with a live chat replay. */
+  streamedLive?: boolean
 }
 
 export interface SeriesInfo {

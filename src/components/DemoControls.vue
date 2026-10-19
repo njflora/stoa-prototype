@@ -9,10 +9,27 @@ import { useWatchProgress } from '@/composables/useWatchProgress'
 
 // Demo-only panel for pitching. It switches between a signed-out visitor,
 // a free account and a member, moves the live show through its phases,
-// and resets watch progress. It is not part of the site design.
+// and clears or restores watch progress. It is not part of the site design.
 
 const { viewer, phase, setViewer, setPhase } = useViewer()
-const { reset } = useWatchProgress()
+const { clear, restoreSample } = useWatchProgress()
+
+// A short confirmation, so it is clear the button did something.
+const progressNote = ref('')
+let noteTimer: ReturnType<typeof setTimeout> | undefined
+function confirm(note: string) {
+  progressNote.value = note
+  clearTimeout(noteTimer)
+  noteTimer = setTimeout(() => (progressNote.value = ''), 2500)
+}
+function clearProgress() {
+  clear()
+  confirm('Watch progress cleared')
+}
+function restoreProgress() {
+  restoreSample()
+  confirm('Sample progress restored')
+}
 const { requestFinish } = usePlayback()
 const route = useRoute()
 const open = ref(false)
@@ -73,9 +90,18 @@ const off = 'text-white/70 hover:text-white'
         Finish episode
       </button>
 
-      <button type="button" class="text-xs text-muted underline hover:text-white" @click="reset">
-        Reset watch progress
-      </button>
+      <div>
+        <p class="mb-1 text-xs font-semibold">Watch progress</p>
+        <div class="flex flex-wrap gap-x-3 gap-y-1">
+          <button type="button" class="text-xs text-muted underline hover:text-white" @click="clearProgress">
+            Clear watch progress
+          </button>
+          <button type="button" class="text-xs text-muted underline hover:text-white" @click="restoreProgress">
+            Restore sample progress
+          </button>
+        </div>
+        <p class="mt-1 h-4 text-xs text-accent-bright" role="status">{{ progressNote }}</p>
+      </div>
     </div>
 
     <button
