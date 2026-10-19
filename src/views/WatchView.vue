@@ -13,6 +13,7 @@ import { episodesForShow, getEpisode, getSeries, getShow, hostNames, seriesOf } 
 import { usePlayback } from '@/composables/usePlayback'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
+import { artForEpisode } from '@/data/media'
 import { formatDuration, formatRelativeDate, toRoman } from '@/utils/format'
 
 // An episode page. Series episodes get the series queue beside the
@@ -122,6 +123,7 @@ watchEffect(() => {
         <div class="relative aspect-video w-full overflow-hidden bg-black lg:rounded-xl">
           <TitleCard
             :show="show"
+            :art="artForEpisode(episode)"
             :show-text="false"
             size="hero"
             :animated="!locked && !ended"

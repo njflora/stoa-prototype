@@ -8,6 +8,7 @@ import TitleCard from '@/components/TitleCard.vue'
 import { allSeries, episodesForShow, getSeries, getShow, hostNames } from '@/data/catalogue'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
+import { artForEpisode, artForSeries } from '@/data/media'
 import { formatDuration, formatRelativeDate, toRoman } from '@/utils/format'
 
 // One series, meant to be watched in order. The main button always picks
@@ -60,7 +61,7 @@ function watchLink(episodeId: string) {
 <template>
   <main v-if="series && show">
     <section class="relative min-h-[420px] overflow-hidden">
-      <TitleCard :show="show" :show-text="false" size="hero" :animated="!locked" />
+      <TitleCard :show="show" :art="artForSeries(series.name)" :show-text="false" size="hero" :animated="!locked" />
       <div class="absolute inset-0 bg-gradient-to-r from-ink via-ink/75 to-ink/20" />
       <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink to-transparent" />
 
@@ -134,6 +135,7 @@ function watchLink(episodeId: string) {
             <div class="relative aspect-video w-32 shrink-0 overflow-hidden rounded-md ring-1 ring-white/10 sm:w-40">
               <TitleCard
                 :show="show"
+                :art="artForEpisode(episode)"
                 :show-text="false"
                 :animated="false"
                 :class="canWatch(episode) ? '' : 'scale-110 blur-sm brightness-75'"

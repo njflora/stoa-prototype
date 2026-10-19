@@ -1,10 +1,10 @@
 # Prototype progress report
 
-Status as of 19 October 2026. Written as a self-contained progress report.
+Status as of 19 October 2026, updated after step 1 of the second brief (real-feeling media). Written as a self-contained progress report.
 
 ## In one paragraph
 
-The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. There are 22 commits so far. It is not deployed yet, so there is no public link. That is the next decision.
+The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. There are 26 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
 
 ## Context
 
@@ -24,7 +24,8 @@ The pitch prototype is built and working locally. All three priority sections fr
   - Free account: Upgrade and the username.
   - Member (Gold in the demo): a reminders bell and the username with a tier badge.
 - **Locked content looks the same everywhere.** Free viewers see members' episodes blurred and still, behind a lock, with an upgrade prompt.
-- **Animated title cards** stand in for preview clips. They pause off screen and respect "reduce motion".
+- **Real-feeling media.** Thumbnails, heroes and players show public-domain paintings and engravings (Hogarth, Turner, Monet, Raphael, Vermeer and others) with a slow pan and zoom. The homepage hero and the live player play a short CC0 ocean-waves loop on arrival. Everything pauses off screen, has a pause button where it is video, and stays still with "reduce motion" on.
+- **Credits.** Every file was checked against its licence on Wikimedia Commons by a script that refuses anything not public domain or CC0. CREDITS.md and a /credits page list each one with its source. Images total about 2 MB; the video is 0.7 MB.
 - **Footer newsletter.** An email form for visitors and free accounts; a single button for members. Nothing is sent or stored.
 - **Demo panel** (bottom left, not part of the design): viewer type, live show phase, finish an episode, and clear or restore watch progress.
 
@@ -82,10 +83,14 @@ The pitch prototype is built and working locally. All three priority sections fr
 | Commenting is a members' perk; chat is open to any account | Matches their current rules |
 | Browser notifications replace "Add to calendar" | Reminders become a members' perk |
 | Live chat replay only on Stoa Podcast and Morning Brief | The shows named as streamed live; The Forum and Statecraft could be added |
+| Neutral episode numbers (Stoa Podcast #201 to #213, Chronos #31 to #44) | The earlier numbers echoed the real site |
+| Public-domain and CC0 media only, from Wikimedia Commons | Safe for a public repo; every file is credited |
+| Ocean-waves loop for the hero video | The smallest option (0.7 MB), chosen over clouds and an Earth timelapse |
+| No deployment until Nick says so | A free GitHub Pages site is public |
 
 ## Not done or not tested
 
-- **Not deployed.** No public link yet. GitHub Pages is planned and needs a small router change.
+- **Not deployed, on purpose.** Deployment is scheduled for week 6 with the PWA. GitHub Pages will need a small router change.
 - **Real Rumble and Odysee embeds are untested.** No embed URLs are set, so the placeholder shows. Rumble on phones (a key finding) needs a real embed to test.
 - **Real notifications are untested.** The test browser blocks them. The logic is in place.
 - **Pages still placeholders:** Shows, Articles index and article pages, Courses, Search, Account, Shop, Sign in.
@@ -96,6 +101,20 @@ The pitch prototype is built and working locally. All three priority sections fr
 - No server. Comments, votes, reminders and watch progress live in the browser only.
 - Notifications only appear while the site is open in a tab. Real reminders need Web Push, which belongs with the PWA work.
 - Comments, chat and reading lists are placeholders. Each episode draws a stable mix from pools that fit its show. Real data can replace them in one file each.
+
+## Ideas
+
+Each idea maps to a finding in the planning doc. Effort is S (hours), M (a day or two) or L (several days). Nothing here is built without Nick's approval.
+
+| Idea | Finding it answers | Effort | Status |
+|---|---|---|---|
+| Follow shows and hosts, and a personalised "For you" row | Mini-project B; benchmark (The Free Press, Nebula) | M | Proposed |
+| Private members' podcast feed demo: a sample feed page showing how to add an ad-free feed to Apple Podcasts or Spotify | Finding 10; Mini-project H | M | Proposed |
+| Searchable transcripts and chapters for a few episodes, using public-domain audio only | Topic 2 stretch; Mini-project B | L | Proposed |
+| Installable PWA with offline downloads and lock-screen media controls (Media Session API) | Finding 8 | L | Proposed, with deployment in week 6 |
+| Community rooms built on the live chat, with tier badges | Finding 6; Mini-project D | M | Proposed |
+| Course cross-links from relevant episodes | Mini-project G | S | Proposed |
+| Styled feed page with a Subscribe panel (Apple Podcasts, Spotify, copy link) instead of raw XML | Finding 10; Mini-project F | S | Suggested during review |
 
 ## Questions for you
 

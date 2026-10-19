@@ -2,8 +2,10 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
+import HeroVideo from './HeroVideo.vue'
 import TitleCard from './TitleCard.vue'
 import { featuredEpisodes, getShow, hostNames } from '@/data/catalogue'
+import { artForEpisode, type Artwork } from '@/data/media'
 import { useLiveStatus } from '@/composables/useLiveStatus'
 import { useViewer } from '@/composables/useViewer'
 import type { Show } from '@/types/content'
@@ -20,6 +22,8 @@ interface Slide {
   title: string
   hosts: string
   action: { label: string; to: string; join: boolean }
+  /** The painting behind an episode slide. The live slide plays video instead. */
+  art?: Artwork
 }
 
 const ROTATE_MS = 8000
@@ -61,6 +65,7 @@ const slides = computed<Slide[]>(() => {
     return {
       key: episode.id,
       show: getShow(episode.showId),
+      art: artForEpisode(episode),
       kicker,
       title: episode.title,
       hosts: hostNames(episode.hostIds),
@@ -100,7 +105,9 @@ onUnmounted(() => clearInterval(timer))
     @focusout="paused = false"
   >
     <Transition name="hero-fade">
-      <TitleCard :key="current.key" :show="current.show" :show-text="false" size="hero" />
+      <!-- Live: the stream (a looping video here). Otherwise: the episode's painting. -->
+      <HeroVideo v-if="current.key === 'live'" key="live" />
+      <TitleCard v-else :key="current.key" :show="current.show" :art="current.art" :show-text="false" size="hero" />
     </Transition>
 
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/40 to-transparent" />

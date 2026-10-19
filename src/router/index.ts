@@ -94,6 +94,12 @@ const router = createRouter({
       meta: { title: 'Search', note: 'Instant search comes in a later step.' },
     },
     {
+      path: '/credits',
+      name: 'credits',
+      component: () => import('../views/CreditsView.vue'),
+      meta: { title: 'Credits' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: PlaceholderView,

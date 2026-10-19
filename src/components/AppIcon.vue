@@ -16,6 +16,7 @@ export type IconName =
   | 'shop'
   | 'crown'
   | 'chat'
+  | 'pause'
 
 defineProps<{ name: IconName }>()
 
@@ -33,6 +34,7 @@ const paths: Record<IconName, string> = {
   shop: 'M6 8h12l1 12H5zM9 8a3 3 0 0 1 6 0',
   crown: 'M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z',
   chat: 'M4 5h16v11H9l-5 4zM8 9h8M8 12h5',
+  pause: 'M9 5v14M15 5v14',
 }
 </script>
 

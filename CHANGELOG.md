@@ -2,6 +2,19 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Real-feeling media
+
+### Added
+- Public-domain paintings and engravings on every thumbnail, hero and player, from Wikimedia Commons. Each show has its own set, and each Chronos series its own image. Episodes keep the same painting on every visit.
+- A slow pan and zoom on animated cards. Locked cards stay blurred and still. Motion pauses off screen and stops with "reduce motion".
+- A short CC0 ocean-waves loop in the homepage hero and the live player, muted, with a pause button. With "reduce motion" on it shows a still poster.
+- scripts/media/fetch_media.py: checks every file's licence on Commons and refuses anything not public domain or CC0, then downloads, resizes and compresses. It paces its requests and caches raw downloads outside git.
+- CREDITS.md and a /credits page, both generated from the same data, with a footer link.
+
+### Changed
+- Images are WebP: 640px cards and 1280px heroes, about 2 MB in total. Heroes get a 1px blur before compression, which is invisible under the dark gradient and saves about 75% of their size.
+- PROGRESS.md: new Ideas list for the backlog, with the finding each idea answers.
+
 ## 2026-10-19: Neutral numbering and no-deploy rule
 
 ### Changed

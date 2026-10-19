@@ -5,6 +5,7 @@ import AppIcon from './AppIcon.vue'
 import TitleCard from './TitleCard.vue'
 import { episodeLabel, getShow, hostNames, isNew, seriesOf } from '@/data/catalogue'
 import type { Episode } from '@/types/content'
+import { artForEpisode } from '@/data/media'
 import { formatRelativeDate, toRoman } from '@/utils/format'
 
 const props = withDefaults(
@@ -61,6 +62,7 @@ const label = computed(() =>
       >
         <TitleCard
           :show="show"
+          :art="artForEpisode(episode)"
           :label="variant === 'show' ? '' : episodeLabel(episode)"
           :animated="!locked"
           class="transition duration-500"

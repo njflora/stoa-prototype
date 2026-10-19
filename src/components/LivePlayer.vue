@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import TitleCard from './TitleCard.vue'
+import HeroVideo from './HeroVideo.vue'
 import { streamSources, type StreamSourceId } from '@/data/streams'
 import type { Show } from '@/types/content'
 import { formatNumber } from '@/utils/format'
@@ -59,7 +59,8 @@ async function share() {
         referrerpolicy="strict-origin-when-cross-origin"
       />
       <template v-else>
-        <TitleCard :key="active.id" :show="show" :show-text="false" size="hero" />
+        <!-- Keyed by source, so switching rebuilds it, just like a real embed. -->
+        <HeroVideo :key="active.id" button-class="right-3 bottom-3" />
         <div class="absolute inset-0 grid place-items-center px-4 text-center">
           <div>
             <p class="font-serif text-2xl font-bold sm:text-4xl">{{ show.name }}</p>

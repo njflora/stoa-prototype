@@ -7,6 +7,7 @@ import { getShow } from '@/data/catalogue'
 import { usePlayback } from '@/composables/usePlayback'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import type { Series } from '@/types/content'
+import { artForEpisode } from '@/data/media'
 import { formatDuration, toRoman } from '@/utils/format'
 
 // The series as a playlist beside the player: every part in order, the
@@ -76,7 +77,7 @@ function link(id: string) {
             {{ toRoman(i + 1) }}
           </span>
           <div class="relative aspect-video w-24 shrink-0 overflow-hidden rounded ring-1 ring-white/10">
-            <TitleCard :show="show" :show-text="false" :animated="episode.id === currentId" />
+            <TitleCard :show="show" :art="artForEpisode(episode)" :show-text="false" :animated="episode.id === currentId" />
             <div v-if="progressFor(episode.id) > 0" class="absolute inset-x-0 bottom-0 h-0.5 bg-white/20">
               <div class="h-full bg-accent-bright" :style="{ width: `${Math.round(progressFor(episode.id) * 100)}%` }" />
             </div>

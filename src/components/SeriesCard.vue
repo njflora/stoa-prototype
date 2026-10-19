@@ -7,6 +7,7 @@ import { getShow, hostNames } from '@/data/catalogue'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import type { Series } from '@/types/content'
+import { artForSeries } from '@/data/media'
 import { formatDuration } from '@/utils/format'
 
 // A whole series as one card. It links to the series page, which anyone
@@ -29,6 +30,7 @@ const watched = computed(() => props.series.episodes.filter((e) => isWatched(e.i
     >
       <TitleCard
         :show="show"
+        :art="artForSeries(series.name)"
         :label="`${series.episodes.length} parts · ${formatDuration(series.totalMin)}`"
         :animated="!locked"
         class="transition duration-500 group-hover:scale-105"

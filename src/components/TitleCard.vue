@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { artForShow, mediaUrl, type Artwork } from '@/data/media'
 import type { Show } from '@/types/content'
+import { hashString } from '@/utils/random'
 
-// Generated title art standing in for short preview clips. When animated,
-// light drifts across the card. Only transform and opacity animate, so
-// the browser can run it on the GPU without repainting the page.
+// Artwork standing in for short preview clips. When animated, the painting
+// drifts in a slow pan and zoom (a "Ken Burns" effect). Only transform
+// animates, so the browser can run it on the GPU without repainting.
 
 const props = withDefaults(
   defineProps<{
     show: Show
+    /** The painting to show. Defaults to the show's first artwork. */
+    art?: Artwork
     /** Small line under the show name, such as "#212" or a series part. */
     label?: string
     animated?: boolean
@@ -16,7 +20,7 @@ const props = withDefaults(
     showText?: boolean
     size?: 'card' | 'hero'
   }>(),
-  { label: '', animated: true, showText: true, size: 'card' },
+  { art: undefined, label: '', animated: true, showText: true, size: 'card' },
 )
 
 const root = ref<HTMLElement>()
@@ -33,29 +37,45 @@ onMounted(() => {
 })
 onUnmounted(() => observer?.disconnect())
 
-const glow = computed(() => props.show.palette[0])
+const artwork = computed(() => props.art ?? artForShow(props.show.id)[0])
+
+// Let the browser choose: the 640px card file for thumbnails, the 1280px
+// file when the art fills a hero or player.
+const srcset = computed(() =>
+  artwork.value ? `${mediaUrl(artwork.value.card)} 640w, ${mediaUrl(artwork.value.hero)} 1280w` : undefined,
+)
+const sizes = computed(() => (props.size === 'hero' ? '100vw' : '(min-width: 640px) 288px, 240px'))
+
+// Start each card at a different point in the pan, so a row of cards does
+// not move in lockstep.
+const delay = computed(() => `-${hashString(`${artwork.value?.id}${props.label}`) % 20}s`)
+
 const base = computed(() => props.show.palette[1])
-const highlight = computed(() => props.show.palette[2])
+const tint = computed(() => props.show.palette[0])
 </script>
 
 <template>
   <div
     ref="root"
     class="title-card absolute inset-0 isolate overflow-hidden"
-    :class="{ 'is-animated': animated, 'is-paused': !onScreen, 'is-hero': size === 'hero' }"
+    :class="{ 'is-animated': animated, 'is-paused': !onScreen }"
     :style="{ backgroundColor: base }"
     aria-hidden="true"
   >
-    <div
-      class="orb orb-a"
-      :style="{ background: `radial-gradient(circle at center, ${glow} 0%, transparent 62%)` }"
+    <img
+      v-if="artwork"
+      :src="mediaUrl(size === 'hero' ? artwork.hero : artwork.card)"
+      :srcset="srcset"
+      :sizes="sizes"
+      alt=""
+      :loading="size === 'hero' ? 'eager' : 'lazy'"
+      decoding="async"
+      class="art absolute inset-0 size-full object-cover"
+      :style="{ animationDelay: delay }"
     />
-    <div
-      class="orb orb-b"
-      :style="{ background: `radial-gradient(circle at center, ${highlight} 0%, transparent 58%)` }"
-    />
-    <div class="sheen" />
-    <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+    <!-- A wash of the show's colour keeps each show recognisable. -->
+    <div class="absolute inset-0 opacity-25 mix-blend-soft-light" :style="{ backgroundColor: tint }" />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/5" />
 
     <div v-if="showText" class="absolute inset-x-0 bottom-0" :class="size === 'hero' ? 'p-8' : 'p-3'">
       <p
@@ -64,7 +84,7 @@ const highlight = computed(() => props.show.palette[2])
       >
         {{ show.name }}
       </p>
-      <p v-if="label" class="mt-0.5 truncate text-[11px] tracking-wide text-white/75 uppercase">
+      <p v-if="label" class="mt-0.5 truncate text-[11px] tracking-wide text-white/80 uppercase drop-shadow">
         {{ label }}
       </p>
     </div>
@@ -72,109 +92,30 @@ const highlight = computed(() => props.show.palette[2])
 </template>
 
 <style scoped>
-.orb {
-  position: absolute;
-  width: 95%;
-  aspect-ratio: 1;
-  opacity: 0.85;
+.art {
+  transform-origin: 50% 40%;
   will-change: transform;
 }
 
-.orb-a {
-  top: -45%;
-  left: -25%;
+.is-animated .art {
+  animation: ken-burns 20s ease-in-out infinite alternate;
 }
 
-.orb-b {
-  right: -30%;
-  bottom: -60%;
-  opacity: 0.45;
+.is-paused .art {
+  animation-play-state: paused;
 }
 
-/* The hero keeps its text on the left, so its light sits to the right. */
-.is-hero .orb-a,
-.is-hero .orb-b {
-  width: auto;
-  height: 130%;
-}
-
-.is-hero .orb-a {
-  top: -45%;
-  left: 25%;
-}
-
-.is-hero .orb-b {
-  right: -25%;
-  bottom: -75%;
-}
-
-/* On narrow screens, keep the light within the frame. */
-@media (max-width: 640px) {
-  .is-hero .orb-a {
-    left: -55%;
-    top: -35%;
+@keyframes ken-burns {
+  from {
+    transform: scale(1.04) translate3d(0, 0, 0);
   }
-}
-
-/* A soft diagonal band of light that sweeps across the card. */
-.sheen {
-  position: absolute;
-  inset: -50% auto -50% 0;
-  width: 40%;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.14), transparent);
-  transform: translateX(-150%) rotate(18deg);
-  opacity: 0;
-}
-
-.is-animated .orb-a {
-  animation: drift 9s ease-in-out infinite;
-}
-
-.is-animated .orb-b {
-  animation: drift-alt 13s ease-in-out infinite;
-}
-
-.is-animated .sheen {
-  opacity: 1;
-  animation: sweep 6s ease-in-out infinite;
-}
-
-.is-paused * {
-  animation-play-state: paused !important;
-}
-
-@keyframes drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(35%, 22%, 0) scale(1.2);
-  }
-}
-
-@keyframes drift-alt {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1.1);
-  }
-  50% {
-    transform: translate3d(-30%, -25%, 0) scale(0.9);
-  }
-}
-
-@keyframes sweep {
-  0% {
-    transform: translateX(-150%) rotate(18deg);
-  }
-  60%,
-  100% {
-    transform: translateX(400%) rotate(18deg);
+  to {
+    transform: scale(1.16) translate3d(-3%, -2%, 0);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .title-card * {
+  .title-card .art {
     animation: none !important;
   }
 }
