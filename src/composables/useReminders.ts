@@ -93,5 +93,5 @@ export function useReminders() {
     if (isOn(target.id) && permission.value === 'granted') schedule(target)
   }
 
-  return { permission, isOn, turnOn, turnOff, restore }
+  return { permission, reminders, isOn, turnOn, turnOff, restore }
 }

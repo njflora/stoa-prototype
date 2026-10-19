@@ -2,12 +2,24 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
+import NotificationBell from './NotificationBell.vue'
+import UserBadge from './UserBadge.vue'
 import { useViewer } from '@/composables/useViewer'
 
-// One top bar replaces the long side navigation. Watching sits on the
-// left; articles, courses and the upgrade route sit on the right.
+// One top bar replaces the long side navigation.
+// Left:  Stoa · Live · Home · Shows · Articles · Courses · Search
+// Right: Shop · Upgrade (not members) · bell (members) · account or sign in
 
-const { isMember, isLive } = useViewer()
+const { isMember, isLive, user } = useViewer()
+
+const links = [
+  { label: 'Live', to: '/live' },
+  { label: 'Home', to: '/' },
+  { label: 'Shows', to: '/shows' },
+  { label: 'Articles', to: '/articles' },
+  { label: 'Courses', to: '/courses' },
+]
+const mobileLinks = [...links, { label: 'Shop', to: '/shop' }]
 
 // Publish the header's height as --header-h, so full-height layouts such
 // as the live page can fit exactly beneath it.
@@ -23,15 +35,8 @@ onMounted(() => {
 })
 onUnmounted(() => resizeObserver?.disconnect())
 
-const primary = [
-  { label: 'Home', to: '/' },
-  { label: 'Shows', to: '/shows' },
-  { label: 'Live', to: '/live' },
-]
-const secondary = [
-  { label: 'Articles', to: '/articles' },
-  { label: 'Courses', to: '/courses' },
-]
+const linkClass = 'flex items-center gap-1.5 text-white/70 transition hover:text-white'
+const activeClass = '!text-white font-semibold'
 </script>
 
 <template>
@@ -42,13 +47,9 @@ const secondary = [
       </RouterLink>
 
       <nav aria-label="Main" class="hidden md:block">
-        <ul class="flex items-center gap-6 text-sm">
-          <li v-for="link in primary" :key="link.to">
-            <RouterLink
-              :to="link.to"
-              class="flex items-center gap-1.5 text-white/70 transition hover:text-white"
-              exact-active-class="!text-white font-semibold"
-            >
+        <ul class="flex items-center gap-5 text-sm">
+          <li v-for="link in links" :key="link.to">
+            <RouterLink :to="link.to" :class="linkClass" :exact-active-class="activeClass">
               <span
                 v-if="link.to === '/live' && isLive"
                 class="size-2 animate-pulse rounded-full bg-live motion-reduce:animate-none"
@@ -56,55 +57,58 @@ const secondary = [
               {{ link.label }}
             </RouterLink>
           </li>
-        </ul>
-      </nav>
-
-      <div class="ml-auto flex items-center gap-2 sm:gap-4">
-        <ul class="hidden items-center gap-5 text-sm md:flex">
-          <li v-for="link in secondary" :key="link.to">
+          <li>
             <RouterLink
-              :to="link.to"
-              class="text-white/70 transition hover:text-white"
-              exact-active-class="!text-white font-semibold"
+              to="/search"
+              class="grid size-9 place-items-center rounded-full text-white/80 hover:bg-white/10 hover:text-white"
+              aria-label="Search"
             >
-              {{ link.label }}
+              <AppIcon name="search" />
             </RouterLink>
           </li>
         </ul>
+      </nav>
 
+      <div class="ml-auto flex items-center gap-2 sm:gap-3">
         <RouterLink
           to="/search"
-          class="grid size-9 place-items-center rounded-full text-white/80 hover:bg-white/10 hover:text-white"
+          class="grid size-9 place-items-center rounded-full text-white/80 hover:bg-white/10 hover:text-white md:hidden"
           aria-label="Search"
         >
           <AppIcon name="search" />
         </RouterLink>
 
-        <span
-          v-if="isMember"
-          class="rounded-full border border-gold/50 px-3 py-1 text-xs font-semibold text-gold"
-        >
-          Member
-        </span>
+        <RouterLink to="/shop" class="hidden text-sm md:inline" :class="linkClass" :exact-active-class="activeClass">
+          Shop
+        </RouterLink>
+
         <RouterLink
-          v-else
+          v-if="!isMember"
           to="/join"
-          class="rounded-lg bg-gold px-4 py-1.5 text-sm font-semibold text-ink transition hover:brightness-110"
+          class="rounded-lg bg-gold px-3 py-1.5 text-sm font-semibold text-ink transition hover:brightness-110 sm:px-4"
         >
           Upgrade
+        </RouterLink>
+
+        <NotificationBell v-if="isMember" />
+
+        <UserBadge v-if="user" :user="user" />
+        <RouterLink
+          v-else
+          to="/sign-in"
+          class="rounded-lg px-3 py-1.5 text-sm font-semibold ring-1 ring-white/25 transition hover:bg-white/10"
+        >
+          <span class="hidden sm:inline">Sign in / Sign up</span>
+          <span class="sm:hidden">Sign in</span>
         </RouterLink>
       </div>
     </div>
 
-    <!-- Small screens: the same links in one swipeable strip. -->
+    <!-- Small screens: the links in one swipeable strip. -->
     <nav aria-label="Main" class="no-scrollbar overflow-x-auto md:hidden">
       <ul class="flex gap-5 px-4 pb-2.5 text-sm whitespace-nowrap">
-        <li v-for="link in [...primary, ...secondary]" :key="link.to">
-          <RouterLink
-            :to="link.to"
-            class="flex items-center gap-1.5 text-white/70"
-            exact-active-class="!text-white font-semibold"
-          >
+        <li v-for="link in mobileLinks" :key="link.to">
+          <RouterLink :to="link.to" :class="linkClass" :exact-active-class="activeClass">
             <span
               v-if="link.to === '/live' && isLive"
               class="size-2 animate-pulse rounded-full bg-live motion-reduce:animate-none"

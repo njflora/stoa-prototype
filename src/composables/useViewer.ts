@@ -1,13 +1,20 @@
 import { computed, ref, watch } from 'vue'
+import type { ChatTier } from '@/data/chat'
 import type { Episode } from '@/types/content'
 import { readJson, writeJson } from './storage'
 
 // Stands in for a signed-in account and the show's schedule. There is no
-// real login: the demo panel switches between a free viewer and a member,
-// and moves the live show through its phases, so every state can be shown
-// in a pitch.
+// real login: the demo panel switches between a signed-out visitor, a free
+// account and a member, and moves the live show through its phases, so
+// every state can be shown in a pitch.
 
-export type Membership = 'free' | 'member'
+export type ViewerType = 'signed-out' | 'free' | 'member'
+
+export const viewerTypes: { id: ViewerType; label: string }[] = [
+  { id: 'signed-out', label: 'Signed out' },
+  { id: 'free', label: 'Free account' },
+  { id: 'member', label: 'Member' },
+]
 
 /**
  * The live show's phases, in order:
@@ -23,8 +30,15 @@ export const livePhases: { id: LivePhase; label: string }[] = [
   { id: 'ended', label: 'Ended' },
 ]
 
+export interface DemoUser {
+  name: string
+  initials: string
+  /** The member's tier, or null for a free account. */
+  tier: Extract<ChatTier, 'bronze' | 'silver' | 'gold'> | null
+}
+
 interface DemoState {
-  membership: Membership
+  viewer: ViewerType
   phase: LivePhase
 }
 
@@ -33,7 +47,7 @@ const STORAGE_KEY = 'stoa-demo'
 function load(): DemoState {
   const saved = readJson<Partial<DemoState>>(STORAGE_KEY, {})
   return {
-    membership: saved.membership === 'member' ? 'member' : 'free',
+    viewer: viewerTypes.some((v) => v.id === saved.viewer) ? saved.viewer! : 'signed-out',
     phase: livePhases.some((p) => p.id === saved.phase) ? saved.phase! : 'live',
   }
 }
@@ -44,23 +58,31 @@ const state = ref<DemoState>(load())
 watch(state, (value) => writeJson(STORAGE_KEY, value), { deep: true })
 
 export function useViewer() {
-  const isMember = computed(() => state.value.membership === 'member')
+  const viewer = computed(() => state.value.viewer)
+  const isSignedIn = computed(() => state.value.viewer !== 'signed-out')
+  const isMember = computed(() => state.value.viewer === 'member')
   const phase = computed(() => state.value.phase)
   /** On air: the free stream or the members' after-show. */
   const isLive = computed(() => phase.value === 'live' || phase.value === 'members')
+
+  const user = computed<DemoUser | null>(() =>
+    isSignedIn.value
+      ? { name: 'chris_m', initials: 'CM', tier: isMember.value ? 'gold' : null }
+      : null,
+  )
 
   /** Free viewers can watch free episodes and free previews. Members watch everything. */
   function canWatch(episode: Episode): boolean {
     return isMember.value || episode.access !== 'premium'
   }
 
-  function setMembership(membership: Membership) {
-    state.value.membership = membership
+  function setViewer(next: ViewerType) {
+    state.value.viewer = next
   }
 
   function setPhase(next: LivePhase) {
     state.value.phase = next
   }
 
-  return { isMember, isLive, phase, canWatch, setMembership, setPhase }
+  return { viewer, isSignedIn, isMember, isLive, phase, user, canWatch, setViewer, setPhase }
 }

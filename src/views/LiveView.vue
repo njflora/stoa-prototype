@@ -21,7 +21,7 @@ import { formatCountdown, formatLongDate, formatTime } from '@/utils/format'
 const BREAK_MS = (28 * 60 + 14) * 1000
 
 const { phase, event, nextStart, countdown, now } = useLiveStatus()
-const { isMember, setPhase } = useViewer()
+const { isMember, isSignedIn, setPhase } = useViewer()
 const show = getShow(event.showId)
 const hosts = hostNames(event.hostIds)
 
@@ -189,7 +189,7 @@ const schedule = computed<ScheduleItem[]>(() => [
       <LiveChat
         :mode="chatMode"
         :opens-at="formatTime(nextStart)"
-        :signed-in="isMember"
+        :signed-in="isSignedIn"
         class="min-h-0 flex-1 border-t border-white/5 lg:sticky lg:top-[calc(var(--header-h,4rem)+1.5rem)] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[calc(100svh-var(--header-h,4rem)-3rem)] lg:self-start lg:border-0"
       >
         <template v-if="phase === 'break'" #pinned>

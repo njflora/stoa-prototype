@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { livePhases, useViewer } from '@/composables/useViewer'
+import { livePhases, useViewer, viewerTypes } from '@/composables/useViewer'
 // Loaded here so the demo's "live now" notification works from any page.
 import '@/composables/useReminders'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 
-// Demo-only panel for pitching. It switches between a free viewer and a
-// member, moves the live show through its phases, and resets watch
-// progress. It is not part of the site design.
+// Demo-only panel for pitching. It switches between a signed-out visitor,
+// a free account and a member, moves the live show through its phases,
+// and resets watch progress. It is not part of the site design.
 
-const { isMember, phase, setMembership, setPhase } = useViewer()
+const { viewer, phase, setViewer, setPhase } = useViewer()
 const { reset } = useWatchProgress()
 const open = ref(false)
 
@@ -29,12 +29,16 @@ const off = 'text-white/70 hover:text-white'
 
       <div>
         <p class="mb-1 text-xs font-semibold">Viewing as</p>
-        <div class="inline-flex rounded-lg bg-black/40 p-1" role="group" aria-label="Viewing as">
-          <button type="button" :class="[segment, !isMember ? on : off]" :aria-pressed="!isMember" @click="setMembership('free')">
-            Free viewer
-          </button>
-          <button type="button" :class="[segment, isMember ? on : off]" :aria-pressed="isMember" @click="setMembership('member')">
-            Member
+        <div class="flex flex-wrap gap-1 rounded-lg bg-black/40 p-1" role="group" aria-label="Viewing as">
+          <button
+            v-for="v in viewerTypes"
+            :key="v.id"
+            type="button"
+            :class="[segment, viewer === v.id ? on : off]"
+            :aria-pressed="viewer === v.id"
+            @click="setViewer(v.id)"
+          >
+            {{ v.label }}
           </button>
         </div>
       </div>

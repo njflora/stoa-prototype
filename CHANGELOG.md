@@ -2,6 +2,18 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Navigation bar
+
+### Changed
+- New link order: Stoa, Live, Home, Shows, Articles, Courses, Search. On phones, the links sit in a swipeable strip with Shop at the end.
+- Right side depends on the viewer. Signed out: Shop, Upgrade, Sign in / Sign up. Free account: Shop, Upgrade, username. Member: Shop, reminders bell, username with tier badge.
+- Demo panel now offers three viewers: signed out, free account and member.
+- Free accounts can type in live chat (a mock-up). Signed-out visitors see "Sign in to chat".
+
+### Added
+- Reminders bell for members. It lists their live reminders with a remove button, and flags a followed show that is live now.
+- Placeholder pages for Shop and the account page.
+
 ## 2026-10-19: Live reminders and chat format
 
 ### Added

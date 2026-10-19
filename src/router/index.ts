@@ -28,7 +28,22 @@ const router = createRouter({
       path: '/sign-in',
       name: 'sign-in',
       component: PlaceholderView,
-      meta: { title: 'Sign in', note: 'This prototype has no accounts. Use the demo panel to switch views.' },
+      meta: {
+        title: 'Sign in or sign up',
+        note: 'This prototype has no accounts. Use the demo panel to switch views.',
+      },
+    },
+    {
+      path: '/account',
+      name: 'account',
+      component: PlaceholderView,
+      meta: { title: 'Your account', note: 'Account settings and membership tier come in a later step.' },
+    },
+    {
+      path: '/shop',
+      name: 'shop',
+      component: PlaceholderView,
+      meta: { title: 'Shop' },
     },
     {
       path: '/shows',
