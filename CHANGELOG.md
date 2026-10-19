@@ -2,6 +2,19 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Series view
+
+### Added
+- Series page at /series/:name. It shows the series art, host, number of parts, total running time, a description and progress ("2 of 5 watched").
+- One main button that picks the right place: Play from Part I, Continue with a part already started, or Watch again.
+- Parts listed in order with duration, release date, progress and a tick when watched. Part numbers always read Part I, Part II and so on.
+- Free viewers see the parts locked, with "Upgrade to watch the series" and a free preview from the same show.
+- "Watch a whole series" row on the homepage, and a "Part II of 5 · See the series" link on episode cards.
+- "More series from" row on each series page.
+
+### Fixed
+- The chat no longer asks when the reading list goes up, since it is published before the show. The producer's comment now points to the reading list on the page.
+
 ## 2026-10-19: Votes and purple accents
 
 ### Added

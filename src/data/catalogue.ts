@@ -9,6 +9,7 @@ import type {
   Episode,
   Host,
   LiveEvent,
+  Series,
   Show,
 } from '@/types/content'
 import { formatLongDate, toRoman } from '@/utils/format'
@@ -485,4 +486,64 @@ export function featuredEpisodes(): Episode[] {
     latest('conversations'),
     latest('statecraft', 'freemium'),
   ]
+}
+
+// Series. Episodes carry their series name and part number as data, so a
+// series can always be played in order and numbered the same way, as
+// Part I, Part II and so on.
+
+const seriesDescriptions: Record<string, string> = {
+  'The Fall of the Republic':
+    'How the Roman Republic tore itself apart, from the Gracchi brothers to the Ides of March.',
+  'Byzantium Rising':
+    'The eastern empire that outlived Rome by a thousand years, and the gambles that kept it alive.',
+  "The Hundred Years' War":
+    'A century of war between England and France over one disputed crown.',
+}
+
+/** "The Hundred Years' War" → "the-hundred-years-war" */
+export function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function buildSeries(): Series[] {
+  const byName = new Map<string, Episode[]>()
+  for (const episode of episodes) {
+    if (!episode.series) continue
+    const list = byName.get(episode.series.name) ?? []
+    list.push(episode)
+    byName.set(episode.series.name, list)
+  }
+
+  return [...byName].map(([name, parts]) => {
+    const ordered = [...parts].sort((a, b) => a.series!.part - b.series!.part)
+    return {
+      slug: slugify(name),
+      name,
+      showId: ordered[0]!.showId,
+      description: seriesDescriptions[name] ?? '',
+      episodes: ordered,
+      totalMin: ordered.reduce((sum, e) => sum + e.durationMin, 0),
+    }
+  })
+}
+
+/** Every series, newest first. */
+export const allSeries: Series[] = buildSeries().sort((a, b) =>
+  b.episodes.at(-1)!.publishedAt.localeCompare(a.episodes.at(-1)!.publishedAt),
+)
+
+const seriesBySlug = new Map(allSeries.map((s) => [s.slug, s]))
+
+export function getSeries(slug: string): Series | undefined {
+  return seriesBySlug.get(slug)
+}
+
+/** The series an episode belongs to, if any. */
+export function seriesOf(episode: Episode): Series | undefined {
+  return episode.series ? seriesBySlug.get(slugify(episode.series.name)) : undefined
 }

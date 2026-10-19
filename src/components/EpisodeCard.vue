@@ -3,9 +3,9 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import TitleCard from './TitleCard.vue'
-import { episodeLabel, getShow, hostNames, isNew } from '@/data/catalogue'
+import { episodeLabel, getShow, hostNames, isNew, seriesOf } from '@/data/catalogue'
 import type { Episode } from '@/types/content'
-import { formatRelativeDate } from '@/utils/format'
+import { formatRelativeDate, toRoman } from '@/utils/format'
 
 const props = withDefaults(
   defineProps<{
@@ -39,61 +39,74 @@ const badge = computed(() => {
   return null
 })
 
-const to = computed(() => (props.locked ? '/join' : `/watch/${props.episode.id}`))
+const series = computed(() => seriesOf(props.episode))
+
+// Series episodes open with their series queue alongside.
+const to = computed(() => {
+  if (props.locked) return '/join'
+  const path = `/watch/${props.episode.id}`
+  return series.value ? { path, query: { series: series.value.slug } } : path
+})
 const label = computed(() =>
   props.locked ? `${caption.value}. Members only. Join to watch.` : undefined,
 )
 </script>
 
 <template>
-  <RouterLink
-    :to="to"
-    :aria-label="label"
-    class="group block w-60 flex-none snap-start outline-none sm:w-72"
-  >
-    <div
-      class="relative aspect-video overflow-hidden rounded-lg bg-surface ring-1 ring-white/10 transition duration-300 group-hover:ring-white/30 group-focus-visible:ring-2 group-focus-visible:ring-accent-bright"
-    >
-      <TitleCard
-        :show="show"
-        :label="variant === 'show' ? '' : episodeLabel(episode)"
-        :animated="!locked"
-        class="transition duration-500"
-        :class="locked ? 'scale-110 blur-md brightness-75' : 'group-hover:scale-105'"
-      />
+  <!-- A wrapper, so the series link can sit beside the main link rather than inside it. -->
+  <div class="w-60 flex-none snap-start sm:w-72">
+    <RouterLink :to="to" :aria-label="label" class="group block outline-none">
+      <div
+        class="relative aspect-video overflow-hidden rounded-lg bg-surface ring-1 ring-white/10 transition duration-300 group-hover:ring-white/30 group-focus-visible:ring-2 group-focus-visible:ring-accent-bright"
+      >
+        <TitleCard
+          :show="show"
+          :label="variant === 'show' ? '' : episodeLabel(episode)"
+          :animated="!locked"
+          class="transition duration-500"
+          :class="locked ? 'scale-110 blur-md brightness-75' : 'group-hover:scale-105'"
+        />
 
-      <div v-if="locked" class="absolute inset-0 grid place-items-center">
-        <div class="flex flex-col items-center gap-1.5 text-center">
-          <span class="grid size-10 place-items-center rounded-full bg-black/55 ring-1 ring-white/20">
-            <AppIcon name="lock" />
-          </span>
-          <span class="text-xs font-semibold tracking-wide uppercase">Members only</span>
-          <span
-            class="rounded-full bg-gold px-3 py-0.5 text-[11px] font-semibold text-ink opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100"
-          >
-            Join to watch
-          </span>
+        <div v-if="locked" class="absolute inset-0 grid place-items-center">
+          <div class="flex flex-col items-center gap-1.5 text-center">
+            <span class="grid size-10 place-items-center rounded-full bg-black/55 ring-1 ring-white/20">
+              <AppIcon name="lock" />
+            </span>
+            <span class="text-xs font-semibold tracking-wide uppercase">Members only</span>
+            <span
+              class="rounded-full bg-gold px-3 py-0.5 text-[11px] font-semibold text-ink opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100"
+            >
+              Join to watch
+            </span>
+          </div>
+        </div>
+
+        <span
+          v-if="badge"
+          class="absolute top-2 left-2 rounded px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase"
+          :class="badge.class"
+        >
+          {{ badge.text }}
+        </span>
+
+        <div v-if="progress > 0 && !locked" class="absolute inset-x-0 bottom-0 h-1 bg-white/20">
+          <div class="h-full bg-accent-bright" :style="{ width: `${Math.round(progress * 100)}%` }" />
         </div>
       </div>
 
-      <span
-        v-if="badge"
-        class="absolute top-2 left-2 rounded px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase"
-        :class="badge.class"
-      >
-        {{ badge.text }}
-      </span>
-
-      <div v-if="progress > 0 && !locked" class="absolute inset-x-0 bottom-0 h-1 bg-white/20">
-        <div class="h-full bg-accent-bright" :style="{ width: `${Math.round(progress * 100)}%` }" />
+      <div class="mt-2 px-0.5">
+        <p class="line-clamp-2 text-sm leading-snug font-medium text-white/90 group-hover:text-white">
+          {{ caption }}
+        </p>
+        <p class="mt-0.5 truncate text-xs text-muted">{{ subcaption }}</p>
       </div>
-    </div>
-
-    <div class="mt-2 px-0.5">
-      <p class="line-clamp-2 text-sm leading-snug font-medium text-white/90 group-hover:text-white">
-        {{ caption }}
-      </p>
-      <p class="mt-0.5 truncate text-xs text-muted">{{ subcaption }}</p>
-    </div>
-  </RouterLink>
+    </RouterLink>
+    <RouterLink
+      v-if="series && variant === 'episode'"
+      :to="`/series/${series.slug}`"
+      class="mt-1 inline-block px-0.5 text-xs font-medium text-accent-bright hover:underline"
+    >
+      Part {{ toRoman(episode.series!.part) }} of {{ series.episodes.length }} · See the series
+    </RouterLink>
+  </div>
 </template>

@@ -5,7 +5,15 @@ import ArticleCard from '@/components/ArticleCard.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import EpisodeCard from '@/components/EpisodeCard.vue'
 import HeroBanner from '@/components/HeroBanner.vue'
-import { articles, episodes, episodesForShow, shows, startHereEpisodes } from '@/data/catalogue'
+import SeriesCard from '@/components/SeriesCard.vue'
+import {
+  allSeries,
+  articles,
+  episodes,
+  episodesForShow,
+  shows,
+  startHereEpisodes,
+} from '@/data/catalogue'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 
@@ -49,6 +57,10 @@ const conversations = episodesForShow('conversations')
           :locked="!canWatch(item.episode)"
           variant="show"
         />
+      </ContentRow>
+
+      <ContentRow title="Watch a whole series" subtitle="Multi-part series, played in order">
+        <SeriesCard v-for="s in allSeries" :key="s.slug" :series="s" />
       </ContentRow>
 
       <ContentRow

@@ -63,6 +63,14 @@ export function formatTime(date: Date): string {
   return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
 }
 
+/** "1h 25m", "45m", or "7h" for whole hours. */
+export function formatDuration(totalMin: number): string {
+  const hours = Math.floor(totalMin / 60)
+  const minutes = totalMin % 60
+  if (hours === 0) return `${minutes}m`
+  return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`
+}
+
 export function formatNumber(value: number): string {
   return number.format(value)
 }

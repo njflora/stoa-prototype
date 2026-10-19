@@ -40,6 +40,18 @@ export interface Episode {
   series?: SeriesInfo
 }
 
+/** A run of episodes meant to be watched in order. */
+export interface Series {
+  /** Web-friendly name, such as "the-fall-of-the-republic". */
+  slug: string
+  name: string
+  showId: string
+  description: string
+  /** Parts in order, Part I first. */
+  episodes: Episode[]
+  totalMin: number
+}
+
 export type ArticleCategory = 'Politics' | 'Analysis' | 'History' | 'Culture' | 'Economics'
 
 export interface Article {

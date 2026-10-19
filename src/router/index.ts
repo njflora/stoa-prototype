@@ -52,6 +52,12 @@ const router = createRouter({
       meta: { title: 'Shows', note: 'Show pages and series views come in a later step.' },
     },
     {
+      path: '/series/:slug',
+      name: 'series',
+      component: () => import('../views/SeriesView.vue'),
+      meta: { title: 'Series' },
+    },
+    {
       path: '/watch/:id',
       name: 'watch',
       component: PlaceholderView,

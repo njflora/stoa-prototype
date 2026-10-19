@@ -48,9 +48,22 @@ export function useWatchProgress() {
     return progress.value[id]?.fraction ?? 0
   }
 
+  /** Watched to the end, near enough. */
+  function isWatched(id: string): boolean {
+    return progressFor(id) >= 0.95
+  }
+
+  function setProgress(id: string, fraction: number) {
+    progress.value = { ...progress.value, [id]: { fraction, updatedAt: Date.now() } }
+  }
+
+  function markWatched(id: string) {
+    setProgress(id, 1)
+  }
+
   function reset() {
     progress.value = seed()
   }
 
-  return { inProgress, progressFor, reset }
+  return { inProgress, progressFor, isWatched, setProgress, markWatched, reset }
 }
