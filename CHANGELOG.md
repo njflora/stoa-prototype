@@ -2,6 +2,21 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Live page
+
+### Added
+- Live page at /live covering the whole show: countdown, free stream, break, members' after-show and recording.
+- Player frame with a Rumble and Odysee source switcher. Each switch builds a fresh player, so it never goes black. Title, viewer count and share sit outside the platform's player, and nothing links off-site.
+- Real embeds load from .env.local (see .env.example). Only each platform's own embed path is accepted. With no URL set, a placeholder shows.
+- Countdown before the show, with "Add to calendar" (a working .ics file and a 10 minute reminder).
+- The break as a sign-up moment: a countdown to the members' after-show with "Continue as a member", on the video and pinned in chat. Members see "You're in", and the after-show starts by itself.
+- Free viewers see the after-show blurred and locked, with a route to join.
+- Mock live chat with tier badges, staff messages and highlighted Gold questions.
+- Chat replay beside the recording, with a timeline, play and 10x speed.
+- Phone layout: video at the top, chat filling the screen below it, never covering the video.
+- "Coming up live" schedule with calendar buttons.
+- Demo panel now moves the show through all five phases.
+
 ## 2026-10-19: Contributor names
 
 ### Changed

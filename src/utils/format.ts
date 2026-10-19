@@ -37,6 +37,20 @@ export function formatCountdown(ms: number): string {
   return `${minutes}m ${String(seconds).padStart(2, '0')}s`
 }
 
+/** Seconds as a video timestamp: "4:05" or "1:02:03". */
+export function formatClock(totalSeconds: number): string {
+  const s = Math.max(0, Math.floor(totalSeconds))
+  const hours = Math.floor(s / 3600)
+  const minutes = Math.floor((s % 3600) / 60)
+  const seconds = String(s % 60).padStart(2, '0')
+  return hours > 0 ? `${hours}:${String(minutes).padStart(2, '0')}:${seconds}` : `${minutes}:${seconds}`
+}
+
+/** "13:00". */
+export function formatTime(date: Date): string {
+  return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+}
+
 export function formatNumber(value: number): string {
   return number.format(value)
 }

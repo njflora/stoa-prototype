@@ -21,8 +21,14 @@ const router = createRouter({
     {
       path: '/live',
       name: 'live',
+      component: () => import('../views/LiveView.vue'),
+      meta: { title: 'Live' },
+    },
+    {
+      path: '/sign-in',
+      name: 'sign-in',
       component: PlaceholderView,
-      meta: { title: 'Live', note: 'The live page is the next section to build.' },
+      meta: { title: 'Sign in', note: 'This prototype has no accounts. Use the demo panel to switch views.' },
     },
     {
       path: '/shows',

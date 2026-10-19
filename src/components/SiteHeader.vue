@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import { useViewer } from '@/composables/useViewer'
@@ -7,6 +8,20 @@ import { useViewer } from '@/composables/useViewer'
 // left; articles, courses and the upgrade route sit on the right.
 
 const { isMember, isLive } = useViewer()
+
+// Publish the header's height as --header-h, so full-height layouts such
+// as the live page can fit exactly beneath it.
+const header = ref<HTMLElement>()
+let resizeObserver: ResizeObserver | undefined
+onMounted(() => {
+  if (!header.value || !('ResizeObserver' in window)) return
+  resizeObserver = new ResizeObserver(([entry]) => {
+    const height = entry?.borderBoxSize?.[0]?.blockSize ?? header.value!.offsetHeight
+    document.documentElement.style.setProperty('--header-h', `${height}px`)
+  })
+  resizeObserver.observe(header.value)
+})
+onUnmounted(() => resizeObserver?.disconnect())
 
 const primary = [
   { label: 'Home', to: '/' },
@@ -20,7 +35,7 @@ const secondary = [
 </script>
 
 <template>
-  <header class="sticky top-0 z-40 border-b border-white/5 bg-ink/85 backdrop-blur-md">
+  <header ref="header" class="sticky top-0 z-40 border-b border-white/5 bg-ink/85 backdrop-blur-md">
     <div class="flex h-14 items-center gap-6 px-4 sm:h-16 sm:px-8">
       <RouterLink to="/" class="font-serif text-2xl font-bold tracking-tight" aria-label="Stoa home">
         Stoa
