@@ -1,10 +1,10 @@
 # Prototype progress report
 
-Status as of 19 October 2026, updated after steps 1 and 2 of the second brief (real-feeling media with hover previews, pitch mode). Written as a self-contained progress report.
+Status as of 19 October 2026, updated after steps 1 to 3 of the second brief (real-feeling media with hover previews, pitch mode, mobile navigation). Written as a self-contained progress report.
 
 ## In one paragraph
 
-The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. There are 28 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
+The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. There are 30 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
 
 ## Context
 
@@ -19,6 +19,7 @@ The pitch prototype is built and working locally. All three priority sections fr
 ### Across the site
 
 - **One top bar instead of the long side nav.** Left: Stoa, Live (with a red dot when on air), Home, Shows, Articles, Courses, Search. Right: a purple Shop button, a gold Upgrade button with a crown, then the account.
+- **Phones get an app-style tab bar** (Home, Live, Shows, Search, More), with More opening a sheet for Articles, Courses, Shop and the account. Every page was checked at 375px and 320px for overflow and tap-target size.
 - **Three viewer types**, switched from a demo panel since there is no real login:
   - Signed out: Upgrade and a "Sign in / Sign up" button.
   - Free account: Upgrade and the username.

@@ -219,14 +219,14 @@ onUnmounted(() => {
             min="0"
             :max="length"
             step="1"
-            class="min-w-0 flex-1 accent-accent-bright"
+            class="h-6 min-w-0 flex-1 accent-accent-bright"
             aria-label="Position in the recording"
             :aria-valuetext="formatClock(position)"
           />
           <span class="w-14 shrink-0 text-right text-xs text-muted tabular-nums">{{ formatClock(position) }}</span>
           <button
             type="button"
-            class="shrink-0 rounded px-1.5 py-0.5 text-xs ring-1"
+            class="min-h-6 shrink-0 rounded px-2 text-xs ring-1"
             :class="fast ? 'bg-white text-ink ring-white' : 'text-white/70 ring-white/20'"
             :aria-pressed="fast"
             @click="fast = !fast"

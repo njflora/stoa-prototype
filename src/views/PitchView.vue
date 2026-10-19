@@ -56,7 +56,7 @@ const pill = {
     <section v-for="group in groups" :key="group.name" class="mt-10" :aria-labelledby="`pitch-${group.name}`">
       <div class="flex items-baseline justify-between gap-3">
         <h2 :id="`pitch-${group.name}`" class="text-xl font-semibold">{{ group.name }}</h2>
-        <RouterLink :to="group.to" class="text-sm text-accent-bright hover:underline">Show me</RouterLink>
+        <RouterLink :to="group.to" class="inline-flex min-h-6 items-center text-sm text-accent-bright hover:underline">Show me</RouterLink>
       </div>
       <ul class="mt-3 divide-y divide-white/5 rounded-xl bg-surface ring-1 ring-white/10">
         <li v-for="note in group.notes" :key="note.id" class="p-4">

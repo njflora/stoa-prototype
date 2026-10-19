@@ -79,7 +79,7 @@ const conversations = episodesForShow('conversations')
 
       <ContentRow title="Latest articles" subtitle="Free to read">
         <template #action>
-          <RouterLink to="/articles" class="shrink-0 text-sm text-muted hover:text-white">
+          <RouterLink to="/articles" class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white">
             See all
           </RouterLink>
         </template>
@@ -117,11 +117,11 @@ const conversations = episodesForShow('conversations')
           <RouterLink
             v-if="!isMember"
             to="/join"
-            class="shrink-0 text-sm font-semibold text-gold hover:underline"
+            class="inline-flex min-h-6 items-center shrink-0 text-sm font-semibold text-gold hover:underline"
           >
             Unlock {{ show.name }}
           </RouterLink>
-          <RouterLink v-else to="/shows" class="shrink-0 text-sm text-muted hover:text-white">
+          <RouterLink v-else to="/shows" class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white">
             See all
           </RouterLink>
         </template>

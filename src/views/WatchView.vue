@@ -219,7 +219,7 @@ watchEffect(() => {
           <RouterLink
             v-if="series && partIndex >= 0"
             :to="`/series/${series.slug}`"
-            class="mt-2 inline-block text-sm font-medium text-accent-bright hover:underline"
+            class="mt-2 inline-flex min-h-6 items-center text-sm font-medium text-accent-bright hover:underline"
           >
             Part {{ toRoman(partIndex + 1) }} of {{ toRoman(series.episodes.length) }} · {{ series.name }}
           </RouterLink>

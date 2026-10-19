@@ -25,7 +25,7 @@ const styles = {
     v-if="enabled && note"
     ref="button"
     type="button"
-    class="z-20 inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[10px] leading-4 font-bold tracking-wide whitespace-nowrap uppercase shadow-lg shadow-black/40 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+    class="z-20 inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[10px] leading-4 font-bold tracking-wide whitespace-nowrap uppercase shadow-lg shadow-black/40 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
     :class="styles[note.kind]"
     :aria-label="`Pitch note: ${pillLabel(note)}. ${note.title}`"
     :aria-expanded="openId === note.id"

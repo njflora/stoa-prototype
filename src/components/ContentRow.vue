@@ -64,7 +64,7 @@ onUnmounted(() => resizeObserver?.disconnect())
     <div class="group/row relative">
       <div
         ref="track"
-        class="no-scrollbar flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 sm:scroll-px-8 sm:gap-4 sm:px-8"
+        class="no-scrollbar relative flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 sm:scroll-px-8 sm:gap-4 sm:px-8"
         @scroll.passive="updateArrows"
       >
         <slot />

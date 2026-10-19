@@ -51,7 +51,7 @@ function link(id: string) {
           type="button"
           role="switch"
           :aria-checked="autoplay"
-          class="flex items-center gap-2 text-xs text-white/80"
+          class="flex min-h-6 items-center gap-2 text-xs text-white/80"
           @click="autoplay = !autoplay"
         >
           Autoplay next part

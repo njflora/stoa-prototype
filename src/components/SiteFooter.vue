@@ -11,7 +11,7 @@ import NewsletterSignup from './NewsletterSignup.vue'
     <p class="md:max-w-sm md:pt-1">
       <span class="font-serif text-sm font-bold text-white">Stoa</span>
       is an unofficial concept. Every show, host and episode is a placeholder.
-      <RouterLink to="/credits" class="mt-1 block underline hover:text-white">Image and video credits</RouterLink>
+      <RouterLink to="/credits" class="mt-1 inline-flex min-h-6 items-center underline hover:text-white">Image and video credits</RouterLink>
     </p>
     <NewsletterSignup class="md:w-96" />
   </footer>

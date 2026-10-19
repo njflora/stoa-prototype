@@ -112,7 +112,7 @@ const { root, previewing, handlers } = usePreview(() => !props.locked)
     <RouterLink
       v-if="series && variant === 'episode'"
       :to="`/series/${series.slug}`"
-      class="mt-1 inline-block px-0.5 text-xs font-medium text-accent-bright hover:underline"
+      class="mt-0.5 inline-flex min-h-6 items-center px-0.5 text-xs font-medium text-accent-bright hover:underline"
     >
       Part {{ toRoman(episode.series!.part) }} of {{ series.episodes.length }} · See the series
     </RouterLink>

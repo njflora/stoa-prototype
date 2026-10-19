@@ -213,11 +213,11 @@ const schedule = computed<ScheduleItem[]>(() => [
         <h2 id="schedule-heading" class="text-lg font-semibold sm:text-xl">Coming up live</h2>
         <PitchNote id="live-reminders" />
       </div>
-      <ul class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <ul class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <li
           v-for="item in schedule"
           :key="item.title"
-          class="flex items-center gap-3 rounded-lg bg-surface p-3 ring-1 ring-white/10"
+          class="flex flex-wrap items-center gap-3 rounded-lg bg-surface p-3 ring-1 ring-white/10"
         >
           <div class="relative aspect-video w-24 shrink-0 overflow-hidden rounded">
             <TitleCard
@@ -242,7 +242,8 @@ const schedule = computed<ScheduleItem[]>(() => [
               {{ startsLabel(item.start) }}{{ item.members ? ' · Members' : ' · Free' }}
             </p>
           </div>
-          <ReminderButton :target="item" />
+          <!-- On phones the button takes its own line, so the row never runs off the screen. -->
+          <ReminderButton :target="item" class="w-full justify-center sm:w-auto" />
         </li>
       </ul>
     </section>

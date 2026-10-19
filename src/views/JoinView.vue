@@ -176,7 +176,8 @@ const faqs = [
         <h2 id="compare-heading" class="text-2xl font-bold">What free gets, and what members add</h2>
         <PitchNote id="join-compare" />
       </div>
-      <div class="mt-6 overflow-x-auto rounded-xl ring-1 ring-white/10">
+      <!-- relative: keeps the hidden screen-reader labels inside the scroll box, so they cannot widen the page. -->
+      <div class="relative mt-6 overflow-x-auto rounded-xl ring-1 ring-white/10">
         <table class="w-full min-w-[560px] text-sm">
           <caption class="sr-only">Features included in each plan</caption>
           <thead class="bg-surface">

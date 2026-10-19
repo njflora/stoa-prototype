@@ -2,6 +2,24 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Mobile navigation and a full mobile pass
+
+### Added
+- An app-style tab bar on phones (below 768px): Home, Live (with an on-air dot), Shows, Search and More. The current section is highlighted. More opens a sheet with Articles, Courses, Shop and the account.
+- The More sheet closes with Escape, a tap outside, or when you go to another page, and focus returns to the More button.
+- Room for the bar everywhere: pages pad by its height, the Demo button and pitch panel sit above it, and the live page's phone layout leaves space for it. iPhones with a home indicator get extra padding.
+
+### Changed
+- The phone top bar now holds only Stoa, Upgrade (or the bell for members) and the pitch label. The swipeable link strip is gone, so nothing runs off the edge.
+- Small controls are at least 24px tall, the WCAG minimum: pitch labels, votes, Reply, "See all", "Show me", series links, the credits link, the autoplay switch and the chat replay controls.
+
+### Fixed
+- The live page's "Coming up live" rows were wider than a phone screen, so phones zoomed out the whole page. The reminder button now takes its own line on phones.
+- On the members' preview, hidden screen-reader labels in the comparison table escaped its scroll box and widened the page. The scroll box now contains them.
+
+### Checked
+- Every page, for signed-out, free and member viewers and all five live phases, at 375px and 320px: nothing wider than the screen, and no tap target under 24px.
+
 ## 2026-10-19: Hover previews
 
 ### Added

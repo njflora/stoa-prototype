@@ -43,7 +43,7 @@ const wrapper = computed(() => {
     <template v-if="canVote">
       <button
         type="button"
-        class="flex items-center gap-1 transition hover:text-white"
+        class="-my-1 flex min-h-6 min-w-6 items-center justify-center gap-1 px-0.5 transition hover:text-white"
         :class="vote === 'up' ? 'text-accent-bright' : ''"
         :aria-pressed="vote === 'up'"
         :aria-label="`Like, ${up} ${up === 1 ? 'like' : 'likes'}`"
@@ -54,7 +54,7 @@ const wrapper = computed(() => {
       </button>
       <button
         type="button"
-        class="flex items-center gap-1 transition hover:text-white"
+        class="-my-1 flex min-h-6 min-w-6 items-center justify-center gap-1 px-0.5 transition hover:text-white"
         :class="vote === 'down' ? 'text-accent-bright' : ''"
         :aria-pressed="vote === 'down'"
         :aria-label="`Dislike, ${down} ${down === 1 ? 'dislike' : 'dislikes'}`"

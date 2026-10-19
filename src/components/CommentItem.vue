@@ -78,7 +78,7 @@ const initials = computed(() =>
         <button
           v-if="canInteract && !isReply"
           type="button"
-          class="font-medium transition hover:text-white"
+          class="min-h-6 font-medium transition hover:text-white"
           @click="emit('reply', comment.id)"
         >
           Reply
