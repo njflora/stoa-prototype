@@ -2,6 +2,13 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Neutral numbering and no-deploy rule
+
+### Changed
+- Episode numbers no longer echo the reference site. The Stoa Podcast runs #201 to #212 with the live show at #213. Chronos runs #31 to #44, Statecraft #14 to #22 and The Forum #41 to #47.
+- The live show's comment thread and reading list are now keyed "live-show" instead of an episode number.
+- Working rules: new rule, "Do not deploy until Nick says so". Hosting on GitHub Pages moves to week 6, with the PWA.
+
 ## 2026-10-19: Progress report
 
 ### Added

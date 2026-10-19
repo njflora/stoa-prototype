@@ -241,8 +241,8 @@ const schedule = computed<ScheduleItem[]>(() => [
     <div
       class="flex flex-col gap-10 px-4 pt-10 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-x-6 lg:px-8"
     >
-      <ReadingList list-id="stoa-podcast-1432" class="lg:col-start-2 lg:row-start-1" />
-      <CommentSection thread-id="stoa-podcast-1432" class="lg:col-start-1 lg:row-start-1" />
+      <ReadingList list-id="live-show" class="lg:col-start-2 lg:row-start-1" />
+      <CommentSection thread-id="live-show" class="lg:col-start-1 lg:row-start-1" />
     </div>
   </main>
 </template>

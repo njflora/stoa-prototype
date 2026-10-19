@@ -10,7 +10,7 @@ import { formatClock } from '@/utils/format'
 // everywhere. Free for everyone.
 
 const props = defineProps<{
-  /** Which list to show: an episode id, or a hand-written list such as "stoa-podcast-1432". */
+  /** Which list to show: an episode id, or a hand-written list such as "live-show". */
   listId: string
 }>()
 

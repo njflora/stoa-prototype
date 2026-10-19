@@ -18,7 +18,7 @@ export interface ReadingItem {
 }
 
 export const readingLists: Record<string, ReadingItem[]> = {
-  'stoa-podcast-1432': [
+  'live-show': [
     {
       id: 'r1',
       type: 'Data',

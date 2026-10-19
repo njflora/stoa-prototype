@@ -141,7 +141,7 @@ const stoaPodcast = run(
     'The Cost of Net Zero',
     'Councils in Crisis',
   ],
-  { firstNumber: 1431, offset: 1, durationMin: 95 },
+  { firstNumber: 212, offset: 1, durationMin: 95 },
 )
 
 const morningBrief = Array.from({ length: 10 }, (_, i): Episode => {
@@ -227,7 +227,7 @@ function buildChronos(): Episode[] {
     access: 'freemium',
   })
 
-  const firstNumber = 270
+  const firstNumber = 31
   return oldestFirst
     .map((episode, i) => ({
       ...episode,
@@ -253,7 +253,7 @@ const statecraft = [
       'The Shipping Lanes',
       "Africa's New Partners",
     ],
-    { firstNumber: 69, offset: 2, every: 7, hour: 15, durationMin: 75 },
+    { firstNumber: 22, offset: 2, every: 7, hour: 15, durationMin: 75 },
   ),
   {
     id: 'statecraft-preview',
@@ -292,7 +292,7 @@ const theForum = run(
     'Underrated Inventions',
     'The Great Debate Night',
   ],
-  { firstNumber: 128, offset: 3, every: 7, hour: 19, durationMin: 110 },
+  { firstNumber: 47, offset: 3, every: 7, hour: 19, durationMin: 110 },
 )
 
 /** A short free preview from a members' show. */
@@ -440,7 +440,7 @@ export const articles: Article[] = [
 
 export const liveEvent: LiveEvent = {
   showId: 'stoa-podcast',
-  title: 'The Stoa Podcast #1432',
+  title: 'The Stoa Podcast #213',
   hostIds: ['andrew', 'richard', 'tom'],
   viewers: 1984,
   startHour: 13,

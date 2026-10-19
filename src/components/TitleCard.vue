@@ -9,7 +9,7 @@ import type { Show } from '@/types/content'
 const props = withDefaults(
   defineProps<{
     show: Show
-    /** Small line under the show name, such as "#1431" or a series part. */
+    /** Small line under the show name, such as "#212" or a series part. */
     label?: string
     animated?: boolean
     /** Hide the text when the parent overlays its own, as the hero does. */

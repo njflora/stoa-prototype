@@ -22,7 +22,7 @@ const sortOptions: { id: Sort; label: string }[] = [
 ]
 
 const props = defineProps<{
-  /** Which thread to show: an episode id, or a hand-written thread such as "stoa-podcast-1432". */
+  /** Which thread to show: an episode id, or a hand-written thread such as "live-show". */
   threadId: string
 }>()
 

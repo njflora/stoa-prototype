@@ -36,7 +36,7 @@ function comment(
 }
 
 export const commentThreads: Record<string, Comment[]> = {
-  'stoa-podcast-1432': [
+  'live-show': [
     comment('c1', 'MargaretH', 'silver', 12, [14, 1], 'The segment on council budgets was the clearest explanation I have heard anywhere. More of that please.', [
       comment('c1r1', 'GrumpyHistorian', 'silver', 8, [3, 0], 'Agreed. Tom had the figures ready, which helps.'),
     ]),
