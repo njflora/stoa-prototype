@@ -2,6 +2,22 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Members' preview
+
+### Added
+- Members' preview page at /join, where every Join, Unlock and Upgrade link already leads.
+- Hero with the starting price and a 7-day free trial. The trial is a proposal drawn from the benchmark.
+- "Free previews" row with one free preview from every members' show, reviving the idea behind the old Premium Preview section.
+- Tier cards for Bronze (£5), Silver (£10) and Gold (£30) a month, with what each adds. Prices and perks follow the reference site's Premium page.
+- "What free gets, and what members add" comparison table across Free, Bronze, Silver and Gold.
+- Short FAQ on the trial, cancelling, changing tier, gifts and free accounts.
+- Members see "You're a Gold member", their tier marked, and options to switch.
+- Free previews for Ledger and The Forum, so every members' show has one.
+
+### Notes
+- No checkout. The tier buttons say "Checkout isn't part of this prototype".
+- No yearly prices yet. The reference site's yearly prices are still to collect, so only monthly prices show.
+
 ## 2026-10-19: Episode page and autoplay
 
 ### Added

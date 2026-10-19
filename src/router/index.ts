@@ -66,11 +66,8 @@ const router = createRouter({
     {
       path: '/join',
       name: 'join',
-      component: PlaceholderView,
-      meta: {
-        title: 'Membership',
-        note: "The members' preview comes in a later step. This prototype never takes payment.",
-      },
+      component: () => import('../views/JoinView.vue'),
+      meta: { title: 'Membership' },
     },
     {
       path: '/articles',

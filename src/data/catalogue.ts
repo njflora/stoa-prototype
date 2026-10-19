@@ -293,6 +293,24 @@ const theForum = run(
   { firstNumber: 128, offset: 3, every: 7, hour: 19, durationMin: 110 },
 )
 
+/** A short free preview from a members' show. */
+function preview(showId: string, title: string, days: number): Episode {
+  return {
+    id: `${showId}-preview`,
+    showId,
+    title,
+    hostIds: shows.find((s) => s.id === showId)!.hostIds,
+    publishedAt: daysAgo(days, 12),
+    durationMin: 12,
+    access: 'freemium',
+  }
+}
+
+const memberPreviews = [
+  preview('ledger', 'Ledger Preview | Why Money Matters', 20),
+  preview('the-forum', 'The Forum Preview | The Best Bits', 24),
+]
+
 export const episodes: Episode[] = [
   ...stoaPodcast,
   ...morningBrief,
@@ -301,6 +319,7 @@ export const episodes: Episode[] = [
   ...statecraft,
   ...ledger,
   ...theForum,
+  ...memberPreviews,
 ].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 
 /** Colours for article thumbnails: a dark base and an accent per category. */
