@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import ArticleCard from '@/components/ArticleCard.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import EpisodeCard from '@/components/EpisodeCard.vue'
 import HeroBanner from '@/components/HeroBanner.vue'
-import { episodes, episodesForShow, shows, startHereEpisodes } from '@/data/catalogue'
+import { articles, episodes, episodesForShow, shows, startHereEpisodes } from '@/data/catalogue'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 
@@ -60,6 +61,15 @@ const conversations = episodesForShow('conversations')
           :episode="episode"
           :progress="progressFor(episode.id)"
         />
+      </ContentRow>
+
+      <ContentRow title="Latest articles" subtitle="Free to read">
+        <template #action>
+          <RouterLink to="/articles" class="shrink-0 text-sm text-muted hover:text-white">
+            See all
+          </RouterLink>
+        </template>
+        <ArticleCard v-for="article in articles" :key="article.id" :article="article" />
       </ContentRow>
 
       <!-- What free gets, and what joining adds. Free viewers only. -->

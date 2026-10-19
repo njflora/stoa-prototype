@@ -40,6 +40,20 @@ export interface Episode {
   series?: SeriesInfo
 }
 
+export type ArticleCategory = 'Politics' | 'Analysis' | 'History' | 'Culture' | 'Economics'
+
+export interface Article {
+  id: string
+  title: string
+  /** One or two sentences under the headline. */
+  standfirst: string
+  authorId: string
+  category: ArticleCategory
+  /** ISO 8601 date string. */
+  publishedAt: string
+  readMin: number
+}
+
 export interface LiveEvent {
   showId: string
   title: string

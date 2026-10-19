@@ -2,6 +2,14 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Articles row
+
+### Added
+- "Latest articles" row on the homepage, under the latest episodes.
+- Still, editorial article thumbnails: serif headline, category colour and no motion, so articles read differently from videos.
+- Ten invented articles across five categories, all free to read.
+- Placeholder article page at /articles/:id.
+
 ## 2026-10-19: Homepage
 
 ### Added

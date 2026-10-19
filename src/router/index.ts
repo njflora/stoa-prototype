@@ -52,6 +52,12 @@ const router = createRouter({
       meta: { title: 'Articles' },
     },
     {
+      path: '/articles/:id',
+      name: 'article',
+      component: PlaceholderView,
+      meta: { title: 'Article', note: 'The article page and its reading list come in a later step.' },
+    },
+    {
       path: '/courses',
       name: 'courses',
       component: PlaceholderView,
