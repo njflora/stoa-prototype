@@ -24,7 +24,7 @@ function daysAgo(days: number, hour = 13): string {
 
 export const hosts: Host[] = [
   { id: 'andrew', name: 'Andrew Pickering' },
-  { id: 'kate', name: 'Kate Hollins' },
+  { id: 'richard', name: 'Richard Holloway' },
   { id: 'tom', name: 'Tom Heywood' },
   { id: 'rachel', name: 'Rachel Ashworth' },
   { id: 'neil', name: 'Neil Barraclough' },
@@ -40,7 +40,7 @@ export const shows: Show[] = [
     name: 'The Stoa Podcast',
     tagline: 'The daily flagship, live every weekday',
     access: 'free',
-    hostIds: ['andrew', 'kate', 'tom'],
+    hostIds: ['andrew', 'richard', 'tom'],
     palette: ['#c04d93', '#2a0f22', '#f0a6ca'],
   },
   {
@@ -56,7 +56,7 @@ export const shows: Show[] = [
     name: 'Conversations',
     tagline: 'Long-form interviews with interesting people',
     access: 'free',
-    hostIds: ['kate'],
+    hostIds: ['richard'],
     palette: ['#8b5cf6', '#170d2e', '#d8c8ff'],
   },
   {
@@ -355,7 +355,7 @@ export const articles: Article[] = [
     'long-novel',
     'In Defence of the Long Novel',
     'Why the books that ask the most of us still give the most back.',
-    'kate',
+    'richard',
     'Culture',
     3,
     5,
@@ -419,7 +419,7 @@ export const articles: Article[] = [
 export const liveEvent: LiveEvent = {
   showId: 'stoa-podcast',
   title: 'The Stoa Podcast #1432',
-  hostIds: ['andrew', 'kate', 'tom'],
+  hostIds: ['andrew', 'richard', 'tom'],
   viewers: 1984,
   startHour: 13,
 }

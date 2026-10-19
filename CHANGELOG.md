@@ -6,6 +6,7 @@ All notable changes to this prototype are listed here. Newest first.
 
 ### Changed
 - Replaced every placeholder host, writer and interview guest with an ordinary English name. Host ids now match the new names.
+- Replaced Kate Hollins with Richard Holloway.
 
 ## 2026-10-19: Articles row
 
