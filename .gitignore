@@ -40,3 +40,6 @@ __screenshots__/
 
 # Local editor settings
 .local-settings/
+
+# Raw media downloads (see scripts/media/fetch_media.py)
+scripts/media/.cache/

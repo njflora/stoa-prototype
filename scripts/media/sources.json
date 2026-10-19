@@ -1,0 +1,155 @@
+{
+  "note": "Every file here must be Public domain or CC0 on Wikimedia Commons. fetch_media.py refuses anything else.",
+  "images": [
+    {
+      "id": "house-of-commons",
+      "for": "show:stoa-podcast",
+      "title": "File:The House of Commons, 1833 by Sir George Hayter.jpg",
+      "alt": "Painting of a crowded House of Commons in session, 1833",
+      "credit": {
+        "date": "1833 to 1843"
+      }
+    },
+    {
+      "id": "election-entertainment",
+      "for": "show:stoa-podcast",
+      "title": "File:An Election Entertainment, Plate I- Four Prints of an Election MET DP827052.jpg",
+      "alt": "Hogarth engraving of a rowdy election dinner"
+    },
+    {
+      "id": "chairing-the-members",
+      "for": "show:stoa-podcast",
+      "title": "File:Chairing the Members, Plate IV- Four Prints of an Election MET DP827040.jpg",
+      "alt": "Hogarth engraving of newly elected members carried through a crowd"
+    },
+    {
+      "id": "cicero",
+      "for": "show:stoa-podcast",
+      "title": "File:Maccari-Cicero.jpg",
+      "alt": "Fresco of Cicero addressing the Roman Senate",
+      "credit": {
+        "name": "Cicero Denounces Catiline"
+      }
+    },
+    {
+      "id": "impression-sunrise",
+      "for": "show:morning-brief",
+      "title": "File:Monet - Impression, Sunrise.jpg",
+      "alt": "Monet painting of a harbour at sunrise in blue and orange"
+    },
+    {
+      "id": "norham-castle",
+      "for": "show:morning-brief",
+      "title": "File:Joseph Mallord William Turner - Norham Castle, Sunrise - WGA23182.jpg",
+      "alt": "Turner painting of a castle in soft sunrise light"
+    },
+    {
+      "id": "rigi-sunrise",
+      "for": "show:morning-brief",
+      "title": "File:(Barcelona) Clouds over the Rigi at Sunrise, from Lucerne - c.1844 - William Turner in Tate Britain.jpg",
+      "alt": "Turner watercolour of clouds over a mountain at sunrise",
+      "credit": {
+        "artist": "J. M. W. Turner (photo: Didier Descouens)",
+        "date": "c. 1844",
+        "name": "Clouds over the Rigi at Sunrise"
+      }
+    },
+    {
+      "id": "ambassadors",
+      "for": "show:conversations",
+      "title": "File:Holbein-ambassadorsFXD.jpg",
+      "alt": "Holbein painting of two men standing beside a table of instruments"
+    },
+    {
+      "id": "death-of-socrates",
+      "for": "show:conversations",
+      "title": "File:David - The Death of Socrates.jpg",
+      "alt": "David painting of Socrates talking with his followers"
+    },
+    {
+      "id": "pollice-verso",
+      "for": "show:chronos",
+      "title": "File:Jean-Leon Gerome Pollice Verso.jpg",
+      "alt": "Gerome painting of a gladiator in a crowded Roman arena"
+    },
+    {
+      "id": "death-of-caesar",
+      "for": "series:The Fall of the Republic",
+      "title": "File:Vincenzo Camuccini - La morte di Cesare.jpg",
+      "alt": "Camuccini painting of the assassination of Julius Caesar"
+    },
+    {
+      "id": "hagia-sophia",
+      "for": "series:Byzantium Rising",
+      "title": "File:Hagia Sophia 1852.jpg",
+      "alt": "Lithograph of the interior of Hagia Sophia, 1852"
+    },
+    {
+      "id": "agincourt",
+      "for": "series:The Hundred Years' War",
+      "title": "File:Schlacht von Azincourt.jpg",
+      "alt": "Medieval miniature of the Battle of Agincourt"
+    },
+    {
+      "id": "blaeu-world",
+      "for": "show:statecraft",
+      "title": "File:Blaeu Nova Totius Terrarum orbis Geographica ac Hydrographica Tabula 1635.jpg",
+      "alt": "Blaeu world map of 1635",
+      "credit": {
+        "artist": "Willem Blaeu (scan: National Library of Norway)",
+        "date": "1635",
+        "name": "Nova Totius Terrarum Orbis Geographica ac Hydrographica Tabula"
+      }
+    },
+    {
+      "id": "world-map-loc",
+      "for": "show:statecraft",
+      "title": "File:(Nova et accuratissima totius terrarum orbis tabula). LOC 98687202.jpg",
+      "alt": "Seventeenth-century world map with decorated borders",
+      "credit": {
+        "artist": "Joan Blaeu (scan: Library of Congress)"
+      }
+    },
+    {
+      "id": "geographer",
+      "for": "show:statecraft",
+      "title": "File:Johannes Vermeer - The Geographer - Google Art Project.jpg",
+      "alt": "Vermeer painting of a geographer with dividers over a map"
+    },
+    {
+      "id": "moneylender",
+      "for": "show:ledger",
+      "title": "File:Quentin Massys 001.jpg",
+      "alt": "Massys painting of a moneylender weighing coins beside his wife"
+    },
+    {
+      "id": "moneychanger",
+      "for": "show:ledger",
+      "title": "File:Marinus van Reymerswaele - A Moneychanger and His Wife.jpg",
+      "alt": "Reymerswaele painting of a moneychanger counting coins"
+    },
+    {
+      "id": "royal-exchange",
+      "for": "show:ledger",
+      "title": "File:Anonymous - Interior of the Royal Exchange, London - B1977.14.18066 - Yale Center for British Art.jpg",
+      "alt": "Print of merchants trading in the courtyard of the Royal Exchange"
+    },
+    {
+      "id": "school-of-athens",
+      "for": "show:the-forum",
+      "title": "File:Raffael 058.jpg",
+      "alt": "Raphael fresco of philosophers debating in a grand hall"
+    },
+    {
+      "id": "canvassing",
+      "for": "show:the-forum",
+      "title": "File:Canvassing for Votes, Plate II- Four Prints of an Election MET DP827056.jpg",
+      "alt": "Hogarth engraving of candidates canvassing outside an inn"
+    }
+  ],
+  "video": {
+    "id": "hero-loop",
+    "title": "File:Ocean surface waves 07.ogv",
+    "alt": "Ocean waves rolling towards the shore"
+  }
+}
