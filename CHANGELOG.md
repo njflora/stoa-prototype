@@ -2,6 +2,13 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Shop and Upgrade buttons
+
+### Changed
+- Shop is a purple button with a shopping bag icon. On phones it is a purple pill at the end of the link strip.
+- Upgrade has a crown icon.
+- "Sign in / Sign up" shortens to "Sign in" below laptop width, so no button wraps onto two lines.
+
 ## 2026-10-19: Navigation bar
 
 ### Changed

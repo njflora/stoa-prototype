@@ -13,6 +13,8 @@ export type IconName =
   | 'info'
   | 'bell'
   | 'check'
+  | 'shop'
+  | 'crown'
 
 defineProps<{ name: IconName }>()
 
@@ -27,6 +29,8 @@ const paths: Record<IconName, string> = {
   info: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 11v6M12 7.5v.5',
   bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0',
   check: 'M5 12l5 5L20 7',
+  shop: 'M6 8h12l1 12H5zM9 8a3 3 0 0 1 6 0',
+  crown: 'M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z',
 }
 </script>
 

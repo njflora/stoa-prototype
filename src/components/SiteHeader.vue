@@ -19,7 +19,6 @@ const links = [
   { label: 'Articles', to: '/articles' },
   { label: 'Courses', to: '/courses' },
 ]
-const mobileLinks = [...links, { label: 'Shop', to: '/shop' }]
 
 // Publish the header's height as --header-h, so full-height layouts such
 // as the live page can fit exactly beneath it.
@@ -78,15 +77,20 @@ const activeClass = '!text-white font-semibold'
           <AppIcon name="search" />
         </RouterLink>
 
-        <RouterLink to="/shop" class="hidden text-sm md:inline" :class="linkClass" :exact-active-class="activeClass">
+        <RouterLink
+          to="/shop"
+          class="hidden items-center gap-1.5 rounded-lg bg-accent px-4 py-1.5 text-sm font-semibold whitespace-nowrap text-white transition hover:bg-accent-bright md:inline-flex [&>svg]:size-4"
+        >
+          <AppIcon name="shop" />
           Shop
         </RouterLink>
 
         <RouterLink
           v-if="!isMember"
           to="/join"
-          class="rounded-lg bg-gold px-3 py-1.5 text-sm font-semibold text-ink transition hover:brightness-110 sm:px-4"
+          class="inline-flex items-center gap-1.5 rounded-lg bg-gold px-3 py-1.5 text-sm font-semibold whitespace-nowrap text-ink transition hover:brightness-110 sm:px-4 [&>svg]:size-4"
         >
+          <AppIcon name="crown" />
           Upgrade
         </RouterLink>
 
@@ -96,10 +100,10 @@ const activeClass = '!text-white font-semibold'
         <RouterLink
           v-else
           to="/sign-in"
-          class="rounded-lg px-3 py-1.5 text-sm font-semibold ring-1 ring-white/25 transition hover:bg-white/10"
+          class="rounded-lg px-3 py-1.5 text-sm font-semibold whitespace-nowrap ring-1 ring-white/25 transition hover:bg-white/10"
         >
-          <span class="hidden sm:inline">Sign in / Sign up</span>
-          <span class="sm:hidden">Sign in</span>
+          <span class="hidden lg:inline">Sign in / Sign up</span>
+          <span class="lg:hidden">Sign in</span>
         </RouterLink>
       </div>
     </div>
@@ -107,13 +111,22 @@ const activeClass = '!text-white font-semibold'
     <!-- Small screens: the links in one swipeable strip. -->
     <nav aria-label="Main" class="no-scrollbar overflow-x-auto md:hidden">
       <ul class="flex gap-5 px-4 pb-2.5 text-sm whitespace-nowrap">
-        <li v-for="link in mobileLinks" :key="link.to">
+        <li v-for="link in links" :key="link.to">
           <RouterLink :to="link.to" :class="linkClass" :exact-active-class="activeClass">
             <span
               v-if="link.to === '/live' && isLive"
               class="size-2 animate-pulse rounded-full bg-live motion-reduce:animate-none"
             />
             {{ link.label }}
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
+            to="/shop"
+            class="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-white [&>svg]:size-3.5"
+          >
+            <AppIcon name="shop" />
+            Shop
           </RouterLink>
         </li>
       </ul>
