@@ -9,6 +9,7 @@ All notable changes to this prototype are listed here. Newest first.
 - Likes and dislikes in live chat. Anyone signed in can vote. Counts show only above zero, and on desktop the buttons appear when you hover over or tab to a message.
 - A third comment sort, Controversial: lots of votes, split close to evenly.
 - A few divisive placeholder comments, so each sort orders the list differently.
+- NorthernLad replies to NorthernLass in the after-show thread, with strong support.
 
 ### Changed
 - Purple accents, as on the reference site: the selected comment sort, the selected video source and the newsletter button.

@@ -49,6 +49,7 @@ export const commentThreads: Record<string, Comment[]> = {
     comment('c13', 'Brummie_Rob', 'bronze', 60, [40, 35], 'Hot take: the after-show should be free for everyone. The best discussion happens there.', [
       comment('c13r1', 'Wessex_Walker', 'gold', 58, [22, 6], 'Someone has to pay for it. The after-show is what the membership is for.'),
       comment('c13r2', 'NorthernLass', 'bronze', 50, [12, 9], 'A free taster once a month would be a fair middle ground.'),
+      comment('c13r3', 'NorthernLad', 'bronze', 45, [31, 2], '@NorthernLass A free taster for everyone? Sounds a bit communist to me.'),
     ]),
     comment('c5', 'quietreader', 'bronze', 70, [4, 3], 'Richard was on good form today. Looking forward to the after-show.'),
     comment('c6', 'Wessex_Walker', 'gold', 95, [22, 4], 'Good to see the schedule on the site now. Much easier than checking three different places.', [
