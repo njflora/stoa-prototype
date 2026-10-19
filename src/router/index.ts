@@ -60,8 +60,8 @@ const router = createRouter({
     {
       path: '/watch/:id',
       name: 'watch',
-      component: PlaceholderView,
-      meta: { title: 'Episode', note: 'The episode page and player come in a later step.' },
+      component: () => import('../views/WatchView.vue'),
+      meta: { title: 'Episode' },
     },
     {
       path: '/join',

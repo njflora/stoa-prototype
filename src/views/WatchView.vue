@@ -1,0 +1,239 @@
+<script setup lang="ts">
+import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
+import AppIcon from '@/components/AppIcon.vue'
+import ContentRow from '@/components/ContentRow.vue'
+import EpisodeCard from '@/components/EpisodeCard.vue'
+import SeriesQueue from '@/components/SeriesQueue.vue'
+import TitleCard from '@/components/TitleCard.vue'
+import { episodesForShow, getEpisode, getSeries, getShow, hostNames, seriesOf } from '@/data/catalogue'
+import { usePlayback } from '@/composables/usePlayback'
+import { useViewer } from '@/composables/useViewer'
+import { useWatchProgress } from '@/composables/useWatchProgress'
+import { formatDuration, formatRelativeDate, toRoman } from '@/utils/format'
+
+// An episode page. Series episodes get the series queue beside the
+// player, and when a part ends the next one plays after a short
+// countdown, unless autoplay is off. The player is a placeholder here;
+// on a real site this is where their own video player would sit.
+
+const UP_NEXT_SECONDS = 8
+
+const route = useRoute()
+const router = useRouter()
+const { canWatch } = useViewer()
+const { progressFor, setProgress, markWatched } = useWatchProgress()
+const { autoplay, finishSignal } = usePlayback()
+
+const episode = computed(() => getEpisode(String(route.params.id)))
+const show = computed(() => (episode.value ? getShow(episode.value.showId) : undefined))
+const series = computed(() => {
+  const fromLink = route.query.series ? getSeries(String(route.query.series)) : undefined
+  return fromLink ?? (episode.value ? seriesOf(episode.value) : undefined)
+})
+const locked = computed(() => !!episode.value && !canWatch(episode.value))
+
+const partIndex = computed(() =>
+  series.value && episode.value ? series.value.episodes.findIndex((e) => e.id === episode.value!.id) : -1,
+)
+const nextPart = computed(() => (series.value ? series.value.episodes[partIndex.value + 1] : undefined))
+
+const moreFromShow = computed(() =>
+  show.value ? episodesForShow(show.value.id).filter((e) => e.id !== episode.value?.id).slice(0, 10) : [],
+)
+
+// End of an episode: the up-next card, with its countdown.
+const ended = ref(false)
+const secondsLeft = ref(UP_NEXT_SECONDS)
+const counting = ref(false)
+let timer: ReturnType<typeof setInterval> | undefined
+
+function stopCountdown() {
+  clearInterval(timer)
+  timer = undefined
+  counting.value = false
+}
+
+function playNext() {
+  stopCountdown()
+  if (!nextPart.value || !series.value) return
+  router.push({ path: `/watch/${nextPart.value.id}`, query: { series: series.value.slug } })
+}
+
+function cancelNext() {
+  stopCountdown()
+  ended.value = false
+}
+
+function finish() {
+  if (!episode.value || locked.value) return
+  markWatched(episode.value.id)
+  ended.value = true
+  secondsLeft.value = UP_NEXT_SECONDS
+  stopCountdown()
+  if (autoplay.value && nextPart.value && canWatch(nextPart.value)) {
+    counting.value = true
+    timer = setInterval(() => {
+      secondsLeft.value--
+      if (secondsLeft.value <= 0) playNext()
+    }, 1000)
+  }
+}
+
+watch(finishSignal, finish)
+
+// A new episode: reset the end card and count it as started.
+watch(
+  () => route.params.id,
+  () => {
+    stopCountdown()
+    ended.value = false
+    const current = episode.value
+    if (current && !locked.value && progressFor(current.id) === 0) setProgress(current.id, 0.05)
+  },
+  { immediate: true },
+)
+
+onUnmounted(stopCountdown)
+
+watchEffect(() => {
+  if (episode.value) document.title = `${episode.value.title} · Stoa`
+})
+</script>
+
+<template>
+  <main v-if="episode && show">
+    <div
+      class="lg:grid lg:items-start lg:gap-x-6 lg:px-8 lg:pt-6"
+      :class="series && partIndex >= 0 ? 'lg:grid-cols-[minmax(0,1fr)_360px]' : 'lg:grid-cols-1'"
+    >
+      <div>
+        <!-- The player. -->
+        <div class="relative aspect-video w-full overflow-hidden bg-black lg:rounded-xl">
+          <TitleCard
+            :show="show"
+            :show-text="false"
+            size="hero"
+            :animated="!locked && !ended"
+            :class="locked ? 'scale-110 blur-xl brightness-75' : ''"
+          />
+
+          <div v-if="locked" class="absolute inset-0 grid place-items-center px-4 text-center">
+            <div>
+              <span class="mx-auto grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/20">
+                <AppIcon name="lock" />
+              </span>
+              <p class="mt-3 text-lg font-semibold sm:text-2xl">This episode is for members</p>
+              <RouterLink
+                to="/join"
+                class="mt-4 inline-flex items-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-ink hover:brightness-110 [&>svg]:size-4"
+              >
+                <AppIcon name="crown" />
+                Upgrade to watch
+              </RouterLink>
+            </div>
+          </div>
+
+          <div v-else-if="!ended" class="absolute inset-0 grid place-items-center px-4 text-center">
+            <div>
+              <p class="font-serif text-2xl font-bold sm:text-4xl">{{ show.name }}</p>
+              <p class="mt-2 text-[11px] tracking-widest text-white/70 uppercase">Placeholder video</p>
+            </div>
+          </div>
+
+          <!-- Up next, once the episode ends. -->
+          <div
+            v-else
+            class="absolute inset-0 grid place-items-center bg-black/70 px-4 text-center"
+            role="status"
+          >
+            <div v-if="nextPart && canWatch(nextPart)">
+              <p class="text-xs font-semibold tracking-widest text-accent-bright uppercase">Up next</p>
+              <p class="mt-2 text-lg font-semibold sm:text-2xl">
+                Part {{ toRoman(nextPart.series!.part) }}: {{ nextPart.title }}
+              </p>
+              <p v-if="counting" class="mt-1 text-sm text-white/75 tabular-nums">
+                Playing in {{ secondsLeft }}s
+              </p>
+              <div class="mt-4 flex justify-center gap-2">
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+                  @click="playNext"
+                >
+                  <AppIcon name="play" />
+                  Play now
+                </button>
+                <button
+                  type="button"
+                  class="rounded-lg bg-white/15 px-5 py-2.5 text-sm font-semibold hover:bg-white/25"
+                  @click="cancelNext"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+            <div v-else-if="series">
+              <p class="text-lg font-semibold sm:text-2xl">You've finished {{ series.name }}</p>
+              <RouterLink
+                :to="`/series/${series.slug}`"
+                class="mt-4 inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+              >
+                Back to the series
+              </RouterLink>
+            </div>
+            <div v-else>
+              <p class="text-lg font-semibold sm:text-2xl">Thanks for watching</p>
+              <button
+                type="button"
+                class="mt-4 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+                @click="ended = false"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- About this episode. -->
+        <div class="px-4 pt-4 lg:px-0">
+          <p class="font-serif text-sm font-bold tracking-widest text-white/70 uppercase">{{ show.name }}</p>
+          <h1 class="mt-1 text-2xl leading-tight font-bold sm:text-3xl">{{ episode.title }}</h1>
+          <p class="mt-1 text-sm text-muted">
+            {{ hostNames(episode.hostIds) }} · {{ formatRelativeDate(episode.publishedAt) }} ·
+            {{ formatDuration(episode.durationMin) }}
+          </p>
+          <RouterLink
+            v-if="series && partIndex >= 0"
+            :to="`/series/${series.slug}`"
+            class="mt-2 inline-block text-sm font-medium text-accent-bright hover:underline"
+          >
+            Part {{ toRoman(partIndex + 1) }} of {{ toRoman(series.episodes.length) }} · {{ series.name }}
+          </RouterLink>
+        </div>
+      </div>
+
+      <SeriesQueue
+        v-if="series && partIndex >= 0"
+        :series="series"
+        :current-id="episode.id"
+        class="mt-6 lg:mt-0"
+      />
+    </div>
+
+    <ContentRow v-if="moreFromShow.length" :title="`More from ${show.name}`" class="pt-10">
+      <EpisodeCard
+        v-for="e in moreFromShow"
+        :key="e.id"
+        :episode="e"
+        :locked="!canWatch(e)"
+        :progress="progressFor(e.id)"
+      />
+    </ContentRow>
+  </main>
+
+  <main v-else class="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-4 text-center">
+    <h1 class="font-serif text-4xl font-bold">Episode not found</h1>
+    <RouterLink to="/" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink">Back to home</RouterLink>
+  </main>
+</template>

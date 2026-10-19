@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { livePhases, useViewer, viewerTypes } from '@/composables/useViewer'
 // Loaded here so the demo's "live now" notification works from any page.
 import '@/composables/useReminders'
+import { usePlayback } from '@/composables/usePlayback'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 
 // Demo-only panel for pitching. It switches between a signed-out visitor,
@@ -11,6 +13,8 @@ import { useWatchProgress } from '@/composables/useWatchProgress'
 
 const { viewer, phase, setViewer, setPhase } = useViewer()
 const { reset } = useWatchProgress()
+const { requestFinish } = usePlayback()
+const route = useRoute()
 const open = ref(false)
 
 const segment = 'rounded-md px-3 py-1 text-xs font-medium transition'
@@ -58,6 +62,16 @@ const off = 'text-white/70 hover:text-white'
           </button>
         </div>
       </div>
+
+      <!-- The placeholder video never ends, so this stands in for the end of an episode. -->
+      <button
+        v-if="route.name === 'watch'"
+        type="button"
+        class="block rounded-md bg-white px-3 py-1 text-xs font-semibold text-ink"
+        @click="requestFinish"
+      >
+        Finish episode
+      </button>
 
       <button type="button" class="text-xs text-muted underline hover:text-white" @click="reset">
         Reset watch progress

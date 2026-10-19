@@ -2,6 +2,17 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Episode page and autoplay
+
+### Added
+- Episode page at /watch/:id, replacing the placeholder: player, title, hosts, date, running time and a "More from" row.
+- For series episodes, a queue beside the player listing every part, with the current one highlighted, ticks for watched parts, and previous and next buttons.
+- "Autoplay next part" switch, remembered between visits.
+- When a part ends, "Up next" shows over the player and plays the next part after 8 seconds, with Play now and Cancel. With autoplay off it waits. After the last part it offers a way back to the series.
+- Finishing a part marks it watched, which updates the series page and Continue watching.
+- Free viewers see members' episodes locked, with "Upgrade to watch".
+- Demo panel: "Finish episode" on episode pages, since the placeholder video never ends by itself.
+
 ## 2026-10-19: Series view
 
 ### Added
