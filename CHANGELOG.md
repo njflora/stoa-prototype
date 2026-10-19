@@ -2,6 +2,24 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-20: Instant search, over any page
+
+### Added
+- Search as you type (Finding 9), across all 5,521 episodes plus series, shows, hosts and articles. Results are grouped by kind, with a painting, the matched words highlighted, and a lock on members' episodes for free viewers. Episodes show 8 at first, then 20 more at a time.
+- Search opens over the page you are on, which stays visible behind a see-through, frosted panel. Open it with the header button, the Search tab on phones, or "/" anywhere.
+- Prefix and typo matching: "agin" and "agincort" both find Agincourt. Titles count most, and newer episodes win ties.
+- Keyboard: ↑ and ↓ move through results, Enter opens one, Escape clears, a second Escape closes. Tab stays inside the panel, and closing returns focus to where it was. Screen readers hear the number of results.
+- The search lives in the address (?search=rome), so it can be shared, and Back from a result reopens it. Old /search?q= links open it over the homepage.
+- A pitch note: "Search as you type".
+
+### Changed
+- Every episode title is now unique within its show. Topics are dealt like a deck of cards, pairing a subject with an angle, such as "Ledger #151 | The Bond Market: The Winners". Before, a few short topic lists repeated, so search showed the same title many times.
+- Ledger has running numbers like the other shows. "Preview:" is gone from titles: free previews are marked by their access badge.
+- Chronos uses its own random sequence, so changes to other shows never move its series. It now has 121 episodes.
+
+### Notes
+- MiniSearch (MIT licence) builds its index in the browser the first time search opens, from public/data/search-docs.json (92 KB compressed). The plan said to pre-build the index; building it on first use keeps the search settings in one file, and takes about 0.4 seconds once. Pages that do not open search download none of it.
+
 ## 2026-10-19: Built for the real site's scale
 
 ### Added

@@ -20,7 +20,8 @@ The pitch prototype is built and working locally. All three priority sections fr
 
 - **One top bar instead of the long side nav.** Left: Stoa, Live (with a red dot when on air), Home, Shows, Articles, Courses, Search. Right: a purple Shop button, a gold Upgrade button with a crown, then the account.
 - **Phones get an app-style tab bar** (Home, Live, Shows, Search, More), with More opening a sheet for Articles, Courses, Shop and the account. Every page was checked at 375px and 320px for overflow and tap-target size.
-- **Built for the real site's scale.** 5,458 generated episodes (The Stoa Podcast #1 to #1530, Morning Brief with three segments a weekday) served as a paged API from static JSON. Pages fetch only what they show; the homepage needs one request.
+- **Built for the real site's scale.** 5,521 generated episodes, each title unique within its show (The Stoa Podcast #1 to #1530, Morning Brief with three segments a weekday) served as a paged API from static JSON. Pages fetch only what they show; the homepage needs one request.
+- **Instant search over any page** (Finding 9). Press "/", the header button or the Search tab on phones. Results appear as you type, grouped as Episodes, Series, Shows, Hosts and Articles, in a see-through panel over the current page. Small typos are forgiven, the keyboard works throughout, and the search is kept in the address so it can be shared.
 - **Three viewer types**, switched from a demo panel since there is no real login:
   - Signed out: Upgrade and a "Sign in / Sign up" button.
   - Free account: Upgrade and the username.
@@ -87,7 +88,9 @@ The pitch prototype is built and working locally. All three priority sections fr
 | Browser notifications replace "Add to calendar" | Reminders become a members' perk |
 | Live chat replay only on Stoa Podcast and Morning Brief | The shows named as streamed live; The Forum and Statecraft could be added |
 | Episode numbers and titles follow the real site's format (#1530, "Show #N \| Topic") | Nick's call: this is a tech demo of what their site could be. It reverses an earlier move to neutral numbers |
-| Built for real scale: 5,458 generated episodes, paged through an API layer | The real site has 1,500+ mainline episodes and daily shows with 3+ segments a day |
+| Built for real scale: 5,521 generated episodes, paged through an API layer | The real site has 1,500+ mainline episodes and daily shows with 3+ segments a day |
+| Search opens over the current page, in a see-through panel | Nick's call: you keep your place, and the page stays visible behind |
+| The search index is built in the browser on first use, not pre-built | Keeps the search settings in one file; takes about 0.4 seconds once. The real site can swap in a server engine behind the same search() function |
 | Public-domain and CC0 media only, from Wikimedia Commons | Safe for a public repo; every file is credited |
 | Ocean-waves loop for the hero video | The smallest option (0.7 MB), chosen over clouds and an Earth timelapse |
 | No deployment until Nick says so | A free GitHub Pages site is public |
@@ -97,7 +100,8 @@ The pitch prototype is built and working locally. All three priority sections fr
 - **Not deployed, on purpose.** Deployment is scheduled for week 6 with the PWA. GitHub Pages will need a small router change.
 - **Real Rumble and Odysee embeds are untested.** No embed URLs are set, so the placeholder shows. Rumble on phones (a key finding) needs a real embed to test.
 - **Real notifications are untested.** The test browser blocks them. The logic is in place.
-- **Pages still placeholders:** Shows, Articles index and article pages, Courses, Search, Account, Shop, Sign in.
+- **Pages still placeholders:** Shows, Articles index and article pages, Courses, Account, Shop, Sign in.
+- **Accent-free matching is untested.** The generated titles have no accented letters, so "crecy" finding "Crécy" could not be checked.
 - **Not started:** installable PWA, the technical audit, the bug report and screen recording, the Topic 4 and 5 write-ups, the measurement page.
 
 ## Known limits of the prototype

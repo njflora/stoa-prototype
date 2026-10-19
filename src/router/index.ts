@@ -94,10 +94,10 @@ const router = createRouter({
       meta: { title: 'Courses' },
     },
     {
+      // Search is an overlay now (?search=). Old /search?q= links open it over the homepage.
       path: '/search',
       name: 'search',
-      component: PlaceholderView,
-      meta: { title: 'Search', note: 'Instant search comes in a later step.' },
+      redirect: (to) => ({ path: '/', query: { search: typeof to.query.q === 'string' ? to.query.q : '' } }),
     },
     {
       path: '/pitch',

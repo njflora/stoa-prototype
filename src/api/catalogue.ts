@@ -46,9 +46,14 @@ export const reference = {
 let shiftMs = 0
 const WEEK_MS = 7 * 86_400_000
 
+/** A date from the data files, moved forward to the present (see shiftMs). */
+export function shiftDate(iso: string): string {
+  return new Date(new Date(iso).getTime() + shiftMs).toISOString()
+}
+
 /** Fresh dates, and daily editions titled by their date. */
 function normalise(episode: Episode): Episode {
-  const publishedAt = new Date(new Date(episode.publishedAt).getTime() + shiftMs).toISOString()
+  const publishedAt = shiftDate(episode.publishedAt)
   if (!episode.edition) return { ...episode, publishedAt }
   const show = reference.shows.find((s) => s.id === episode.showId)
   return { ...episode, publishedAt, title: `${show?.name ?? ''} | ${formatEditionDate(new Date(publishedAt))}` }

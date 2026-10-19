@@ -26,8 +26,9 @@ export interface PitchNote {
 const home = { name: 'Homepage', to: '/' }
 const live = { name: 'Live page', to: '/live' }
 const episode = { name: 'Episode page', to: '/watch/stoa-podcast-1530' }
-const seriesEpisode = { name: 'Episode in a series', to: '/watch/chronos-116?series=the-fall-of-the-republic' }
+const seriesEpisode = { name: 'Episode in a series', to: '/watch/chronos-111?series=the-fall-of-the-republic' }
 const join = { name: "Members' preview", to: '/join' }
+const searchPage = { name: 'Search, over any page', to: '/?search=rome' }
 
 export const pitchNotes: PitchNote[] = [
   {
@@ -234,6 +235,15 @@ export const pitchNotes: PitchNote[] = [
     today: 'Bronze £5, Silver £10 and Gold £30 a month, with these perks.',
     here: 'Kept as they are. Yearly prices are still to collect.',
     page: join,
+  },
+  {
+    id: 'search',
+    kind: 'fix',
+    source: 'Finding 9',
+    title: 'Search as you type',
+    today: 'Listed as a gap in the planning doc.',
+    here: 'Results appear as you type, grouped by kind, across about 5,500 episodes, over whatever page you are on. Small typos are forgiven. Press "/" anywhere to search.',
+    page: searchPage,
   },
 ]
 

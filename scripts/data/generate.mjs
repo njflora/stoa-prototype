@@ -40,6 +40,26 @@ const random = seeded('stoa-catalogue')
 const pick = (list) => list[Math.floor(random() * list.length)]
 const between = (min, max) => min + Math.floor(random() * (max - min + 1))
 
+/**
+ * Deals items in a shuffled order without repeats, like a deck of cards,
+ * so no topic comes round twice within a show. If the deck runs out it
+ * throws, which means the pool needs more combinations.
+ */
+function deck(name, items) {
+  const order = [...items]
+  const shuffle = seeded(name)
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(shuffle() * (i + 1))
+    ;[order[i], order[j]] = [order[j], order[i]]
+  }
+  return () => {
+    if (!order.length) throw new Error(`The ${name} deck ran out. Add more subjects or angles.`)
+    return order.pop()
+  }
+}
+/** Every pairing of a subject with an angle, such as "The Bond Market: Who Blinks First?". */
+const combine = (subjects, angles, join = (s, a) => (/[?!]$/.test(s) ? `${s} ${a}` : `${s}: ${a}`)) => subjects.flatMap((s) => angles.map((a) => join(s, a)))
+
 // ---------- dates ----------
 // Today at midnight, local time. The site moves every date forward by whole
 // weeks to "now", so weekdays (and daily titles) stay correct.
@@ -102,11 +122,18 @@ const newsTopics = [
   'The Sentencing Review', 'Local Elections Loom', 'Crime and the Cities', 'Cost of Living', 'Fuel Duty',
   'The Interest Rate Call', 'The Census Results', 'Green Belt Battles', 'The Steel Works', 'The Royal Visit',
 ]
-const morningTopics = [
-  'Markets Open Lower', 'The Papers', 'Weather Warnings', 'Overnight in Washington', 'Travel Chaos', 'The Day in Parliament',
-  'Sport Round-Up', 'Energy Markets', 'Business Briefing', 'What the Polls Say', 'Overnight in Europe', 'The Week Ahead',
-  'Court Reports', 'Science Corner', 'Your Letters', 'The Long Read', 'Tech Briefing', 'Weekend Preview',
+// Morning Brief segments: a news subject with the day's angle on it.
+const morningAngles = [
+  'What Happens Next', 'The Numbers', 'Who Pays?', 'The Fallout', 'What the Papers Say', 'Five Things to Know',
+  'The Reaction', 'Behind the Headlines', 'The Vote', 'Winners and Losers', 'The U-Turn', 'A Week On',
+  'The Row Deepens', 'The Leaked Memo', 'Questions in the House', 'The Regional View', 'The Small Print',
+  'Missing the Point', 'The Official Line', 'The Backlash', 'Read Between the Lines', 'The Deadline Looms',
+  'What They Did Not Say', 'Counting the Cost', 'The Expert View', 'The Letters Page', 'Overnight Developments',
+  'The Timeline', 'The Poll', 'The Promise', 'The Climbdown', 'Ministers Respond', 'The Opposition Responds',
+  'Local Reaction', 'The Statistics', 'The Inquiry', 'The Report', 'Back to Square One', 'The Long View',
+  'Fact Check', 'What It Means for You', 'The Morning After', 'The Compromise', 'Twelve Months On', 'The Hidden Cost',
 ]
+const morningTopics = combine(newsTopics, morningAngles)
 const historySeries = [
   ['Augustus', 4], ['The Plantagenets', 6], ['The Spanish Armada', 3], ['Alfred the Great', 4], ['The Crusades', 7],
   ['The Wars of the Roses', 6], ['Charlemagne', 4], ['The Glorious Revolution', 3], ['Hannibal', 4], ['The Black Death', 3],
@@ -114,30 +141,44 @@ const historySeries = [
   ['The Stuarts', 4], ['Alexander the Great', 5], ['The Vikings', 5], ['The Reformation', 4], ['Constantinople Falls', 3],
   ['Henry VIII', 7], ['The Anglo-Saxons', 5], ['The Fall of the Republic', 5], ['Byzantium Rising', 4], ["The Hundred Years' War", 3],
 ]
-const historyExtras = ['How Empires Decline', 'Reading the Ancients', 'Q and A with Listeners', 'The Historian\'s Toolkit', 'Myths of the Middle Ages', 'Interview: The Art of the Archive']
+const historyExtras = [
+  'How Empires Decline', 'Reading the Ancients', 'Questions from Members', "The Historian's Toolkit", 'Myths of the Middle Ages',
+  'The Art of the Archive', 'Castles Explained', 'Coins and Kings', 'The Great Libraries', 'Mapping the Medieval World',
+  'Why Rome Fell (Again)', 'Siege Warfare', 'Saints and Relics', 'How We Date the Past', 'Lost Cities', 'Heralds and Heraldry',
+  'Monks and Manuscripts', 'The Roads of Empire', 'Plague, Famine and Weather', 'Queens Who Ruled',
+]
 const geoTopics = [
   'The Great Energy Crunch', 'Elections Across the Gulf', "China's Long Game", 'The Arctic Scramble', 'Sanctions That Backfired',
   'Water Wars', 'The Shipping Lanes', "Africa's New Partners", 'The Balkan Question', 'Taiwan and the Strait',
   'The Sahel', 'Oil and OPEC', 'The Caucasus', 'India Rising', 'The Pacific Islands', 'Latin America Shifts',
   'The Baltic Front', 'Iran and the Bomb', 'The Red Sea', 'Turkey Between Worlds', 'The New Silk Road', 'Rare Earths',
 ]
+const geoAngles = ['Who Holds the Cards?', 'The Map Explained', 'What Happens Next', 'Follow the Money', 'The View from London', 'Flashpoints', 'A Short History', 'The Players', 'Ten Years On', 'What the West Gets Wrong']
 const econTopics = [
   'The Petrodollar Explained', 'Why Rents Keep Rising', 'Debt, Deficits and You', 'The Pension Problem', "Inflation's Long Tail",
   'What Productivity Means', 'Gold Standard Myths', 'Tax Code Tangles', 'The Basis of Empire', 'Big Ideas', 'Housing Supply',
   'The Bond Market', 'Central Banks', 'The Gig Economy', 'Trade and Tariffs', 'Wages and Migration', 'The Welfare Bill',
   'Energy Economics', 'Money Printing', 'The Stock Market', 'Small Business Britain', 'Austerity Revisited',
 ]
+const econAngles = ['Who Blinks First?', 'The Numbers', 'Myths and Facts', 'What It Means for You', 'A Short History', 'The Winners', 'The Losers', 'The Case Against', 'Where Next?', 'Explained Simply']
 const forumTopics = [
   'Who Would Win?', 'Films We Will Defend', 'The Best Decade for Music', 'Desert Island Books', 'Ranking Prime Ministers',
   'Underrated Inventions', 'The Great Debate Night', 'Worst Haircuts in History', 'Fantasy Cabinet', 'The Perfect Pub',
   'Board Games Tournament', 'Childhood TV', 'Best Battles in Film', 'Food Fight', 'The Ultimate Road Trip', 'Monty Python',
 ]
-const interviewSubjects = [
-  ['The Secret to Great Storytelling', 'Peter Ridley'], ['What Makes a City Work', 'Joanne Hartley'], ['Inside the Newsroom', 'Mark Brindley'],
-  ['The Craft of Biography', 'Susan Elwood'], ['Rebuilding Trust in Institutions', 'Colin Ashby'], ['A Life in Archaeology', 'Diane Marsh'],
-  ['Why Maps Lie', 'Keith Rowntree'], ['The Future of Farming', 'Alan Croft'], ['Defending the Canon', 'Margaret Lyle'],
-  ['Running a Small Press', 'Graham Pell'], ['The Science of Sleep', 'Ruth Ormerod'], ['Life on the Railways', 'Barry Holt'],
+const forumEditions = ['The Eighties Edition', 'Listener Picks', 'Christmas Special', 'Grudge Match', 'The Rematch', 'Summer Special', 'Lightning Round', 'Members Choose', 'The Final', 'Away Day', 'Late Night', 'Rapid Fire']
+// Conversations: a field and a framing, with a guest made from English first and last names.
+const interviewFields = [
+  'Archaeology', 'Farming', 'Biography', 'Publishing', 'Sleep', 'the Railways', 'Map-Making', 'Architecture', 'Shipbuilding',
+  'Brewing', 'Beekeeping', 'Forestry', 'Medicine', 'Policing', 'Journalism', 'the Law', 'Teaching', 'Engineering', 'Fishing',
+  'Astronomy', 'Church Music', 'Theatre', 'Translation', 'Diplomacy', 'Mining', 'Clockmaking', 'Bookbinding', 'Falconry',
+  'Cartooning', 'Stonemasonry',
 ]
+const interviewFramings = [(f) => `A Life in ${f}`, (f) => `The Future of ${f}`, (f) => `Why ${f} Matters`, (f) => `The Trouble with ${f}`, (f) => `Inside ${f}`]
+const interviewTopics = interviewFields.flatMap((f) => interviewFramings.map((frame) => frame(f)))
+const guestFirst = ['Peter', 'Joanne', 'Mark', 'Susan', 'Colin', 'Diane', 'Keith', 'Alan', 'Margaret', 'Graham', 'Ruth', 'Barry', 'Janet', 'Stephen', 'Pauline', 'Roger', 'Gillian', 'Martin', 'Carol', 'Derek']
+const guestLast = ['Ridley', 'Hartley', 'Brindley', 'Elwood', 'Ashby', 'Marsh', 'Rowntree', 'Croft', 'Lyle', 'Pell', 'Ormerod', 'Holt', 'Fairclough', 'Bramwell', 'Catterall', 'Dunstan', 'Pickles', 'Whitworth', 'Sowerby', 'Heald']
+const guests = combine(guestFirst, guestLast, (f, l) => `${f} ${l}`)
 
 // ---------- episodes ----------
 const episodes = []
@@ -179,11 +220,12 @@ function comments(viewCount, rate) {
 }
 
 // Morning Brief: three segments every weekday morning for about four years.
+const nextMorning = deck('morning-brief', morningTopics)
 {
   const dates = datesBack(1040, [1, 2, 3, 4, 5], 0)
   dates.forEach((date) => {
     const ageDays = (generatedAt - date) / DAY
-    const segments = [pick(morningTopics), pick(morningTopics)].filter((t, j, a) => a.indexOf(t) === j)
+    const segments = [nextMorning(), nextMorning()]
     // The main edition is titled by its date when displayed, so it never goes stale.
     const edition = views(800, ageDays)
     add('morning-brief', { edition: true, hostIds: ['danny'], publishedAt: at(date, 8), durationMin: 22, access: 'free', views: edition, comments: comments(edition, 0.008) })
@@ -197,10 +239,13 @@ function comments(viewCount, rate) {
 // Chronos: weekly on Sundays, in multi-part series, with occasional free extras.
 {
   // Oldest series first, so the three named series end up most recent.
+  // Its own random sequence, so edits to other shows never move these series.
+  const planRandom = seeded('chronos-plan')
+  const nextExtra = deck('chronos-extras', historyExtras)
   const plan = []
   for (const [name, parts] of historySeries) {
     for (let p = 1; p <= parts; p++) plan.push({ series: { name, part: p, of: parts } })
-    if (random() < 0.4) plan.push({ extra: pick(historyExtras) })
+    if (planRandom() < 0.4) plan.push({ extra: nextExtra() })
   }
   const dates = datesBack(plan.length, [0], 1).reverse() // oldest first
   plan.forEach((item, i) => {
@@ -240,16 +285,23 @@ function weekly(showId, count, day, hour, makeTitle, base, duration, previewEver
     })
   })
 }
-weekly('statecraft', 200, 2, 15, (n, preview) => ({ number: n, title: preview ? `Statecraft #${n} | Preview: ${pick(geoTopics)}` : `Statecraft #${n} | ${pick(geoTopics)}` }), 2300, [60, 85], 15)
-weekly('ledger', 200, 4, 11, (n, preview) => ({ title: preview ? `Ledger | Preview: ${pick(econTopics)}` : `Ledger | ${pick(econTopics)}` }), 2100, [45, 65], 15)
-weekly('the-forum', 200, 5, 19, (n, preview) => ({ number: n, title: preview ? `The Forum #${n} | The Best Bits` : `The Forum #${n} | ${pick(forumTopics)}`, live: !preview }), 3800, [95, 125], 20)
+// A free preview is marked by its access, not by a word in the title.
+const nextGeo = deck('statecraft', combine(geoTopics, geoAngles))
+const nextEcon = deck('ledger', combine(econTopics, econAngles))
+const nextForum = deck('the-forum', combine(forumTopics, forumEditions))
+weekly('statecraft', 200, 2, 15, (n) => ({ number: n, title: `Statecraft #${n} | ${nextGeo()}` }), 2300, [60, 85], 15)
+weekly('ledger', 200, 4, 11, (n) => ({ number: n, title: `Ledger #${n} | ${nextEcon()}` }), 2100, [45, 65], 15)
+weekly('the-forum', 200, 5, 19, (n, preview) => ({ number: n, title: preview ? `The Forum #${n} | The Best Bits of #${n - 1}` : `The Forum #${n} | ${nextForum()}`, live: !preview }), 3800, [95, 125], 20)
 
 // Conversations: long interviews, every week or so.
 {
   const dates = datesBack(150, [3], 2)
+  const nextTopic = deck('conversations', interviewTopics)
+  const nextGuest = deck('guests', guests)
   dates.forEach((date) => {
     const ageDays = (generatedAt - date) / DAY
-    const [topic, guest] = pick(interviewSubjects)
+    const topic = nextTopic()
+    const guest = nextGuest()
     const v = views(1100, ageDays)
     add('conversations', { title: `${topic} | Interview with ${guest}`, hostIds: ['richard'], publishedAt: at(date, 10), durationMin: between(55, 85), access: 'free', views: v, comments: comments(v, 0.008) })
   })
@@ -349,6 +401,23 @@ write('home.json', {
   rows: Object.fromEntries(shows.map((s) => [s.id, byShow.get(s.id).slice(0, 20).map(card)])),
   seriesSlugs: series.slice(0, 12).map((s) => s.slug),
 })
+
+// What search needs for each episode, with short keys to keep the file small.
+// i: id, t: title (empty for daily editions, which are titled by date),
+// s: show, h: hosts, x: extra searchable text (topics, series), d: date, a: access, e: daily edition.
+write(
+  'search-docs.json',
+  newest.map((e) => ({
+    i: e.id,
+    t: e.title ?? '',
+    s: e.showId,
+    h: e.hostIds,
+    x: [...(e.topics ?? []), e.series?.name ?? ''].join(' ').trim(),
+    d: e.publishedAt,
+    a: e.access,
+    ...(e.edition ? { e: 1 } : {}),
+  })),
+)
 
 const counts = Object.fromEntries(shows.map((s) => [s.id, byShow.get(s.id).length]))
 console.log('Episodes:', episodes.length, counts)

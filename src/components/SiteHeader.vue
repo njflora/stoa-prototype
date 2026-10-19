@@ -5,6 +5,7 @@ import AppIcon from './AppIcon.vue'
 import PitchNote from './PitchNote.vue'
 import NotificationBell from './NotificationBell.vue'
 import UserBadge from './UserBadge.vue'
+import { useSearchOverlay } from '@/composables/useSearchOverlay'
 import { useViewer } from '@/composables/useViewer'
 
 // One top bar replaces the long side navigation.
@@ -37,6 +38,18 @@ onMounted(() => {
 })
 onUnmounted(() => resizeObserver?.disconnect())
 
+// Pressing "/" anywhere opens search, unless you are typing in a field.
+const { isOpen: searchOpen, openSearch } = useSearchOverlay()
+function onSlash(event: KeyboardEvent) {
+  if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return
+  const target = event.target as HTMLElement | null
+  if (target?.closest('input, textarea, select, [contenteditable="true"]')) return
+  event.preventDefault()
+  openSearch()
+}
+onMounted(() => window.addEventListener('keydown', onSlash))
+onUnmounted(() => window.removeEventListener('keydown', onSlash))
+
 const linkClass = 'flex items-center gap-1.5 text-white/70 transition hover:text-white'
 const activeClass = '!text-white font-semibold'
 </script>
@@ -63,13 +76,17 @@ const activeClass = '!text-white font-semibold'
             </RouterLink>
           </li>
           <li>
-            <RouterLink
-              to="/search"
+            <button
+              type="button"
               class="grid size-9 place-items-center rounded-full text-white/80 hover:bg-white/10 hover:text-white"
+              :class="searchOpen ? 'bg-white/10 text-white' : ''"
               aria-label="Search"
+              aria-keyshortcuts="/"
+              title="Search (/)"
+              @click="openSearch()"
             >
               <AppIcon name="search" />
-            </RouterLink>
+            </button>
           </li>
         </ul>
       </nav>

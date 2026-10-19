@@ -23,10 +23,10 @@ function seed(): ProgressMap {
   return {
     // Ids from the generated catalogue (scripts/data/generate.mjs).
     'stoa-podcast-1530': { fraction: 0.42, updatedAt: now - 2 * HOUR_MS },
-    'chronos-127': { fraction: 0.68, updatedAt: now - 20 * HOUR_MS },
+    'chronos-120': { fraction: 0.68, updatedAt: now - 20 * HOUR_MS },
     'conversations-150': { fraction: 0.2, updatedAt: now - 30 * HOUR_MS },
     'ledger-200': { fraction: 0.55, updatedAt: now - 50 * HOUR_MS },
-    'morning-brief-3047': { fraction: 0.8, updatedAt: now - 60 * HOUR_MS },
+    'morning-brief-3118': { fraction: 0.8, updatedAt: now - 60 * HOUR_MS },
   }
 }
 

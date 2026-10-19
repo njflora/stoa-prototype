@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import AppIcon, { type IconName } from './AppIcon.vue'
 import { tierStyles } from '@/data/chat'
+import { useSearchOverlay } from '@/composables/useSearchOverlay'
 import { useViewer } from '@/composables/useViewer'
 
 // Phones only (below 768px): an app-style tab bar fixed to the bottom of
@@ -13,21 +14,21 @@ type TabId = 'home' | 'live' | 'shows' | 'search' | 'more'
 
 const route = useRoute()
 const { isLive, user } = useViewer()
+const { isOpen: searchOpen, openSearch } = useSearchOverlay()
 
-const tabs: { id: Exclude<TabId, 'more'>; label: string; to: string; icon: IconName }[] = [
+const tabs: { id: Exclude<TabId, 'search' | 'more'>; label: string; to: string; icon: IconName }[] = [
   { id: 'home', label: 'Home', to: '/', icon: 'home' },
   { id: 'live', label: 'Live', to: '/live', icon: 'live' },
   { id: 'shows', label: 'Shows', to: '/shows', icon: 'grid' },
-  { id: 'search', label: 'Search', to: '/search', icon: 'search' },
 ]
 
 /** Which tab the current page belongs to, so series and episode pages light up a sensible tab. */
 const current = computed<TabId | null>(() => {
   const path = route.path
+  if (searchOpen.value) return 'search'
   if (path === '/') return 'home'
   if (path.startsWith('/live')) return 'live'
   if (path.startsWith('/shows') || path.startsWith('/series') || path.startsWith('/watch')) return 'shows'
-  if (path.startsWith('/search')) return 'search'
   if (['/articles', '/courses', '/shop', '/account', '/sign-in', '/join', '/pitch', '/credits'].some((p) => path.startsWith(p)))
     return 'more'
   return null
@@ -84,6 +85,18 @@ const tabClass = 'flex h-full flex-col items-center justify-center gap-0.5 text-
           {{ tab.label }}
           <span v-if="tab.id === 'live' && isLive" class="sr-only">(on air)</span>
         </RouterLink>
+      </li>
+      <li>
+        <!-- Search opens over the current page, so it is a button, not a link. -->
+        <button
+          type="button"
+          :class="[tabClass, 'w-full', current === 'search' ? 'text-accent-bright' : 'text-white/65 hover:text-white']"
+          :aria-pressed="searchOpen"
+          @click="openSearch()"
+        >
+          <AppIcon name="search" />
+          Search
+        </button>
       </li>
       <li>
         <button
