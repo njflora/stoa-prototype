@@ -139,7 +139,7 @@ const historySeries = [
   ['The Wars of the Roses', 6], ['Charlemagne', 4], ['The Glorious Revolution', 3], ['Hannibal', 4], ['The Black Death', 3],
   ['Elizabeth I', 5], ['The Normans', 5], ['Rome and Carthage', 4], ['The Tudors', 6], ['Athens and Sparta', 5],
   ['The Stuarts', 4], ['Alexander the Great', 5], ['The Vikings', 5], ['The Reformation', 4], ['Constantinople Falls', 3],
-  ['Henry VIII', 7], ['The Anglo-Saxons', 5], ['The Fall of the Republic', 5], ['Byzantium Rising', 4], ["The Hundred Years' War", 3],
+  ['Henry VIII', 7], ['The Anglo-Saxons', 5], ['The Fall of the Republic', 5], ['The Eastern Roman Empire', 4], ["The Hundred Years' War", 3],
 ]
 const historyExtras = [
   'How Empires Decline', 'Reading the Ancients', 'Questions from Members', "The Historian's Toolkit", 'Myths of the Middle Ages',
@@ -339,7 +339,7 @@ for (const e of [...byShow.get('chronos')].reverse()) {
 }
 const descriptions = {
   'The Fall of the Republic': 'How the Roman Republic tore itself apart, from the Gracchi brothers to the Ides of March.',
-  'Byzantium Rising': 'The eastern empire that outlived Rome by a thousand years, and the gambles that kept it alive.',
+  'The Eastern Roman Empire': 'The eastern empire that outlived Rome by a thousand years, and the gambles that kept it alive.',
   "The Hundred Years' War": 'A century of war between England and France over one disputed crown.',
 }
 const slugify = (name) => name.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')

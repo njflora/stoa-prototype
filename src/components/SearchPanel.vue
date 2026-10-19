@@ -170,7 +170,7 @@ function articleColour(hit: SearchHit): string | undefined {
 
 const locked = (hit: SearchHit) => hit.kind === 'episode' && hit.access === 'premium' && !isMember.value
 
-const suggestions = ['Rome', 'energy', 'Helen Thwaite', 'The Forum', '1530', 'Byzantium']
+const suggestions = ['Rome', 'energy', 'Helen Thwaite', 'The Forum', '1530', 'Eastern Roman Empire']
 </script>
 
 <template>

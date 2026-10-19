@@ -13,6 +13,7 @@ All notable changes to this prototype are listed here. Newest first.
 - A pitch note: "Search as you type".
 
 ### Changed
+- The Chronos series "Byzantium Rising" is now "The Eastern Roman Empire", with the same episodes, artwork and reading list. Its address is /series/the-eastern-roman-empire.
 - Every episode title is now unique within its show. Topics are dealt like a deck of cards, pairing a subject with an angle, such as "Ledger #151 | The Bond Market: The Winners". Before, a few short topic lists repeated, so search showed the same title many times.
 - Ledger has running numbers like the other shows. "Preview:" is gone from titles: free previews are marked by their access badge.
 - Chronos uses its own random sequence, so changes to other shows never move its series. It now has 121 episodes.
