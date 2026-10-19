@@ -1,1 +1,40 @@
 @import "tailwindcss";
+
+/*
+  Design tokens. Each variable here becomes a set of Tailwind classes,
+  so --color-gold gives bg-gold, text-gold, border-gold and so on.
+  The palette follows the reference site's dark theme without its branding.
+*/
+@theme {
+  --color-ink: #101112;
+  --color-surface: #1b1d1e;
+  --color-raised: #2d3133;
+  --color-line: #303436;
+  --color-muted: #a3a8ab;
+  --color-accent: #9f3878;
+  --color-accent-bright: #c04d93;
+  --color-gold: #d5b720;
+  --color-live: #e53935;
+
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "PT Serif", ui-serif, Georgia, serif;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-ink font-sans text-white antialiased;
+  }
+}
+
+/* Hides the scrollbar on horizontal rows while keeping them scrollable. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
