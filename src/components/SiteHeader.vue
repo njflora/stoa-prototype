@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
+import PitchNote from './PitchNote.vue'
 import NotificationBell from './NotificationBell.vue'
 import UserBadge from './UserBadge.vue'
 import { useViewer } from '@/composables/useViewer'
@@ -41,9 +42,12 @@ const activeClass = '!text-white font-semibold'
 <template>
   <header ref="header" class="sticky top-0 z-40 border-b border-white/5 bg-ink/85 backdrop-blur-md">
     <div class="flex h-14 items-center gap-6 px-4 sm:h-16 sm:px-8">
-      <RouterLink to="/" class="font-serif text-2xl font-bold tracking-tight" aria-label="Stoa home">
-        Stoa
-      </RouterLink>
+      <div class="flex items-center gap-2">
+        <RouterLink to="/" class="font-serif text-2xl font-bold tracking-tight" aria-label="Stoa home">
+          Stoa
+        </RouterLink>
+        <PitchNote id="nav" />
+      </div>
 
       <nav aria-label="Main" class="hidden md:block">
         <ul class="flex items-center gap-5 text-sm">

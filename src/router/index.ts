@@ -94,6 +94,12 @@ const router = createRouter({
       meta: { title: 'Search', note: 'Instant search comes in a later step.' },
     },
     {
+      path: '/pitch',
+      name: 'pitch',
+      component: () => import('../views/PitchView.vue'),
+      meta: { title: 'Pitch notes' },
+    },
+    {
       path: '/credits',
       name: 'credits',
       component: () => import('../views/CreditsView.vue'),

@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
+import PitchNote from './PitchNote.vue'
 import HeroVideo from './HeroVideo.vue'
 import TitleCard from './TitleCard.vue'
 import { featuredEpisodes, getShow, hostNames } from '@/data/catalogue'
@@ -112,6 +113,12 @@ onUnmounted(() => clearInterval(timer))
 
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/40 to-transparent" />
     <div class="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink to-transparent" />
+
+    <!-- Pitch mode labels. -->
+    <div class="absolute top-4 left-4 z-20 flex flex-wrap gap-2 sm:left-8">
+      <PitchNote id="hero-plays" />
+      <PitchNote v-if="isLive" id="live-takeover" />
+    </div>
 
     <!-- Live: sound control for the stream that is already playing. -->
     <button

@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
+import PitchNote from './PitchNote.vue'
 import VoteButtons from './VoteButtons.vue'
 import { chatMessages, showLengthSeconds, tierStyles, type ChatMessage } from '@/data/chat'
 import { useVotes } from '@/composables/useVotes'
@@ -118,9 +119,13 @@ onUnmounted(() => {
 <template>
   <section class="flex min-h-0 flex-col bg-surface lg:rounded-xl lg:ring-1 lg:ring-white/10" aria-label="Chat">
     <header class="flex items-center justify-between border-b border-white/5 px-4 py-2.5">
-      <h2 class="text-sm font-semibold">
-        {{ mode === 'replay' ? 'Chat replay' : mode === 'locked' ? "Members' chat" : 'Live chat' }}
-      </h2>
+      <div class="flex items-center gap-2">
+        <h2 class="text-sm font-semibold">
+          {{ mode === 'replay' ? 'Chat replay' : mode === 'locked' ? "Members' chat" : 'Live chat' }}
+        </h2>
+        <PitchNote v-if="mode === 'replay'" id="chat-replay" />
+        <PitchNote v-else-if="mode === 'live'" id="chat-kept" />
+      </div>
       <span v-if="mode === 'replay'" class="text-xs text-muted">Synced to the recording</span>
     </header>
 

@@ -2,6 +2,15 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Pitch mode
+
+### Added
+- Pitch mode: small labels on each improvement, naming the finding it answers. Off by default. Switch it on in the demo panel, or open any link with ?pitch=1.
+- Three kinds of label, so nothing is overclaimed: "Finding" (answers a documented gap), "Proposal" (not offered today) and "Kept" (already on the real site, credited).
+- Clicking a label opens a panel at the bottom of the screen: "On the real site today" and "In this prototype". It closes with Escape, the close button or a click outside, and focus returns to the label.
+- 22 notes across the homepage, live page (changing with the show's phase), episode pages, series pages and the members' preview. All the text lives in src/data/pitchNotes.ts.
+- /pitch: every note grouped by page, with "Show me" links. It doubles as the running order for a walkthrough.
+
 ## 2026-10-19: Real-feeling media
 
 ### Added

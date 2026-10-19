@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, useId } from 'vue'
 import AppIcon from './AppIcon.vue'
+import PitchNote from './PitchNote.vue'
 
 // A horizontal row of cards. Swipe or scroll on any device; on larger
 // screens, arrow buttons page through it. Cards snap into place.
@@ -8,6 +9,8 @@ import AppIcon from './AppIcon.vue'
 defineProps<{
   title: string
   subtitle?: string
+  /** A pitch-mode note shown beside the heading. */
+  pitch?: string
 }>()
 
 // useId gives a unique id, used to link the heading to the section for screen readers.
@@ -45,7 +48,10 @@ onUnmounted(() => resizeObserver?.disconnect())
   <section :aria-labelledby="headingId">
     <div class="mb-3 flex items-end justify-between gap-4 px-4 sm:px-8">
       <div class="min-w-0">
-        <h2 :id="headingId" class="text-lg font-semibold sm:text-xl">{{ title }}</h2>
+        <div class="flex flex-wrap items-center gap-2">
+          <h2 :id="headingId" class="text-lg font-semibold sm:text-xl">{{ title }}</h2>
+          <PitchNote v-if="pitch" :id="pitch" />
+        </div>
         <p v-if="subtitle" class="truncate text-sm text-muted">{{ subtitle }}</p>
       </div>
       <slot name="action" />

@@ -2,6 +2,7 @@
 import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
+import PitchNote from '@/components/PitchNote.vue'
 import CommentSection from '@/components/CommentSection.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import EpisodeCard from '@/components/EpisodeCard.vue'
@@ -234,6 +235,7 @@ watchEffect(() => {
               <AppIcon name="chat" />
               {{ chatOpen ? 'Hide chat replay' : 'Live chat replay' }}
             </button>
+            <PitchNote id="chat-replay" class="ml-2 align-middle" />
           </div>
         </div>
       </div>

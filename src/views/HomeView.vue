@@ -39,6 +39,7 @@ const conversations = episodesForShow('conversations')
       <ContentRow
         v-if="continueWatching.length"
         title="Continue watching"
+        pitch="continue-watching"
         subtitle="Pick up where you left off"
       >
         <EpisodeCard
@@ -49,7 +50,7 @@ const conversations = episodesForShow('conversations')
         />
       </ContentRow>
 
-      <ContentRow title="Start here" subtitle="New to Stoa? One way into every show">
+      <ContentRow title="Start here" subtitle="New to Stoa? One way into every show" pitch="start-here">
         <EpisodeCard
           v-for="item in startHere"
           :key="item.show.id"
@@ -59,12 +60,13 @@ const conversations = episodesForShow('conversations')
         />
       </ContentRow>
 
-      <ContentRow title="Watch a whole series" subtitle="Multi-part series, played in order">
+      <ContentRow title="Watch a whole series" subtitle="Multi-part series, played in order" pitch="series-row">
         <SeriesCard v-for="s in allSeries" :key="s.slug" :series="s" />
       </ContentRow>
 
       <ContentRow
         :title="isMember ? 'Latest' : 'Latest free episodes'"
+        pitch="card-previews"
         :subtitle="isMember ? undefined : 'Free shows and free previews from members\' series'"
       >
         <EpisodeCard
@@ -105,8 +107,9 @@ const conversations = episodesForShow('conversations')
       </aside>
 
       <ContentRow
-        v-for="show in premiumShows"
+        v-for="(show, i) in premiumShows"
         :key="show.id"
+        :pitch="i === 0 ? 'members-rows' : undefined"
         :title="show.name"
         :subtitle="show.tagline"
       >

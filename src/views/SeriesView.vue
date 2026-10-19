@@ -2,6 +2,7 @@
 import { computed, watchEffect } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
+import PitchNote from '@/components/PitchNote.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import SeriesCard from '@/components/SeriesCard.vue'
 import TitleCard from '@/components/TitleCard.vue'
@@ -117,7 +118,10 @@ function watchLink(episodeId: string) {
     </section>
 
     <section class="px-4 pt-4 sm:px-8" aria-labelledby="parts-heading">
-      <h2 id="parts-heading" class="text-lg font-semibold sm:text-xl">Play in order</h2>
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 id="parts-heading" class="text-lg font-semibold sm:text-xl">Play in order</h2>
+        <PitchNote id="series-row" />
+      </div>
       <ol class="mt-4 max-w-4xl divide-y divide-white/5">
         <li v-for="episode in series.episodes" :key="episode.id">
           <RouterLink

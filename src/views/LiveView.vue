@@ -2,6 +2,7 @@
 import { computed, ref, watch, watchEffect } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
+import PitchNote from '@/components/PitchNote.vue'
 import CommentSection from '@/components/CommentSection.vue'
 import LiveChat from '@/components/LiveChat.vue'
 import LiveCountdown from '@/components/LiveCountdown.vue'
@@ -118,7 +119,11 @@ const schedule = computed<ScheduleItem[]>(() => [
     <div
       class="flex h-[calc(100svh-var(--header-h,6rem))] flex-col lg:grid lg:h-auto lg:grid-cols-[minmax(0,1fr)_360px] lg:grid-rows-[auto_1fr] lg:gap-x-6 lg:px-8 lg:pt-6"
     >
-      <div class="flex-none lg:col-start-1 lg:row-start-1">
+      <div class="relative flex-none lg:col-start-1 lg:row-start-1">
+        <div class="absolute top-3 right-3 z-20">
+          <PitchNote v-if="phase === 'upcoming'" id="live-countdown" />
+          <PitchNote v-else-if="phase === 'break'" id="live-handoff" />
+        </div>
         <LiveCountdown
           v-if="phase === 'upcoming'"
           :show="show"
@@ -185,7 +190,10 @@ const schedule = computed<ScheduleItem[]>(() => [
         <p class="truncate text-base font-semibold lg:text-2xl lg:whitespace-normal" aria-hidden="true">
           {{ title }}
         </p>
-        <p class="truncate text-xs text-muted lg:mt-1 lg:text-sm">{{ hosts }} · {{ status }}</p>
+        <div class="flex items-center gap-2 lg:mt-1">
+          <p class="min-w-0 truncate text-xs text-muted lg:text-sm">{{ hosts }} · {{ status }}</p>
+          <PitchNote id="live-phone" />
+        </div>
       </div>
 
       <LiveChat
@@ -201,7 +209,10 @@ const schedule = computed<ScheduleItem[]>(() => [
     </div>
 
     <section class="px-4 pt-10 lg:px-8" aria-labelledby="schedule-heading">
-      <h2 id="schedule-heading" class="text-lg font-semibold sm:text-xl">Coming up live</h2>
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 id="schedule-heading" class="text-lg font-semibold sm:text-xl">Coming up live</h2>
+        <PitchNote id="live-reminders" />
+      </div>
       <ul class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <li
           v-for="item in schedule"

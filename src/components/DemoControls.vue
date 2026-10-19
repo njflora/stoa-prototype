@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import { livePhases, useViewer, viewerTypes } from '@/composables/useViewer'
 // Loaded here so the demo's "live now" notification works from any page.
 import '@/composables/useReminders'
+import { usePitchMode } from '@/composables/usePitchMode'
 import { usePlayback } from '@/composables/usePlayback'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 
@@ -31,6 +32,7 @@ function restoreProgress() {
   confirm('Sample progress restored')
 }
 const { requestFinish } = usePlayback()
+const { enabled: pitchMode } = usePitchMode()
 const route = useRoute()
 const open = ref(false)
 
@@ -89,6 +91,21 @@ const off = 'text-white/70 hover:text-white'
       >
         Finish episode
       </button>
+
+      <div>
+        <p class="mb-1 text-xs font-semibold">Pitch mode</p>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="inline-flex rounded-lg bg-black/40 p-1" role="group" aria-label="Pitch mode">
+            <button type="button" :class="[segment, !pitchMode ? on : off]" :aria-pressed="!pitchMode" @click="pitchMode = false">
+              Off
+            </button>
+            <button type="button" :class="[segment, pitchMode ? on : off]" :aria-pressed="pitchMode" @click="pitchMode = true">
+              On
+            </button>
+          </div>
+          <RouterLink to="/pitch" class="text-xs text-muted underline hover:text-white">All notes</RouterLink>
+        </div>
+      </div>
 
       <div>
         <p class="mb-1 text-xs font-semibold">Watch progress</p>

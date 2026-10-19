@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import HeroVideo from './HeroVideo.vue'
+import PitchNote from './PitchNote.vue'
 import { streamSources, type StreamSourceId } from '@/data/streams'
 import type { Show } from '@/types/content'
 import { formatNumber } from '@/utils/format'
@@ -90,6 +91,7 @@ async function share() {
 
     <div class="flex flex-wrap items-center gap-3 px-4 py-2 lg:px-0">
       <span class="text-xs text-muted" id="source-label">Source</span>
+      <PitchNote id="player-switch" />
       <div class="inline-flex rounded-lg bg-surface p-1 ring-1 ring-white/10" role="group" aria-labelledby="source-label">
         <button
           v-for="source in streamSources"

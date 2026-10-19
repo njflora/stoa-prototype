@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
+import PitchNote from '@/components/PitchNote.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import EpisodeCard from '@/components/EpisodeCard.vue'
 import { episodesForShow, shows } from '@/data/catalogue'
@@ -85,6 +86,7 @@ const faqs = [
             <AppIcon name="check" class="!size-4 text-gold" />
             Try any tier free for {{ TRIAL_DAYS }} days
           </p>
+          <PitchNote id="join-trial" class="mt-4 ml-2 align-top" />
           <div class="mt-6 flex flex-wrap gap-3">
             <a
               href="#tiers"
@@ -104,6 +106,7 @@ const faqs = [
     <!-- A taste of every members' show -->
     <ContentRow
       title="Free previews"
+      pitch="join-previews"
       subtitle="A taste of every members' show, free for everyone"
       class="pt-6"
     >
@@ -112,7 +115,10 @@ const faqs = [
 
     <!-- Tiers -->
     <section id="tiers" class="scroll-mt-24 px-4 pt-14 sm:px-8" aria-labelledby="tiers-heading">
-      <h2 id="tiers-heading" class="text-2xl font-bold">Choose a tier</h2>
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 id="tiers-heading" class="text-2xl font-bold">Choose a tier</h2>
+        <PitchNote id="join-tiers" />
+      </div>
       <p class="mt-1 text-sm text-muted">Prices per month. Every tier starts with a {{ TRIAL_DAYS }}-day free trial.</p>
 
       <ul class="mt-6 grid gap-4 md:grid-cols-3">
@@ -166,7 +172,10 @@ const faqs = [
 
     <!-- What free gets, against each tier -->
     <section id="compare" class="scroll-mt-24 px-4 pt-14 sm:px-8" aria-labelledby="compare-heading">
-      <h2 id="compare-heading" class="text-2xl font-bold">What free gets, and what members add</h2>
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 id="compare-heading" class="text-2xl font-bold">What free gets, and what members add</h2>
+        <PitchNote id="join-compare" />
+      </div>
       <div class="mt-6 overflow-x-auto rounded-xl ring-1 ring-white/10">
         <table class="w-full min-w-[560px] text-sm">
           <caption class="sr-only">Features included in each plan</caption>

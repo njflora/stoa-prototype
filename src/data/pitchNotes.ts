@@ -1,0 +1,257 @@
+// Pitch mode labels. Each note names the finding it answers (from the
+// planning doc) and says what is different from the real site today.
+// Three kinds, so nothing is overclaimed:
+//   fix:      answers a documented gap
+//   proposal: not offered today (from the benchmark or our own ideas)
+//   kept:     already on the real site, credited rather than claimed
+
+export type PitchKind = 'fix' | 'proposal' | 'kept'
+
+export interface PitchNote {
+  id: string
+  kind: PitchKind
+  /** Where it comes from in the planning doc, such as "Finding 11". */
+  source: string
+  title: string
+  /** The real site today. */
+  today: string
+  /** What this prototype does instead. */
+  here: string
+  /** Where the note appears, for the index page. */
+  page: { name: string; to: string }
+  /** How to reach it in the demo, if it needs a particular state. */
+  hint?: string
+}
+
+const home = { name: 'Homepage', to: '/' }
+const live = { name: 'Live page', to: '/live' }
+const episode = { name: 'Episode page', to: '/watch/stoa-podcast-0' }
+const seriesEpisode = { name: 'Episode in a series', to: '/watch/chronos-1?series=the-fall-of-the-republic' }
+const join = { name: "Members' preview", to: '/join' }
+
+export const pitchNotes: PitchNote[] = [
+  {
+    id: 'hero-plays',
+    kind: 'fix',
+    source: 'Finding 12',
+    title: 'The homepage plays on arrival',
+    today: 'Static banners and still thumbnails. Nothing plays.',
+    here: 'The hero plays something the moment the page opens: the live stream, or a featured episode.',
+    page: home,
+  },
+  {
+    id: 'live-takeover',
+    kind: 'fix',
+    source: 'Finding 11',
+    title: 'The live show takes the homepage',
+    today: 'On 19 October the hero promoted another show while the live show sat as an ordinary card under "Latest".',
+    here: 'While the show is live it holds the hero and stays there. No click needed.',
+    page: home,
+    hint: 'Demo panel: Live show on "Live".',
+  },
+  {
+    id: 'nav',
+    kind: 'fix',
+    source: 'Finding 2',
+    title: 'One short top bar',
+    today: 'A left sidebar with 9 top-level items, 12 more under Premium and more under Authors, all expanded at once.',
+    here: 'Five links and search in one bar, with Shop and Upgrade on the right.',
+    page: home,
+  },
+  {
+    id: 'continue-watching',
+    kind: 'fix',
+    source: 'Finding 12',
+    title: 'Continue watching',
+    today: 'No "Continue watching" for returning visitors.',
+    here: 'Part-watched episodes, newest first, with progress bars.',
+    page: home,
+  },
+  {
+    id: 'start-here',
+    kind: 'fix',
+    source: 'Finding 12',
+    title: 'A way in for newcomers',
+    today: 'The homepage assumes visitors already know what they want.',
+    here: '"Start here" offers one way into every show.',
+    page: home,
+  },
+  {
+    id: 'card-previews',
+    kind: 'fix',
+    source: 'Finding 12',
+    title: 'Previews on cards',
+    today: 'Still thumbnails. Whether members get hover previews is still to check.',
+    here: 'Cards move gently, standing in for short preview clips.',
+    page: home,
+  },
+  {
+    id: 'series-row',
+    kind: 'fix',
+    source: 'Finding 10',
+    title: 'Series as series',
+    today: 'Series are not tracked. Parts are numbered inconsistently ("Part VII", "Part 1", "Part I").',
+    here: 'Every series has its own page, played in order and numbered the same way.',
+    page: home,
+  },
+  {
+    id: 'members-rows',
+    kind: 'fix',
+    source: 'Topic 3',
+    title: 'Show what members get',
+    today: 'The "Premium Preview" section was removed in 2023. Only 2 of the last 30 Epochs episodes were free.',
+    here: "Members' shows appear in full, locked for free viewers, with a free preview playable in each.",
+    page: home,
+  },
+  {
+    id: 'live-countdown',
+    kind: 'fix',
+    source: 'Finding 11',
+    title: 'A countdown on the site',
+    today: 'The countdown exists only on Rumble. The site shows a looped "starting soon" video about 10 minutes early.',
+    here: 'A countdown to the next show on the live page, with reminders for members.',
+    page: live,
+    hint: 'Demo panel: Live show on "Upcoming".',
+  },
+  {
+    id: 'player-switch',
+    kind: 'fix',
+    source: 'Finding 1',
+    title: 'Switching source never goes black',
+    today: 'Rumble shows a black screen after switching to another source and back, even during the live show. The player logo links out to Rumble.',
+    here: 'Each switch builds a fresh player. Title, viewers and share sit outside the platform player, and nothing links off-site.',
+    page: live,
+  },
+  {
+    id: 'live-handoff',
+    kind: 'fix',
+    source: 'Finding 11',
+    title: "Hand-off to the members' segment",
+    today: 'The members-only after-show starts about 30 minutes after the free stream, with no route into it.',
+    here: 'The break counts down to the after-show, with "Continue as a member" on the video and pinned in chat.',
+    page: live,
+    hint: 'Demo panel: Live show on "Break".',
+  },
+  {
+    id: 'live-phone',
+    kind: 'fix',
+    source: 'Finding 11',
+    title: 'Video above chat on phones',
+    today: 'On phones the chat covers the whole screen.',
+    here: 'Video at the top, chat filling the space below. The chat never covers the video.',
+    page: live,
+    hint: 'Best seen at phone width.',
+  },
+  {
+    id: 'live-reminders',
+    kind: 'fix',
+    source: 'Finding 11',
+    title: 'Schedule and reminders',
+    today: 'No schedule, countdown or reminder on the site itself.',
+    here: 'A "Coming up live" schedule, with browser reminders for members.',
+    page: live,
+  },
+  {
+    id: 'chat-kept',
+    kind: 'kept',
+    source: 'Finding 11',
+    title: 'Their own live chat',
+    today: 'A real strength: tier and Staff badges, replies, likes and images, with almost no delay. Gold members can also send video questions.',
+    here: 'Kept as it is, and built on rather than replaced.',
+    page: live,
+  },
+  {
+    id: 'chat-replay',
+    kind: 'fix',
+    source: 'Finding 11',
+    title: 'Chat replay',
+    today: 'The chat disappears once a viewer leaves the stream or reloads the page.',
+    here: 'The chat replays alongside the recording, in time with it.',
+    page: live,
+    hint: 'Demo panel: Live show on "Ended", or open a Stoa Podcast episode.',
+  },
+  {
+    id: 'votes',
+    kind: 'proposal',
+    source: 'New idea',
+    title: 'Disagreement made visible',
+    today: 'Comments already have dislikes. The live chat has likes only.',
+    here: 'Dislikes in chat too, and a "Controversial" sort for comments: lots of votes, split close to evenly.',
+    page: live,
+  },
+  {
+    id: 'reading-lists',
+    kind: 'fix',
+    source: 'Finding 4',
+    title: 'Sourcing on every episode',
+    today: 'Some episodes have a reading list, in different shapes. Articles have none.',
+    here: 'The same reading list on every episode: type, title, source, year and when it came up. Free for everyone.',
+    page: episode,
+  },
+  {
+    id: 'series-autoplay',
+    kind: 'fix',
+    source: 'Finding 10',
+    title: 'Play this series in order',
+    today: 'No series view, and nothing plays the next part.',
+    here: 'The series queue sits beside the player, and the next part plays after a short countdown.',
+    page: seriesEpisode,
+    hint: 'Demo panel: Viewing as "Member".',
+  },
+  {
+    id: 'join-previews',
+    kind: 'fix',
+    source: 'Site history',
+    title: 'Premium Preview, revived',
+    today: 'A free "Premium Preview" section existed in 2022 and was removed in 2023.',
+    here: "A free preview from every members' show.",
+    page: join,
+  },
+  {
+    id: 'join-compare',
+    kind: 'fix',
+    source: 'Topic 3',
+    title: 'What free gets',
+    today: 'No clear comparison of what free gets and what each tier adds.',
+    here: 'One table across Free, Bronze, Silver and Gold.',
+    page: join,
+  },
+  {
+    id: 'join-trial',
+    kind: 'proposal',
+    source: 'Benchmark',
+    title: 'A 7-day free trial',
+    today: 'Not offered today. Most comparable outlets offer one.',
+    here: 'Every tier starts with a 7-day free trial.',
+    page: join,
+    hint: 'Viewing as "Free account" or "Signed out".',
+  },
+  {
+    id: 'join-tiers',
+    kind: 'kept',
+    source: 'Premium page',
+    title: 'Their real tiers',
+    today: 'Bronze £5, Silver £10 and Gold £30 a month, with these perks.',
+    here: 'Kept as they are. Yearly prices are still to collect.',
+    page: join,
+  },
+]
+
+const byId = new Map(pitchNotes.map((note) => [note.id, note]))
+
+export function getPitchNote(id: string): PitchNote | undefined {
+  return byId.get(id)
+}
+
+/** The short text on the pill. */
+export function pillLabel(note: PitchNote): string {
+  if (note.kind === 'proposal') return 'Proposal'
+  if (note.kind === 'kept') return 'Kept'
+  return note.source
+}
+
+export const kindNames: Record<PitchKind, string> = {
+  fix: 'Answers a finding',
+  proposal: 'Proposal: not offered today',
+  kept: 'Kept from the real site',
+}

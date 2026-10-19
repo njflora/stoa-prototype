@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
+import PitchNote from './PitchNote.vue'
 import TitleCard from './TitleCard.vue'
 import { getShow } from '@/data/catalogue'
 import { usePlayback } from '@/composables/usePlayback'
@@ -36,9 +37,12 @@ function link(id: string) {
   <section class="flex flex-col bg-surface lg:rounded-xl lg:ring-1 lg:ring-white/10" aria-labelledby="queue-heading">
     <header class="border-b border-white/5 px-4 py-3">
       <p class="text-xs text-muted">{{ show.name }} · Series</p>
-      <h2 id="queue-heading" class="font-semibold">
-        <RouterLink :to="`/series/${series.slug}`" class="hover:underline">{{ series.name }}</RouterLink>
-      </h2>
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 id="queue-heading" class="font-semibold">
+          <RouterLink :to="`/series/${series.slug}`" class="hover:underline">{{ series.name }}</RouterLink>
+        </h2>
+        <PitchNote id="series-autoplay" />
+      </div>
       <div class="mt-2 flex items-center justify-between gap-3">
         <p class="text-xs text-white/75">
           Part {{ toRoman(index + 1) }} of {{ toRoman(series.episodes.length) }}

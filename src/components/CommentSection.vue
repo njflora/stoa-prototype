@@ -2,6 +2,7 @@
 import { computed, ref, useId } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
+import PitchNote from './PitchNote.vue'
 import CommentItem from './CommentItem.vue'
 import { countComments, type Comment } from '@/data/comments'
 import { commentsForThread } from '@/data/episodeExtras'
@@ -96,6 +97,7 @@ function postReply(parent: Comment) {
       <h2 :id="headingId" class="text-lg font-semibold sm:text-xl">
         Comments <span class="text-muted">({{ total }})</span>
       </h2>
+      <PitchNote id="votes" class="ml-auto" />
       <div class="inline-flex rounded-lg bg-surface p-1 ring-1 ring-white/10" role="group" aria-label="Sort comments">
         <button
           v-for="option in sortOptions"

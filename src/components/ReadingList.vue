@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
+import PitchNote from './PitchNote.vue'
 import { RouterLink } from 'vue-router'
 import { readingListForThread } from '@/data/episodeExtras'
 import type { SourceType } from '@/data/readingLists'
@@ -30,9 +31,12 @@ const typeStyles: Record<SourceType, string> = {
 
 <template>
   <section :aria-labelledby="headingId" class="rounded-xl bg-surface p-4 ring-1 ring-white/10">
-    <h2 :id="headingId" class="text-lg font-semibold">
-      Reading list <span class="text-muted">({{ items.length }})</span>
-    </h2>
+    <div class="flex flex-wrap items-center gap-2">
+      <h2 :id="headingId" class="text-lg font-semibold">
+        Reading list <span class="text-muted">({{ items.length }})</span>
+      </h2>
+      <PitchNote id="reading-lists" />
+    </div>
     <p class="text-sm text-muted">Sources mentioned in this episode</p>
 
     <ol class="mt-4 space-y-4">
