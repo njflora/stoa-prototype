@@ -8,7 +8,7 @@ import { seededRandom } from '@/utils/random'
 
 export interface Artwork {
   id: string
-  /** What it illustrates, such as "show:chronos" or "series:The Eastern Roman Empire". */
+  /** What it illustrates, such as "show:chronos" or "series:Roman Resurgence". */
   for: string
   alt: string
   name: string

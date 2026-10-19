@@ -180,7 +180,7 @@ const seriesSourcePools: Record<string, Source[]> = {
     source('Report', 'Coin Finds and Trade Routes', 'Society for Ancient Economies', 2022),
     source('Book', 'Senate and Sword', 'R. G. Ellery', 2019),
   ],
-  'The Eastern Roman Empire': [
+  'Roman Resurgence': [
     source('Book', 'Empire of the East', 'C. R. Danvers', 2019),
     source('Data', 'Atlas of the Ancient Mediterranean', 'Historical Maps Project', 2020),
     source('Report', 'Plague and Population in Late Antiquity', 'Society for Ancient Economies', 2023),
