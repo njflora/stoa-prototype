@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useViewer } from '@/composables/useViewer'
+import { livePhases, useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 
 // Demo-only panel for pitching. It switches between a free viewer and a
-// member, turns the live show on or off, and resets watch progress.
-// It is not part of the site design.
+// member, moves the live show through its phases, and resets watch
+// progress. It is not part of the site design.
 
-const { isMember, isLive, setMembership, setLive } = useViewer()
+const { isMember, phase, setMembership, setPhase } = useViewer()
 const { reset } = useWatchProgress()
 const open = ref(false)
 
@@ -39,12 +39,16 @@ const off = 'text-white/70 hover:text-white'
 
       <div>
         <p class="mb-1 text-xs font-semibold">Live show</p>
-        <div class="inline-flex rounded-lg bg-black/40 p-1" role="group" aria-label="Live show">
-          <button type="button" :class="[segment, isLive ? on : off]" :aria-pressed="isLive" @click="setLive(true)">
-            On air
-          </button>
-          <button type="button" :class="[segment, !isLive ? on : off]" :aria-pressed="!isLive" @click="setLive(false)">
-            Off air
+        <div class="flex flex-wrap gap-1 rounded-lg bg-black/40 p-1" role="group" aria-label="Live show phase">
+          <button
+            v-for="p in livePhases"
+            :key="p.id"
+            type="button"
+            :class="[segment, phase === p.id ? on : off]"
+            :aria-pressed="phase === p.id"
+            @click="setPhase(p.id)"
+          >
+            {{ p.label }}
           </button>
         </div>
       </div>

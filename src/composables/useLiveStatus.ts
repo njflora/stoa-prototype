@@ -18,7 +18,7 @@ function useNow(intervalMs: number) {
 
 /** Whether the flagship show is live, and a countdown to the next one if not. */
 export function useLiveStatus() {
-  const { isLive } = useViewer()
+  const { isLive, phase } = useViewer()
   const now = useNow(1000)
 
   const nextStart = computed(() => {
@@ -30,5 +30,5 @@ export function useLiveStatus() {
 
   const countdown = computed(() => formatCountdown(nextStart.value.getTime() - now.value.getTime()))
 
-  return { isLive, event: liveEvent, nextStart, countdown }
+  return { isLive, phase, event: liveEvent, nextStart, countdown, now }
 }

@@ -24,19 +24,26 @@ interface Slide {
 
 const ROTATE_MS = 8000
 
-const { isLive, event, countdown } = useLiveStatus()
-const { canWatch } = useViewer()
+const { isLive, phase, event, countdown } = useLiveStatus()
+const { canWatch, isMember } = useViewer()
 
 const slides = computed<Slide[]>(() => {
   if (isLive.value) {
+    // In the members' after-show, free viewers are invited to join instead.
+    const afterShow = phase.value === 'members'
+    const join = afterShow && !isMember.value
     return [
       {
         key: 'live',
         show: getShow(event.showId),
         kicker: 'Live now',
-        title: event.title,
+        title: afterShow ? `${event.title}: Members' after-show` : event.title,
         hosts: hostNames(event.hostIds),
-        action: { label: 'Watch live', to: '/live', join: false },
+        action: {
+          label: join ? 'Continue as a member' : 'Watch live',
+          to: '/live',
+          join,
+        },
       },
     ]
   }

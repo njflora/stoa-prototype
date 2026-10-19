@@ -2,28 +2,52 @@ import { computed, ref, watch } from 'vue'
 import type { Episode } from '@/types/content'
 import { readJson, writeJson } from './storage'
 
-// Stands in for a signed-in account. There is no real login: the demo
-// panel switches between a free viewer and a member, and turns the live
-// show on or off, so both states can be shown in a pitch.
+// Stands in for a signed-in account and the show's schedule. There is no
+// real login: the demo panel switches between a free viewer and a member,
+// and moves the live show through its phases, so every state can be shown
+// in a pitch.
 
 export type Membership = 'free' | 'member'
 
+/**
+ * The live show's phases, in order:
+ * upcoming → live (free stream) → break → members (after-show) → ended.
+ */
+export type LivePhase = 'upcoming' | 'live' | 'break' | 'members' | 'ended'
+
+export const livePhases: { id: LivePhase; label: string }[] = [
+  { id: 'upcoming', label: 'Upcoming' },
+  { id: 'live', label: 'Live' },
+  { id: 'break', label: 'Break' },
+  { id: 'members', label: "Members'" },
+  { id: 'ended', label: 'Ended' },
+]
+
 interface DemoState {
   membership: Membership
-  live: boolean
+  phase: LivePhase
 }
 
 const STORAGE_KEY = 'stoa-demo'
-const defaults: DemoState = { membership: 'free', live: true }
+
+function load(): DemoState {
+  const saved = readJson<Partial<DemoState>>(STORAGE_KEY, {})
+  return {
+    membership: saved.membership === 'member' ? 'member' : 'free',
+    phase: livePhases.some((p) => p.id === saved.phase) ? saved.phase! : 'live',
+  }
+}
 
 // Declared outside the function, so every component shares one state.
-const state = ref<DemoState>({ ...defaults, ...readJson<Partial<DemoState>>(STORAGE_KEY, {}) })
+const state = ref<DemoState>(load())
 
 watch(state, (value) => writeJson(STORAGE_KEY, value), { deep: true })
 
 export function useViewer() {
   const isMember = computed(() => state.value.membership === 'member')
-  const isLive = computed(() => state.value.live)
+  const phase = computed(() => state.value.phase)
+  /** On air: the free stream or the members' after-show. */
+  const isLive = computed(() => phase.value === 'live' || phase.value === 'members')
 
   /** Free viewers can watch free episodes and free previews. Members watch everything. */
   function canWatch(episode: Episode): boolean {
@@ -34,9 +58,9 @@ export function useViewer() {
     state.value.membership = membership
   }
 
-  function setLive(live: boolean) {
-    state.value.live = live
+  function setPhase(next: LivePhase) {
+    state.value.phase = next
   }
 
-  return { isMember, isLive, canWatch, setMembership, setLive }
+  return { isMember, isLive, phase, canWatch, setMembership, setPhase }
 }
