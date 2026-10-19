@@ -4,6 +4,7 @@ import PitchNote from './PitchNote.vue'
 import { RouterLink } from 'vue-router'
 import { readingListForThread } from '@/data/episodeExtras'
 import type { SourceType } from '@/data/readingLists'
+import type { Episode } from '@/types/content'
 import { formatClock } from '@/utils/format'
 
 // The sources behind an episode, in the order they came up. The same
@@ -13,12 +14,14 @@ import { formatClock } from '@/utils/format'
 const props = defineProps<{
   /** Which list to show: an episode id, or a hand-written list such as "live-show". */
   listId: string
+  /** The episode, so its list can be generated. Not needed for hand-written lists. */
+  episode?: Episode
 }>()
 
 const headingId = useId()
 
 const items = computed(() =>
-  [...readingListForThread(props.listId)].sort((a, b) => (a.at ?? 0) - (b.at ?? 0)),
+  [...readingListForThread(props.listId, props.episode)].sort((a, b) => (a.at ?? 0) - (b.at ?? 0)),
 )
 
 const typeStyles: Record<SourceType, string> = {

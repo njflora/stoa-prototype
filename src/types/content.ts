@@ -21,6 +21,11 @@ export interface Show {
   palette: [string, string, string]
   /** Streamed live, so recordings come with a live chat replay. */
   streamedLive?: boolean
+  /** Paging details, from the API. */
+  episodeCount?: number
+  pageCount?: number
+  /** A free episode from this show, for previews. */
+  freePreview?: Episode
 }
 
 export interface SeriesInfo {
@@ -38,8 +43,17 @@ export interface Episode {
   publishedAt: string
   durationMin: number
   access: Access
+  /** The running episode number, as in "The Stoa Podcast #1530". */
   number?: number
   series?: SeriesInfo
+  /** Segment headlines, shown under the title and used by search. */
+  topics?: string[]
+  views?: number
+  comments?: number
+  /** Streamed live before it became a recording. */
+  live?: boolean
+  /** A daily show's main edition, titled by its date. */
+  edition?: boolean
 }
 
 /** A run of episodes meant to be watched in order. */
@@ -73,6 +87,7 @@ export type Vote = 'up' | 'down'
 
 export interface LiveEvent {
   showId: string
+  number?: number
   title: string
   hostIds: string[]
   /** Concurrent viewers shown on the live badge. */

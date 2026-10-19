@@ -2,38 +2,52 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
+import CardSkeleton from '@/components/CardSkeleton.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import EpisodeCard from '@/components/EpisodeCard.vue'
 import HeroBanner from '@/components/HeroBanner.vue'
 import SeriesCard from '@/components/SeriesCard.vue'
-import {
-  allSeries,
-  articles,
-  episodes,
-  episodesForShow,
-  shows,
-  startHereEpisodes,
-} from '@/data/catalogue'
+import { getEpisodes, getHome } from '@/api/catalogue'
+import { articles, getSeries, getShow, listShows } from '@/data/catalogue'
+import type { Series } from '@/types/content'
+import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 
 const { isMember, canWatch } = useViewer()
-const { inProgress, progressFor } = useWatchProgress()
+const { inProgressIds, progressFor } = useWatchProgress()
 
-const continueWatching = computed(() => inProgress.value.filter((item) => canWatch(item.episode)))
-const startHere = startHereEpisodes()
+// One request for everything above the fold and the first page of each row.
+const home = useQuery(() => 'home', getHome)
+
+// Continue watching fetches only the episodes it needs, by id.
+const continuing = useQuery(
+  () => inProgressIds.value.join(','),
+  () => getEpisodes(inProgressIds.value),
+)
+const continueWatching = computed(() => (continuing.data.value ?? []).filter((e) => canWatch(e)))
+
+const startHere = computed(() => home.data.value?.startHere ?? [])
+const series = computed(() =>
+  (home.data.value?.seriesSlugs ?? []).map(getSeries).filter((s): s is Series => s !== undefined),
+)
 
 // Free viewers see what they can watch; members see everything.
-const latest = computed(() => episodes.filter((e) => canWatch(e)).slice(0, 16))
+const latest = computed(() => (home.data.value?.latest ?? []).filter((e) => canWatch(e)).slice(0, 20))
 
-const premiumShows = shows.filter((s) => s.access === 'premium')
-const conversations = episodesForShow('conversations')
+const premiumShows = listShows().filter((s) => s.access === 'premium')
+const rowFor = (showId: string) => home.data.value?.rows[showId] ?? []
 </script>
 
 <template>
   <main>
     <h1 class="sr-only">Stoa</h1>
-    <HeroBanner />
+    <HeroBanner :featured="home.data.value?.featured ?? []" />
+
+    <div v-if="home.error.value" class="mx-4 mt-6 rounded-lg bg-surface p-4 text-sm ring-1 ring-white/10 sm:mx-8" role="alert">
+      The latest episodes could not load.
+      <button type="button" class="ml-2 min-h-6 font-semibold underline" @click="home.reload()">Try again</button>
+    </div>
 
     <div class="relative z-10 -mt-6 space-y-10 sm:space-y-12">
       <ContentRow
@@ -43,17 +57,18 @@ const conversations = episodesForShow('conversations')
         subtitle="Pick up where you left off"
       >
         <EpisodeCard
-          v-for="item in continueWatching"
-          :key="item.episode.id"
-          :episode="item.episode"
-          :progress="item.fraction"
+          v-for="episode in continueWatching"
+          :key="episode.id"
+          :episode="episode"
+          :progress="progressFor(episode.id)"
         />
       </ContentRow>
 
       <ContentRow title="Start here" subtitle="New to Stoa? One way into every show" pitch="start-here">
+        <CardSkeleton v-if="home.loading.value" :count="4" />
         <EpisodeCard
           v-for="item in startHere"
-          :key="item.show.id"
+          :key="item.showId"
           :episode="item.episode"
           :locked="!canWatch(item.episode)"
           variant="show"
@@ -61,7 +76,7 @@ const conversations = episodesForShow('conversations')
       </ContentRow>
 
       <ContentRow title="Watch a whole series" subtitle="Multi-part series, played in order" pitch="series-row">
-        <SeriesCard v-for="s in allSeries" :key="s.slug" :series="s" />
+        <SeriesCard v-for="s in series" :key="s.slug" :series="s" />
       </ContentRow>
 
       <ContentRow
@@ -69,6 +84,7 @@ const conversations = episodesForShow('conversations')
         pitch="card-previews"
         :subtitle="isMember ? undefined : 'Free shows and free previews from members\' series'"
       >
+        <CardSkeleton v-if="home.loading.value" />
         <EpisodeCard
           v-for="episode in latest"
           :key="episode.id"
@@ -111,7 +127,7 @@ const conversations = episodesForShow('conversations')
         :key="show.id"
         :pitch="i === 0 ? 'members-rows' : undefined"
         :title="show.name"
-        :subtitle="show.tagline"
+        :subtitle="`${show.tagline} · ${show.episodeCount?.toLocaleString('en-GB')} episodes`"
       >
         <template #action>
           <RouterLink
@@ -121,12 +137,13 @@ const conversations = episodesForShow('conversations')
           >
             Unlock {{ show.name }}
           </RouterLink>
-          <RouterLink v-else to="/shows" class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white">
+          <RouterLink v-else :to="`/shows/${show.id}`" class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white">
             See all
           </RouterLink>
         </template>
+        <CardSkeleton v-if="home.loading.value" />
         <EpisodeCard
-          v-for="episode in episodesForShow(show.id)"
+          v-for="episode in rowFor(show.id)"
           :key="episode.id"
           :episode="episode"
           :locked="!canWatch(episode)"
@@ -134,9 +151,15 @@ const conversations = episodesForShow('conversations')
         />
       </ContentRow>
 
-      <ContentRow title="Conversations" subtitle="Long-form interviews, free for everyone">
+      <ContentRow :title="getShow('conversations').name" subtitle="Long-form interviews, free for everyone">
+        <template #action>
+          <RouterLink to="/shows/conversations" class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white">
+            See all
+          </RouterLink>
+        </template>
+        <CardSkeleton v-if="home.loading.value" />
         <EpisodeCard
-          v-for="episode in conversations"
+          v-for="episode in rowFor('conversations')"
           :key="episode.id"
           :episode="episode"
           :progress="progressFor(episode.id)"

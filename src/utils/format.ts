@@ -71,6 +71,43 @@ export function formatDuration(totalMin: number): string {
   return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`
 }
 
+/** 1st, 2nd, 3rd, 4th, 11th, 12th, 13th, 21st, 22nd, 23rd, 31st. */
+function ordinal(day: number): string {
+  if (day % 100 >= 11 && day % 100 <= 13) return `${day}th`
+  const suffix = ({ 1: 'st', 2: 'nd', 3: 'rd' } as Record<number, string>)[day % 10] ?? 'th'
+  return `${day}${suffix}`
+}
+
+/** "Monday 19th October 2026", the daily-show title style. */
+export function formatEditionDate(date: Date): string {
+  const weekday = date.toLocaleDateString('en-GB', { weekday: 'long' })
+  const month = date.toLocaleDateString('en-GB', { month: 'long' })
+  return `${weekday} ${ordinal(date.getDate())} ${month} ${date.getFullYear()}`
+}
+
+/**
+ * The card date style: "Published 3:00 pm" today, "Published 18th October"
+ * this year, "Published 3rd August, 2024" before that.
+ */
+export function formatPublished(iso: string, now = new Date()): string {
+  const date = new Date(iso)
+  if (date.toDateString() === now.toDateString()) {
+    const time = date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }).replace(/\s/g, ' ')
+    return `Published ${time.toLowerCase()}`
+  }
+  const month = date.toLocaleDateString('en-GB', { month: 'long' })
+  const day = ordinal(date.getDate())
+  return date.getFullYear() === now.getFullYear()
+    ? `Published ${day} ${month}`
+    : `Published ${day} ${month}, ${date.getFullYear()}`
+}
+
+/** "4.1k", "12.8k", "960": the card count style. */
+export function formatCount(value: number): string {
+  if (value < 1000) return String(value)
+  return `${(value / 1000).toFixed(1).replace(/\.0$/, '')}k`
+}
+
 export function formatNumber(value: number): string {
   return number.format(value)
 }

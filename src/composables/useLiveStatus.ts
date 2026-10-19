@@ -1,5 +1,5 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { liveEvent } from '@/data/catalogue'
+import { getLiveEvent } from '@/data/catalogue'
 import { formatCountdown } from '@/utils/format'
 import { useViewer } from './useViewer'
 
@@ -23,12 +23,12 @@ export function useLiveStatus() {
 
   const nextStart = computed(() => {
     const start = new Date(now.value)
-    start.setHours(liveEvent.startHour, 0, 0, 0)
+    start.setHours(getLiveEvent().startHour, 0, 0, 0)
     if (start <= now.value) start.setDate(start.getDate() + 1)
     return start
   })
 
   const countdown = computed(() => formatCountdown(nextStart.value.getTime() - now.value.getTime()))
 
-  return { isLive, phase, event: liveEvent, nextStart, countdown, now }
+  return { isLive, phase, event: getLiveEvent(), nextStart, countdown, now }
 }

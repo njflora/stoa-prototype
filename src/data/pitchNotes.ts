@@ -25,8 +25,8 @@ export interface PitchNote {
 
 const home = { name: 'Homepage', to: '/' }
 const live = { name: 'Live page', to: '/live' }
-const episode = { name: 'Episode page', to: '/watch/stoa-podcast-0' }
-const seriesEpisode = { name: 'Episode in a series', to: '/watch/chronos-1?series=the-fall-of-the-republic' }
+const episode = { name: 'Episode page', to: '/watch/stoa-podcast-1530' }
+const seriesEpisode = { name: 'Episode in a series', to: '/watch/chronos-116?series=the-fall-of-the-republic' }
 const join = { name: "Members' preview", to: '/join' }
 
 export const pitchNotes: PitchNote[] = [

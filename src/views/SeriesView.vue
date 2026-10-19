@@ -6,11 +6,11 @@ import PitchNote from '@/components/PitchNote.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import SeriesCard from '@/components/SeriesCard.vue'
 import TitleCard from '@/components/TitleCard.vue'
-import { allSeries, episodesForShow, getSeries, getShow, hostNames } from '@/data/catalogue'
+import { getSeries, getShow, hostNames, listAllSeries } from '@/data/catalogue'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import { artForEpisode, artForSeries } from '@/data/media'
-import { formatDuration, formatRelativeDate, toRoman } from '@/utils/format'
+import { formatDuration, formatPublished, toRoman } from '@/utils/format'
 
 // One series, meant to be watched in order. The main button always picks
 // the right place to start: Part I, the next unwatched part, or the start
@@ -41,12 +41,10 @@ const start = computed(() => {
 })
 
 /** A free taste of the same show, for viewers who cannot watch the series. */
-const freePreview = computed(() =>
-  show.value ? episodesForShow(show.value.id).find((e) => e.access === 'freemium') : undefined,
-)
+const freePreview = computed(() => show.value?.freePreview)
 
 const otherSeries = computed(() =>
-  allSeries.filter((s) => s.showId === series.value?.showId && s.slug !== series.value?.slug),
+  listAllSeries().filter((s) => s.showId === series.value?.showId && s.slug !== series.value?.slug),
 )
 
 // Name the browser tab after the series.
@@ -157,7 +155,7 @@ function watchLink(episodeId: string) {
               <p class="truncate font-medium group-hover:text-white/80">{{ episode.title }}</p>
               <p class="mt-0.5 text-xs text-muted">
                 Part {{ toRoman(episode.series!.part) }} of {{ toRoman(episode.series!.of) }} ·
-                {{ formatDuration(episode.durationMin) }} · {{ formatRelativeDate(episode.publishedAt) }}
+                {{ formatDuration(episode.durationMin) }} · {{ formatPublished(episode.publishedAt) }}
               </p>
             </div>
             <span v-if="isWatched(episode.id)" class="shrink-0 text-accent-bright" aria-label="Watched">

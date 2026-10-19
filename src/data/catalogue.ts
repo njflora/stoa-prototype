@@ -1,18 +1,13 @@
-// Placeholder catalogue. Every show, host and episode here is invented.
-// The shape matches src/types/content.ts, so the cleaned feed data can
-// replace this file later without touching the components.
+// Lookups shared across the site, plus the hand-written articles.
+//
+// Shows, hosts, series and the live event come from the data API and are
+// loaded once before the app mounts (loadReference in src/api/catalogue.ts),
+// so these helpers can answer instantly. Episodes are never listed here:
+// there are thousands, so pages fetch them through src/api/catalogue.ts.
 
-import type {
-  Access,
-  Article,
-  ArticleCategory,
-  Episode,
-  Host,
-  LiveEvent,
-  Series,
-  Show,
-} from '@/types/content'
-import { formatLongDate, toRoman } from '@/utils/format'
+import { reference } from '@/api/catalogue'
+import type { Article, ArticleCategory, Episode, LiveEvent, Series, Show } from '@/types/content'
+import { toRoman } from '@/utils/format'
 
 const DAY_MS = 86_400_000
 
@@ -23,306 +18,60 @@ function daysAgo(days: number, hour = 13): string {
   return new Date(date.getTime() - days * DAY_MS).toISOString()
 }
 
-export const hosts: Host[] = [
-  { id: 'andrew', name: 'Andrew Pickering' },
-  { id: 'richard', name: 'Richard Holloway' },
-  { id: 'tom', name: 'Tom Heywood' },
-  { id: 'rachel', name: 'Rachel Ashworth' },
-  { id: 'neil', name: 'Neil Barraclough' },
-  { id: 'helen', name: 'Helen Thwaite' },
-  { id: 'danny', name: 'Danny Shaw' },
-  { id: 'gary', name: 'Gary Lowther' },
-  { id: 'sally', name: 'Sally Dunmore' },
-]
-
-export const shows: Show[] = [
-  {
-    id: 'stoa-podcast',
-    name: 'The Stoa Podcast',
-    tagline: 'The daily flagship, live every weekday',
-    access: 'free',
-    hostIds: ['andrew', 'richard', 'tom'],
-    palette: ['#c04d93', '#2a0f22', '#f0a6ca'],
-    streamedLive: true,
-  },
-  {
-    id: 'morning-brief',
-    name: 'Morning Brief',
-    tagline: 'The day ahead in twenty minutes',
-    access: 'free',
-    hostIds: ['danny'],
-    palette: ['#d5b720', '#2a2205', '#f6e7a1'],
-    streamedLive: true,
-  },
-  {
-    id: 'conversations',
-    name: 'Conversations',
-    tagline: 'Long-form interviews with interesting people',
-    access: 'free',
-    hostIds: ['richard'],
-    palette: ['#8b5cf6', '#170d2e', '#d8c8ff'],
-  },
-  {
-    id: 'chronos',
-    name: 'Chronos',
-    tagline: 'History told in full, series by series',
-    access: 'premium',
-    hostIds: ['helen'],
-    palette: ['#2a9d8f', '#08221f', '#e9c46a'],
-  },
-  {
-    id: 'statecraft',
-    name: 'Statecraft',
-    tagline: 'Geopolitics without the noise',
-    access: 'premium',
-    hostIds: ['rachel'],
-    palette: ['#4f8fc0', '#0b1726', '#a8dadc'],
-  },
-  {
-    id: 'ledger',
-    name: 'Ledger',
-    tagline: 'Economics you can actually use',
-    access: 'premium',
-    hostIds: ['neil'],
-    palette: ['#6a994e', '#101b0c', '#e3f0c8'],
-  },
-  {
-    id: 'the-forum',
-    name: 'The Forum',
-    tagline: 'The panel show, live for members',
-    access: 'premium',
-    hostIds: ['andrew', 'tom', 'danny', 'neil'],
-    palette: ['#e76f51', '#260d06', '#f4a261'],
-  },
-]
-
-/** Builds a run of episodes, newest first, spaced `every` days apart. */
-function run(
-  showId: string,
-  titles: string[],
-  options: {
-    firstNumber?: number
-    offset?: number
-    every?: number
-    hour?: number
-    durationMin?: number
-    access?: Access
-  } = {},
-): Episode[] {
-  const show = shows.find((s) => s.id === showId)!
-  const { offset = 0, every = 1, hour = 13, durationMin = 60 } = options
-  const access = options.access ?? (show.access === 'free' ? 'free' : 'premium')
-
-  return titles.map((title, i) => ({
-    id: `${showId}-${i}`,
-    showId,
-    title,
-    hostIds: show.hostIds,
-    publishedAt: daysAgo(offset + i * every, hour),
-    durationMin,
-    access,
-    number: options.firstNumber === undefined ? undefined : options.firstNumber - i,
-  }))
+export function listShows(): Show[] {
+  return reference.shows
 }
 
-const stoaPodcast = run(
-  'stoa-podcast',
-  [
-    'Parliament Returns',
-    'The Budget Nobody Wanted',
-    'Energy Prices Bite',
-    'Strikes and Standstills',
-    'The Housing Question',
-    'A Week in Westminster',
-    'Polls, Promises and Problems',
-    'The Border Debate',
-    'Free Speech on Trial',
-    "Europe's New Mood",
-    'The Cost of Net Zero',
-    'Councils in Crisis',
-  ],
-  { firstNumber: 212, offset: 1, durationMin: 95 },
-)
-
-const morningBrief = Array.from({ length: 10 }, (_, i): Episode => {
-  const publishedAt = daysAgo(i, 8)
-  return {
-    id: `morning-brief-${i}`,
-    showId: 'morning-brief',
-    title: `Morning Brief | ${formatLongDate(new Date(publishedAt))}`,
-    hostIds: ['danny'],
-    publishedAt,
-    durationMin: 22,
-    access: 'free',
-  }
-})
-
-const conversations: Episode[] = run(
-  'conversations',
-  [
-    'The Secret to Great Storytelling | with Peter Ridley',
-    'What Makes a City Work | with Joanne Hartley',
-    'Inside the Newsroom | with Mark Brindley',
-    'The Craft of Biography | with Susan Elwood',
-    'Rebuilding Trust in Institutions | with Colin Ashby',
-    'A Life in Archaeology | with Diane Marsh',
-    'Why Maps Lie | with Keith Rowntree',
-  ],
-  { offset: 2, every: 5, durationMin: 70 },
-)
-
-/** Chronos runs in multi-part series, released weekly, with free extras. */
-const chronosSeries: { name: string; parts: string[] }[] = [
-  {
-    name: 'The Fall of the Republic',
-    parts: [
-      'The Gracchi',
-      'Marius and Sulla',
-      'The First Triumvirate',
-      'Crossing the Rubicon',
-      'The Ides of March',
-    ],
-  },
-  {
-    name: 'Byzantium Rising',
-    parts: ['A New Rome', "Justinian's Gamble", 'The Plague Years', 'Heraclius and the Persians'],
-  },
-  {
-    name: "The Hundred Years' War",
-    parts: ['A Disputed Crown', 'Crécy', 'Agincourt'],
-  },
-]
-
-function buildChronos(): Episode[] {
-  // Oldest first, then reversed so the newest part comes first.
-  const oldestFirst: Omit<Episode, 'publishedAt' | 'number' | 'id'>[] = []
-
-  chronosSeries.forEach((series, seriesIndex) => {
-    series.parts.forEach((title, partIndex) => {
-      oldestFirst.push({
-        showId: 'chronos',
-        title,
-        hostIds: ['helen'],
-        durationMin: 85,
-        access: 'premium',
-        series: { name: series.name, part: partIndex + 1, of: series.parts.length },
-      })
-    })
-    if (seriesIndex === 0) {
-      oldestFirst.push({
-        showId: 'chronos',
-        title: 'Chronos Extra | How Empires Decline',
-        hostIds: ['helen'],
-        durationMin: 50,
-        access: 'freemium',
-      })
-    }
-  })
-
-  oldestFirst.push({
-    showId: 'chronos',
-    title: 'Chronos Extra | Reading the Ancients',
-    hostIds: ['helen'],
-    durationMin: 45,
-    access: 'freemium',
-  })
-
-  const firstNumber = 31
-  return oldestFirst
-    .map((episode, i) => ({
-      ...episode,
-      id: `chronos-${i}`,
-      number: firstNumber + i,
-      publishedAt: daysAgo((oldestFirst.length - 1 - i) * 7 + 1, 13),
-    }))
-    .reverse()
+export function getShow(id: string): Show {
+  const show = reference.shows.find((s) => s.id === id)
+  if (!show) throw new Error(`Unknown show: ${id}`)
+  return show
 }
 
-const chronos = buildChronos()
-
-const statecraft = [
-  ...run(
-    'statecraft',
-    [
-      'The Great Energy Crunch',
-      'Elections Across the Gulf',
-      "China's Long Game",
-      'The Arctic Scramble',
-      'Sanctions That Backfired',
-      'Water Wars',
-      'The Shipping Lanes',
-      "Africa's New Partners",
-    ],
-    { firstNumber: 22, offset: 2, every: 7, hour: 15, durationMin: 75 },
-  ),
-  {
-    id: 'statecraft-preview',
-    showId: 'statecraft',
-    title: 'Statecraft Preview | Reading a Map of Power',
-    hostIds: ['rachel'],
-    publishedAt: daysAgo(30, 15),
-    durationMin: 25,
-    access: 'freemium',
-  } satisfies Episode,
-]
-
-const ledger = run(
-  'ledger',
-  [
-    'The Petrodollar Explained',
-    'Why Rents Keep Rising',
-    'Debt, Deficits and You',
-    'The Pension Problem',
-    "Inflation's Long Tail",
-    'What Productivity Means',
-    'Gold Standard Myths',
-    'Tax Code Tangles',
-  ],
-  { offset: 4, every: 7, hour: 11, durationMin: 55 },
-)
-
-const theForum = run(
-  'the-forum',
-  [
-    'Who Would Win?',
-    'Films We Will Defend',
-    'The Best Decade for Music',
-    'Desert Island Books',
-    'Ranking Prime Ministers',
-    'Underrated Inventions',
-    'The Great Debate Night',
-  ],
-  { firstNumber: 47, offset: 3, every: 7, hour: 19, durationMin: 110 },
-)
-
-/** A short free preview from a members' show. */
-function preview(showId: string, title: string, days: number): Episode {
-  return {
-    id: `${showId}-preview`,
-    showId,
-    title,
-    hostIds: shows.find((s) => s.id === showId)!.hostIds,
-    publishedAt: daysAgo(days, 12),
-    durationMin: 12,
-    access: 'freemium',
-  }
+export function hostNames(ids: string[]): string {
+  const names = ids.map((id) => reference.hosts.find((h) => h.id === id)?.name).filter(Boolean)
+  if (names.length <= 2) return names.join(' & ')
+  return `${names.slice(0, -1).join(', ')} & ${names.at(-1)}`
 }
 
-const memberPreviews = [
-  preview('ledger', 'Ledger Preview | Why Money Matters', 20),
-  preview('the-forum', 'The Forum Preview | The Best Bits', 24),
-]
+export function getLiveEvent(): LiveEvent {
+  if (!reference.live) throw new Error('The live event has not loaded yet')
+  return reference.live
+}
 
-export const episodes: Episode[] = [
-  ...stoaPodcast,
-  ...morningBrief,
-  ...conversations,
-  ...chronos,
-  ...statecraft,
-  ...ledger,
-  ...theForum,
-  ...memberPreviews,
-].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+/** Text for the title card: series and part, or the episode number. */
+export function episodeLabel(episode: Episode): string {
+  if (episode.series) return `${episode.series.name} · Part ${toRoman(episode.series.part)}`
+  if (episode.number) return `#${episode.number}`
+  return ''
+}
+
+export function isNew(episode: Episode, now = Date.now()): boolean {
+  return now - new Date(episode.publishedAt).getTime() < 2 * DAY_MS
+}
+
+/** "The Hundred Years' War" → "the-hundred-years-war" */
+export function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+/** Every series, newest first. */
+export function listAllSeries(): Series[] {
+  return reference.series
+}
+
+export function getSeries(slug: string): Series | undefined {
+  return reference.series.find((s) => s.slug === slug)
+}
+
+/** The series an episode belongs to, if any. */
+export function seriesOf(episode: Episode): Series | undefined {
+  return episode.series ? getSeries(slugify(episode.series.name)) : undefined
+}
 
 /** Colours for article thumbnails: a dark base and an accent per category. */
 export const articleCategoryColours: Record<ArticleCategory, { base: string; accent: string }> = {
@@ -437,134 +186,3 @@ export const articles: Article[] = [
     8,
   ),
 ]
-
-export const liveEvent: LiveEvent = {
-  showId: 'stoa-podcast',
-  title: 'The Stoa Podcast #213',
-  hostIds: ['andrew', 'richard', 'tom'],
-  viewers: 1984,
-  startHour: 13,
-}
-
-// Lookups. Maps make each lookup instant rather than a search through the array.
-const showsById = new Map(shows.map((s) => [s.id, s]))
-const hostsById = new Map(hosts.map((h) => [h.id, h]))
-const episodesById = new Map(episodes.map((e) => [e.id, e]))
-
-export function getShow(id: string): Show {
-  const show = showsById.get(id)
-  if (!show) throw new Error(`Unknown show: ${id}`)
-  return show
-}
-
-export function getEpisode(id: string): Episode | undefined {
-  return episodesById.get(id)
-}
-
-export function hostNames(ids: string[]): string {
-  const names = ids.map((id) => hostsById.get(id)?.name).filter(Boolean)
-  if (names.length <= 2) return names.join(' & ')
-  return `${names.slice(0, -1).join(', ')} & ${names.at(-1)}`
-}
-
-export function episodesForShow(showId: string): Episode[] {
-  return episodes.filter((e) => e.showId === showId)
-}
-
-/** Text for the title card: series and part, or the episode number. */
-export function episodeLabel(episode: Episode): string {
-  if (episode.series) return `${episode.series.name} · Part ${toRoman(episode.series.part)}`
-  if (episode.number) return `#${episode.number}`
-  return ''
-}
-
-export function isNew(episode: Episode, now = Date.now()): boolean {
-  return now - new Date(episode.publishedAt).getTime() < 2 * DAY_MS
-}
-
-/**
- * One way in per show for newcomers. Free shows start with the latest
- * episode. Premium shows start with a free preview if there is one,
- * otherwise with part one of their first series.
- */
-export function startHereEpisodes(): { show: Show; episode: Episode }[] {
-  return shows.map((show) => {
-    const list = episodesForShow(show.id)
-    const preview = list.find((e) => e.access === 'freemium')
-    const firstPart = [...list].reverse().find((e) => e.series?.part === 1)
-    const episode = show.access === 'free' ? list[0]! : (preview ?? firstPart ?? list.at(-1)!)
-    return { show, episode }
-  })
-}
-
-/** Rotating hero picks for when nothing is live. */
-export function featuredEpisodes(): Episode[] {
-  const latest = (showId: string, access?: Access) =>
-    episodesForShow(showId).find((e) => !access || e.access === access)!
-  return [
-    latest('stoa-podcast'),
-    latest('chronos', 'premium'),
-    latest('conversations'),
-    latest('statecraft', 'freemium'),
-  ]
-}
-
-// Series. Episodes carry their series name and part number as data, so a
-// series can always be played in order and numbered the same way, as
-// Part I, Part II and so on.
-
-const seriesDescriptions: Record<string, string> = {
-  'The Fall of the Republic':
-    'How the Roman Republic tore itself apart, from the Gracchi brothers to the Ides of March.',
-  'Byzantium Rising':
-    'The eastern empire that outlived Rome by a thousand years, and the gambles that kept it alive.',
-  "The Hundred Years' War":
-    'A century of war between England and France over one disputed crown.',
-}
-
-/** "The Hundred Years' War" → "the-hundred-years-war" */
-export function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/['’]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
-function buildSeries(): Series[] {
-  const byName = new Map<string, Episode[]>()
-  for (const episode of episodes) {
-    if (!episode.series) continue
-    const list = byName.get(episode.series.name) ?? []
-    list.push(episode)
-    byName.set(episode.series.name, list)
-  }
-
-  return [...byName].map(([name, parts]) => {
-    const ordered = [...parts].sort((a, b) => a.series!.part - b.series!.part)
-    return {
-      slug: slugify(name),
-      name,
-      showId: ordered[0]!.showId,
-      description: seriesDescriptions[name] ?? '',
-      episodes: ordered,
-      totalMin: ordered.reduce((sum, e) => sum + e.durationMin, 0),
-    }
-  })
-}
-
-/** Every series, newest first. */
-export const allSeries: Series[] = buildSeries().sort((a, b) =>
-  b.episodes.at(-1)!.publishedAt.localeCompare(a.episodes.at(-1)!.publishedAt),
-)
-
-const seriesBySlug = new Map(allSeries.map((s) => [s.slug, s]))
-
-export function getSeries(slug: string): Series | undefined {
-  return seriesBySlug.get(slug)
-}
-
-/** The series an episode belongs to, if any. */
-export function seriesOf(episode: Episode): Series | undefined {
-  return episode.series ? seriesBySlug.get(slugify(episode.series.name)) : undefined
-}

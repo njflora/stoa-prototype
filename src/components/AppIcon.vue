@@ -21,6 +21,7 @@ export type IconName =
   | 'live'
   | 'grid'
   | 'menu'
+  | 'eye'
 
 defineProps<{ name: IconName }>()
 
@@ -43,6 +44,7 @@ const paths: Record<IconName, string> = {
   live: 'M12 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14',
   grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
   menu: 'M4 6h16M4 12h16M4 18h16',
+  eye: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
 }
 </script>
 

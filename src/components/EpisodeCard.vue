@@ -7,7 +7,7 @@ import { episodeLabel, getShow, hostNames, isNew, seriesOf } from '@/data/catalo
 import type { Episode } from '@/types/content'
 import { artForEpisode } from '@/data/media'
 import { usePreview } from '@/composables/usePreview'
-import { formatRelativeDate, toRoman } from '@/utils/format'
+import { formatCount, formatPublished, toRoman } from '@/utils/format'
 
 const props = withDefaults(
   defineProps<{
@@ -30,7 +30,7 @@ const caption = computed(() =>
 const subcaption = computed(() =>
   props.variant === 'show'
     ? show.value.tagline
-    : `${hostNames(props.episode.hostIds)} · ${formatRelativeDate(props.episode.publishedAt)}`,
+    : hostNames(props.episode.hostIds),
 )
 
 const badge = computed(() => {
@@ -107,6 +107,16 @@ const { root, previewing, handlers } = usePreview(() => !props.locked)
           {{ caption }}
         </p>
         <p class="mt-0.5 truncate text-xs text-muted">{{ subcaption }}</p>
+        <!-- The reference site's card line: when it was published, views and comments. -->
+        <p v-if="variant === 'episode'" class="mt-0.5 flex items-center gap-2 truncate text-[11px] text-muted [&_svg]:size-3.5">
+          <span>{{ formatPublished(episode.publishedAt) }}</span>
+          <span v-if="episode.views !== undefined" class="inline-flex items-center gap-0.5" :aria-label="`${episode.views} views`">
+            <AppIcon name="eye" /> {{ formatCount(episode.views) }}
+          </span>
+          <span v-if="episode.comments !== undefined" class="inline-flex items-center gap-0.5" :aria-label="`${episode.comments} comments`">
+            <AppIcon name="chat" /> {{ formatCount(episode.comments) }}
+          </span>
+        </p>
       </div>
     </RouterLink>
     <RouterLink

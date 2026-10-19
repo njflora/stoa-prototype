@@ -6,7 +6,6 @@
 // episode looks different but the same on every visit. Real data can
 // replace this file without touching the pages.
 
-import { getEpisode } from './catalogue'
 import type { ChatTier } from './chat'
 import { commentThreads, type Comment } from './comments'
 import { readingLists, type ReadingItem, type SourceType } from './readingLists'
@@ -256,18 +255,16 @@ function generateReadingList(episode: Episode): ReadingItem[] {
   }))
 }
 
-/** The comment thread for an episode or a hand-written thread id. */
-export function commentsForThread(threadId: string): Comment[] {
+/** The comments for a hand-written thread id, or else for the given episode. */
+export function commentsForThread(threadId: string, episode?: Episode): Comment[] {
   const handWritten = commentThreads[threadId]
   if (handWritten) return handWritten
-  const episode = getEpisode(threadId)
   return episode ? generateComments(episode) : []
 }
 
-/** The reading list for an episode or a hand-written list id. */
-export function readingListForThread(listId: string): ReadingItem[] {
+/** The reading list for a hand-written list id, or else for the given episode. */
+export function readingListForThread(listId: string, episode?: Episode): ReadingItem[] {
   const handWritten = readingLists[listId]
   if (handWritten) return handWritten
-  const episode = getEpisode(listId)
   return episode ? generateReadingList(episode) : []
 }

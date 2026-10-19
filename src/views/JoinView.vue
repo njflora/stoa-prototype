@@ -5,7 +5,7 @@ import AppIcon from '@/components/AppIcon.vue'
 import PitchNote from '@/components/PitchNote.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import EpisodeCard from '@/components/EpisodeCard.vue'
-import { episodesForShow, shows } from '@/data/catalogue'
+import { listShows } from '@/data/catalogue'
 import { tierStyles } from '@/data/chat'
 import { features, tiers, TRIAL_DAYS, type PlanId, type TierId } from '@/data/membership'
 import { useViewer } from '@/composables/useViewer'
@@ -20,10 +20,10 @@ const { isMember, user } = useViewer()
 const currentTier = computed<TierId | null>(() => (isMember.value ? (user.value?.tier ?? null) : null))
 const lowestPrice = Math.min(...tiers.map((t) => t.monthly))
 
-/** One free preview per members' show, newest first. */
-const previews = shows
+/** One free preview per members' show (each show's freePreview, from the shows API). */
+const previews = listShows()
   .filter((s) => s.access === 'premium')
-  .map((s) => episodesForShow(s.id).find((e) => e.access === 'freemium'))
+  .map((s) => s.freePreview)
   .filter((e) => e !== undefined)
 
 const columns: { id: PlanId; label: string; price?: number }[] = [

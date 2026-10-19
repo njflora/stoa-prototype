@@ -6,6 +6,7 @@ import PitchNote from './PitchNote.vue'
 import CommentItem from './CommentItem.vue'
 import { countComments, type Comment } from '@/data/comments'
 import { commentsForThread } from '@/data/episodeExtras'
+import type { Episode } from '@/types/content'
 import { useViewer } from '@/composables/useViewer'
 import { controversy, useVotes } from '@/composables/useVotes'
 
@@ -25,6 +26,8 @@ const sortOptions: { id: Sort; label: string }[] = [
 const props = defineProps<{
   /** Which thread to show: an episode id, or a hand-written thread such as "live-show". */
   threadId: string
+  /** The episode, so its comments can be generated. Not needed for hand-written threads. */
+  episode?: Episode
 }>()
 
 const PAGE_SIZE = 5
@@ -33,7 +36,7 @@ const { isMember, isSignedIn, user } = useViewer()
 const headingId = useId()
 
 // A copy, so posting here never changes the placeholder data.
-const comments = ref<Comment[]>(structuredClone(commentsForThread(props.threadId)))
+const comments = ref<Comment[]>(structuredClone(commentsForThread(props.threadId, props.episode)))
 const sort = ref<Sort>('newest')
 const shown = ref(PAGE_SIZE)
 const { vote, voteFor, totals } = useVotes()

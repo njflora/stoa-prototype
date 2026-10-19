@@ -52,6 +52,12 @@ const router = createRouter({
       meta: { title: 'Shows', note: 'Show pages and series views come in a later step.' },
     },
     {
+      path: '/shows/:id',
+      name: 'show',
+      component: PlaceholderView,
+      meta: { title: 'Show', note: 'Every episode of a show, paged and filterable, comes in step 5.' },
+    },
+    {
       path: '/series/:slug',
       name: 'series',
       component: () => import('../views/SeriesView.vue'),

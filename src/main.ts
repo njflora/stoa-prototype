@@ -8,10 +8,17 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
+import { loadReference } from './api/catalogue'
 import router from './router'
 
-const app = createApp(App)
-
-app.use(router)
-
-app.mount('#app')
+// Load the small reference data (shows, hosts, series, the live event)
+// before mounting, so every page can read it instantly. Top-level await:
+// the rest of this file waits for it.
+try {
+  await loadReference()
+  createApp(App).use(router).mount('#app')
+} catch (error) {
+  console.error(error)
+  document.getElementById('app')!.innerHTML =
+    '<p style="padding:2rem;font-family:sans-serif">Stoa could not load. Check your connection and refresh the page.</p>'
+}

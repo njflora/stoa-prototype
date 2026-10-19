@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { articleCategoryColours, hostNames } from '@/data/catalogue'
 import type { Article } from '@/types/content'
-import { formatRelativeDate } from '@/utils/format'
+import { formatPublished } from '@/utils/format'
 
 // A still, editorial thumbnail for written pieces. No motion and no play
 // icon, so articles read as "read" rather than "watch" next to episodes.
@@ -50,7 +50,7 @@ const colours = computed(() => articleCategoryColours[props.article.category])
       <p class="line-clamp-2 text-sm leading-snug text-white/80">{{ article.standfirst }}</p>
       <p class="mt-0.5 truncate text-xs text-muted">
         {{ hostNames([article.authorId]) }} · {{ article.readMin }} min read ·
-        {{ formatRelativeDate(article.publishedAt) }}
+        {{ formatPublished(article.publishedAt) }}
       </p>
     </div>
   </RouterLink>

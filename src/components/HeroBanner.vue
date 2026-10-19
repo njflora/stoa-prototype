@@ -5,11 +5,11 @@ import AppIcon from './AppIcon.vue'
 import PitchNote from './PitchNote.vue'
 import HeroVideo from './HeroVideo.vue'
 import TitleCard from './TitleCard.vue'
-import { featuredEpisodes, getShow, hostNames } from '@/data/catalogue'
+import { getShow, hostNames } from '@/data/catalogue'
 import { artForEpisode, type Artwork } from '@/data/media'
 import { useLiveStatus } from '@/composables/useLiveStatus'
 import { useViewer } from '@/composables/useViewer'
-import type { Show } from '@/types/content'
+import type { Episode, Show } from '@/types/content'
 import { formatNumber } from '@/utils/format'
 
 // The hero is an enlarged title card. When the flagship show is live it
@@ -28,6 +28,9 @@ interface Slide {
 }
 
 const ROTATE_MS = 8000
+
+/** The homepage passes in its featured episodes once they have loaded. */
+const props = withDefaults(defineProps<{ featured?: Episode[] }>(), { featured: () => [] })
 
 const { isLive, phase, event, countdown } = useLiveStatus()
 const { canWatch, isMember } = useViewer()
@@ -53,7 +56,21 @@ const slides = computed<Slide[]>(() => {
     ]
   }
 
-  return featuredEpisodes().map((episode) => {
+  // Before the featured episodes arrive, show the next live show.
+  if (!props.featured.length) {
+    return [
+      {
+        key: 'next-live',
+        show: getShow(event.showId),
+        kicker: 'Next live',
+        title: event.title,
+        hosts: hostNames(event.hostIds),
+        action: { label: 'Set a reminder', to: '/live', join: false },
+      },
+    ]
+  }
+
+  return props.featured.map((episode) => {
     const locked = !canWatch(episode)
     const kicker =
       episode.access === 'freemium'

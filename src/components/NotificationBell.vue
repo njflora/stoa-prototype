@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, useId } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
-import { getShow, liveEvent } from '@/data/catalogue'
+import { getLiveEvent, getShow } from '@/data/catalogue'
 import { useReminders } from '@/composables/useReminders'
 import { useViewer } from '@/composables/useViewer'
 
@@ -17,6 +17,7 @@ const root = ref<HTMLElement>()
 const panelId = useId()
 
 const items = computed(() => reminders.value.map((id) => ({ id, name: getShow(id).name })))
+const liveEvent = getLiveEvent()
 const liveFollowed = computed(() => isLive.value && reminders.value.includes(liveEvent.showId))
 const count = computed(() => reminders.value.length)
 

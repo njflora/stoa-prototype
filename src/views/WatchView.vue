@@ -10,12 +10,14 @@ import LiveChat from '@/components/LiveChat.vue'
 import ReadingList from '@/components/ReadingList.vue'
 import SeriesQueue from '@/components/SeriesQueue.vue'
 import TitleCard from '@/components/TitleCard.vue'
-import { episodesForShow, getEpisode, getSeries, getShow, hostNames, seriesOf } from '@/data/catalogue'
+import { getEpisode, listEpisodes } from '@/api/catalogue'
+import { getSeries, getShow, hostNames, seriesOf } from '@/data/catalogue'
+import { useQuery } from '@/composables/useQuery'
 import { usePlayback } from '@/composables/usePlayback'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import { artForEpisode } from '@/data/media'
-import { formatDuration, formatRelativeDate, toRoman } from '@/utils/format'
+import { formatDuration, formatPublished, toRoman } from '@/utils/format'
 
 // An episode page. Series episodes get the series queue beside the
 // player, and when a part ends the next one plays after a short
@@ -30,7 +32,9 @@ const { canWatch, isSignedIn } = useViewer()
 const { progressFor, setProgress, markWatched } = useWatchProgress()
 const { autoplay, finishSignal } = usePlayback()
 
-const episode = computed(() => getEpisode(String(route.params.id)))
+// Fetched by id: the page holding it is worked out from the id (see src/api/catalogue.ts).
+const episodeQuery = useQuery(() => route.params.id, () => getEpisode(String(route.params.id)))
+const episode = computed(() => episodeQuery.data.value)
 const show = computed(() => (episode.value ? getShow(episode.value.showId) : undefined))
 const series = computed(() => {
   const fromLink = route.query.series ? getSeries(String(route.query.series)) : undefined
@@ -49,8 +53,13 @@ const hasChatReplay = computed(() => !!show.value?.streamedLive && !locked.value
 const showQueue = computed(() => !!series.value && partIndex.value >= 0)
 const sideColumn = computed(() => showQueue.value || (hasChatReplay.value && chatOpen.value))
 
+// The first page of the same show: 50 episodes, of which we show 10.
+const showPage = useQuery(
+  () => show.value?.id,
+  () => (show.value ? listEpisodes(show.value.id, 0) : Promise.resolve(undefined)),
+)
 const moreFromShow = computed(() =>
-  show.value ? episodesForShow(show.value.id).filter((e) => e.id !== episode.value?.id).slice(0, 10) : [],
+  (showPage.data.value?.items ?? []).filter((e) => e.id !== episode.value?.id).slice(0, 10),
 )
 
 // End of an episode: the up-next card, with its countdown.
@@ -95,7 +104,7 @@ watch(finishSignal, finish)
 
 // A new episode: reset the end card and count it as started.
 watch(
-  () => route.params.id,
+  () => episode.value?.id,
   () => {
     stopCountdown()
     ended.value = false
@@ -213,7 +222,7 @@ watchEffect(() => {
           <p class="font-serif text-sm font-bold tracking-widest text-white/70 uppercase">{{ show.name }}</p>
           <h1 class="mt-1 text-2xl leading-tight font-bold sm:text-3xl">{{ episode.title }}</h1>
           <p class="mt-1 text-sm text-muted">
-            {{ hostNames(episode.hostIds) }} · {{ formatRelativeDate(episode.publishedAt) }} ·
+            {{ hostNames(episode.hostIds) }} · {{ formatPublished(episode.publishedAt) }} ·
             {{ formatDuration(episode.durationMin) }}
           </p>
           <RouterLink
@@ -266,8 +275,8 @@ watchEffect(() => {
     <div
       class="flex flex-col gap-10 px-4 pt-10 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-x-6 lg:px-8"
     >
-      <ReadingList :key="`reading-${episode.id}`" :list-id="episode.id" class="lg:col-start-2 lg:row-start-1" />
-      <CommentSection :key="`comments-${episode.id}`" :thread-id="episode.id" class="lg:col-start-1 lg:row-start-1" />
+      <ReadingList :key="`reading-${episode.id}`" :list-id="episode.id" :episode="episode" class="lg:col-start-2 lg:row-start-1" />
+      <CommentSection :key="`comments-${episode.id}`" :thread-id="episode.id" :episode="episode" class="lg:col-start-1 lg:row-start-1" />
     </div>
 
     <ContentRow v-if="moreFromShow.length" :title="`More from ${show.name}`" class="pt-10">
@@ -281,8 +290,16 @@ watchEffect(() => {
     </ContentRow>
   </main>
 
+  <main v-else-if="episodeQuery.loading.value" class="px-4 pt-0 lg:px-8 lg:pt-6" aria-busy="true">
+    <div class="aspect-video w-full bg-surface lg:rounded-xl" />
+    <div class="mt-4 h-7 w-2/3 rounded bg-surface" />
+    <div class="mt-2 h-4 w-1/3 rounded bg-surface" />
+    <span class="sr-only">Loading the episode</span>
+  </main>
+
   <main v-else class="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-4 text-center">
-    <h1 class="font-serif text-4xl font-bold">Episode not found</h1>
+    <h1 class="font-serif text-4xl font-bold">{{ episodeQuery.error.value ? 'Could not load this episode' : 'Episode not found' }}</h1>
+    <button v-if="episodeQuery.error.value" type="button" class="mt-4 underline" @click="episodeQuery.reload()">Try again</button>
     <RouterLink to="/" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink">Back to home</RouterLink>
   </main>
 </template>

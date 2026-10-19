@@ -1,11 +1,10 @@
 import { computed, ref, watch } from 'vue'
-import { getEpisode } from '@/data/catalogue'
-import type { Episode } from '@/types/content'
 import { readJson, writeJson } from './storage'
 
 // Remembers how far the viewer got in each episode. It powers
 // "Continue watching". Kept in the browser for the prototype; a real site
-// would sync it to the viewer's account.
+// would sync it to the viewer's account. It stores only ids: the episodes
+// themselves are fetched when needed (getEpisodes in src/api/catalogue.ts).
 
 interface Progress {
   /** 0 to 1. */
@@ -22,11 +21,12 @@ const HOUR_MS = 3_600_000
 function seed(): ProgressMap {
   const now = Date.now()
   return {
-    'stoa-podcast-0': { fraction: 0.42, updatedAt: now - 2 * HOUR_MS },
-    'chronos-9': { fraction: 0.68, updatedAt: now - 20 * HOUR_MS },
-    'conversations-0': { fraction: 0.2, updatedAt: now - 30 * HOUR_MS },
-    'ledger-0': { fraction: 0.55, updatedAt: now - 50 * HOUR_MS },
-    'morning-brief-1': { fraction: 0.8, updatedAt: now - 60 * HOUR_MS },
+    // Ids from the generated catalogue (scripts/data/generate.mjs).
+    'stoa-podcast-1530': { fraction: 0.42, updatedAt: now - 2 * HOUR_MS },
+    'chronos-127': { fraction: 0.68, updatedAt: now - 20 * HOUR_MS },
+    'conversations-150': { fraction: 0.2, updatedAt: now - 30 * HOUR_MS },
+    'ledger-200': { fraction: 0.55, updatedAt: now - 50 * HOUR_MS },
+    'morning-brief-3047': { fraction: 0.8, updatedAt: now - 60 * HOUR_MS },
   }
 }
 
@@ -35,13 +35,13 @@ const progress = ref<ProgressMap>(readJson(STORAGE_KEY, seed()))
 watch(progress, (value) => writeJson(STORAGE_KEY, value), { deep: true })
 
 export function useWatchProgress() {
-  /** Started but unfinished episodes, most recent first. */
-  const inProgress = computed(() =>
+  /** Ids of started but unfinished episodes, most recent first (at most 20). */
+  const inProgressIds = computed(() =>
     Object.entries(progress.value)
       .filter(([, p]) => p.fraction > 0.02 && p.fraction < 0.95)
       .sort(([, a], [, b]) => b.updatedAt - a.updatedAt)
-      .map(([id, p]) => ({ episode: getEpisode(id), fraction: p.fraction }))
-      .filter((item): item is { episode: Episode; fraction: number } => !!item.episode),
+      .slice(0, 20)
+      .map(([id]) => id),
   )
 
   function progressFor(id: string): number {
@@ -71,5 +71,5 @@ export function useWatchProgress() {
     progress.value = seed()
   }
 
-  return { inProgress, progressFor, isWatched, setProgress, markWatched, clear, restoreSample }
+  return { inProgressIds, progressFor, isWatched, setProgress, markWatched, clear, restoreSample }
 }
