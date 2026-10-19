@@ -35,7 +35,7 @@ function subscribe() {
       :class="
         memberSubscribed
           ? 'bg-white/15 text-white ring-1 ring-white/30 hover:bg-white/25'
-          : 'bg-white text-ink hover:brightness-95'
+          : 'bg-accent text-white hover:bg-accent-bright'
       "
       :aria-pressed="memberSubscribed"
       @click="memberSubscribed = !memberSubscribed"
@@ -62,7 +62,7 @@ function subscribe() {
         />
         <button
           type="submit"
-          class="shrink-0 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:brightness-95"
+          class="shrink-0 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-bright"
         >
           Subscribe
         </button>

@@ -13,6 +13,8 @@ export interface ChatMessage {
   text: string
   /** A Gold member's question for the hosts, highlighted in chat. */
   question?: boolean
+  likes: number
+  dislikes: number
 }
 
 export const tierStyles: Record<ChatTier, { label: string; class: string }> = {
@@ -73,6 +75,9 @@ export const chatMessages: ChatMessage[] = raw.map(([at, user, tier, text, quest
   tier,
   text,
   question,
+  // A fixed spread of votes, so the replay looks the same every time.
+  likes: question ? 12 + (i % 5) : (i * 37) % 11,
+  dislikes: i % 4 === 0 ? (i * 13) % 6 : 0,
 }))
 
 /** Length of the free stream in seconds, used by the replay timeline. */

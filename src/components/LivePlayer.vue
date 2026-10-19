@@ -95,7 +95,7 @@ async function share() {
           :key="source.id"
           type="button"
           class="rounded-md px-3 py-1 text-xs font-medium transition"
-          :class="source.id === sourceId ? 'bg-white text-ink' : 'text-white/70 hover:text-white'"
+          :class="source.id === sourceId ? 'bg-accent text-white' : 'text-white/70 hover:text-white'"
           :aria-pressed="source.id === sourceId"
           @click="sourceId = source.id"
         >

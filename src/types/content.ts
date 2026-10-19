@@ -54,6 +54,9 @@ export interface Article {
   readMin: number
 }
 
+/** A like or a dislike, on comments and chat messages. */
+export type Vote = 'up' | 'down'
+
 export interface LiveEvent {
   showId: string
   title: string

@@ -5,11 +5,20 @@ import AppIcon from './AppIcon.vue'
 import CommentItem from './CommentItem.vue'
 import { commentThreads, countComments, type Comment } from '@/data/comments'
 import { useViewer } from '@/composables/useViewer'
+import { controversy, useVotes } from '@/composables/useVotes'
 
-// Comments on one episode. Everyone can read. Commenting is a members'
-// perk, so members can post, like and reply; free accounts see an upgrade
-// prompt and signed-out visitors a sign-in prompt. Posts are kept in the
-// page only: the prototype has no server.
+// Comments on one episode. Everyone can read and see the votes.
+// Commenting is a members' perk, so members can post, vote and reply;
+// free accounts see an upgrade prompt and signed-out visitors a sign-in
+// prompt. Posts and votes are kept in the page only: no server.
+
+type Sort = 'newest' | 'top' | 'controversial'
+
+const sortOptions: { id: Sort; label: string }[] = [
+  { id: 'newest', label: 'Newest' },
+  { id: 'top', label: 'Top' },
+  { id: 'controversial', label: 'Controversial' },
+]
 
 const props = defineProps<{
   /** Which thread to show, such as "stoa-podcast-1432". */
@@ -23,18 +32,25 @@ const headingId = useId()
 
 // A copy, so posting here never changes the placeholder data.
 const comments = ref<Comment[]>(structuredClone(commentThreads[props.threadId] ?? []))
-const sort = ref<'newest' | 'top'>('newest')
+const sort = ref<Sort>('newest')
 const shown = ref(PAGE_SIZE)
-const liked = ref(new Set<string>())
+const { vote, voteFor, totals } = useVotes()
 const draft = ref('')
 const replyingTo = ref<string | null>(null)
 const replyDraft = ref('')
 let localId = 0
 
 const total = computed(() => countComments(comments.value))
+
+function score(c: Comment): number {
+  const { likes, dislikes } = totals(c.id, c.likes, c.dislikes)
+  if (sort.value === 'top') return likes - dislikes
+  return controversy(likes, dislikes)
+}
+
 const sorted = computed(() =>
   [...comments.value].sort((a, b) =>
-    sort.value === 'top' ? b.likes - a.likes : b.postedAt.localeCompare(a.postedAt),
+    sort.value === 'newest' ? b.postedAt.localeCompare(a.postedAt) : score(b) - score(a),
   ),
 )
 const visible = computed(() => sorted.value.slice(0, shown.value))
@@ -47,6 +63,7 @@ function newComment(text: string): Comment {
     postedAt: new Date().toISOString(),
     text: text.trim(),
     likes: 0,
+    dislikes: 0,
     replies: [],
     mine: true,
   }
@@ -57,13 +74,6 @@ function post() {
   comments.value.unshift(newComment(draft.value))
   draft.value = ''
   sort.value = 'newest'
-}
-
-function toggleLike(id: string) {
-  const next = new Set(liked.value)
-  if (next.has(id)) next.delete(id)
-  else next.add(id)
-  liked.value = next
 }
 
 function startReply(id: string) {
@@ -87,11 +97,11 @@ function postReply(parent: Comment) {
       </h2>
       <div class="inline-flex rounded-lg bg-surface p-1 ring-1 ring-white/10" role="group" aria-label="Sort comments">
         <button
-          v-for="option in [{ id: 'newest', label: 'Newest' }, { id: 'top', label: 'Top' }] as const"
+          v-for="option in sortOptions"
           :key="option.id"
           type="button"
           class="rounded-md px-3 py-1 text-xs font-medium transition"
-          :class="sort === option.id ? 'bg-white text-ink' : 'text-white/70 hover:text-white'"
+          :class="sort === option.id ? 'bg-accent text-white' : 'text-white/70 hover:text-white'"
           :aria-pressed="sort === option.id"
           @click="sort = option.id"
         >
@@ -162,9 +172,9 @@ function postReply(parent: Comment) {
       <li v-for="c in visible" :key="c.id">
         <CommentItem
           :comment="c"
-          :liked="liked.has(c.id)"
+          :vote="voteFor(c.id)"
           :can-interact="isMember"
-          @like="toggleLike"
+          @vote="vote"
           @reply="startReply"
         />
 
@@ -195,10 +205,10 @@ function postReply(parent: Comment) {
           <li v-for="r in c.replies" :key="r.id">
             <CommentItem
               :comment="r"
-              :liked="liked.has(r.id)"
+              :vote="voteFor(r.id)"
               :can-interact="isMember"
               is-reply
-              @like="toggleLike"
+              @vote="vote"
             />
           </li>
         </ol>

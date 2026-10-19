@@ -2,7 +2,9 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
+import VoteButtons from './VoteButtons.vue'
 import { chatMessages, showLengthSeconds, tierStyles, type ChatMessage } from '@/data/chat'
+import { useVotes } from '@/composables/useVotes'
 import { formatClock } from '@/utils/format'
 
 // The live chat, and its replay alongside the recording.
@@ -25,6 +27,8 @@ const LIVE_INTERVAL_MS = 2800
 const MAX_LIVE_MESSAGES = 150
 
 const list = ref<HTMLElement>()
+// Anyone signed in can like or dislike a message, as they can post.
+const { vote, voteFor } = useVotes()
 
 // Live mode: start part-way into the show, then add one message at a time.
 // The first pass stops before the closing sign-off. After that the mock
@@ -46,7 +50,8 @@ function addLiveMessage() {
   sent++
   liveMessages.value = [
     ...liveMessages.value.slice(-MAX_LIVE_MESSAGES + 1),
-    { ...source, id: `${source.id}-${sent}` },
+    // A brand new message has no votes yet.
+    { ...source, id: `${source.id}-${sent}`, likes: 0, dislikes: 0 },
   ]
 }
 
@@ -141,6 +146,7 @@ onUnmounted(() => {
         <li
           v-for="m in messages"
           :key="m.id"
+          class="group/msg"
           :class="m.question ? 'my-2 rounded-lg bg-gold/10 p-2.5 ring-1 ring-gold/40' : 'py-1'"
         >
           <p v-if="m.question" class="mb-1 text-[10px] font-bold tracking-widest text-gold uppercase">
@@ -159,7 +165,15 @@ onUnmounted(() => {
             </span>
             <span class="font-semibold" :class="m.tier === 'staff' ? 'text-accent-bright' : 'text-white/90'"
               >{{ m.user }}:</span
-            >{{ ' ' }}<span class="text-white/80">{{ m.text }}</span>
+            >{{ ' ' }}<span class="text-white/80">{{ m.text }}</span>{{ ' ' }}<VoteButtons
+              :likes="m.likes"
+              :dislikes="m.dislikes"
+              :vote="voteFor(m.id)"
+              :can-vote="!!signedIn"
+              compact
+              class="ml-1"
+              @vote="(direction) => vote(m.id, direction)"
+            />
           </p>
         </li>
       </ol>

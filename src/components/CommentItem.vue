@@ -1,23 +1,25 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import VoteButtons from './VoteButtons.vue'
 import { tierStyles } from '@/data/chat'
 import type { Comment } from '@/data/comments'
+import type { Vote } from '@/types/content'
 import { formatTimeAgo } from '@/utils/format'
 
-// One comment. It shows the data it is given and announces likes and
+// One comment. It shows the data it is given and announces votes and
 // replies to its parent, which owns the thread.
 
 const props = defineProps<{
   comment: Comment
-  liked: boolean
-  /** Members can like and reply; everyone else can read. */
+  vote: Vote | null
+  /** Members can vote and reply; everyone else can read. */
   canInteract: boolean
   /** Replies are not replied to again, so threads stay one level deep. */
   isReply?: boolean
 }>()
 
 const emit = defineEmits<{
-  like: [id: string]
+  vote: [id: string, direction: Vote]
   reply: [id: string]
 }>()
 
@@ -31,7 +33,6 @@ const initials = computed(() =>
     .map((part) => part[0]!.toUpperCase())
     .join(''),
 )
-const likes = computed(() => props.comment.likes + (props.liked ? 1 : 0))
 </script>
 
 <template>
@@ -67,19 +68,13 @@ const likes = computed(() => props.comment.likes + (props.liked ? 1 : 0))
       <p class="mt-1 text-sm leading-relaxed text-white/85">{{ comment.text }}</p>
 
       <div class="mt-1.5 flex items-center gap-4 text-xs text-muted">
-        <button
-          v-if="canInteract"
-          type="button"
-          class="flex items-center gap-1 transition hover:text-white"
-          :class="liked ? 'text-accent-bright' : ''"
-          :aria-pressed="liked"
-          :aria-label="`Like this comment, ${likes} likes`"
-          @click="emit('like', comment.id)"
-        >
-          <span aria-hidden="true">▲</span> {{ likes }}
-        </button>
-        <span v-else :aria-label="`${likes} likes`"><span aria-hidden="true">▲</span> {{ likes }}</span>
-
+        <VoteButtons
+          :likes="comment.likes"
+          :dislikes="comment.dislikes"
+          :vote="vote"
+          :can-vote="canInteract"
+          @vote="(direction) => emit('vote', comment.id, direction)"
+        />
         <button
           v-if="canInteract && !isReply"
           type="button"
