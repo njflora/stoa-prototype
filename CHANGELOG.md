@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Contributor names
+
+### Changed
+- Replaced every placeholder host, writer and interview guest with an ordinary English name. Host ids now match the new names.
+
 ## 2026-10-19: Articles row
 
 ### Added
