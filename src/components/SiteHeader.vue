@@ -10,8 +10,8 @@ import { useViewer } from '@/composables/useViewer'
 // One top bar replaces the long side navigation.
 // Left:  Stoa · Live · Home · Shows · Articles · Courses · Search
 // Right: Shop · Upgrade (not members) · bell (members) · account or sign in
-// On phones (below 768px) only Stoa, Upgrade and the bell stay here; the
-// links move to the bottom tab bar (MobileTabBar.vue).
+// On phones (below 768px) the links move to the bottom tab bar
+// (MobileTabBar.vue). Stoa, Upgrade, the bell and the account stay here.
 
 const { isMember, isLive, user } = useViewer()
 
@@ -74,7 +74,7 @@ const activeClass = '!text-white font-semibold'
         </ul>
       </nav>
 
-      <div class="ml-auto flex items-center gap-2 sm:gap-3">
+      <div class="ml-auto flex items-center gap-1.5 sm:gap-3">
         <RouterLink
           to="/shop"
           class="hidden items-center gap-1.5 rounded-lg bg-accent px-4 py-1.5 text-sm font-semibold whitespace-nowrap text-white transition hover:bg-accent-bright md:inline-flex [&>svg]:size-4"
@@ -89,16 +89,17 @@ const activeClass = '!text-white font-semibold'
           class="inline-flex items-center gap-1.5 rounded-lg bg-gold px-3 py-1.5 text-sm font-semibold whitespace-nowrap text-ink transition hover:brightness-110 sm:px-4 [&>svg]:size-4"
         >
           <AppIcon name="crown" />
-          Upgrade
+          <!-- On the narrowest phones only the crown shows; the label stays for screen readers. -->
+          <span class="max-[359px]:sr-only">Upgrade</span>
         </RouterLink>
 
         <NotificationBell v-if="isMember" />
 
-        <UserBadge v-if="user" :user="user" class="hidden md:flex" />
+        <UserBadge v-if="user" :user="user" />
         <RouterLink
           v-else
           to="/sign-in"
-          class="hidden rounded-lg px-3 py-1.5 text-sm font-semibold whitespace-nowrap ring-1 ring-white/25 transition hover:bg-white/10 md:inline-block"
+          class="rounded-lg px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap ring-1 ring-white/25 transition hover:bg-white/10 sm:px-3"
         >
           <span class="hidden lg:inline">Sign in / Sign up</span>
           <span class="lg:hidden">Sign in</span>

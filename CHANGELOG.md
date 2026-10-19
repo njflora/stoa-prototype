@@ -2,6 +2,13 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-19: Account always in the phone top bar
+
+### Changed
+- On phones the account is always at the top: members see the bell then their initials, free accounts see Upgrade then their initials, and signed-out visitors see Upgrade then "Sign in". It is still in the More sheet too.
+- Below 360px, Upgrade shows only its crown so everything fits. Screen readers still hear "Upgrade".
+- Checked at 375px and 320px for all three viewers, with pitch labels on: everything ends 16px from the edge.
+
 ## 2026-10-19: Mobile navigation and a full mobile pass
 
 ### Added
