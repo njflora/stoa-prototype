@@ -39,6 +39,14 @@ const PAGE_SIZE = 5
 const { isMember, isSignedIn, user } = useViewer()
 /** Post, reply and vote: members anywhere, free accounts in open spaces. */
 const canPost = computed(() => isMember.value || (props.openToFree && isSignedIn.value))
+/**
+ * A members-only discussion seen by someone who is not a member: only a
+ * blurred glimpse, behind an invitation, so it feels exclusive (Nick's call).
+ * A real site would not send the comments at all, just a count and a
+ * placeholder; the demo blurs its placeholder comments instead.
+ */
+const exclusive = computed(() => !props.openToFree && !isMember.value)
+const glimpse = computed(() => sorted.value.slice(0, 3))
 const headingId = useId()
 
 // A copy, so posting here never changes the placeholder data.
@@ -111,7 +119,7 @@ function postReply(parent: Comment) {
         {{ openToFree ? 'Open to all accounts' : 'Members only' }}
         <PitchNote id="open-spaces" class="ml-1 align-middle" />
       </p>
-      <div class="inline-flex rounded-lg bg-surface p-1 ring-1 ring-white/10" role="group" aria-label="Sort comments">
+      <div v-if="!exclusive" class="inline-flex rounded-lg bg-surface p-1 ring-1 ring-white/10" role="group" aria-label="Sort comments">
         <button
           v-for="option in sortOptions"
           :key="option.id"
@@ -152,25 +160,44 @@ function postReply(parent: Comment) {
       </div>
     </form>
 
-    <!-- Free account in a members' space. -->
-    <div
-      v-else-if="isSignedIn"
-      class="mt-4 flex flex-col gap-3 rounded-lg bg-surface p-4 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between"
-    >
-      <p class="flex items-center gap-2 text-sm text-white/85">
-        <AppIcon name="lock" class="!size-4 text-gold" />
-        Comments on members' shows are for members.
-      </p>
-      <RouterLink
-        to="/join"
-        class="inline-flex items-center gap-1.5 self-start rounded-lg bg-gold px-4 py-1.5 text-sm font-semibold whitespace-nowrap text-ink hover:brightness-110 sm:self-auto [&>svg]:size-4"
-      >
-        <AppIcon name="crown" />
-        Upgrade to comment
-      </RouterLink>
+    <!-- Members' discussion, seen by a non-member: a blurred glimpse behind an invitation. -->
+    <div v-else-if="exclusive" class="relative mt-4 min-h-72 overflow-hidden rounded-xl ring-1 ring-gold/30">
+      <ol class="pointer-events-none space-y-6 p-4 blur-[7px] select-none" aria-hidden="true" inert>
+        <li v-for="c in glimpse" :key="c.id">
+          <CommentItem :comment="c" :vote="null" :can-interact="false" />
+        </li>
+      </ol>
+      <div class="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/70 to-ink/95" />
+      <div class="absolute inset-0 grid place-items-center p-4 text-center">
+        <div class="max-w-sm">
+          <span class="mx-auto grid size-11 place-items-center rounded-full bg-gold/15 text-gold ring-1 ring-gold/40">
+            <AppIcon name="crown" />
+          </span>
+          <p class="mt-3 text-lg font-semibold">The members' discussion</p>
+          <p class="mt-1 text-sm text-white/80">
+            {{ total }} {{ total === 1 ? 'comment' : 'comments' }} from members. Join to read them and have your say.
+          </p>
+          <div class="mt-4 flex flex-wrap justify-center gap-2">
+            <RouterLink
+              to="/join"
+              class="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-gold px-4 text-sm font-semibold text-ink hover:brightness-110 [&>svg]:size-4"
+            >
+              <AppIcon name="crown" />
+              Become a member
+            </RouterLink>
+            <RouterLink
+              v-if="!isSignedIn"
+              to="/sign-in"
+              class="inline-flex min-h-9 items-center rounded-lg px-4 text-sm font-semibold ring-1 ring-white/25 hover:bg-white/10"
+            >
+              Sign in
+            </RouterLink>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Signed out. -->
+    <!-- Signed out, in an open space. -->
     <div
       v-else
       class="mt-4 flex flex-col gap-3 rounded-lg bg-surface p-4 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between"
@@ -184,7 +211,7 @@ function postReply(parent: Comment) {
       </RouterLink>
     </div>
 
-    <ol class="mt-6 space-y-6">
+    <ol v-if="!exclusive" class="mt-6 space-y-6">
       <li v-for="c in visible" :key="c.id">
         <CommentItem
           :comment="c"
@@ -232,7 +259,7 @@ function postReply(parent: Comment) {
     </ol>
 
     <button
-      v-if="shown < sorted.length"
+      v-if="!exclusive && shown < sorted.length"
       type="button"
       class="mt-6 w-full rounded-lg bg-surface py-2.5 text-sm font-medium ring-1 ring-white/10 hover:bg-raised"
       @click="shown += PAGE_SIZE"
