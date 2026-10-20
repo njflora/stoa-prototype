@@ -7,7 +7,7 @@ import ContentRow from '@/components/ContentRow.vue'
 import EpisodeCard from '@/components/EpisodeCard.vue'
 import { listShows } from '@/data/catalogue'
 import { tierStyles } from '@/data/chat'
-import { features, tiers, TRIAL_DAYS, type PlanId, type TierId } from '@/data/membership'
+import { features, hasTrial, tiers, TRIAL_DAYS, type PlanId, type TierId } from '@/data/membership'
 import { useViewer } from '@/composables/useViewer'
 
 // The members' preview: why join, shown rather than told. A free preview
@@ -37,7 +37,7 @@ const noteFor = ref<TierId | null>(null)
 const faqs = [
   {
     q: 'How does the free trial work?',
-    a: `Pick any tier and use everything in it free for ${TRIAL_DAYS} days. Cancel before the trial ends and you pay nothing.`,
+    a: `Bronze and Silver start with ${TRIAL_DAYS} days free: use everything in the tier, and cancel before the trial ends to pay nothing. Gold has no trial, and starts with the first month.`,
   },
   { q: 'Can I cancel at any time?', a: 'Yes. Membership runs month to month, and cancelling takes effect at the end of the month you have paid for.' },
   { q: 'Can I change tier later?', a: 'Yes. Move up or down at any time from your account page.' },
@@ -84,7 +84,7 @@ const faqs = [
           </p>
           <p class="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm ring-1 ring-white/15">
             <AppIcon name="check" class="!size-4 text-gold" />
-            Try any tier free for {{ TRIAL_DAYS }} days
+            Try Bronze or Silver free for {{ TRIAL_DAYS }} days
           </p>
           <PitchNote id="join-trial" class="mt-4 ml-2 align-top" />
           <div class="mt-6 flex flex-wrap gap-3">
@@ -119,7 +119,7 @@ const faqs = [
         <h2 id="tiers-heading" class="text-2xl font-bold">Choose a tier</h2>
         <PitchNote id="join-tiers" />
       </div>
-      <p class="mt-1 text-sm text-muted">Prices per month. Every tier starts with a {{ TRIAL_DAYS }}-day free trial.</p>
+      <p class="mt-1 text-sm text-muted">Prices per month. Bronze and Silver start with a {{ TRIAL_DAYS }}-day free trial.</p>
 
       <ul class="mt-6 grid gap-4 md:grid-cols-3">
         <li
@@ -160,7 +160,9 @@ const faqs = [
                 ? 'Your current tier'
                 : currentTier
                   ? `Switch to ${tier.name}`
-                  : `Start ${TRIAL_DAYS}-day free trial`
+                  : hasTrial(tier.id)
+                    ? `Start ${TRIAL_DAYS}-day free trial`
+                    : `Join ${tier.name}`
             }}
           </button>
           <p v-if="noteFor === tier.id" class="mt-2 text-center text-xs text-muted" role="status">

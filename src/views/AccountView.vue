@@ -80,7 +80,7 @@ const settings = [
           class="mt-4 inline-flex items-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-ink hover:brightness-110 [&>svg]:size-4"
         >
           <AppIcon name="crown" />
-          Upgrade, with a 7-day free trial
+          Upgrade: Bronze and Silver are free for 7 days
         </RouterLink>
       </template>
     </section>

@@ -226,7 +226,7 @@ export const pitchNotes: PitchNote[] = [
     source: 'Benchmark',
     title: 'A 7-day free trial',
     today: 'Not offered today. Most comparable outlets offer one.',
-    here: 'Every tier starts with a 7-day free trial.',
+    here: 'Bronze and Silver start with a 7-day free trial. Gold, with its extras, does not.',
     page: join,
     hint: 'Viewing as "Free account" or "Signed out".',
   },

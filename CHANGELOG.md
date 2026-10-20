@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-20: Trial, single episodes, article comments, who can post
+
+### Changed
+- The 7-day free trial is for Bronze and Silver only. Gold's button reads "Join Gold", and the Join page, FAQ, account page and pitch note say which tiers have the trial.
+
 ## 2026-10-20: Popular, contributors and members (Nick's feedback)
 
 ### Changed

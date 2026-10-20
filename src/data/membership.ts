@@ -73,5 +73,14 @@ export const features: Feature[] = [
   { label: 'Monthly video call with the team', includedIn: ['gold'] },
 ]
 
-/** A proposal from the benchmark: most comparable outlets offer a trial. */
+/**
+ * A proposal from the benchmark: most comparable outlets offer a trial.
+ * Bronze and Silver only (Nick's call): Gold's extras, such as video
+ * questions and the monthly call, are not something to give away free.
+ */
 export const TRIAL_DAYS = 7
+export const TRIAL_TIERS: TierId[] = ['bronze', 'silver']
+
+export function hasTrial(tier: TierId): boolean {
+  return TRIAL_TIERS.includes(tier)
+}
