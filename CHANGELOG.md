@@ -18,6 +18,7 @@ All notable changes to this prototype are listed here. Newest first.
 - Search: a contributor result opens their profile.
 - A footer links block: Contributors, FAQ, Contact, Courses, Shop and Pitch notes. FAQ jumps to the questions on the members' page, below the sticky header.
 - /contact: placeholder addresses for general, membership and press enquiries. A contact form is not part of this demo.
+- The Shows page for members: it leads with Continue watching, Trending this week (across every show) and Latest, then the show grids as "The daily shows" and "Members' shows, all unlocked with your Gold membership". Free and signed-out viewers see it as before.
 - Show pages filter by contributor. Click a name in the show's header, or use the contributor chips above the list; "View profile" appears beside the active filter. Contributor, access and sort combine, and all of it is kept in the address.
 
 ## 2026-10-20: An account page from the demo's real state
