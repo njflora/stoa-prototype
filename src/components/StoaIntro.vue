@@ -201,6 +201,15 @@ const waxPath = (() => {
   return `M${points.join('L')}Z`
 })()
 const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
+// The E of Delphi, the old form carved at Apollo's temple: an upright and a
+// crossbar between two arcs that bow towards the middle. Drawn about the
+// seal's centre, about 40 units tall.
+const DELPHIC_E = [
+  'M-14,-20 Q-0.6,0 -14,20', // left arc
+  'M14,-20 Q0.6,0 14,20', // right arc
+  'M0,-15.5 V15.5', // upright
+  'M-15.8,0 H15.8', // crossbar
+].join(' ')
 </script>
 
 <template>
@@ -387,8 +396,9 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
                   fill-opacity="0.4"
                   :transform="`rotate(${angle})`"
                 />
-                <text y="13" text-anchor="middle" class="font-serif" font-size="38" font-weight="700" fill="#3d0f2e" fill-opacity="0.6">Σ</text>
-                <text y="11" text-anchor="middle" class="font-serif" font-size="38" font-weight="700" fill="#f6c2de">Σ</text>
+                <!-- The Delphic E, pressed into the wax: a shadow, then the mark -->
+                <path :d="DELPHIC_E" transform="translate(0 1.5)" fill="none" stroke="#3d0f2e" stroke-opacity="0.6" stroke-width="3.2" />
+                <path :d="DELPHIC_E" fill="none" stroke="#f6c2de" stroke-width="3.2" />
               </g>
             </defs>
             <g class="half half-left" :clip-path="`url(#${id('left')})`"><use :href="`#${id('wax-face')}`" /></g>

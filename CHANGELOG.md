@@ -17,6 +17,7 @@ All notable changes to this prototype are listed here. Newest first.
 - The live page's "Coming up live" contradicted the show pages (The Forum on Thursdays, Statecraft on Fridays). Each show now has one slot (days, hour, and whether it airs live) that drives its episode dates, its schedule line and the live page, so they can never disagree. "Coming up live" lists the shows that air live: The Stoa Podcast, Morning Brief and The Forum, soonest first. Episode data is unchanged.
 - Times on the live page use the site's style ("1:00 pm", "Friday 23rd October") instead of "13:00".
 - A series listed part 2 of "Athens and Sparta" before part 1, because two Chronos episodes shared a timestamp. Series now list their parts in part order.
+- The seal on the intro bears the Delphic E, the old form of the letter carved at Apollo's temple at Delphi, instead of a modern Σ. It is drawn as lines rather than typed, so it looks the same in every font, and the crack runs through its upright.
 - The intro's sun showed only one stripe beside the seal. It now has seven vaporwave stripes across its lower half, thin and far apart near the middle and thicker towards the horizon, so they show on both sides of the seal. Its size and position are unchanged.
 
 ## 2026-10-20: Preview sound and a shorter credits page
