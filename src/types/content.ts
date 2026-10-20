@@ -33,11 +33,22 @@ export interface Show {
   pageCount?: number
   /** A free episode from this show, for previews. */
   freePreview?: Episode
-  /** When new episodes arrive, such as "Live weekdays at 1:00 pm". */
+  /** When new episodes arrive, such as "Live weekdays at 1:00 pm". Written from `slot`. */
   schedule?: string
+  /** When the show airs: the one definition behind its schedule line and the live page. */
+  slot?: ShowSlot
   /** Episodes free to watch (free or free preview), and members-only ones. */
   freeCount?: number
   membersCount?: number
+}
+
+export interface ShowSlot {
+  /** Days of the week, 0 is Sunday. */
+  days: number[]
+  hour: number
+  minute: number
+  /** Streamed live at that time, rather than released. */
+  live: boolean
 }
 
 export interface SeriesInfo {

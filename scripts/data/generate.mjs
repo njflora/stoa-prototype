@@ -112,15 +112,31 @@ function lineup(pool, count, anchor, anchorChance) {
   return pool.filter((id) => chosen.has(id))
 }
 
+// Each show's slot is the one definition of when it airs: the episode dates
+// below, the schedule line on its page and the live page's "Coming up live"
+// all come from it, so they can never disagree. days: 0 is Sunday.
+// unit: what a new release is called, for the schedule line.
+const WEEKDAYS = [1, 2, 3, 4, 5]
 const shows = [
-  { id: 'stoa-podcast', name: 'The Stoa Podcast', tagline: 'The daily flagship, live every weekday', access: 'free', hostIds: ['andrew', 'richard', 'tom'], palette: ['#c04d93', '#2a0f22', '#f0a6ca'], streamedLive: true, schedule: 'Live weekdays at 1:00 pm' },
-  { id: 'morning-brief', name: 'Morning Brief', tagline: 'The day ahead, in short segments every weekday morning', access: 'free', hostIds: ['danny'], palette: ['#d5b720', '#2a2205', '#f6e7a1'], streamedLive: true, schedule: 'Weekdays from 8:00 am' },
-  { id: 'conversations', name: 'Conversations', tagline: 'Long-form interviews with interesting people', access: 'free', hostIds: ['richard'], palette: ['#8b5cf6', '#170d2e', '#d8c8ff'], schedule: 'New interviews on Wednesdays' },
-  { id: 'chronos', name: 'Chronos', tagline: 'History told in full, series by series', access: 'premium', hostIds: ['helen'], palette: ['#2a9d8f', '#08221f', '#e9c46a'], schedule: 'New parts on Sundays' },
-  { id: 'statecraft', name: 'Statecraft', tagline: 'Geopolitics without the noise', access: 'premium', hostIds: ['rachel'], palette: ['#4f8fc0', '#0b1726', '#a8dadc'], schedule: 'Tuesdays at 3:00 pm' },
-  { id: 'ledger', name: 'Ledger', tagline: 'Economics you can actually use', access: 'premium', hostIds: ['neil'], palette: ['#6a994e', '#101b0c', '#e3f0c8'], schedule: 'Thursdays at 11:00 am' },
-  { id: 'the-forum', name: 'The Forum', tagline: 'The panel show, live for members', access: 'premium', hostIds: ['andrew', 'tom', 'danny', 'neil'], palette: ['#e76f51', '#260d06', '#f4a261'], schedule: 'Live on Fridays at 7:00 pm' },
+  { id: 'stoa-podcast', name: 'The Stoa Podcast', tagline: 'The daily flagship, live every weekday', access: 'free', hostIds: ['andrew', 'richard', 'tom'], palette: ['#c04d93', '#2a0f22', '#f0a6ca'], streamedLive: true, slot: { days: WEEKDAYS, hour: 13, minute: 0, live: true }, unit: 'episodes' },
+  { id: 'morning-brief', name: 'Morning Brief', tagline: 'The day ahead, in short segments every weekday morning', access: 'free', hostIds: ['danny'], palette: ['#d5b720', '#2a2205', '#f6e7a1'], streamedLive: true, slot: { days: WEEKDAYS, hour: 8, minute: 0, live: true }, unit: 'editions' },
+  { id: 'conversations', name: 'Conversations', tagline: 'Long-form interviews with interesting people', access: 'free', hostIds: ['richard'], palette: ['#8b5cf6', '#170d2e', '#d8c8ff'], slot: { days: [3], hour: 10, minute: 0, live: false }, unit: 'interviews' },
+  { id: 'chronos', name: 'Chronos', tagline: 'History told in full, series by series', access: 'premium', hostIds: ['helen'], palette: ['#2a9d8f', '#08221f', '#e9c46a'], slot: { days: [0], hour: 13, minute: 0, live: false }, unit: 'parts' },
+  { id: 'statecraft', name: 'Statecraft', tagline: 'Geopolitics without the noise', access: 'premium', hostIds: ['rachel'], palette: ['#4f8fc0', '#0b1726', '#a8dadc'], slot: { days: [2], hour: 15, minute: 0, live: false }, unit: 'episodes' },
+  { id: 'ledger', name: 'Ledger', tagline: 'Economics you can actually use', access: 'premium', hostIds: ['neil'], palette: ['#6a994e', '#101b0c', '#e3f0c8'], slot: { days: [4], hour: 11, minute: 0, live: false }, unit: 'episodes' },
+  { id: 'the-forum', name: 'The Forum', tagline: 'The panel show, live for members', access: 'premium', hostIds: ['andrew', 'tom', 'danny', 'neil'], palette: ['#e76f51', '#260d06', '#f4a261'], slot: { days: [5], hour: 19, minute: 0, live: true }, unit: 'episodes' },
 ]
+const slotOf = (showId) => shows.find((s) => s.id === showId).slot
+
+/** "Live weekdays at 1:00 pm", "New parts on Sundays at 1:00 pm". */
+function scheduleText({ slot, unit }) {
+  const dayNames = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays']
+  const days = slot.days.join() === WEEKDAYS.join() ? 'weekdays' : `on ${slot.days.map((d) => dayNames[d]).join(' and ')}`
+  const hour12 = slot.hour % 12 || 12
+  const time = `${hour12}:${String(slot.minute).padStart(2, '0')} ${slot.hour < 12 ? 'am' : 'pm'}`
+  return slot.live ? `Live ${days} at ${time}` : `New ${unit} ${days} at ${time}`
+}
+for (const show of shows) show.schedule = scheduleText(show)
 
 // ---------- topic pools ----------
 const newsTopics = [
@@ -245,7 +261,8 @@ function comments(viewCount, rate) {
 
 // The Stoa Podcast: #1 to #1530, weekdays, live at 13:00.
 {
-  const dates = datesBack(1530, [1, 2, 3, 4, 5])
+  const slot = slotOf('stoa-podcast')
+  const dates = datesBack(1530, slot.days)
   dates.forEach((date, i) => {
     const number = 1530 - i
     const ageDays = (generatedAt - date) / DAY
@@ -255,7 +272,7 @@ function comments(viewCount, rate) {
       title: `The Stoa Podcast #${number}`,
       topics: [pick(newsTopics), pick(newsTopics), pick(newsTopics)].filter((t, j, a) => a.indexOf(t) === j),
       hostIds: lineup(['andrew', 'richard', 'tom', 'gary', 'sally'], 3, 'andrew', 0.85),
-      publishedAt: at(date, 13),
+      publishedAt: at(date, slot.hour, slot.minute),
       durationMin: between(80, 110),
       access: 'free',
       live: true,
@@ -268,7 +285,8 @@ function comments(viewCount, rate) {
 // Morning Brief: three segments every weekday morning for about four years.
 const nextMorning = deck('morning-brief', morningTopics)
 {
-  const dates = datesBack(1040, [1, 2, 3, 4, 5], 0)
+  const slot = slotOf('morning-brief')
+  const dates = datesBack(1040, slot.days, 0)
   dates.forEach((date) => {
     const ageDays = (generatedAt - date) / DAY
     const segments = [nextMorning(), nextMorning()]
@@ -276,10 +294,10 @@ const nextMorning = deck('morning-brief', morningTopics)
     const edition = views(800, ageDays)
     // Sally covers some mornings.
     const presenter = rota() < 0.85 ? ['danny'] : ['sally']
-    add('morning-brief', { edition: true, hostIds: presenter, publishedAt: at(date, 8), durationMin: 22, access: 'free', views: edition, comments: comments(edition, 0.008) })
+    add('morning-brief', { edition: true, hostIds: presenter, publishedAt: at(date, slot.hour, slot.minute), durationMin: 22, access: 'free', views: edition, comments: comments(edition, 0.008) })
     segments.forEach((topic, j) => {
       const v = views(350, ageDays)
-      add('morning-brief', { title: `Morning Brief | ${topic}`, hostIds: presenter, publishedAt: at(date, 8, 30 + j * 15), durationMin: between(6, 12), access: 'free', views: v, comments: comments(v, 0.006) })
+      add('morning-brief', { title: `Morning Brief | ${topic}`, hostIds: presenter, publishedAt: at(date, slot.hour, slot.minute + 30 + j * 15), durationMin: between(6, 12), access: 'free', views: v, comments: comments(v, 0.006) })
     })
   })
 }
@@ -295,7 +313,8 @@ const nextMorning = deck('morning-brief', morningTopics)
     for (let p = 1; p <= parts; p++) plan.push({ series: { name, part: p, of: parts }, partTitle: partTitles[name][p - 1] })
     if (planRandom() < 0.4) plan.push({ extra: nextExtra() })
   }
-  const dates = datesBack(plan.length, [0], 1).reverse() // oldest first
+  const slot = slotOf('chronos')
+  const dates = datesBack(plan.length, slot.days, 1).reverse() // oldest first
   plan.forEach((item, i) => {
     const number = 160 + i
     const ageDays = (generatedAt - dates[i]) / DAY
@@ -306,7 +325,7 @@ const nextMorning = deck('morning-brief', morningTopics)
       title: isExtra ? `Chronos #${number} | ${item.extra}` : `Chronos #${number} | ${item.partTitle} | ${item.series.name}, Part ${item.series.part}`,
       series: item.series,
       hostIds: ['helen'],
-      publishedAt: at(dates[i], 13),
+      publishedAt: at(dates[i], slot.hour, slot.minute),
       durationMin: isExtra ? between(40, 55) : between(75, 95),
       access: isExtra ? 'freemium' : 'premium',
       views: v,
@@ -316,8 +335,9 @@ const nextMorning = deck('morning-brief', morningTopics)
 }
 
 // Weekly members' shows, each with the odd free preview.
-function weekly(showId, count, day, hour, makeTitle, base, duration, previewEvery) {
-  const dates = datesBack(count, [day], 1)
+function weekly(showId, count, makeTitle, base, duration, previewEvery) {
+  const { days, hour, minute } = slotOf(showId)
+  const dates = datesBack(count, days, 1)
   dates.forEach((date, i) => {
     const ageDays = (generatedAt - date) / DAY
     const v = views(base, ageDays)
@@ -325,7 +345,7 @@ function weekly(showId, count, day, hour, makeTitle, base, duration, previewEver
     add(showId, {
       hostIds: shows.find((s) => s.id === showId).hostIds,
       ...makeTitle(count - i, preview),
-      publishedAt: at(date, hour),
+      publishedAt: at(date, hour, minute),
       durationMin: preview ? between(12, 25) : between(duration[0], duration[1]),
       access: preview ? 'freemium' : 'premium',
       views: v,
@@ -337,13 +357,14 @@ function weekly(showId, count, day, hour, makeTitle, base, duration, previewEver
 const nextGeo = deck('statecraft', combine(geoTopics, geoAngles))
 const nextEcon = deck('ledger', combine(econTopics, econAngles))
 const nextForum = deck('the-forum', combine(forumTopics, forumEditions))
-weekly('statecraft', 200, 2, 15, (n) => ({ number: n, title: `Statecraft #${n} | ${nextGeo()}` }), 2300, [60, 85], 15)
-weekly('ledger', 200, 4, 11, (n) => ({ number: n, title: `Ledger #${n} | ${nextEcon()}` }), 2100, [45, 65], 15)
-weekly('the-forum', 200, 5, 19, (n, preview) => ({ number: n, title: preview ? `The Forum #${n} | The Best Bits of #${n - 1}` : `The Forum #${n} | ${nextForum()}`, live: !preview, hostIds: lineup(['andrew', 'tom', 'danny', 'neil', 'gary', 'sally'], 4, 'tom', 0.8) }), 3800, [95, 125], 20)
+weekly('statecraft', 200, (n) => ({ number: n, title: `Statecraft #${n} | ${nextGeo()}` }), 2300, [60, 85], 15)
+weekly('ledger', 200, (n) => ({ number: n, title: `Ledger #${n} | ${nextEcon()}` }), 2100, [45, 65], 15)
+weekly('the-forum', 200, (n, preview) => ({ number: n, title: preview ? `The Forum #${n} | The Best Bits of #${n - 1}` : `The Forum #${n} | ${nextForum()}`, live: !preview, hostIds: lineup(['andrew', 'tom', 'danny', 'neil', 'gary', 'sally'], 4, 'tom', 0.8) }), 3800, [95, 125], 20)
 
 // Conversations: long interviews, every week or so.
 {
-  const dates = datesBack(150, [3], 2)
+  const slot = slotOf('conversations')
+  const dates = datesBack(150, slot.days, 2)
   const nextTopic = deck('conversations', interviewTopics)
   const nextGuest = deck('guests', guests)
   dates.forEach((date) => {
@@ -353,7 +374,7 @@ weekly('the-forum', 200, 5, 19, (n, preview) => ({ number: n, title: preview ? `
     const v = views(1100, ageDays)
     const r = rota()
     const interviewer = r < 0.8 ? 'richard' : r < 0.9 ? 'helen' : 'andrew'
-    add('conversations', { title: `${topic} | Interview with ${guest}`, hostIds: [interviewer], publishedAt: at(date, 10), durationMin: between(55, 85), access: 'free', views: v, comments: comments(v, 0.008) })
+    add('conversations', { title: `${topic} | Interview with ${guest}`, hostIds: [interviewer], publishedAt: at(date, slot.hour, slot.minute), durationMin: between(55, 85), access: 'free', views: v, comments: comments(v, 0.008) })
   })
 }
 
@@ -425,7 +446,7 @@ const live = {
   title: 'The Stoa Podcast #1531',
   hostIds: ['andrew', 'richard', 'tom'],
   viewers: 1984,
-  startHour: 13,
+  startHour: slotOf('stoa-podcast').hour,
 }
 
 write('meta.json', { generatedAt: generatedAt.toISOString(), pageSize: PAGE_SIZE, total: episodes.length, articleCount: articleSources.length })

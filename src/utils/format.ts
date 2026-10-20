@@ -1,11 +1,6 @@
 const DAY_MS = 86_400_000
 
 const shortDate = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' })
-const longDate = new Intl.DateTimeFormat('en-GB', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-})
 const number = new Intl.NumberFormat('en-GB')
 
 /** "Today", "Yesterday", "3 days ago", then "12 Oct". */
@@ -33,9 +28,11 @@ export function formatTimeAgo(iso: string, now = new Date()): string {
   return shortDate.format(new Date(iso))
 }
 
-/** "Monday 19 October". */
+/** "Monday 19th October", in the site's ordinal date style. */
 export function formatLongDate(date: Date): string {
-  return longDate.format(date).replace(',', '')
+  const weekday = date.toLocaleDateString('en-GB', { weekday: 'long' })
+  const month = date.toLocaleDateString('en-GB', { month: 'long' })
+  return `${weekday} ${ordinal(date.getDate())} ${month}`
 }
 
 /** "2h 14m", or "14m 05s" in the last hour. */
@@ -58,9 +55,9 @@ export function formatClock(totalSeconds: number): string {
   return hours > 0 ? `${hours}:${String(minutes).padStart(2, '0')}:${seconds}` : `${minutes}:${seconds}`
 }
 
-/** "13:00". */
+/** "1:00 pm", the site's time style (as in "Published 3:00 pm"). */
 export function formatTime(date: Date): string {
-  return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+  return date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }).replace(/\s/g, ' ').toLowerCase()
 }
 
 /** "1h 25m", "45m", or "7h" for whole hours. */
@@ -91,10 +88,7 @@ export function formatEditionDate(date: Date): string {
  */
 export function formatPublished(iso: string, now = new Date()): string {
   const date = new Date(iso)
-  if (date.toDateString() === now.toDateString()) {
-    const time = date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }).replace(/\s/g, ' ')
-    return `Published ${time.toLowerCase()}`
-  }
+  if (date.toDateString() === now.toDateString()) return `Published ${formatTime(date)}`
   const month = date.toLocaleDateString('en-GB', { month: 'long' })
   const day = ordinal(date.getDate())
   return date.getFullYear() === now.getFullYear()

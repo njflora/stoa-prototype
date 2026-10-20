@@ -137,8 +137,12 @@ Each idea maps to a finding in the planning doc. Effort is S (hours), M (a day o
 
 ## Questions for you
 
-1. **How best to share the site?** Options: deploy to GitHub Pages for a public link, take screenshots of key screens, or record a short walkthrough video. GitHub Pages is the next planned step.
-2. Should The Forum and Statecraft also get live chat replay, since they stream live?
-3. Should article pages come next (the reading-list overhaul from Finding 4), or the installable PWA (Finding 8)?
-4. Is the 7-day trial the right proposal, or should the page show their offer exactly as it is today?
-5. Anything in the pitch plan that the prototype should show and does not yet?
+1. **Which review notes should be fixed first?** REVIEW-NOTES.md lists 24. The suggestion is notes 1, 2, 4 and 5 (the live schedule mismatch, missing and out-of-date pitch notes, the article error state, and a pause button on the hero carousel). Each is small.
+2. **Pitch notes for your feedback features.** Contributor profiles, the members' gate, article comments, the preview mute button and the members' Shows page have no pitch note. Should they be labelled as proposals with the source "Nick's feedback", or tied to a finding in the planning doc?
+3. **The exact wording of Findings 3 and 9.** The pitch notes for the show archive and search only say "Listed as a gap in the planning doc". Can you paste the findings' wording, so the "today" line is specific?
+4. **Real Rumble and Odysee embed URLs.** Finding 1 (the black screen) and Rumble on phones cannot be tested without them. Do you have test videos that are fine to use in a public repo?
+5. **Deployment in week 6.** What should the GitHub repository be called (it sets the site's address and the `base` setting), and is adding `vite-plugin-pwa` for the installable app approved?
+6. **Live chat replay for The Forum and Statecraft.** Both are described as live shows. Should they get chat replay too, like The Stoa Podcast and Morning Brief?
+7. **Votes.** Likes and dislikes are forgotten when you leave a page, unlike watch progress and purchases. Save them, or say in the pitch that they are not saved in the demo?
+8. **Sign in.** It is the last placeholder page. Keep it as a placeholder (the demo panel switches viewers), or build a small honest page?
+

@@ -12,11 +12,12 @@ import MemberHandoff from '@/components/MemberHandoff.vue'
 import ReadingList from '@/components/ReadingList.vue'
 import ReminderButton from '@/components/ReminderButton.vue'
 import TitleCard from '@/components/TitleCard.vue'
-import { getShow } from '@/data/catalogue'
+import { getShow, listShows } from '@/data/catalogue'
 import { useLiveStatus } from '@/composables/useLiveStatus'
 import { useViewer } from '@/composables/useViewer'
 import type { Show } from '@/types/content'
 import { formatCountdown, formatLongDate, formatTime } from '@/utils/format'
+import { nextOccurrence } from '@/utils/schedule'
 
 // One page for the whole live show: countdown, the free stream, the break
 // with its route into the members' after-show, and the recording with its
@@ -74,15 +75,6 @@ function startsLabel(date: Date): string {
   return `${formatLongDate(date)} at ${time}`
 }
 
-/** The next given weekday (0 is Sunday) at the given hour. */
-function nextWeekday(day: number, hour: number): Date {
-  const date = new Date()
-  date.setHours(hour, 0, 0, 0)
-  const ahead = (day - date.getDay() + 7) % 7 || (date <= new Date() ? 7 : 0)
-  date.setDate(date.getDate() + ahead)
-  return date
-}
-
 interface ScheduleItem {
   id: string
   show: Show
@@ -91,23 +83,22 @@ interface ScheduleItem {
   members: boolean
 }
 
-const schedule = computed<ScheduleItem[]>(() => [
-  { id: show.id, show, title: 'The Stoa Podcast', start: nextStart.value, members: false },
-  {
-    id: 'the-forum',
-    show: getShow('the-forum'),
-    title: 'The Forum',
-    start: nextWeekday(4, 19),
-    members: true,
-  },
-  {
-    id: 'statecraft',
-    show: getShow('statecraft'),
-    title: 'Statecraft',
-    start: nextWeekday(5, 15),
-    members: true,
-  },
-])
+// Every show that airs live, from its slot: the same definition behind the
+// show pages' schedule lines, so the two always agree. Soonest first.
+const schedule = computed<ScheduleItem[]>(() =>
+  listShows()
+    .filter((s) => s.slot?.live)
+    .map((s) => ({
+      id: s.id,
+      show: s,
+      title: s.name,
+      start: s.id === show.id ? nextStart.value : nextOccurrence(s.slot!, now.value),
+      members: s.access === 'premium',
+    }))
+    .sort((a, b) => a.start.getTime() - b.start.getTime()),
+)
+// The flagship's own entry, for the countdown's reminder button.
+const flagship = computed(() => schedule.value.find((item) => item.id === show.id)!)
 </script>
 
 <template>
@@ -131,7 +122,7 @@ const schedule = computed<ScheduleItem[]>(() => [
           :countdown="countdown"
           :note="`The Stoa Podcast, ${startsLabel(nextStart)}`"
         >
-          <ReminderButton :target="schedule[0]!" size="large" />
+          <ReminderButton :target="flagship" size="large" />
         </LiveCountdown>
 
         <LiveCountdown
