@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BuyEpisodeDialog from '@/components/BuyEpisodeDialog.vue'
 import ContributorNames from '@/components/ContributorNames.vue'
 import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
@@ -18,7 +19,8 @@ import { usePlayback } from '@/composables/usePlayback'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import { artForEpisode } from '@/data/media'
-import { formatDuration, formatPublished, toRoman } from '@/utils/format'
+import { EPISODE_PRICE } from '@/data/membership'
+import { formatDuration, formatPrice, formatPublished, toRoman } from '@/utils/format'
 
 // An episode page. Series episodes get the series queue beside the
 // player, and when a part ends the next one plays after a short
@@ -42,6 +44,7 @@ const series = computed(() => {
   return fromLink ?? (episode.value ? seriesOf(episode.value) : undefined)
 })
 const locked = computed(() => !!episode.value && !canWatch(episode.value))
+const buying = ref(false)
 
 const partIndex = computed(() =>
   series.value && episode.value ? series.value.episodes.findIndex((e) => e.id === episode.value!.id) : -1,
@@ -147,13 +150,33 @@ watchEffect(() => {
                 <AppIcon name="lock" />
               </span>
               <p class="mt-3 text-lg font-semibold sm:text-2xl">This episode is for members</p>
-              <RouterLink
-                to="/join"
-                class="mt-4 inline-flex items-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-ink hover:brightness-110 [&>svg]:size-4"
-              >
-                <AppIcon name="crown" />
-                Upgrade to watch
-              </RouterLink>
+              <!-- Two ways in: join for everything, or buy just this one. -->
+              <div class="mt-4 flex flex-wrap justify-center gap-3">
+                <RouterLink
+                  to="/join"
+                  class="inline-flex items-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-ink hover:brightness-110 [&>svg]:size-4"
+                >
+                  <AppIcon name="crown" />
+                  Upgrade to watch everything
+                </RouterLink>
+                <button
+                  v-if="isSignedIn"
+                  type="button"
+                  class="inline-flex items-center gap-2 rounded-lg bg-white/15 px-5 py-2.5 text-sm font-semibold ring-1 ring-white/20 backdrop-blur hover:bg-white/25"
+                  @click="buying = true"
+                >
+                  Buy this episode, {{ formatPrice(EPISODE_PRICE) }}
+                </button>
+                <RouterLink
+                  v-else
+                  to="/sign-in"
+                  class="inline-flex items-center gap-2 rounded-lg bg-white/15 px-5 py-2.5 text-sm font-semibold ring-1 ring-white/20 backdrop-blur hover:bg-white/25"
+                >
+                  Sign in to buy, {{ formatPrice(EPISODE_PRICE) }}
+                </RouterLink>
+              </div>
+              <PitchNote id="buy-episode" class="mt-3" />
+              <BuyEpisodeDialog v-if="episode" v-model="buying" :episode="episode" />
             </div>
           </div>
 

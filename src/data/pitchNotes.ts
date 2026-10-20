@@ -28,6 +28,7 @@ const live = { name: 'Live page', to: '/live' }
 const episode = { name: 'Episode page', to: '/watch/stoa-podcast-1530' }
 const seriesEpisode = { name: 'Episode in a series', to: '/watch/chronos-111?series=the-fall-of-the-republic' }
 const join = { name: "Members' preview", to: '/join' }
+const lockedEpisode = { name: 'A locked episode', to: '/watch/chronos-116?series=roman-resurgence' }
 const showPage = { name: 'A show page', to: '/shows/chronos' }
 const coursesPage = { name: 'Courses', to: '/courses' }
 const shopPage = { name: 'Shop', to: '/shop' }
@@ -274,6 +275,16 @@ export const pitchNotes: PitchNote[] = [
     today: 'A single philosophy community on the separate courses site, joined by email.',
     here: 'Join with one click on your Stoa account. One forum is open; more are planned, and the same model could give every show or series its own forum.',
     page: coursesPage,
+  },
+  {
+    id: 'buy-episode',
+    kind: 'proposal',
+    source: 'New idea',
+    title: 'Buy a single episode',
+    today: 'Members-only content needs a membership.',
+    here: 'A locked episode can be bought on its own for £1.99, kept on the account. A way to try members\' content without a plan.',
+    page: lockedEpisode,
+    hint: 'Viewing as "Free account".',
   },
   {
     id: 'search',

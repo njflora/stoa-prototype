@@ -10,6 +10,7 @@ import { listShows } from '@/data/catalogue'
 import { getCourse } from '@/data/courses'
 import { tiers } from '@/data/membership'
 import { useCommunity } from '@/composables/useCommunity'
+import { usePurchases } from '@/composables/usePurchases'
 import { useQuery } from '@/composables/useQuery'
 import { useReminders } from '@/composables/useReminders'
 import { useViewer } from '@/composables/useViewer'
@@ -26,6 +27,11 @@ const { reminders, turnOff } = useReminders()
 
 const tier = computed(() => tiers.find((t) => t.id === user.value?.tier))
 const { joined, leave } = useCommunity()
+const { owned } = usePurchases()
+const bought = useQuery(
+  () => owned.value.join(','),
+  () => getEpisodes(owned.value),
+)
 const communities = computed(() => joined.value.map((id) => getCourse(id)).filter((c) => c !== undefined))
 
 const history = useQuery(
@@ -109,6 +115,15 @@ const settings = [
           :locked="episode.access === 'premium' && !isMember"
           fluid
         />
+      </div>
+    </section>
+
+    <section v-if="owned.length" class="mt-10" aria-labelledby="your-episodes">
+      <h2 id="your-episodes" class="text-lg font-semibold">Your episodes</h2>
+      <p class="text-sm text-muted">Bought one at a time, yours to keep.</p>
+      <div class="mt-4 grid grid-cols-1 gap-x-4 gap-y-8 min-[480px]:grid-cols-2 lg:grid-cols-3">
+        <CardSkeleton v-if="bought.loading.value && !bought.data.value" :count="2" fluid />
+        <EpisodeCard v-for="episode in bought.data.value ?? []" v-else :key="episode.id" :episode="episode" fluid />
       </div>
     </section>
 

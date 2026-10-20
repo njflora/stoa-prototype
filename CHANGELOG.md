@@ -4,7 +4,12 @@ All notable changes to this prototype are listed here. Newest first.
 
 ## 2026-10-20: Trial, single episodes, article comments, who can post
 
+### Added
+- Buy a single members' episode for £1.99, kept on the account. A confirmation dialog shows the episode and price and says that no payment is taken in the demo. It follows the dialog pattern: focus moves in, Escape closes, and focus returns. Signed-out visitors are asked to sign in first; members never see the option.
+- Bought episodes unlock everywhere at once, carry an "Owned" badge, and are listed under "Your episodes" on the account page. A pitch note: "Buy a single episode".
+
 ### Changed
+- Locked episode cards open the episode page, which now offers two ways in: "Upgrade to watch everything" or "Buy this episode, £1.99".
 - The 7-day free trial is for Bronze and Silver only. Gold's button reads "Join Gold", and the Join page, FAQ, account page and pitch note say which tiers have the trial.
 
 ## 2026-10-20: Popular, contributors and members (Nick's feedback)

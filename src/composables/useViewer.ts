@@ -2,6 +2,7 @@ import { computed, ref, watch } from 'vue'
 import type { ChatTier } from '@/data/chat'
 import type { Episode } from '@/types/content'
 import { readJson, writeJson } from './storage'
+import { usePurchases } from './usePurchases'
 
 // Stands in for a signed-in account and the show's schedule. There is no
 // real login: the demo panel switches between a signed-out visitor, a free
@@ -71,9 +72,13 @@ export function useViewer() {
       : null,
   )
 
-  /** Free viewers can watch free episodes and free previews. Members watch everything. */
+  /**
+   * Free viewers can watch free episodes, free previews and members'
+   * episodes they have bought. Members watch everything.
+   */
+  const { isOwned } = usePurchases()
   function canWatch(episode: Episode): boolean {
-    return isMember.value || episode.access !== 'premium'
+    return isMember.value || episode.access !== 'premium' || (state.value.viewer !== 'signed-out' && isOwned(episode.id))
   }
 
   function setViewer(next: ViewerType) {

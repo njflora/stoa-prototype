@@ -8,6 +8,8 @@ import { episodeLabel, getShow, isNew, seriesOf } from '@/data/catalogue'
 import type { Episode } from '@/types/content'
 import { artForEpisode } from '@/data/media'
 import { usePreview } from '@/composables/usePreview'
+import { usePurchases } from '@/composables/usePurchases'
+import { useViewer } from '@/composables/useViewer'
 import { formatCount, formatPublished, toRoman } from '@/utils/format'
 
 const props = withDefaults(
@@ -31,7 +33,12 @@ const caption = computed(() =>
   props.variant === 'show' ? `Start with: ${props.episode.title}` : props.episode.title,
 )
 
+const { isOwned } = usePurchases()
+const { isMember, isSignedIn } = useViewer()
+
 const badge = computed(() => {
+  if (props.episode.access === 'premium' && !isMember.value && isSignedIn.value && isOwned(props.episode.id))
+    return { text: 'Owned', class: 'bg-[#2a9d8f] text-white' }
   if (props.episode.access === 'freemium') return { text: 'Free preview', class: 'bg-accent text-white' }
   if (props.episode.access === 'premium' && !props.locked)
     return { text: 'Members', class: 'bg-gold text-ink' }
@@ -43,12 +50,12 @@ const series = computed(() => seriesOf(props.episode))
 
 // Series episodes open with their series queue alongside.
 const to = computed(() => {
-  if (props.locked) return '/join'
+  // Locked episodes open too: the page offers joining or buying just this one.
   const path = `/watch/${props.episode.id}`
   return series.value ? { path, query: { series: series.value.slug } } : path
 })
 const label = computed(() =>
-  props.locked ? `${caption.value}. Members only. Join to watch.` : undefined,
+  props.locked ? `${caption.value}. Members only. Join or buy to watch.` : undefined,
 )
 
 // Still at rest; plays a preview on hover, focus, or (on phones) when it

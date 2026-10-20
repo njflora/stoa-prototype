@@ -81,6 +81,9 @@ export const features: Feature[] = [
 export const TRIAL_DAYS = 7
 export const TRIAL_TIERS: TierId[] = ['bronze', 'silver']
 
+/** One members' episode, bought to keep (Nick's call): a way to try without a plan. */
+export const EPISODE_PRICE = 1.99
+
 export function hasTrial(tier: TierId): boolean {
   return TRIAL_TIERS.includes(tier)
 }
