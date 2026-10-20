@@ -151,7 +151,7 @@ watchEffect(() => {
             </form>
             <p v-else-if="forum.status === 'open' && isSignedIn" class="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/80">
               <AppIcon name="lock" class="!size-4 text-gold" /> Posting here is for members.
-              <RouterLink to="/join" class="font-semibold text-gold underline">Upgrade</RouterLink>
+              <RouterLink to="/join" class="inline-flex min-h-6 items-center font-semibold text-gold underline">Upgrade</RouterLink>
             </p>
             <p v-else-if="forum.status === 'open'" class="mt-3 text-sm text-white/80">
               <RouterLink to="/sign-in" class="font-semibold underline">Sign in</RouterLink> to post.

@@ -4,7 +4,7 @@ Status as of 19 October 2026, updated during step 4 of the second brief (real-fe
 
 ## In one paragraph
 
-The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. Every nav link now leads to a finished page (step 5). The code walkthrough (step 6) is next. There are 50 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
+The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. Every nav link now leads to a finished page (step 5). The code walkthrough (step 6) is next. There are 55 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
 
 ## Context
 
@@ -28,6 +28,8 @@ The pitch prototype is built and working locally. All three priority sections fr
 - **Courses live inside the site**, in their course shop's format and at their price points, with a page per course. The Philosophy Circle is a free membership on your account, with an open forum and more forums on the roadmap.
 - **One shop inside the site**, using the real stores' product format and prices, with a store switch in place of three separate regional stores.
 - **An account page** built from the demo's state: membership, watch history, reminders and the newsletter. Billing and passwords say they are not part of the demo.
+- **Buy a single episode.** Free accounts can buy one members' episode for £1.99 to keep, from the locked episode page, instead of joining. No payment is taken in the demo.
+- **Comments under articles,** and a clear rule for who can post: free accounts in casual spaces (the free daily shows, articles, the Circle's General discussion), members everywhere. Every comment section and forum says which it is.
 - **Instant search over any page** (Finding 9). Press "/", the header button or the Search tab on phones. Results appear as you type, grouped as Episodes, Series, Shows, Hosts and Articles, in a see-through panel over the current page. Small typos are forgiven, the keyboard works throughout, and the search is kept in the address so it can be shared.
 - **Three viewer types**, switched from a demo panel since there is no real login:
   - Signed out: Upgrade and a "Sign in / Sign up" button.
@@ -88,7 +90,8 @@ The pitch prototype is built and working locally. All three priority sections fr
 | Author name removed from the footer | The footer reads "Stoa is an unofficial concept" |
 | Real tier names, prices and perks | So the pitch maps directly onto their offer |
 | No yearly prices | Their yearly prices are still to collect |
-| 7-day trial shown | The benchmark lists "no free trial" as a gap |
+| 7-day trial for Bronze and Silver only | The benchmark lists "no free trial" as a gap; Gold's extras are not given away free (Nick's call) |
+| Single members' episodes for £1.99, bought to keep | Nick's call: a way to try members' content without a plan |
 | No checkout, no real login | The plan rules out anything resembling a payment or credential flow |
 | Reading lists are free for everyone | Sourcing builds trust |
 | Free accounts post in casual spaces (the free daily shows, articles, the Circle's General discussion); members' shows and topic forums are members-only; chat is open to any account | Nick's call: open where it is casual, members-only where it could get unruly |

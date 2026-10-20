@@ -146,15 +146,16 @@ watchEffect(() => {
 
           <div v-if="locked" class="absolute inset-0 grid place-items-center px-4 text-center">
             <div>
-              <span class="mx-auto grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/20">
+              <!-- Phones: compact, so everything fits in a 16:9 frame 320px wide. -->
+              <span class="mx-auto grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/20 max-sm:hidden">
                 <AppIcon name="lock" />
               </span>
-              <p class="mt-3 text-lg font-semibold sm:text-2xl">This episode is for members</p>
+              <p class="text-base font-semibold sm:mt-3 sm:text-2xl">This episode is for members</p>
               <!-- Two ways in: join for everything, or buy just this one. -->
-              <div class="mt-4 flex flex-wrap justify-center gap-3">
+              <div class="mt-2 flex flex-wrap justify-center gap-2 sm:mt-4 sm:gap-3">
                 <RouterLink
                   to="/join"
-                  class="inline-flex items-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-ink hover:brightness-110 [&>svg]:size-4"
+                  class="inline-flex items-center gap-2 rounded-lg bg-gold px-3 py-1.5 text-xs font-semibold sm:px-5 sm:py-2.5 sm:text-sm text-ink hover:brightness-110 [&>svg]:size-4"
                 >
                   <AppIcon name="crown" />
                   Upgrade to watch everything
@@ -162,7 +163,7 @@ watchEffect(() => {
                 <button
                   v-if="isSignedIn"
                   type="button"
-                  class="inline-flex items-center gap-2 rounded-lg bg-white/15 px-5 py-2.5 text-sm font-semibold ring-1 ring-white/20 backdrop-blur hover:bg-white/25"
+                  class="inline-flex items-center gap-2 rounded-lg bg-white/15 px-3 py-1.5 text-xs font-semibold sm:px-5 sm:py-2.5 sm:text-sm ring-1 ring-white/20 backdrop-blur hover:bg-white/25"
                   @click="buying = true"
                 >
                   Buy this episode, {{ formatPrice(EPISODE_PRICE) }}
@@ -170,12 +171,12 @@ watchEffect(() => {
                 <RouterLink
                   v-else
                   to="/sign-in"
-                  class="inline-flex items-center gap-2 rounded-lg bg-white/15 px-5 py-2.5 text-sm font-semibold ring-1 ring-white/20 backdrop-blur hover:bg-white/25"
+                  class="inline-flex items-center gap-2 rounded-lg bg-white/15 px-3 py-1.5 text-xs font-semibold sm:px-5 sm:py-2.5 sm:text-sm ring-1 ring-white/20 backdrop-blur hover:bg-white/25"
                 >
                   Sign in to buy, {{ formatPrice(EPISODE_PRICE) }}
                 </RouterLink>
               </div>
-              <PitchNote id="buy-episode" class="mt-3" />
+              <PitchNote id="buy-episode" class="mt-2 sm:mt-3" />
               <BuyEpisodeDialog v-if="episode" v-model="buying" :episode="episode" />
             </div>
           </div>
