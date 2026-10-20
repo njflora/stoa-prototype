@@ -12,6 +12,8 @@ All notable changes to this prototype are listed here. Newest first.
 - Data for "Popular": the 50 most-watched episodes per show for this week, month, year and all time, for every access and contributor combination. A real API would run a query; the static demo stores each answer.
 - Each contributor's episodes across every show, paged, and a site-wide "trending this week" list.
 - Article engagement: views, comments, likes and dislikes, with sorted lists for popular (week, month, all time) and controversial.
+- Show pages sort by Popular, with This week, This month, This year or All time. The heading follows ("Most watched this month").
+- Show pages filter by contributor. Click a name in the show's header, or use the contributor chips above the list; "View profile" appears beside the active filter. Contributor, access and sort combine, and all of it is kept in the address.
 
 ## 2026-10-20: An account page from the demo's real state
 
