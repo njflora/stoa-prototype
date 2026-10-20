@@ -2,6 +2,15 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-20: One shop inside the site
+
+### Added
+- /shop: T-shirts and mugs with designs from the site's public-domain paintings, titled in the reference store's format ("Agincourt | T-Shirt UK").
+- A store switch (UK, Europe and Worldwide, USA and Canada) changes titles, prices and currency in place. Prices are the real stores' prices for each product type: £22.99 and $27.99 for T-shirts, £14.99, $20.99 and $25.99 to $27.99 for mugs. The choice is remembered on the device.
+- Category chips for T-shirts and mugs. There is no Posters filter: the real store's posters category is empty.
+- "Add to basket" says that checkout is not part of this demo.
+- A pitch note: "One shop inside the site". Today their merch sits on three regional stores.
+
 ## 2026-10-20: Courses inside the site
 
 ### Added

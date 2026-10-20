@@ -131,11 +131,12 @@ export function toRoman(value: number): string {
   return out
 }
 
-/** A price in the reference site's style: "£325", or "£22.99" when there are pence. */
+/** A price in the reference site's style: "£325", "£22.99", or "$27.99" for dollars. */
 export function formatPrice(amount: number, currency = 'GBP'): string {
   const whole = Number.isInteger(amount)
   return new Intl.NumberFormat('en-GB', {
     style: 'currency',
+    currencyDisplay: 'narrowSymbol',
     currency,
     minimumFractionDigits: whole ? 0 : 2,
     maximumFractionDigits: whole ? 0 : 2,

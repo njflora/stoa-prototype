@@ -42,7 +42,7 @@ const router = createRouter({
     {
       path: '/shop',
       name: 'shop',
-      component: PlaceholderView,
+      component: () => import('../views/ShopView.vue'),
       meta: { title: 'Shop' },
     },
     {

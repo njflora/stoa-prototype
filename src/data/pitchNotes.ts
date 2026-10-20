@@ -30,6 +30,7 @@ const seriesEpisode = { name: 'Episode in a series', to: '/watch/chronos-111?ser
 const join = { name: "Members' preview", to: '/join' }
 const showPage = { name: 'A show page', to: '/shows/chronos' }
 const coursesPage = { name: 'Courses', to: '/courses' }
+const shopPage = { name: 'Shop', to: '/shop' }
 const searchPage = { name: 'Search, over any page', to: '/?search=rome' }
 
 export const pitchNotes: PitchNote[] = [
@@ -255,6 +256,15 @@ export const pitchNotes: PitchNote[] = [
     today: 'Courses sit on a separate site, with its own design and checkout.',
     here: 'Courses live in the main site, with the same look, navigation and account, and link to related series. Same product types and price points as today.',
     page: coursesPage,
+  },
+  {
+    id: 'shop-inside',
+    kind: 'proposal',
+    source: 'Merch stores',
+    title: 'One shop inside the site',
+    today: 'Merch sits on three separate regional stores (UK, Europe and Worldwide, USA and Canada), each at its own address.',
+    here: "One shop in the main site. A store switch changes titles, prices and currency in place, using the real stores' current prices.",
+    page: shopPage,
   },
   {
     id: 'search',
