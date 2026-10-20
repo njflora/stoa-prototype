@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import PitchNote from './PitchNote.vue'
 import CommentItem from './CommentItem.vue'
+import MembersGate from './MembersGate.vue'
 import { countComments, type Comment } from '@/data/comments'
 import { commentsForThread } from '@/data/episodeExtras'
 import type { Article, Episode } from '@/types/content'
@@ -39,12 +40,7 @@ const PAGE_SIZE = 5
 const { isMember, isSignedIn, user } = useViewer()
 /** Post, reply and vote: members anywhere, free accounts in open spaces. */
 const canPost = computed(() => isMember.value || (props.openToFree && isSignedIn.value))
-/**
- * A members-only discussion seen by someone who is not a member: only a
- * blurred glimpse, behind an invitation, so it feels exclusive (Nick's call).
- * A real site would not send the comments at all, just a count and a
- * placeholder; the demo blurs its placeholder comments instead.
- */
+/** A members-only discussion seen by someone who is not a member: see MembersGate. */
 const exclusive = computed(() => !props.openToFree && !isMember.value)
 const glimpse = computed(() => sorted.value.slice(0, 3))
 const headingId = useId()
@@ -161,41 +157,18 @@ function postReply(parent: Comment) {
     </form>
 
     <!-- Members' discussion, seen by a non-member: a blurred glimpse behind an invitation. -->
-    <div v-else-if="exclusive" class="relative mt-4 min-h-72 overflow-hidden rounded-xl ring-1 ring-gold/30">
-      <ol class="pointer-events-none space-y-6 p-4 blur-[7px] select-none" aria-hidden="true" inert>
+    <MembersGate
+      v-else-if="exclusive"
+      class="mt-4"
+      title="The members' discussion"
+      :detail="`${total} ${total === 1 ? 'comment' : 'comments'} from members. Join to read them and have your say.`"
+    >
+      <ol class="space-y-6">
         <li v-for="c in glimpse" :key="c.id">
           <CommentItem :comment="c" :vote="null" :can-interact="false" />
         </li>
       </ol>
-      <div class="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/70 to-ink/95" />
-      <div class="absolute inset-0 grid place-items-center p-4 text-center">
-        <div class="max-w-sm">
-          <span class="mx-auto grid size-11 place-items-center rounded-full bg-gold/15 text-gold ring-1 ring-gold/40">
-            <AppIcon name="crown" />
-          </span>
-          <p class="mt-3 text-lg font-semibold">The members' discussion</p>
-          <p class="mt-1 text-sm text-white/80">
-            {{ total }} {{ total === 1 ? 'comment' : 'comments' }} from members. Join to read them and have your say.
-          </p>
-          <div class="mt-4 flex flex-wrap justify-center gap-2">
-            <RouterLink
-              to="/join"
-              class="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-gold px-4 text-sm font-semibold text-ink hover:brightness-110 [&>svg]:size-4"
-            >
-              <AppIcon name="crown" />
-              Become a member
-            </RouterLink>
-            <RouterLink
-              v-if="!isSignedIn"
-              to="/sign-in"
-              class="inline-flex min-h-9 items-center rounded-lg px-4 text-sm font-semibold ring-1 ring-white/25 hover:bg-white/10"
-            >
-              Sign in
-            </RouterLink>
-          </div>
-        </div>
-      </div>
-    </div>
+    </MembersGate>
 
     <!-- Signed out, in an open space. -->
     <div

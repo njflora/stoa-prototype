@@ -93,7 +93,7 @@ The pitch prototype is built and working locally. All three priority sections fr
 | 7-day trial for Bronze and Silver only | The benchmark lists "no free trial" as a gap; Gold's extras are not given away free (Nick's call) |
 | Single members' episodes for £1.99, bought to keep | Nick's call: a way to try members' content without a plan |
 | No checkout, no real login | The plan rules out anything resembling a payment or credential flow |
-| Reading lists are free for everyone | Sourcing builds trust |
+| Reading lists are free on the free shows and articles; on members' shows they sit behind the members' gate with the discussion | Nick's call: members' shows should feel exclusive. Reverses the earlier "free for everyone" |
 | Free accounts post in casual spaces (the free daily shows, articles, the Circle's General discussion); members' shows and topic forums are members-only; chat is open to any account | Nick's call: open where it is casual, members-only where it could get unruly |
 | Browser notifications replace "Add to calendar" | Reminders become a members' perk |
 | Live chat replay only on Stoa Podcast and Morning Brief | The shows named as streamed live; The Forum and Statecraft could be added |

@@ -88,6 +88,8 @@ export const TRIAL_TIERS: TierId[] = ['bronze', 'silver']
  * (and the live show, which is The Stoa Podcast), under articles, and in
  * the Philosophy Circle's General discussion. Everything else is members'.
  */
+// The same shows keep their reading lists open to everyone; on other shows
+// the reading list is members-only too.
 export const FREE_POSTING_SHOWS = ['stoa-podcast', 'morning-brief']
 
 /** One members' episode, bought to keep (Nick's call): a way to try without a plan. */

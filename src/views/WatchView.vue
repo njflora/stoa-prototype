@@ -300,7 +300,8 @@ watchEffect(() => {
     <div
       class="flex flex-col gap-10 px-4 pt-10 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-x-6 lg:px-8"
     >
-      <ReadingList :key="`reading-${episode.id}`" :list-id="episode.id" :episode="episode" class="lg:col-start-2 lg:row-start-1" />
+      <ReadingList
+        :members-only="!FREE_POSTING_SHOWS.includes(episode.showId)" :key="`reading-${episode.id}`" :list-id="episode.id" :episode="episode" class="lg:col-start-2 lg:row-start-1" />
       <CommentSection
         :key="`comments-${episode.id}`"
         :thread-id="episode.id"

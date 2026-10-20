@@ -11,6 +11,7 @@ All notable changes to this prototype are listed here. Newest first.
 
 ### Changed
 - Who can post (Nick's call): free accounts post, reply and vote in casual spaces, meaning comments on The Stoa Podcast and Morning Brief (and the live show), under articles, and in the Philosophy Circle's General discussion. Members' shows and the Circle's topic forums are members-only. Every comment section and forum says which it is ("Open to all accounts" or "Members only"), and the rule lives in one place (FREE_POSTING_SHOWS in src/data/membership.ts).
+- Reading lists on members' shows sit behind the same gate: non-members see a blurred glimpse and "The members' reading list". The free daily shows and articles keep theirs open. This reverses the earlier "reading lists free for everyone" (Nick's call); the pitch note and PROGRESS say so. Both gates now share one component, MembersGate.
 - Members-only discussions feel exclusive: anyone who is not a member sees only a blurred glimpse of the comments (no sorting, no reading, nothing to click), behind a "The members' discussion" card with the comment count and "Become a member". A real site would send only the count; the demo blurs its placeholder comments.
 - The Circle's Ethics forum is now open, members-only, so the lock can be seen. "Start a thread" works in any forum you may post in (kept on the page only). A pitch note: "Open spaces and members' spaces".
 - Bronze's perk now reads "Comment on members' shows, and post in every forum".
