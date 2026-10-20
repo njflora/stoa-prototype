@@ -141,6 +141,39 @@ const historySeries = [
   ['The Stuarts', 4], ['Alexander the Great', 5], ['The Vikings', 5], ['The Reformation', 4], ['Constantinople Falls', 3],
   ['Henry VIII', 7], ['The Anglo-Saxons', 5], ['The Fall of the Republic', 5], ['Roman Resurgence', 4], ["The Hundred Years' War", 3],
 ]
+// Each part's own title, shown before the series name:
+// "Chronos #275 | Justinian's Gamble | Roman Resurgence, Part 2".
+const partTitles = {
+  Augustus: ['Octavian, Heir of Caesar', 'The Triumvirs', 'Actium', 'The First Emperor'],
+  'The Plantagenets': ['Henry II and the Angevin Empire', 'Becket', 'Richard the Lionheart', 'Bad King John', 'Magna Carta', 'Edward I, Hammer of the Scots'],
+  'The Spanish Armada': ["Philip's Grand Design", 'Fireships at Calais', 'The Protestant Wind'],
+  'Alfred the Great': ['The Great Heathen Army', 'Retreat to Athelney', 'Edington', 'Burhs and Books'],
+  'The Crusades': ['Deus Vult', 'The Fall of Jerusalem', 'The Crusader States', 'Saladin', 'The Third Crusade', 'The Sack of Constantinople', 'Acre, the Last Stand'],
+  'The Wars of the Roses': ['A Weak King', 'York Claims the Crown', 'Towton', 'The Kingmaker', 'The Princes in the Tower', 'Bosworth Field'],
+  Charlemagne: ["Pepin's Son", 'The Saxon Wars', 'Christmas Day, 800', 'The Carolingian Renaissance'],
+  'The Glorious Revolution': ['James II', 'The Invitation', 'The Bill of Rights'],
+  Hannibal: ['Over the Alps', 'Trebia and Trasimene', 'Cannae', 'Zama'],
+  'The Black Death': ['Out of the East', 'The Great Mortality', 'A World Turned Upside Down'],
+  'Elizabeth I': ['The Lady Elizabeth', 'The Religious Settlement', 'Mary, Queen of Scots', 'Spain and the Sea Dogs', 'Gloriana'],
+  'The Normans': ['Rollo and Normandy', 'The Bastard Duke', 'Hastings', 'The Harrying of the North', 'Domesday'],
+  'Rome and Carthage': ['Two Powers, One Sea', 'The First Punic War', "Hannibal's War", 'Carthago Delenda Est'],
+  'The Tudors': ['From Bosworth to the Throne', 'Henry VII, the Miser King', 'The Young Henry VIII', 'Edward VI', 'Bloody Mary', 'The Last Tudor'],
+  'Athens and Sparta': ['Two Cities', 'Marathon and Thermopylae', 'The Delian League', 'The Peloponnesian War', 'The Sicilian Disaster'],
+  'The Stuarts': ['James VI and I', 'Charles I and Parliament', 'Civil War', 'Restoration'],
+  'Alexander the Great': ['Philip of Macedon', 'The Granicus', 'Issus', 'Gaugamela', 'To the Edge of the World'],
+  'The Vikings': ['Raiders from the North', 'Lindisfarne', 'Settlers and Traders', 'Vinland', 'Stamford Bridge'],
+  'The Reformation': ['Ninety-Five Theses', 'Luther at Worms', "Calvin's Geneva", 'The Counter-Reformation'],
+  'Constantinople Falls': ['The City Besieged', "Mehmed's Guns", 'The Last Emperor'],
+  'Henry VIII': ['The Golden Prince', 'Wolsey', "The King's Great Matter", 'The Break with Rome', 'Dissolution', 'Six Wives', 'The Tyrant'],
+  'The Anglo-Saxons': ['After Rome', 'Sutton Hoo', 'Conversion', "Offa's Dyke", 'The Kingdom of England'],
+  'The Fall of the Republic': ['The Gracchi', 'Marius and Sulla', 'Pompey the Great', 'Crossing the Rubicon', 'The Ides of March'],
+  'Roman Resurgence': ["Constantine's New Rome", "Justinian's Gamble", 'Belisarius Takes Italy', 'Heraclius and the Persian War'],
+  "The Hundred Years' War": ['A Disputed Crown', 'Crécy and Poitiers', 'Agincourt'],
+}
+for (const [name, parts] of historySeries) {
+  if (partTitles[name]?.length !== parts) throw new Error(`${name} needs ${parts} part titles.`)
+}
+
 const historyExtras = [
   'How Empires Decline', 'Reading the Ancients', 'Questions from Members', "The Historian's Toolkit", 'Myths of the Middle Ages',
   'The Art of the Archive', 'Castles Explained', 'Coins and Kings', 'The Great Libraries', 'Mapping the Medieval World',
@@ -244,7 +277,7 @@ const nextMorning = deck('morning-brief', morningTopics)
   const nextExtra = deck('chronos-extras', historyExtras)
   const plan = []
   for (const [name, parts] of historySeries) {
-    for (let p = 1; p <= parts; p++) plan.push({ series: { name, part: p, of: parts } })
+    for (let p = 1; p <= parts; p++) plan.push({ series: { name, part: p, of: parts }, partTitle: partTitles[name][p - 1] })
     if (planRandom() < 0.4) plan.push({ extra: nextExtra() })
   }
   const dates = datesBack(plan.length, [0], 1).reverse() // oldest first
@@ -255,7 +288,7 @@ const nextMorning = deck('morning-brief', morningTopics)
     const isExtra = !item.series
     add('chronos', {
       number,
-      title: isExtra ? `Chronos #${number} | ${item.extra}` : `Chronos #${number} | ${item.series.name}, Part ${item.series.part}`,
+      title: isExtra ? `Chronos #${number} | ${item.extra}` : `Chronos #${number} | ${item.partTitle} | ${item.series.name}, Part ${item.series.part}`,
       series: item.series,
       hostIds: ['helen'],
       publishedAt: at(dates[i], 13),

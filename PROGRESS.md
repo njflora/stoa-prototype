@@ -101,7 +101,6 @@ The pitch prototype is built and working locally. All three priority sections fr
 - **Real Rumble and Odysee embeds are untested.** No embed URLs are set, so the placeholder shows. Rumble on phones (a key finding) needs a real embed to test.
 - **Real notifications are untested.** The test browser blocks them. The logic is in place.
 - **Pages still placeholders:** Shows, Articles index and article pages, Courses, Account, Shop, Sign in.
-- **Accent-free matching is untested.** The generated titles have no accented letters, so "crecy" finding "Crécy" could not be checked.
 - **Not started:** installable PWA, the technical audit, the bug report and screen recording, the Topic 4 and 5 write-ups, the measurement page.
 
 ## Known limits of the prototype
