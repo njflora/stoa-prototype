@@ -12,12 +12,13 @@ import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { controversy, useVotes } from '@/composables/useVotes'
 
-// Comments on an episode, an article or the live show. Who may read and post
-// is decided by the server (config/stoa.php): open threads are for every
-// account, the rest for members. A non-member asking about a members' thread
-// gets only its count, shown as a blurred gate with nothing real behind it.
-// In Laravel mode, posts and votes are saved on the account. In the static
-// preview they are kept in the page.
+// Comments on an episode, an article or the live show. Open threads are for
+// every account, the rest for members (backend/config/stoa.php). A
+// non-member sees a members' thread as a blurred gate with nothing real
+// behind it. In Laravel mode the server decides, and sends a non-member the
+// count only; posts and votes are saved on the account. The static preview
+// applies the same rule in the page, and saves posts and votes in this
+// browser.
 
 type Sort = 'newest' | 'top' | 'controversial'
 
@@ -44,17 +45,18 @@ const { data, loading, error, reload } = useQuery(
 )
 
 const open = computed(() => data.value?.open ?? false)
-const locked = computed(() => data.value?.locked ?? false)
-/** Post, reply and vote: the server says, or in the static preview the same rule here. */
+/** A members' thread seen by a non-member: the gate. The server says, or in the static preview the same rule here. */
+const locked = computed(() => {
+  const thread = data.value
+  if (!thread) return false
+  return API_MODE === 'laravel' ? thread.locked : !thread.open && !isMember.value
+})
+/** Post, reply and vote. */
 const canPost = computed(() => {
   const thread = data.value
-  if (!thread || thread.locked) return false
+  if (!thread || thread.locked || locked.value) return false
   return API_MODE === 'laravel' ? Boolean(thread.canPost) : isMember.value || (thread.open && isSignedIn.value)
 })
-/** A members' thread seen by a non-member: the gate. */
-const gated = computed(() => locked.value && !isMember.value)
-/** Only in the static preview: a "member" viewing a thread it holds only the count of. */
-const countOnly = computed(() => locked.value && isMember.value)
 
 // A copy, so posting here never changes the loaded data.
 const comments = ref<Comment[]>([])
@@ -65,7 +67,6 @@ const draft = ref('')
 const replyingTo = ref<string | null>(null)
 const replyDraft = ref('')
 const postError = ref('')
-let localId = 0
 
 watch(data, (thread) => {
   comments.value = thread && !thread.locked ? structuredClone(thread.comments) : []
@@ -90,24 +91,12 @@ const sorted = computed(() =>
 )
 const visible = computed(() => sorted.value.slice(0, shown.value))
 
-/** A new comment: saved on the server in Laravel mode, kept in the page otherwise. */
+/** A new comment: saved on the account in Laravel mode, in this browser in the static preview. */
 async function save(text: string, parent?: Comment): Promise<Comment | null> {
   postError.value = ''
-  if (API_MODE !== 'laravel') {
-    return {
-      id: `local-${++localId}`,
-      user: user.value?.name ?? 'You',
-      tier: user.value?.tier ?? 'free',
-      postedAt: new Date().toISOString(),
-      text: text.trim(),
-      likes: 0,
-      dislikes: 0,
-      replies: [],
-      mine: true,
-    }
-  }
+  const author = { name: user.value?.name ?? 'You', tier: user.value?.tier ?? ('free' as const) }
   try {
-    return await postComment(props.thread, text.trim(), parent?.id)
+    return await postComment(props.thread, text.trim(), author, parent?.id)
   } catch {
     postError.value = 'Your comment was not posted. Please try again.'
     return null
@@ -137,11 +126,10 @@ async function postReply(parent: Comment) {
   replyDraft.value = ''
 }
 
-/** Shows the vote at once; in Laravel mode saves it, and takes it back if saving fails. */
+/** Shows the vote at once, then saves it, and takes it back if saving fails. */
 async function vote(id: string, direction: Vote) {
   const before = voteFor(id)
   toggleVote(id, direction)
-  if (API_MODE !== 'laravel' || id.startsWith('local-')) return
   try {
     await voteOnComment(id, voteFor(id))
   } catch {
@@ -211,20 +199,15 @@ async function vote(id: string, direction: Vote) {
       </div>
     </form>
 
-    <!-- Members' discussion, seen by a non-member: only its count came back. -->
+    <!-- Members' discussion, seen by a non-member. -->
     <MembersGate
-      v-else-if="gated"
+      v-else-if="locked"
       class="mt-4"
       kind="comments"
       title="The members' discussion"
       :detail="`${total} ${total === 1 ? 'comment' : 'comments'} from members. Join to read them and have your say.`"
     />
 
-    <!-- The static preview holds only the count of members' threads, whoever is viewing. -->
-    <p v-else-if="countOnly" class="mt-4 rounded-lg bg-surface p-4 text-sm text-white/85 ring-1 ring-white/10">
-      {{ total }} {{ total === 1 ? 'comment' : 'comments' }} from members. This preview carries only the count:
-      the live site serves members' comments to members only.
-    </p>
 
     <!-- Signed out, in an open space. -->
     <div

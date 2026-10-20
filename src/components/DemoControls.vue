@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { API_MODE } from '@/api/client'
 import { RouterLink, useRoute } from 'vue-router'
 import { livePhases, useViewer, viewerTypes } from '@/composables/useViewer'
 // Loaded here so the demo's "live now" notification works from any page.
@@ -50,9 +51,20 @@ const off = 'text-white/70 hover:text-white'
     <div
       v-if="open"
       id="demo-panel"
-      class="mb-2 w-64 space-y-3 rounded-xl bg-raised/95 p-4 shadow-2xl ring-1 ring-white/10 backdrop-blur"
+      class="mb-2 max-h-[calc(100dvh-var(--tabbar-h)-5rem)] w-64 space-y-3 overflow-y-auto rounded-xl bg-raised/95 p-4 shadow-2xl ring-1 ring-white/10 backdrop-blur"
     >
       <p class="text-xs text-muted">Demo controls. Not part of the design.</p>
+
+      <!-- Which version this is, so nobody mistakes the preview's checks for the server's. -->
+      <div>
+        <p class="mb-1 text-xs font-semibold">Mode</p>
+        <p v-if="API_MODE === 'laravel'" class="text-xs text-white/75">
+          Laravel API. Saved on the account, and the server checks who can see what.
+        </p>
+        <p v-else class="text-xs text-white/75">
+          Static preview. Saved in this browser. In the Laravel version, the server checks who can see what.
+        </p>
+      </div>
 
       <div>
         <p class="mb-1 text-xs font-semibold">Viewing as</p>

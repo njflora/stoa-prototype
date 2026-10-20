@@ -9,6 +9,7 @@ use App\Models\Article;
 use App\Models\Contributor;
 use App\Models\Episode;
 use App\Models\Show;
+use App\Models\User;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -20,9 +21,11 @@ use Illuminate\Support\Facades\File;
  * the site's public/data, so the site runs on GitHub Pages with no server.
  * Each file comes from the same Catalogue method as the matching endpoint.
  * The preview is a snapshot, and it cannot enforce access: anyone can read
- * every file. So discussion and reading lists are exported as a signed-out
- * visitor sees them: members' threads as a count only. The live site uses
- * the API, which answers for whoever is signed in.
+ * every file. So discussion and reading lists are exported as a member sees
+ * them, and the site applies the members' gate in the browser, so the
+ * preview behaves like the real site. The comments are invented, so nothing
+ * private is published. The Laravel API is where access is enforced: it
+ * sends a non-member the count only.
  */
 #[Signature('stoa:export {--to= : The folder to write to (default: STOA_EXPORT_PATH)}')]
 #[Description('Write the static preview of the API to the site\'s public/data folder')]
@@ -96,17 +99,19 @@ class ExportStatic extends Command
     }
 
     /**
-     * Comments and reading lists, as a signed-out visitor sees them. An
+     * Comments and reading lists, as a member sees them. An
      * episode's are grouped with the 49 others on its archive page
      * (extras/episodes/{show}/{page}.json, newest first, as the episode
      * pages are), so an episode page needs one small file.
      */
     private function discussion(Discussions $discussions): void
     {
-        // A page of threads at a time, answered together.
-        $extras = function (array $threads) use ($discussions) {
-            $comments = $discussions->threads($threads, null);
-            $lists = $discussions->readingLists($threads, null);
+        // Seen as a member: an unsaved account with a tier, so nothing is
+        // marked as theirs. A page of threads at a time, answered together.
+        $member = new User(['name' => 'preview', 'tier' => 'gold']);
+        $extras = function (array $threads) use ($discussions, $member) {
+            $comments = $discussions->threads($threads, $member);
+            $lists = $discussions->readingLists($threads, $member);
 
             return collect($threads)->mapWithKeys(fn (Thread $t) => [
                 $t->id => ['thread' => $comments[$t->key()], 'readingList' => $lists[$t->key()]],
@@ -121,7 +126,7 @@ class ExportStatic extends Command
                 ));
         }
         foreach (Article::pluck('id') as $id) {
-            $this->write("extras/articles/{$id}.json", ['thread' => $discussions->thread(Thread::find('article', $id), null)]);
+            $this->write("extras/articles/{$id}.json", ['thread' => $discussions->thread(Thread::find('article', $id), $member)]);
         }
         $this->write('extras/live/live-show.json', $extras([Thread::find('live', 'live-show')])['live-show']);
     }

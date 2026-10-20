@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Gate;
 /**
  * Threads and reading lists as one person may see them. Someone who may not
  * read gets `{ locked: true, count }` and nothing else: no text, no names.
- * The API answers for whoever is signed in; the static export answers for
- * a signed-out visitor, so it publishes counts only for members' threads.
+ * The API answers for whoever is signed in. The static export answers as a
+ * member, and the site gates it in the browser (the preview cannot check).
  *
  * Each method takes many threads at once and answers them in a few
  * queries, so a page of 50 episodes costs the same as one.

@@ -7,7 +7,6 @@ import { getCourse, lessonCount, separatePrice, type Forum } from '@/data/course
 import { artworks, mediaUrl } from '@/data/media'
 import AppIcon from '@/components/AppIcon.vue'
 import PitchNote from '@/components/PitchNote.vue'
-import { API_MODE } from '@/api/client'
 import { listForumTopics, startForumTopic } from '@/api/discussion'
 import { useCommunity } from '@/composables/useCommunity'
 import { useQuery } from '@/composables/useQuery'
@@ -29,9 +28,9 @@ const saving = computed(() => {
 const { viewer, isSignedIn, isMember, user } = useViewer()
 
 // Starting threads: anyone signed in in open forums, members in members'
-// forums. In Laravel mode new threads are saved, and the server enforces
-// the same rule (backend/config/stoa.php). In the static preview they stay
-// on the page.
+// forums. New threads are saved: on the account in Laravel mode, where the
+// server enforces the same rule (backend/config/stoa.php), and in this
+// browser in the static preview.
 type ForumThread = NonNullable<Forum['threads']>[number] & { at?: string }
 const canPostIn = (forum: Forum) => forum.status === 'open' && (isMember.value || (forum.posting === 'all' && isSignedIn.value))
 /** "philosophy-circle/general-discussion": how the server names a forum. */
@@ -45,7 +44,7 @@ const postError = ref<Record<string, string>>({})
 const { data: saved } = useQuery(
   () => `${course.value?.id}|${viewer.value}`,
   async () => {
-    const open = API_MODE === 'laravel' ? (course.value?.community?.forums ?? []).filter((f) => f.status === 'open') : []
+    const open = (course.value?.community?.forums ?? []).filter((f) => f.status === 'open')
     const lists = await Promise.all(open.map((f) => listForumTopics(forumId(f)).catch(() => [])))
     return Object.fromEntries(
       open.map((f, i): [string, ForumThread[]] => [f.name, lists[i]!.map((t) => ({ title: t.title, by: t.by, replies: t.replies, daysAgo: 0, at: t.createdAt }))]),
@@ -58,17 +57,13 @@ async function startThread(forum: Forum) {
   const title = drafts.value[forum.name]?.trim()
   if (!title) return
   postError.value[forum.name] = ''
-  let thread: ForumThread = { title, by: user.value?.name ?? 'You', replies: 0, daysAgo: 0 }
-  if (API_MODE === 'laravel') {
-    try {
-      const topic = await startForumTopic(forumId(forum), title)
-      thread = { ...thread, by: topic.by, at: topic.createdAt }
-    } catch {
-      postError.value[forum.name] = 'Your thread was not posted. Please try again.'
-      return
-    }
+  try {
+    const topic = await startForumTopic(forumId(forum), title, { name: user.value?.name ?? 'You', tier: user.value?.tier ?? ('free' as const) })
+    added.value[forum.name] = [{ title, by: topic.by, replies: 0, daysAgo: 0, at: topic.createdAt }, ...(added.value[forum.name] ?? [])]
+  } catch {
+    postError.value[forum.name] = 'Your thread was not posted. Please try again.'
+    return
   }
-  added.value[forum.name] = [thread, ...(added.value[forum.name] ?? [])]
   drafts.value[forum.name] = ''
 }
 const threadsOf = (forum: Forum): ForumThread[] => [
@@ -207,7 +202,6 @@ watchEffect(() => {
             </ul>
           </li>
         </ul>
-        <p v-if="API_MODE !== 'laravel'" class="mt-2 text-xs text-muted">New threads stay on this page only in this preview.</p>
       </section>
 
       <section v-if="course.modules.length" aria-labelledby="course-modules">

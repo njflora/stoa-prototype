@@ -102,7 +102,8 @@ The pitch prototype is built and working locally. All three priority sections fr
 | Search opens over the current page, in a see-through panel | Nick's call: you keep your place, and the page stays visible behind |
 | The search index is built in the browser on first use, not pre-built | Keeps the search settings in one file; takes about 0.4 seconds once. The real site can swap in a server engine behind the same search() function |
 | Laravel is the source of truth; public/data is a snapshot exported from it | They use Laravel. The API and the export share one code path, so the static preview can never disagree with the API |
-| Members-only content never leaves the server; non-members get a count only | Review note 3: a blurred glimpse of real text was still sent to the browser. The gate now blurs placeholder shapes |
+| In Laravel mode, members-only content never leaves the server; non-members get a count only | Review note 3: a blurred glimpse of real text was still sent to the browser. The gate now blurs placeholder shapes |
+| The static preview keeps every feature, checked and saved in the browser | Nick's call: the client will most likely see the static site, so it must behave like the real one. The demo panel and banner say where the real checks run |
 | Thread sizes follow popularity, and card counts equal real thread sizes | Generating the 111,000 comments the old counts implied would repeat the same phrases in every thread |
 | The demo sign-in picks a seeded account with no password, and exists only in development | The plan rules out credential flows; the tier checks themselves are real |
 | The static preview stays, with a banner | It runs on GitHub Pages with no server. It cannot enforce access, and the banner says so |
@@ -122,8 +123,18 @@ The pitch prototype is built and working locally. All three priority sections fr
 
 - **The static preview pre-builds its answers.** Every combination of show, access, contributor and period is stored as a file, so public/data is about 10 MB on disk. The Laravel API runs queries instead.
 
-- In Laravel mode, comments, votes, purchases and communities are saved on the account. Reminders and watch progress still live in the browser. In the static preview, everything you do stays in the browser.
-- **The static preview shows members' discussion as a count only,** whoever is viewing, because it cannot check who is a member. The members' experience is shown in Laravel mode.
+- **Two versions, the same features.**
+
+  | | Static preview (GitHub Pages) | Laravel version |
+  |---|---|---|
+  | Members' comments and reading lists | In the files; the page shows the gate to non-members | Sent to members only; others get a count |
+  | Comments, votes, forum threads | Saved in this browser | Saved on the account |
+  | Purchases, communities | Saved in this browser | Saved on the account |
+  | Who can see what | Checked in the page | Checked on the server, with tests |
+  | Viewing as | Switches on this device | Signs in to a seeded demo account |
+
+- Reminders and watch progress live in the browser in both versions.
+- Showing the Laravel version to others needs a PHP host. GitHub Pages carries the static preview.
 - **Generated dates skip and repeat a day at each clock change.** The generator steps back 24 hours at a time, so twice in the archive two Chronos episodes share a Sunday. A fix changes many archive dates, so it waits for Nick's go-ahead.
 - Notifications only appear while the site is open in a tab. Real reminders need Web Push, which belongs with the PWA work.
 - Comments, chat and reading lists are placeholders. Each episode draws a stable mix from pools that fit its show. Real data can replace them in one file each.

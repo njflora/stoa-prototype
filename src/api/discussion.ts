@@ -1,18 +1,26 @@
-// Comments and reading lists. In Laravel mode each answer depends on who is
-// signed in: someone who may not see a members' thread gets only its count.
-// The static preview was exported as a signed-out visitor sees things, so it
-// holds counts only for members' threads, whoever is "viewing".
+// Comments, reading lists and forum topics, in both modes.
+//
+// - Laravel mode: each answer depends on who is signed in. Someone who may
+//   not see a members' thread gets only its count, and every post and vote
+//   is saved on the account.
+// - Static preview: the files hold every thread as a member sees it, and the
+//   page applies the members' gate itself. Posts, votes and forum topics are
+//   saved in this browser, so a reload keeps them, as the real site would.
+//
+// Pages call the same functions either way.
 
 import { API_MODE, getFresh, getJson, send } from './client'
 import { shiftDate, storedPageOf } from './catalogue'
+import type { ChatTier } from '@/data/chat'
 import type { Comment } from '@/data/comments'
 import type { ReadingItem } from '@/data/readingLists'
+import { readJson, writeJson } from '@/composables/storage'
 import type { Vote } from '@/types/content'
 
 /** Which discussion: an episode's, an article's or the live show's. */
 export type ThreadRef = { type: 'episode'; id: string } | { type: 'article'; id: string } | { type: 'live' }
 
-/** A thread as the viewer may see it. Locked: a count and nothing else. */
+/** A thread as the viewer may see it. Locked (Laravel mode only): a count and nothing else. */
 export type Thread =
   | { locked: true; open: boolean; count: number }
   | { locked: false; open: boolean; count: number; canPost?: boolean; comments: Comment[] }
@@ -21,7 +29,22 @@ export type ReadingListAnswer =
   | { locked: true; open: boolean; count: number }
   | { locked: false; open: boolean; count: number; items: ReadingItem[] }
 
+/** Who is posting, for posts saved in the browser. */
+export interface Author {
+  name: string
+  tier: ChatTier
+}
+
 const pathOf = (ref: ThreadRef) => (ref.type === 'live' ? 'live/live-show' : `${ref.type}/${ref.id}`)
+const keyOf = (ref: ThreadRef) => (ref.type === 'live' ? 'live:live-show' : `${ref.type}:${ref.id}`)
+
+// ---------- the static preview's saved changes ----------
+
+/** Posts made in this browser, by thread: new comments, and replies to a comment. */
+type SavedPost = { parentId?: string; comment: Comment }
+const POSTS_KEY = 'stoa-posts'
+const VOTES_KEY = 'stoa-votes'
+const TOPICS_KEY = 'stoa-forum-topics'
 
 /** Where the static preview keeps a thread and its reading list. */
 async function stored(ref: ThreadRef): Promise<{ thread: Thread; readingList?: ReadingListAnswer }> {
@@ -37,6 +60,23 @@ async function stored(ref: ThreadRef): Promise<{ thread: Thread; readingList?: R
   }
   return getJson(ref.type === 'article' ? `extras/articles/${ref.id}.json` : 'extras/live/live-show.json')
 }
+
+/** Adds this browser's posts and votes to a thread from the static files. */
+function withSavedChanges(thread: Thread, ref: ThreadRef): Thread {
+  if (thread.locked) return thread
+  const posts = readJson<Record<string, SavedPost[]>>(POSTS_KEY, {})[keyOf(ref)] ?? []
+  const votes = readJson<Record<string, Vote>>(VOTES_KEY, {})
+  const comments = thread.comments.map((c) => ({ ...c, replies: [...c.replies] }))
+  for (const { parentId, comment } of posts) {
+    if (!parentId) comments.unshift({ ...comment, replies: [] })
+    else comments.find((c) => c.id === parentId)?.replies.push(comment)
+  }
+  const voted = (c: Comment): Comment => ({ ...c, myVote: votes[c.id], replies: c.replies.map(voted) })
+  const withVotes = comments.map(voted)
+  return { ...thread, comments: withVotes, count: withVotes.reduce((n, c) => n + 1 + c.replies.length, 0) }
+}
+
+// ---------- reading ----------
 
 /**
  * Fresh dates, and counts that leave out the viewer's own vote (the vote
@@ -67,8 +107,9 @@ function normaliseThread(thread: Thread, ref: ThreadRef): Thread {
 
 /** GET /api/threads/{type}/{id} */
 export async function getThread(ref: ThreadRef): Promise<Thread> {
-  const thread = API_MODE === 'laravel' ? await getFresh<Thread>(`threads/${pathOf(ref)}`) : (await stored(ref)).thread
-  return normaliseThread(thread, ref)
+  if (API_MODE === 'laravel') return normaliseThread(await getFresh<Thread>(`threads/${pathOf(ref)}`), ref)
+  // Saved posts already have real times, so they are added after the dates move.
+  return withSavedChanges(normaliseThread((await stored(ref)).thread, ref), ref)
 }
 
 /** GET /api/reading-lists/{type}/{id}, for an episode or the live show. */
@@ -79,14 +120,40 @@ export async function getReadingList(ref: ThreadRef): Promise<ReadingListAnswer>
   return readingList
 }
 
-/** POST /api/threads/{type}/{id}/comments. Laravel mode only. */
-export async function postComment(ref: ThreadRef, text: string, parentId?: string): Promise<Comment> {
-  return normaliseComment(await send<Comment>('POST', `threads/${pathOf(ref)}/comments`, { text, parentId }))
+// ---------- changes ----------
+
+/** POST /api/threads/{type}/{id}/comments, or saved in this browser. */
+export async function postComment(ref: ThreadRef, text: string, author: Author, parentId?: string): Promise<Comment> {
+  if (API_MODE === 'laravel') {
+    return normaliseComment(await send<Comment>('POST', `threads/${pathOf(ref)}/comments`, { text, parentId }))
+  }
+  const comment: Comment = {
+    id: `local-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    user: author.name,
+    tier: author.tier,
+    postedAt: new Date().toISOString(),
+    text,
+    likes: 0,
+    dislikes: 0,
+    replies: [],
+    mine: true,
+  }
+  const posts = readJson<Record<string, SavedPost[]>>(POSTS_KEY, {})
+  posts[keyOf(ref)] = [...(posts[keyOf(ref)] ?? []), { parentId, comment }]
+  writeJson(POSTS_KEY, posts)
+  return comment
 }
 
-/** POST /api/comments/{id}/vote. Null takes a vote back. Laravel mode only. */
-export function voteOnComment(id: string, direction: Vote | null): Promise<{ likes: number; dislikes: number; myVote: Vote | null }> {
-  return send('POST', `comments/${id}/vote`, { direction })
+/** POST /api/comments/{id}/vote, or saved in this browser. Null takes a vote back. */
+export async function voteOnComment(id: string, direction: Vote | null): Promise<void> {
+  if (API_MODE === 'laravel') {
+    await send('POST', `comments/${id}/vote`, { direction })
+    return
+  }
+  const votes = readJson<Record<string, Vote>>(VOTES_KEY, {})
+  if (direction) votes[id] = direction
+  else delete votes[id]
+  writeJson(VOTES_KEY, votes)
 }
 
 export interface ForumTopic {
@@ -96,12 +163,18 @@ export interface ForumTopic {
   createdAt: string
 }
 
-/** GET /api/forums/{community}/{forum}/topics: topics people have started. Laravel mode only. */
-export function listForumTopics(forum: string): Promise<ForumTopic[]> {
-  return getFresh(`forums/${forum}/topics`)
+/** GET /api/forums/{community}/{forum}/topics: topics people have started, newest first. */
+export async function listForumTopics(forum: string): Promise<ForumTopic[]> {
+  if (API_MODE === 'laravel') return getFresh(`forums/${forum}/topics`)
+  return readJson<Record<string, ForumTopic[]>>(TOPICS_KEY, {})[forum] ?? []
 }
 
-/** POST /api/forums/{community}/{forum}/topics. Laravel mode only. */
-export function startForumTopic(forum: string, title: string): Promise<ForumTopic> {
-  return send('POST', `forums/${forum}/topics`, { title })
+/** POST /api/forums/{community}/{forum}/topics, or saved in this browser. */
+export async function startForumTopic(forum: string, title: string, author: Author): Promise<ForumTopic> {
+  if (API_MODE === 'laravel') return send('POST', `forums/${forum}/topics`, { title })
+  const topic: ForumTopic = { title, by: author.name, replies: 0, createdAt: new Date().toISOString() }
+  const topics = readJson<Record<string, ForumTopic[]>>(TOPICS_KEY, {})
+  topics[forum] = [topic, ...(topics[forum] ?? [])]
+  writeJson(TOPICS_KEY, topics)
+  return topic
 }

@@ -3,6 +3,7 @@ import { computed, useId } from 'vue'
 import MembersGate from './MembersGate.vue'
 import PitchNote from './PitchNote.vue'
 import { RouterLink } from 'vue-router'
+import { API_MODE } from '@/api/client'
 import { getReadingList, type ThreadRef } from '@/api/discussion'
 import type { ReadingItem, SourceType } from '@/data/readingLists'
 import { useQuery } from '@/composables/useQuery'
@@ -12,8 +13,9 @@ import { formatClock } from '@/utils/format'
 // The sources behind an episode, in the order they came up. The same
 // block can sit on any episode or article, so sourcing looks the same
 // everywhere. Free on the free shows and articles; on members' shows it is
-// for members, behind the same gate as the discussion (Nick's call). The
-// server decides: a non-member gets only the count.
+// for members, behind the same gate as the discussion (Nick's call). In
+// Laravel mode the server decides, and sends a non-member the count only;
+// the static preview applies the same rule in the page.
 
 const props = defineProps<{
   /** Whose list to load: an episode's or the live show's. */
@@ -33,7 +35,11 @@ const { data, loading, error, reload } = useQuery(
   async () => (props.thread ? getReadingList(props.thread) : null),
 )
 
-const locked = computed(() => Boolean(data.value?.locked))
+const locked = computed(() => {
+  const list = data.value
+  if (!list) return false
+  return API_MODE === 'laravel' ? list.locked : !list.open && !isMember.value
+})
 const count = computed(() => (props.items ? props.items.length : (data.value?.count ?? 0)))
 const items = computed(() => {
   const list = props.items ?? (data.value && !data.value.locked ? data.value.items : [])
@@ -64,20 +70,15 @@ const typeStyles: Record<SourceType, string> = {
       <button type="button" class="font-semibold text-white underline underline-offset-2" @click="reload">Try again</button>
     </div>
 
-    <!-- A members' list seen by a non-member: only its count came back. -->
+    <!-- A members' list seen by a non-member. -->
     <MembersGate
-      v-else-if="locked && !isMember"
+      v-else-if="locked"
       class="mt-4"
       kind="sources"
       title="The members' reading list"
       :detail="`${count} ${count === 1 ? 'source' : 'sources'} behind this episode. Join to see them.`"
     />
 
-    <!-- The static preview holds only the count of members' lists, whoever is viewing. -->
-    <p v-else-if="locked" class="mt-4 text-sm text-white/85">
-      {{ count }} {{ count === 1 ? 'source' : 'sources' }} behind this episode. This preview carries only the count:
-      the live site serves members' reading lists to members only.
-    </p>
 
     <div v-else class="mt-4">
       <ol class="space-y-4">
