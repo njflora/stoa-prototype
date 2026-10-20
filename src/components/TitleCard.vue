@@ -83,10 +83,8 @@ const tint = computed(() => props.show.palette[0])
 
     <template v-if="preview">
       <PreviewAnimation :show-id="show.id" />
-      <span
-        class="absolute top-2 right-2 inline-flex items-center gap-1 rounded bg-black/65 px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase [&>svg]:size-3"
-      >
-        <AppIcon name="volume-off" />
+      <!-- Left of the card's mute button (PreviewSoundButton), which sits in the corner. -->
+      <span class="absolute top-2.5 right-11 rounded bg-black/65 px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase">
         Preview
       </span>
       <div class="absolute inset-x-0 bottom-0 z-10 h-1 bg-white/20">

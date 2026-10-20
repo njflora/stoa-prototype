@@ -8,10 +8,6 @@ import { artworks, heroVideo, mediaUrl } from '@/data/media'
 <template>
   <main class="px-4 pt-10 sm:px-8">
     <h1 class="text-3xl font-bold">Image and video credits</h1>
-    <p class="mt-2 max-w-2xl text-sm text-white/80">
-      Every image and video on Stoa is in the public domain or released under CC0. Each one was checked
-      against its licence on Wikimedia Commons. Images were resized and compressed. Nothing else was changed.
-    </p>
 
     <h2 class="mt-10 text-lg font-semibold">Images</h2>
     <ul class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

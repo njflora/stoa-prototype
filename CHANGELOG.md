@@ -2,6 +2,14 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-20: Preview sound and a shorter credits page
+
+### Added
+- Card previews (episode, series and show cards) have a mute and unmute button in the corner while they play, as on YouTube. One setting for every card: unmute once and every preview plays with sound. The demo has no audio, so the button shows the control only. It sits beside the card's link rather than inside it, and moving keyboard focus onto it keeps the preview playing.
+
+### Changed
+- The credits page is just its heading and the list: the introductory paragraph is gone.
+
 ## 2026-10-20: Trial, single episodes, article comments, who can post
 
 ### Added

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import ContributorNames from './ContributorNames.vue'
+import PreviewSoundButton from './PreviewSoundButton.vue'
 import TitleCard from './TitleCard.vue'
 import { episodeLabel, getShow, isNew, seriesOf } from '@/data/catalogue'
 import type { Episode } from '@/types/content'
@@ -65,7 +66,8 @@ const { root, previewing, handlers } = usePreview(() => !props.locked)
 
 <template>
   <!-- A wrapper, so the series link can sit beside the main link rather than inside it. -->
-  <div ref="root" :class="fluid ? 'min-w-0' : 'w-60 flex-none snap-start sm:w-72'" v-on="handlers">
+  <div ref="root" class="relative" :class="fluid ? 'min-w-0' : 'w-60 flex-none snap-start sm:w-72'" v-on="handlers">
+    <PreviewSoundButton v-if="previewing" />
     <RouterLink :to="to" :aria-label="label" class="group block outline-none">
       <div
         class="relative aspect-video overflow-hidden rounded-lg bg-surface ring-1 ring-white/10 transition duration-300 group-hover:ring-white/30 group-focus-visible:ring-2 group-focus-visible:ring-accent-bright"

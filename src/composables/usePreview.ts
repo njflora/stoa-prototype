@@ -28,6 +28,14 @@ const noHover = window.matchMedia('(hover: none)').matches
 /** The card playing on a device with a mouse. One at a time, page-wide. */
 const activeId = ref<string | null>(null)
 
+/** Previews start muted. One setting for every card, page-wide. */
+const previewMuted = ref(true)
+
+/** The previews' sound setting, for the mute button on each card. */
+export function usePreviewSound() {
+  return { muted: previewMuted, toggle: () => (previewMuted.value = !previewMuted.value) }
+}
+
 interface RowPreview {
   register: (id: string, el: Element) => () => void
   current: Ref<string | null>
@@ -101,7 +109,11 @@ export function usePreview(allowed: () => boolean) {
     },
     mouseleave: stop,
     focusin: start,
-    focusout: stop,
+    // Moving focus within the card (to its mute button) keeps it playing.
+    focusout(event: FocusEvent) {
+      if ((event.currentTarget as Element).contains(event.relatedTarget as Node | null)) return
+      stop()
+    },
   }
 
   onMounted(() => {
