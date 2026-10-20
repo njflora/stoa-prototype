@@ -8,19 +8,26 @@ defineProps<{
   /** Read out to screen readers, such as "Sort". */
   label: string
   options: { value: T; label: string; count?: number }[]
+  /** On phones, one row that swipes sideways instead of wrapping onto many lines. */
+  scroll?: boolean
 }>()
 
 const model = defineModel<T>({ required: true })
 </script>
 
 <template>
-  <div role="group" :aria-label="label" class="flex flex-wrap gap-1.5">
+  <div
+    role="group"
+    :aria-label="label"
+    class="flex gap-1.5"
+    :class="scroll ? 'max-sm:-mx-4 max-sm:overflow-x-auto max-sm:px-4 max-sm:[scrollbar-width:none] sm:flex-wrap' : 'flex-wrap'"
+  >
     <button
       v-for="option in options"
       :key="option.value"
       type="button"
       :aria-pressed="model === option.value"
-      class="inline-flex min-h-8 items-center gap-1.5 rounded-full px-3.5 text-sm font-medium ring-1 transition"
+      class="inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-sm font-medium whitespace-nowrap ring-1 transition"
       :class="
         model === option.value
           ? 'bg-accent text-white ring-accent'

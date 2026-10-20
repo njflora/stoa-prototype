@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ContributorNames from '@/components/ContributorNames.vue'
 import { computed, ref, watch, watchEffect } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
@@ -11,7 +12,7 @@ import MemberHandoff from '@/components/MemberHandoff.vue'
 import ReadingList from '@/components/ReadingList.vue'
 import ReminderButton from '@/components/ReminderButton.vue'
 import TitleCard from '@/components/TitleCard.vue'
-import { getShow, hostNames } from '@/data/catalogue'
+import { getShow } from '@/data/catalogue'
 import { useLiveStatus } from '@/composables/useLiveStatus'
 import { useViewer } from '@/composables/useViewer'
 import type { Show } from '@/types/content'
@@ -26,7 +27,6 @@ const BREAK_MS = (28 * 60 + 14) * 1000
 const { phase, event, nextStart, countdown, now } = useLiveStatus()
 const { isMember, isSignedIn, setPhase } = useViewer()
 const show = getShow(event.showId)
-const hosts = hostNames(event.hostIds)
 
 // The break counts down to the members' after-show, then starts it.
 const breakEndsAt = ref(Date.now() + BREAK_MS)
@@ -191,7 +191,7 @@ const schedule = computed<ScheduleItem[]>(() => [
           {{ title }}
         </p>
         <div class="flex items-center gap-2 lg:mt-1">
-          <p class="min-w-0 truncate text-xs text-muted lg:text-sm">{{ hosts }} · {{ status }}</p>
+          <p class="min-w-0 truncate text-xs text-muted lg:text-sm"><ContributorNames :ids="event.hostIds" /> · {{ status }}</p>
           <PitchNote id="live-phone" />
         </div>
       </div>

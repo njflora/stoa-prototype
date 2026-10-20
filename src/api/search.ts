@@ -114,7 +114,7 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
   }
   for (const h of reference.hosts) {
     const presents = reference.shows.filter((s) => s.hostIds.includes(h.id)).map((s) => s.name)
-    docs.push({ id: `host:${h.id}`, kind: 'host', title: h.name, show: presents.join(' '), hosts: h.name, text: '', to: `/?search=${encodeURIComponent(h.name)}`, hostIds: [h.id] })
+    docs.push({ id: `host:${h.id}`, kind: 'host', title: h.name, show: presents.join(' '), hosts: h.name, text: '', to: `/contributors/${h.id}`, hostIds: [h.id] })
   }
 
   const times = docs.filter((d) => d.publishedAt).map((d) => new Date(d.publishedAt!).getTime())

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ContributorNames from '@/components/ContributorNames.vue'
 import { computed, watchEffect } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
@@ -57,7 +58,7 @@ watchEffect(() => {
           <h1 class="mt-3 font-serif text-3xl leading-tight font-bold text-balance sm:text-5xl">{{ piece.title }}</h1>
           <p class="mt-4 text-lg text-white/85 sm:text-xl">{{ piece.standfirst }}</p>
           <p class="mt-4 text-sm text-white/70">
-            {{ hostNames([piece.authorId]) }} · {{ piece.readMin }} min read · {{ formatPublished(piece.publishedAt) }}
+            <ContributorNames :ids="[piece.authorId]" /> · {{ piece.readMin }} min read · {{ formatPublished(piece.publishedAt) }}
           </p>
         </div>
       </header>

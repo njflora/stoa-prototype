@@ -2,8 +2,9 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
+import ContributorNames from './ContributorNames.vue'
 import TitleCard from './TitleCard.vue'
-import { episodeLabel, getShow, hostNames, isNew, seriesOf } from '@/data/catalogue'
+import { episodeLabel, getShow, isNew, seriesOf } from '@/data/catalogue'
 import type { Episode } from '@/types/content'
 import { artForEpisode } from '@/data/media'
 import { usePreview } from '@/composables/usePreview'
@@ -28,11 +29,6 @@ const show = computed(() => getShow(props.episode.showId))
 
 const caption = computed(() =>
   props.variant === 'show' ? `Start with: ${props.episode.title}` : props.episode.title,
-)
-const subcaption = computed(() =>
-  props.variant === 'show'
-    ? show.value.tagline
-    : hostNames(props.episode.hostIds),
 )
 
 const badge = computed(() => {
@@ -104,13 +100,16 @@ const { root, previewing, handlers } = usePreview(() => !props.locked)
         </div>
       </div>
 
-      <div class="mt-2 px-0.5">
-        <p class="line-clamp-2 text-sm leading-snug font-medium text-white/90 group-hover:text-white">
-          {{ caption }}
-        </p>
-        <p class="mt-0.5 truncate text-xs text-muted">{{ subcaption }}</p>
-        <!-- The reference site's card line: when it was published, views and comments. -->
-        <p v-if="variant === 'episode'" class="mt-0.5 flex items-center gap-2 truncate text-[11px] text-muted [&_svg]:size-3.5">
+      <p class="mt-2 line-clamp-2 px-0.5 text-sm leading-snug font-medium text-white/90 group-hover:text-white">
+        {{ caption }}
+      </p>
+    </RouterLink>
+    <!-- Below the main link, so the names can be links to their profiles. -->
+    <div class="px-0.5">
+      <p v-if="variant === 'show'" class="mt-0.5 truncate text-xs text-muted">{{ show.tagline }}</p>
+      <p v-else class="mt-0.5 truncate text-xs text-muted"><ContributorNames :ids="episode.hostIds" /></p>
+      <!-- The reference site's card line: when it was published, views and comments. -->
+      <p v-if="variant === 'episode'" class="mt-0.5 flex items-center gap-2 truncate text-[11px] text-muted [&_svg]:size-3.5">
           <span>{{ formatPublished(episode.publishedAt) }}</span>
           <span v-if="episode.views !== undefined" class="inline-flex items-center gap-0.5" :aria-label="`${episode.views} views`">
             <AppIcon name="eye" /> {{ formatCount(episode.views) }}
@@ -118,9 +117,8 @@ const { root, previewing, handlers } = usePreview(() => !props.locked)
           <span v-if="episode.comments !== undefined" class="inline-flex items-center gap-0.5" :aria-label="`${episode.comments} comments`">
             <AppIcon name="chat" /> {{ formatCount(episode.comments) }}
           </span>
-        </p>
-      </div>
-    </RouterLink>
+      </p>
+    </div>
     <RouterLink
       v-if="series && variant === 'episode'"
       :to="`/series/${series.slug}`"

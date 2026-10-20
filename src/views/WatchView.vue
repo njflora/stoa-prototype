@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ContributorNames from '@/components/ContributorNames.vue'
 import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
@@ -11,7 +12,7 @@ import ReadingList from '@/components/ReadingList.vue'
 import SeriesQueue from '@/components/SeriesQueue.vue'
 import TitleCard from '@/components/TitleCard.vue'
 import { getEpisode, listEpisodes } from '@/api/catalogue'
-import { getSeries, getShow, hostNames, seriesOf } from '@/data/catalogue'
+import { getSeries, getShow, seriesOf } from '@/data/catalogue'
 import { useQuery } from '@/composables/useQuery'
 import { usePlayback } from '@/composables/usePlayback'
 import { useViewer } from '@/composables/useViewer'
@@ -222,7 +223,7 @@ watchEffect(() => {
           <p class="font-serif text-sm font-bold tracking-widest text-white/70 uppercase">{{ show.name }}</p>
           <h1 class="mt-1 text-2xl leading-tight font-bold sm:text-3xl">{{ episode.title }}</h1>
           <p class="mt-1 text-sm text-muted">
-            {{ hostNames(episode.hostIds) }} · {{ formatPublished(episode.publishedAt) }} ·
+            <ContributorNames :ids="episode.hostIds" /> · {{ formatPublished(episode.publishedAt) }} ·
             {{ formatDuration(episode.durationMin) }}
           </p>
           <RouterLink

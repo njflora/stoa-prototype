@@ -2,10 +2,11 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
+import ContributorNames from './ContributorNames.vue'
 import PitchNote from './PitchNote.vue'
 import HeroVideo from './HeroVideo.vue'
 import TitleCard from './TitleCard.vue'
-import { getShow, hostNames } from '@/data/catalogue'
+import { getShow } from '@/data/catalogue'
 import { artForEpisode, type Artwork } from '@/data/media'
 import { useLiveStatus } from '@/composables/useLiveStatus'
 import { useViewer } from '@/composables/useViewer'
@@ -21,7 +22,7 @@ interface Slide {
   show: Show
   kicker: string
   title: string
-  hosts: string
+  hostIds: string[]
   action: { label: string; to: string; join: boolean }
   /** The painting behind an episode slide. The live slide plays video instead. */
   art?: Artwork
@@ -46,7 +47,7 @@ const slides = computed<Slide[]>(() => {
         show: getShow(event.showId),
         kicker: 'Live now',
         title: afterShow ? `${event.title}: Members' after-show` : event.title,
-        hosts: hostNames(event.hostIds),
+        hostIds: event.hostIds,
         action: {
           label: join ? 'Continue as a member' : 'Watch live',
           to: '/live',
@@ -64,7 +65,7 @@ const slides = computed<Slide[]>(() => {
         show: getShow(event.showId),
         kicker: 'Next live',
         title: event.title,
-        hosts: hostNames(event.hostIds),
+        hostIds: event.hostIds,
         action: { label: 'Set a reminder', to: '/live', join: false },
       },
     ]
@@ -86,7 +87,7 @@ const slides = computed<Slide[]>(() => {
       art: artForEpisode(episode),
       kicker,
       title: episode.title,
-      hosts: hostNames(episode.hostIds),
+      hostIds: episode.hostIds,
       action: locked
         ? { label: 'Join to watch', to: '/join', join: true }
         : { label: 'Play', to: `/watch/${episode.id}`, join: false },
@@ -184,7 +185,7 @@ onUnmounted(() => clearInterval(timer))
         <h2 class="mt-1 text-3xl leading-tight font-bold text-balance sm:text-5xl">
           {{ current.title }}
         </h2>
-        <p class="mt-2 text-sm text-white/75 sm:text-base">{{ current.hosts }}</p>
+        <p class="mt-2 text-sm text-white/75 sm:text-base"><ContributorNames :ids="current.hostIds" /></p>
 
         <div class="mt-5 flex flex-wrap gap-3">
           <RouterLink

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ContributorNames from '@/components/ContributorNames.vue'
 import { computed, watchEffect } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
@@ -6,7 +7,7 @@ import PitchNote from '@/components/PitchNote.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import SeriesCard from '@/components/SeriesCard.vue'
 import TitleCard from '@/components/TitleCard.vue'
-import { getSeries, getShow, hostNames, listAllSeries } from '@/data/catalogue'
+import { getSeries, getShow, listAllSeries } from '@/data/catalogue'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import { artForEpisode, artForSeries } from '@/data/media'
@@ -70,7 +71,7 @@ function watchLink(episodeId: string) {
         </p>
         <h1 class="mt-2 text-3xl leading-tight font-bold text-balance sm:text-5xl">{{ series.name }}</h1>
         <p class="mt-2 text-sm text-white/75">
-          {{ hostNames(series.episodes[0]!.hostIds) }} · {{ series.episodes.length }} parts ·
+          <ContributorNames :ids="series.episodes[0]!.hostIds" /> · {{ series.episodes.length }} parts ·
           {{ formatDuration(series.totalMin) }}
         </p>
         <p class="mt-4 text-white/85">{{ series.description }}</p>

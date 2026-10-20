@@ -13,6 +13,11 @@ All notable changes to this prototype are listed here. Newest first.
 - Each contributor's episodes across every show, paged, and a site-wide "trending this week" list.
 - Article engagement: views, comments, likes and dislikes, with sorted lists for popular (week, month, all time) and controversial.
 - Show pages sort by Popular, with This week, This month, This year or All time. The heading follows ("Most watched this month").
+- /contributors and a profile page for each contributor: role, bio, the shows they appear on (each opening that show filtered to them), their series, their articles and every episode they are in, paged.
+- Contributor names link to their profiles across the site: episode and article cards, the episode, live, series, article and course pages, and the homepage hero. On cards the names now sit below the main link, since a link cannot sit inside another. Series, show and course cards keep plain names, as each card is a single link.
+- Search: a contributor result opens their profile.
+- A footer links block: Contributors, FAQ, Contact, Courses, Shop and Pitch notes. FAQ jumps to the questions on the members' page, below the sticky header.
+- /contact: placeholder addresses for general, membership and press enquiries. A contact form is not part of this demo.
 - Show pages filter by contributor. Click a name in the show's header, or use the contributor chips above the list; "View profile" appears beside the active filter. Contributor, access and sort combine, and all of it is kept in the address.
 
 ## 2026-10-20: An account page from the demo's real state

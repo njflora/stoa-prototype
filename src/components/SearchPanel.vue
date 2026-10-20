@@ -4,7 +4,8 @@ import { useRouter } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import PitchNote from './PitchNote.vue'
 import type { ResultKind, SearchHit } from '@/api/search'
-import { articleCategoryColours, getShow, hostNames, listShows } from '@/data/catalogue'
+import { reference } from '@/api/catalogue'
+import { articleCategoryColours, getShow, hostNames } from '@/data/catalogue'
 import { artForEpisode, artForSeries, artForShow, mediaUrl } from '@/data/media'
 import { useSearch } from '@/composables/useSearch'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
@@ -66,12 +67,6 @@ async function move(step: 1 | -1) {
 
 function open(hit: SearchHit | undefined) {
   if (!hit) return
-  // A host result searches for that host, right here.
-  if (hit.kind === 'host') {
-    query.value = hit.title
-    input.value?.focus()
-    return
-  }
   // Going to another page closes the overlay, since the new address has no ?search.
   router.push(hit.to)
 }
@@ -151,11 +146,8 @@ function detail(hit: SearchHit): string {
       const show = hit.showId ? getShow(hit.showId) : undefined
       return show ? `${show.episodeCount?.toLocaleString('en-GB')} episodes · ${show.tagline}` : ''
     }
-    case 'host': {
-      const id = hit.hostIds?.[0]
-      const presents = listShows().filter((s) => id && s.hostIds.includes(id)).map((s) => s.name)
-      return presents.length ? `Presents ${presents.join(', ')}` : 'Writer'
-    }
+    case 'host':
+      return `Contributor · ${reference.hosts.find((h) => h.id === hit.hostIds?.[0])?.role ?? ''}`
     case 'article':
       return `Article · ${hostNames(hit.hostIds ?? [])} · ${hit.category ?? ''}`
   }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import ContributorNames from '@/components/ContributorNames.vue'
 import { computed, ref, watch, watchEffect } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import CourseCard from '@/components/CourseCard.vue'
 import { getCourse, lessonCount, separatePrice } from '@/data/courses'
-import { hostNames } from '@/data/catalogue'
 import { artworks, mediaUrl } from '@/data/media'
 import { formatPrice } from '@/utils/format'
 
@@ -38,7 +38,7 @@ watchEffect(() => {
         <h1 class="mt-2 text-3xl leading-tight font-bold text-balance sm:text-5xl">{{ course.title }}</h1>
         <p class="mt-3 text-lg text-white/85">{{ course.summary }}</p>
         <p class="mt-3 text-sm text-white/70">
-          Taught by {{ hostNames([course.teacherId]) }}
+          Taught by <ContributorNames :ids="[course.teacherId]" />
           <template v-if="lessonCount(course)"> · {{ lessonCount(course) }} lessons</template>
         </p>
 

@@ -100,6 +100,24 @@ const router = createRouter({
       component: () => import('../views/CourseView.vue'),
     },
     {
+      path: '/contributors',
+      name: 'contributors',
+      component: () => import('../views/ContributorsView.vue'),
+      meta: { title: 'Contributors' },
+    },
+    {
+      // The page names the tab itself, after the person.
+      path: '/contributors/:id',
+      name: 'contributor',
+      component: () => import('../views/ContributorView.vue'),
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: () => import('../views/ContactView.vue'),
+      meta: { title: 'Contact' },
+    },
+    {
       // Search is an overlay now (?search=). Old /search?q= links open it over the homepage.
       path: '/search',
       name: 'search',
@@ -127,7 +145,15 @@ const router = createRouter({
   // Back and Forward return to where you were. A new page starts at the top,
   // but a change on the same page (a filter, a page of results, opening
   // search) keeps your place; the page scrolls itself if it needs to.
-  scrollBehavior: (to, from, saved) => saved ?? (to.path === from.path ? false : { top: 0 }),
+  // A link to a #section scrolls it into view below the sticky header.
+  scrollBehavior: (to, from, saved) => {
+    if (saved) return saved
+    if (to.hash) {
+      const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 64
+      return { el: to.hash, top: header + 16 }
+    }
+    return to.path === from.path ? false : { top: 0 }
+  },
 })
 
 router.afterEach((to, from) => {

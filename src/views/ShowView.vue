@@ -243,7 +243,7 @@ watchEffect(() => {
       </div>
       <FilterChips v-if="sort === 'popular'" v-model="periodModel" label="Published" :options="periodOptions" class="mt-3" />
       <div v-if="filterable" class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-        <FilterChips v-model="hostModel" label="Contributor" :options="hostOptions" />
+        <FilterChips v-model="hostModel" label="Contributor" :options="hostOptions" scroll class="max-w-full" />
         <RouterLink
           v-if="activeHost"
           :to="`/contributors/${activeHost.id}`"
