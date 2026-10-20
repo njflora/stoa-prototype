@@ -1,0 +1,31 @@
+# The Stoa API in Docker, so nothing needs installing on the host.
+#
+#   docker compose up -d app                      start the API on http://localhost:8000
+#   docker compose run --rm composer install      install PHP packages
+#   docker compose run --rm app php artisan ...   run any artisan command
+#
+# Installed packages (vendor/) live in a Docker volume, not in this folder:
+# on Windows, a mounted folder is slow and Composer cannot always delete
+# its temporary files there.
+
+services:
+  app:
+    image: php:8.4-cli
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - vendor:/var/www/vendor
+    ports:
+      - "8000:8000"
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  composer:
+    image: composer:2
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - vendor:/app/vendor
+    profiles: [tools]
+
+volumes:
+  vendor:
