@@ -107,7 +107,7 @@ const { root, previewing, handlers } = usePreview(() => !props.locked)
     <!-- Below the main link, so the names can be links to their profiles. -->
     <div class="px-0.5">
       <p v-if="variant === 'show'" class="mt-0.5 truncate text-xs text-muted">{{ show.tagline }}</p>
-      <p v-else class="mt-0.5 truncate text-xs text-muted"><ContributorNames :ids="episode.hostIds" /></p>
+      <p v-else class="mt-0.5 line-clamp-2 text-xs text-muted"><ContributorNames :ids="episode.hostIds" /></p>
       <!-- The reference site's card line: when it was published, views and comments. -->
       <p v-if="variant === 'episode'" class="mt-0.5 flex items-center gap-2 truncate text-[11px] text-muted [&_svg]:size-3.5">
           <span>{{ formatPublished(episode.publishedAt) }}</span>

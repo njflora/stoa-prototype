@@ -4,7 +4,7 @@ Status as of 19 October 2026, updated during step 4 of the second brief (real-fe
 
 ## In one paragraph
 
-The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. Every nav link now leads to a finished page (step 5). The code walkthrough (step 6) is next. There are 43 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
+The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. Every nav link now leads to a finished page (step 5). The code walkthrough (step 6) is next. There are 50 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
 
 ## Context
 
@@ -21,9 +21,11 @@ The pitch prototype is built and working locally. All three priority sections fr
 - **One top bar instead of the long side nav.** Left: Stoa, Live (with a red dot when on air), Home, Shows, Articles, Courses, Search. Right: a purple Shop button, a gold Upgrade button with a crown, then the account.
 - **Phones get an app-style tab bar** (Home, Live, Shows, Search, More), with More opening a sheet for Articles, Courses, Shop and the account. Every page was checked at 375px and 320px for overflow and tap-target size.
 - **Built for the real site's scale.** 5,521 generated episodes, each title unique within its show (The Stoa Podcast #1 to #1530, Morning Brief with three segments a weekday) served as a paged API from static JSON. Pages fetch only what they show; the homepage needs one request.
-- **Every show has a page** with its full archive: 50 episodes a page, newest or oldest first, and free or members-only on mixed shows. The view is kept in the address.
-- **Articles have an index and full pages.** Category filters, a lead piece, and at the end of each article its sources, an episode to watch next and more from the writer.
-- **Courses live inside the site**, in their course shop's format and at their price points, with a page per course.
+- **Every show has a page** with its full archive: 50 episodes a page, newest, oldest or most watched (this week, month, year or all time), filtered by access and by contributor. The view is kept in the address.
+- **Contributor profiles.** Every presenter and writer has a page with a bio, their shows, series, articles and episodes. Their names link there across the site, and the footer lists them alongside FAQ and Contact.
+- **The Shows page suits members.** Members get Continue watching, Trending this week and Latest first; free viewers see the shows to try.
+- **Articles have an index and full pages.** Newest, Popular and Controversial sorts, category filters, a lead piece, and at the end of each article its sources, an episode to watch next and more from the writer.
+- **Courses live inside the site**, in their course shop's format and at their price points, with a page per course. The Philosophy Circle is a free membership on your account, with an open forum and more forums on the roadmap.
 - **One shop inside the site**, using the real stores' product format and prices, with a store switch in place of three separate regional stores.
 - **An account page** built from the demo's state: membership, watch history, reminders and the newsletter. Billing and passwords say they are not part of the demo.
 - **Instant search over any page** (Finding 9). Press "/", the header button or the Search tab on phones. Results appear as you type, grouped as Episodes, Series, Shows, Hosts and Articles, in a see-through panel over the current page. Small typos are forgiven, the keyboard works throughout, and the search is kept in the address so it can be shared.
@@ -109,6 +111,8 @@ The pitch prototype is built and working locally. All three priority sections fr
 - **Not started:** installable PWA, the technical audit, the bug report and screen recording, the Topic 4 and 5 write-ups, the measurement page.
 
 ## Known limits of the prototype
+
+- **Pre-built filter answers take disk space.** Every combination of show, access, contributor and period is stored as a file, so public/data is about 10 MB on disk. Each page fetched is still a few KB. A real API would run queries instead.
 
 - No server. Comments, votes, reminders and watch progress live in the browser only.
 - Notifications only appear while the site is open in a tab. Real reminders need Web Push, which belongs with the PWA work.
