@@ -287,6 +287,16 @@ export const pitchNotes: PitchNote[] = [
     hint: 'Viewing as "Free account".',
   },
   {
+    id: 'open-spaces',
+    kind: 'proposal',
+    source: 'New idea',
+    title: 'Open spaces and members\' spaces',
+    today: 'Commenting is a members\' perk everywhere.',
+    here: 'Free accounts can post where discussion is casual: the free daily shows, articles and the Circle\'s general forum. Members\' shows and topic forums stay members-only, which keeps them civil.',
+    page: { name: 'An article', to: '/articles/centre-ground' },
+    hint: 'Viewing as "Free account".',
+  },
+  {
     id: 'search',
     kind: 'fix',
     source: 'Finding 9',

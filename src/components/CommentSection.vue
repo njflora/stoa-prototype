@@ -30,11 +30,15 @@ const props = defineProps<{
   episode?: Episode
   /** Or the article, for comments under a written piece. */
   article?: Article
+  /** Free accounts may post here too (see FREE_POSTING_SHOWS). Otherwise members only. */
+  openToFree?: boolean
 }>()
 
 const PAGE_SIZE = 5
 
 const { isMember, isSignedIn, user } = useViewer()
+/** Post, reply and vote: members anywhere, free accounts in open spaces. */
+const canPost = computed(() => isMember.value || (props.openToFree && isSignedIn.value))
 const headingId = useId()
 
 // A copy, so posting here never changes the placeholder data.
@@ -103,6 +107,10 @@ function postReply(parent: Comment) {
         Comments <span class="text-muted">({{ total }})</span>
       </h2>
       <PitchNote id="votes" class="ml-auto" />
+      <p class="w-full text-xs text-muted sm:order-last">
+        {{ openToFree ? 'Open to all accounts' : 'Members only' }}
+        <PitchNote id="open-spaces" class="ml-1 align-middle" />
+      </p>
       <div class="inline-flex rounded-lg bg-surface p-1 ring-1 ring-white/10" role="group" aria-label="Sort comments">
         <button
           v-for="option in sortOptions"
@@ -118,8 +126,8 @@ function postReply(parent: Comment) {
       </div>
     </div>
 
-    <!-- Members: write a comment. -->
-    <form v-if="isMember" class="mt-4 flex gap-3" @submit.prevent="post">
+    <!-- Anyone allowed to post here: write a comment. -->
+    <form v-if="canPost" class="mt-4 flex gap-3" @submit.prevent="post">
       <span class="grid size-9 shrink-0 place-items-center rounded-full bg-accent text-xs font-bold" aria-hidden="true">
         {{ user?.initials }}
       </span>
@@ -144,14 +152,14 @@ function postReply(parent: Comment) {
       </div>
     </form>
 
-    <!-- Free account: commenting is a members' perk. -->
+    <!-- Free account in a members' space. -->
     <div
       v-else-if="isSignedIn"
       class="mt-4 flex flex-col gap-3 rounded-lg bg-surface p-4 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between"
     >
       <p class="flex items-center gap-2 text-sm text-white/85">
         <AppIcon name="lock" class="!size-4 text-gold" />
-        Commenting is for members.
+        Comments on members' shows are for members.
       </p>
       <RouterLink
         to="/join"
@@ -181,7 +189,7 @@ function postReply(parent: Comment) {
         <CommentItem
           :comment="c"
           :vote="voteFor(c.id)"
-          :can-interact="isMember"
+          :can-interact="canPost"
           @vote="vote"
           @reply="startReply"
         />
@@ -214,7 +222,7 @@ function postReply(parent: Comment) {
             <CommentItem
               :comment="r"
               :vote="voteFor(r.id)"
-              :can-interact="isMember"
+              :can-interact="canPost"
               is-reply
               @vote="vote"
             />

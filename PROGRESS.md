@@ -91,7 +91,7 @@ The pitch prototype is built and working locally. All three priority sections fr
 | 7-day trial shown | The benchmark lists "no free trial" as a gap |
 | No checkout, no real login | The plan rules out anything resembling a payment or credential flow |
 | Reading lists are free for everyone | Sourcing builds trust |
-| Commenting is a members' perk; chat is open to any account | Matches their current rules |
+| Free accounts post in casual spaces (the free daily shows, articles, the Circle's General discussion); members' shows and topic forums are members-only; chat is open to any account | Nick's call: open where it is casual, members-only where it could get unruly |
 | Browser notifications replace "Add to calendar" | Reminders become a members' perk |
 | Live chat replay only on Stoa Podcast and Morning Brief | The shows named as streamed live; The Forum and Statecraft could be added |
 | Episode numbers and titles follow the real site's format (#1530, "Show #N \| Topic") | Nick's call: this is a tech demo of what their site could be. It reverses an earlier move to neutral numbers |

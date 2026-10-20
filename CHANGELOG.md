@@ -10,6 +10,9 @@ All notable changes to this prototype are listed here. Newest first.
 - Bought episodes unlock everywhere at once, carry an "Owned" badge, and are listed under "Your episodes" on the account page. A pitch note: "Buy a single episode".
 
 ### Changed
+- Who can post (Nick's call): free accounts post, reply and vote in casual spaces, meaning comments on The Stoa Podcast and Morning Brief (and the live show), under articles, and in the Philosophy Circle's General discussion. Members' shows and the Circle's topic forums are members-only. Every comment section and forum says which it is ("Open to all accounts" or "Members only"), and the rule lives in one place (FREE_POSTING_SHOWS in src/data/membership.ts).
+- The Circle's Ethics forum is now open, members-only, so the lock can be seen. "Start a thread" works in any forum you may post in (kept on the page only). A pitch note: "Open spaces and members' spaces".
+- Bronze's perk now reads "Comment on members' shows, and post in every forum".
 - Locked episode cards open the episode page, which now offers two ways in: "Upgrade to watch everything" or "Buy this episode, £1.99".
 - The 7-day free trial is for Bronze and Silver only. Gold's button reads "Join Gold", and the Join page, FAQ, account page and pitch note say which tiers have the trial.
 

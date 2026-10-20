@@ -3,7 +3,7 @@ import ContributorNames from '@/components/ContributorNames.vue'
 import { computed, ref, watch, watchEffect } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import CourseCard from '@/components/CourseCard.vue'
-import { getCourse, lessonCount, separatePrice } from '@/data/courses'
+import { getCourse, lessonCount, separatePrice, type Forum } from '@/data/courses'
 import { artworks, mediaUrl } from '@/data/media'
 import AppIcon from '@/components/AppIcon.vue'
 import PitchNote from '@/components/PitchNote.vue'
@@ -23,7 +23,20 @@ const saving = computed(() => {
   return separate && course.value?.price ? separate - course.value.price : 0
 })
 
-const { isSignedIn } = useViewer()
+const { isSignedIn, isMember, user } = useViewer()
+
+// Starting threads: anyone signed in in open forums, members in members' forums.
+// Kept on the page only, like comments: there is no server.
+const canPostIn = (forum: Forum) => forum.status === 'open' && (isMember.value || (forum.posting === 'all' && isSignedIn.value))
+const drafts = ref<Record<string, string>>({})
+const added = ref<Record<string, NonNullable<Forum['threads']>>>({})
+function startThread(forum: Forum) {
+  const title = drafts.value[forum.name]?.trim()
+  if (!title) return
+  added.value[forum.name] = [{ title, by: user.value?.name ?? 'You', replies: 0, daysAgo: 0 }, ...(added.value[forum.name] ?? [])]
+  drafts.value[forum.name] = ''
+}
+const threadsOf = (forum: Forum) => [...(added.value[forum.name] ?? []), ...(forum.threads ?? [])]
 const { isJoined, join, leave } = useCommunity()
 const joined = computed(() => !!course.value && isJoined(course.value.id))
 const members = computed(() => (course.value?.community?.members ?? 0) + (joined.value ? 1 : 0))
@@ -110,16 +123,42 @@ watchEffect(() => {
           <li v-for="forum in course.community.forums" :key="forum.name" class="rounded-xl bg-surface p-4 ring-1 ring-white/10" :class="forum.status === 'planned' ? 'opacity-75' : ''">
             <div class="flex flex-wrap items-center gap-2">
               <h3 class="font-semibold">{{ forum.name }}</h3>
+              <span v-if="forum.status === 'planned'" class="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white/70 uppercase">
+                Planned
+              </span>
               <span
-                class="rounded px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase"
-                :class="forum.status === 'open' ? 'bg-accent text-white' : 'bg-white/10 text-white/70'"
+                class="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase [&>svg]:size-3"
+                :class="forum.posting === 'all' ? 'bg-accent text-white' : 'bg-gold text-ink'"
               >
-                {{ forum.status === 'open' ? 'Open' : 'Planned' }}
+                <AppIcon v-if="forum.posting === 'members'" name="lock" />
+                {{ forum.posting === 'all' ? 'Open to all accounts' : 'Members only' }}
               </span>
             </div>
             <p class="mt-1 text-sm text-white/75">{{ forum.description }}</p>
-            <ul v-if="forum.threads" class="mt-3 divide-y divide-white/5">
-              <li v-for="thread in forum.threads" :key="thread.title" class="py-2.5">
+
+            <form v-if="canPostIn(forum)" class="mt-3 flex gap-2" @submit.prevent="startThread(forum)">
+              <label :for="`thread-${forum.name}`" class="sr-only">Start a thread in {{ forum.name }}</label>
+              <input
+                :id="`thread-${forum.name}`"
+                v-model="drafts[forum.name]"
+                type="text"
+                placeholder="Start a thread"
+                class="h-9 min-w-0 flex-1 rounded-lg bg-ink px-3 text-sm ring-1 ring-white/10 placeholder:text-muted focus:ring-2 focus:ring-accent-bright focus:outline-none"
+              />
+              <button type="submit" class="h-9 rounded-lg bg-white px-3 text-sm font-semibold text-ink disabled:opacity-40" :disabled="!drafts[forum.name]?.trim()">
+                Post
+              </button>
+            </form>
+            <p v-else-if="forum.status === 'open' && isSignedIn" class="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/80">
+              <AppIcon name="lock" class="!size-4 text-gold" /> Posting here is for members.
+              <RouterLink to="/join" class="font-semibold text-gold underline">Upgrade</RouterLink>
+            </p>
+            <p v-else-if="forum.status === 'open'" class="mt-3 text-sm text-white/80">
+              <RouterLink to="/sign-in" class="font-semibold underline">Sign in</RouterLink> to post.
+            </p>
+
+            <ul v-if="threadsOf(forum).length" class="mt-3 divide-y divide-white/5">
+              <li v-for="thread in threadsOf(forum)" :key="thread.title" class="py-2.5">
                 <p class="text-sm font-medium">{{ thread.title }}</p>
                 <p class="text-xs text-muted">
                   {{ thread.by }} · {{ thread.replies }} replies · last reply {{ formatTimeAgo(daysAgoIso(thread.daysAgo)).toLowerCase() }}
@@ -128,7 +167,7 @@ watchEffect(() => {
             </ul>
           </li>
         </ul>
-        <p class="mt-2 text-xs text-muted">Posting is not part of this demo.</p>
+        <p class="mt-2 text-xs text-muted">New threads stay on this page only: the demo has no server.</p>
       </section>
 
       <section v-if="course.modules.length" aria-labelledby="course-modules">

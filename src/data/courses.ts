@@ -37,6 +37,8 @@ export interface Forum {
   description: string
   /** "planned" forums are on the roadmap, not built. */
   status: 'open' | 'planned'
+  /** Who can post: every signed-in account, or members only. */
+  posting: 'all' | 'members'
   threads?: { title: string; by: string; replies: number; daysAgo: number }[]
 }
 
@@ -62,6 +64,7 @@ export const courses: Course[] = [
           name: 'General discussion',
           description: 'Questions, recommendations and the monthly reading.',
           status: 'open',
+          posting: 'all',
           threads: [
             { title: 'This month: the Apology. First impressions?', by: 'northernlass', replies: 34, daysAgo: 0 },
             { title: 'Is Stoicism just good manners with a reading list?', by: 'Wessex_Walker', replies: 57, daysAgo: 1 },
@@ -69,10 +72,19 @@ export const courses: Course[] = [
             { title: 'Suggestions for next month’s book', by: 'chris_m', replies: 22, daysAgo: 5 },
           ],
         },
-        { name: 'Ethics', description: 'How to live, and how to argue about it.', status: 'planned' },
-        { name: 'Political philosophy', description: 'Justice, power and the state, from Plato to now.', status: 'planned' },
-        { name: 'Classics reading room', description: 'Slow reading of the ancient texts, a chapter at a time.', status: 'planned' },
-        { name: 'Book club', description: 'One modern book a month, chosen by members.', status: 'planned' },
+        {
+          name: 'Ethics',
+          description: 'How to live, and how to argue about it. Members only, to keep it civil.',
+          status: 'open',
+          posting: 'members',
+          threads: [
+            { title: 'Is it ever right to lie to protect someone?', by: 'GrumpyHistorian', replies: 41, daysAgo: 0 },
+            { title: 'Virtue or rules: which is the better guide?', by: 'CanalBoatKev', replies: 29, daysAgo: 2 },
+          ],
+        },
+        { name: 'Political philosophy', description: 'Justice, power and the state, from Plato to now.', status: 'planned', posting: 'members' },
+        { name: 'Classics reading room', description: 'Slow reading of the ancient texts, a chapter at a time.', status: 'planned', posting: 'members' },
+        { name: 'Book club', description: 'One modern book a month, chosen by members.', status: 'planned', posting: 'members' },
       ],
     },
     related: [{ label: 'Conversations', to: '/shows/conversations' }],

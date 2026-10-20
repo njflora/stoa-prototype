@@ -19,7 +19,7 @@ import { usePlayback } from '@/composables/usePlayback'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import { artForEpisode } from '@/data/media'
-import { EPISODE_PRICE } from '@/data/membership'
+import { EPISODE_PRICE, FREE_POSTING_SHOWS } from '@/data/membership'
 import { formatDuration, formatPrice, formatPublished, toRoman } from '@/utils/format'
 
 // An episode page. Series episodes get the series queue beside the
@@ -300,7 +300,13 @@ watchEffect(() => {
       class="flex flex-col gap-10 px-4 pt-10 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-x-6 lg:px-8"
     >
       <ReadingList :key="`reading-${episode.id}`" :list-id="episode.id" :episode="episode" class="lg:col-start-2 lg:row-start-1" />
-      <CommentSection :key="`comments-${episode.id}`" :thread-id="episode.id" :episode="episode" class="lg:col-start-1 lg:row-start-1" />
+      <CommentSection
+        :key="`comments-${episode.id}`"
+        :thread-id="episode.id"
+        :episode="episode"
+        :open-to-free="FREE_POSTING_SHOWS.includes(episode.showId)"
+        class="lg:col-start-1 lg:row-start-1"
+      />
     </div>
 
     <ContentRow v-if="moreFromShow.length" :title="`More from ${show.name}`" class="pt-10">

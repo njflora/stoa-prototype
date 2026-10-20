@@ -24,7 +24,7 @@ export const tiers: Tier[] = [
     adds: [
       "All members' shows and the full back catalogue",
       "The members' after-show, live",
-      'Comment and vote on episodes and articles',
+      "Comment on members' shows, and post in every forum",
       'Live reminders',
     ],
   },
@@ -80,6 +80,15 @@ export const features: Feature[] = [
  */
 export const TRIAL_DAYS = 7
 export const TRIAL_TIERS: TierId[] = ['bronze', 'silver']
+
+/**
+ * Where free accounts may post (Nick's call). Casual spaces stay open to
+ * everyone signed in; heated or specialist ones are for members, which
+ * keeps them civil. Free accounts can post on the two free daily shows
+ * (and the live show, which is The Stoa Podcast), under articles, and in
+ * the Philosophy Circle's General discussion. Everything else is members'.
+ */
+export const FREE_POSTING_SHOWS = ['stoa-podcast', 'morning-brief']
 
 /** One members' episode, bought to keep (Nick's call): a way to try without a plan. */
 export const EPISODE_PRICE = 1.99
