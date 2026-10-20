@@ -3,6 +3,7 @@ import ContributorNames from '@/components/ContributorNames.vue'
 import { computed, watchEffect } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
+import CommentSection from '@/components/CommentSection.vue'
 import ContentRow from '@/components/ContentRow.vue'
 import EpisodeCard from '@/components/EpisodeCard.vue'
 import ReadingList from '@/components/ReadingList.vue'
@@ -77,14 +78,23 @@ watchEffect(() => {
       </div>
     </article>
 
-    <div class="mx-auto max-w-[68ch] space-y-8 px-4">
-      <ReadingList :items="piece.readingList" context="article" />
+    <!-- Phones: sources, watch next, then comments. Wide screens: comments left, the rest right. -->
+    <div class="mx-auto grid max-w-6xl items-start gap-8 px-4 sm:px-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div class="space-y-8 lg:col-start-2 lg:row-start-1">
+        <ReadingList :items="piece.readingList" context="article" />
 
-      <section aria-labelledby="watch-next">
-        <h2 id="watch-next" class="text-lg font-semibold">Watch next</h2>
-        <p class="text-sm text-muted">An episode on the same subject</p>
-        <EpisodeCard :episode="piece.watchNext" :locked="!canWatch(piece.watchNext)" fluid class="mt-4 max-w-sm" />
-      </section>
+        <section aria-labelledby="watch-next">
+          <h2 id="watch-next" class="text-lg font-semibold">Watch next</h2>
+          <p class="text-sm text-muted">An episode on the same subject</p>
+          <EpisodeCard :episode="piece.watchNext" :locked="!canWatch(piece.watchNext)" fluid class="mt-4 max-w-sm" />
+        </section>
+      </div>
+      <CommentSection
+        :key="`comments-${piece.id}`"
+        :thread-id="`article-${piece.id}`"
+        :article="piece"
+        class="lg:col-start-1 lg:row-start-1"
+      />
     </div>
 
     <ContentRow

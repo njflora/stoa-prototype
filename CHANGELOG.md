@@ -6,6 +6,7 @@ All notable changes to this prototype are listed here. Newest first.
 
 ### Added
 - Buy a single members' episode for £1.99, kept on the account. A confirmation dialog shows the episode and price and says that no payment is taken in the demo. It follows the dialog pattern: focus moves in, Escape closes, and focus returns. Signed-out visitors are asked to sign in first; members never see the option.
+- Comments under every article, with the same votes, sorting (Newest, Top, Controversial) and posting as episodes. They come from a hand-written pool per category. On wide screens the comments sit left, with the sources and "Watch next" on the right.
 - Bought episodes unlock everywhere at once, carry an "Owned" badge, and are listed under "Your episodes" on the account page. A pitch note: "Buy a single episode".
 
 ### Changed

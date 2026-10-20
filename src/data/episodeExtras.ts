@@ -9,7 +9,7 @@
 import type { ChatTier } from './chat'
 import { commentThreads, type Comment } from './comments'
 import { readingLists, type ReadingItem, type SourceType } from './readingLists'
-import type { Episode } from '@/types/content'
+import type { Article, ArticleCategory, Episode } from '@/types/content'
 import { pickSome, randomInt, seededRandom } from '@/utils/random'
 
 type Commenter = [user: string, tier: ChatTier]
@@ -96,6 +96,60 @@ const commentPools: Record<string, string[]> = {
     'Please make this a regular format.',
     'Neil defending that pick was the highlight of my week.',
     'Strongly disagree with the winner, but what a debate.',
+  ],
+}
+
+// Comments under articles, by category. Invented for the demo.
+const articleCommentPools: Record<ArticleCategory, string[]> = {
+  Politics: [
+    'The point about loyalty no longer being inherited rings true in my family.',
+    'Good piece, though I think you underrate how much the voting system protects the big two.',
+    'Every party says it listens. Few of them ever seem to hear anything.',
+    'I would like to see the numbers behind this. Still, a fair argument.',
+    'Our ward changed hands on forty votes. Local results matter more than people think.',
+    'This is the clearest explanation of the problem I have read in a while.',
+    'I disagree with the conclusion, but the analysis is honest.',
+    'More of this, please. Less shouting, more explaining.',
+  ],
+  Analysis: [
+    'The bit about prepayment meters should be read by every MP.',
+    'Insulation first, every time. It is the cheapest energy there is.',
+    'I had no idea how much passes through so few narrow straits.',
+    'Useful and calm. Bookmarked to send to my parents.',
+    'A good primer. A follow-up on what the government could do would be welcome.',
+    'The rerouting costs explain a lot about what I have seen in the shops.',
+    'Clear writing on a complicated subject. Thank you.',
+    'I would quibble with one figure, but the overall picture is right.',
+  ],
+  History: [
+    'Helen writes the way she talks on Chronos. Clear and never dull.',
+    'The part the legend leaves out is always the most interesting part.',
+    'I visited the battlefield last summer. The ground really is that narrow.',
+    'Great to see the primary sources taken seriously.',
+    'This made me go back and rewatch the whole series.',
+    'The monks deserve more credit than they get in school.',
+    'A fair and balanced take on a period full of myths.',
+    'Could we have a reading list for beginners on this?',
+  ],
+  Culture: [
+    'Finally someone says it. Long books are worth the time.',
+    'The old sitcoms worked because everyone watched them together.',
+    'Twenty minutes a day is good advice. I finished my first big novel that way.',
+    'Some of the best new comedy is online now. Agree completely.',
+    'I miss the studio audience. The laughter made it feel like an event.',
+    'Lovely piece. It made me want to pick up a book I abandoned years ago.',
+    'Not sure I agree about the decline, but I enjoyed the argument.',
+    'The bit about the monthly instalments was fascinating.',
+  ],
+  Economics: [
+    'The difference between debt and deficit should be taught in schools.',
+    'Rent takes over half of my pay. This piece describes my life.',
+    'Clear, plain and no jargon. More like this, please.',
+    'I would add that pension funds holding gilts affects all of us.',
+    'Building more homes is the answer everyone agrees on and nobody delivers.',
+    'Interest on the debt is the number I wish more people knew.',
+    'A fair explanation. I came away understanding more than before.',
+    'The missing middle is real. Too rich for help, too poor to save.',
   ],
 }
 
@@ -211,15 +265,15 @@ function postedAfter(random: () => number, publishedAt: string): string {
   return new Date(start + random() * Math.max(0, end - start)).toISOString()
 }
 
-function generateComments(episode: Episode): Comment[] {
-  const random = seededRandom(`${episode.id}:comments`)
-  const pool = commentPools[episode.showId] ?? []
+/** A handful of comments from a pool, the same every time for a given thread. */
+function generateComments(threadId: string, pool: string[], publishedAt: string): Comment[] {
+  const random = seededRandom(`${threadId}:comments`)
   const texts = pickSome(random, pool, randomInt(random, 4, Math.min(8, pool.length)))
 
   return texts.map((text, i) => {
     const [user, tier] = commenters[randomInt(random, 0, commenters.length - 1)]!
-    const id = `${episode.id}-c${i}`
-    const postedAt = postedAfter(random, episode.publishedAt)
+    const id = `${threadId}-c${i}`
+    const postedAt = postedAfter(random, publishedAt)
     const [likes, dislikes] = votes(random)
     const replyCount = random() < 0.3 ? randomInt(random, 1, 2) : 0
     const replies = pickSome(random, replyPool, replyCount).map((reply, j): Comment => {
@@ -255,11 +309,13 @@ function generateReadingList(episode: Episode): ReadingItem[] {
   }))
 }
 
-/** The comments for a hand-written thread id, or else for the given episode. */
-export function commentsForThread(threadId: string, episode?: Episode): Comment[] {
+/** The comments for a hand-written thread id, or else for the given episode or article. */
+export function commentsForThread(threadId: string, episode?: Episode, article?: Article): Comment[] {
   const handWritten = commentThreads[threadId]
   if (handWritten) return handWritten
-  return episode ? generateComments(episode) : []
+  if (episode) return generateComments(episode.id, commentPools[episode.showId] ?? [], episode.publishedAt)
+  if (article) return generateComments(`article-${article.id}`, articleCommentPools[article.category], article.publishedAt)
+  return []
 }
 
 /** The reading list for a hand-written list id, or else for the given episode. */
