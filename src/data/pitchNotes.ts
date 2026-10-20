@@ -267,6 +267,15 @@ export const pitchNotes: PitchNote[] = [
     page: shopPage,
   },
   {
+    id: 'community-forums',
+    kind: 'proposal',
+    source: 'Courses site',
+    title: 'Forums for each community',
+    today: 'A single philosophy community on the separate courses site, joined by email.',
+    here: 'Join with one click on your Stoa account. One forum is open; more are planned, and the same model could give every show or series its own forum.',
+    page: coursesPage,
+  },
+  {
     id: 'search',
     kind: 'fix',
     source: 'Finding 9',

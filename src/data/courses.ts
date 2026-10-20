@@ -1,8 +1,8 @@
 // Courses, in the format of the reference site's course shop: a type
 // (Community, Course or Bundle), a title, a description and a price.
 // The products are invented for the demo; the prices match the real
-// site's price points. Their community card shows no price, so ours
-// does not invent one.
+// site's price points. Their community is free, with a member and post
+// count, so ours is too: a membership on your account, not lessons.
 
 export type CourseType = 'Community' | 'Course' | 'Bundle'
 
@@ -24,6 +24,20 @@ export interface Course {
   includes?: string[]
   /** Related shows and series on the site. */
   related?: { label: string; to: string }[]
+  /** For a community: its size and its forums. */
+  community?: {
+    members: number
+    posts: number
+    forums: Forum[]
+  }
+}
+
+export interface Forum {
+  name: string
+  description: string
+  /** "planned" forums are on the roadmap, not built. */
+  status: 'open' | 'planned'
+  threads?: { title: string; by: string; replies: number; daysAgo: number }[]
 }
 
 export const courses: Course[] = [
@@ -33,16 +47,34 @@ export const courses: Course[] = [
     title: 'The Philosophy Circle',
     summary: 'Discuss the big questions with like-minded people, in monthly reading groups and an open forum.',
     about: [
-      'The Philosophy Circle is a place to think out loud. Each month the group reads a short classic together, then meets online to argue about it.',
-      'Between meetings, the forum stays open for questions, recommendations and the occasional heated debate.',
+      'The Philosophy Circle is a place to think out loud. Members read a short classic together each month and argue about it in the forum.',
+      'Membership is free and sits on your Stoa account, so there is nothing new to sign up for.',
     ],
+    price: 0,
     teacherId: 'richard',
     artId: 'death-of-socrates',
-    modules: [
-      { title: 'Monthly reading group', lessons: 12 },
-      { title: 'Live discussion evenings', lessons: 12 },
-      { title: 'Open forum', lessons: 0 },
-    ],
+    modules: [],
+    community: {
+      members: 128,
+      posts: 412,
+      forums: [
+        {
+          name: 'General discussion',
+          description: 'Questions, recommendations and the monthly reading.',
+          status: 'open',
+          threads: [
+            { title: 'This month: the Apology. First impressions?', by: 'northernlass', replies: 34, daysAgo: 0 },
+            { title: 'Is Stoicism just good manners with a reading list?', by: 'Wessex_Walker', replies: 57, daysAgo: 1 },
+            { title: 'Best translation of the Ethics for a beginner', by: 'quietreader', replies: 18, daysAgo: 3 },
+            { title: 'Suggestions for next month’s book', by: 'chris_m', replies: 22, daysAgo: 5 },
+          ],
+        },
+        { name: 'Ethics', description: 'How to live, and how to argue about it.', status: 'planned' },
+        { name: 'Political philosophy', description: 'Justice, power and the state, from Plato to now.', status: 'planned' },
+        { name: 'Classics reading room', description: 'Slow reading of the ancient texts, a chapter at a time.', status: 'planned' },
+        { name: 'Book club', description: 'One modern book a month, chosen by members.', status: 'planned' },
+      ],
+    },
     related: [{ label: 'Conversations', to: '/shows/conversations' }],
   },
   {

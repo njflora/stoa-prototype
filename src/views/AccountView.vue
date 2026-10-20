@@ -7,7 +7,9 @@ import EpisodeCard from '@/components/EpisodeCard.vue'
 import NewsletterSignup from '@/components/NewsletterSignup.vue'
 import { getEpisodes } from '@/api/catalogue'
 import { listShows } from '@/data/catalogue'
+import { getCourse } from '@/data/courses'
 import { tiers } from '@/data/membership'
+import { useCommunity } from '@/composables/useCommunity'
 import { useQuery } from '@/composables/useQuery'
 import { useReminders } from '@/composables/useReminders'
 import { useViewer } from '@/composables/useViewer'
@@ -23,6 +25,8 @@ const { inProgressIds, progressFor, clear } = useWatchProgress()
 const { reminders, turnOff } = useReminders()
 
 const tier = computed(() => tiers.find((t) => t.id === user.value?.tier))
+const { joined, leave } = useCommunity()
+const communities = computed(() => joined.value.map((id) => getCourse(id)).filter((c) => c !== undefined))
 
 const history = useQuery(
   () => inProgressIds.value.join(','),
@@ -121,6 +125,21 @@ const settings = [
           <span class="flex items-center gap-2 text-sm font-medium [&>svg]:size-4"><AppIcon name="bell" /> {{ r.name }}</span>
           <button type="button" class="inline-flex min-h-8 items-center rounded-lg px-3 text-sm text-white/75 ring-1 ring-white/15 hover:bg-white/10 hover:text-white" @click="turnOff(r.id)">
             Turn off
+          </button>
+        </li>
+      </ul>
+    </section>
+
+    <section class="mt-10" aria-labelledby="communities">
+      <h2 id="communities" class="text-lg font-semibold">Communities</h2>
+      <p v-if="!communities.length" class="mt-2 text-sm text-muted">
+        You have not joined a community yet. The <RouterLink to="/courses/philosophy-circle" class="underline hover:text-white">Philosophy Circle</RouterLink> is free to join.
+      </p>
+      <ul v-else class="mt-3 divide-y divide-white/5 rounded-xl bg-surface ring-1 ring-white/10">
+        <li v-for="c in communities" :key="c.id" class="flex items-center justify-between gap-3 px-4 py-3">
+          <RouterLink :to="`/courses/${c.id}`" class="text-sm font-medium hover:underline">{{ c.title }}</RouterLink>
+          <button type="button" class="inline-flex min-h-8 items-center rounded-lg px-3 text-sm text-white/75 ring-1 ring-white/15 hover:bg-white/10 hover:text-white" @click="leave(c.id)">
+            Leave
           </button>
         </li>
       </ul>

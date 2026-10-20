@@ -21,6 +21,8 @@ All notable changes to this prototype are listed here. Newest first.
 - The Shows page for members: it leads with Continue watching, Trending this week (across every show) and Latest, then the show grids as "The daily shows" and "Members' shows, all unlocked with your Gold membership". Free and signed-out viewers see it as before.
 - Articles sort by Newest, Popular (this week, this month or all time) or Controversial, combined with category and kept in the address. Controversial counts only pieces with at least 100 reactions and comments, and ranks them as comment sections do: many votes, split close to evenly. A line under the chips says so.
 - Article cards show views and comments; article pages also show likes and dislikes.
+- The Philosophy Circle is now a free membership on your Stoa account, as their real community is free: no lessons, a member and post count, and "Join the Circle" (or "Sign in to join"). Joining is remembered on the device and listed under Communities on the account page.
+- The Circle's forums: General discussion is open, with recent threads; Ethics, Political philosophy, Classics reading room and Book club are marked as planned. A pitch note, "Forums for each community", suggests the same model for every show or series. Posting is not part of this demo.
 - Show pages filter by contributor. Click a name in the show's header, or use the contributor chips above the list; "View profile" appears beside the active filter. Contributor, access and sort combine, and all of it is kept in the address.
 
 ## 2026-10-20: An account page from the demo's real state

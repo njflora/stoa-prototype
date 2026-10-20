@@ -40,7 +40,10 @@ const images = computed(() =>
         {{ hostNames([course.teacherId]) }}
         <template v-if="lessonCount(course)"> · {{ lessonCount(course) }} lessons</template>
       </p>
-      <p v-if="course.price !== undefined" class="mt-auto pt-3 text-lg font-bold">{{ formatPrice(course.price) }}</p>
+      <p v-if="course.community" class="mt-auto pt-3 text-lg font-bold">
+        Free <span class="text-sm font-normal text-muted">· {{ course.community.members }} members</span>
+      </p>
+      <p v-else-if="course.price !== undefined" class="mt-auto pt-3 text-lg font-bold">{{ formatPrice(course.price) }}</p>
     </div>
   </RouterLink>
 </template>
