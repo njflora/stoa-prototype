@@ -179,9 +179,16 @@ const floorRays = Array.from({ length: 25 }, (_, i) => (i - 12) * 70).map((offse
 }))
 const floorLines = [...steps, 1.3, 1.65, 2.1, 2.6].map((d) => VP.y + FLOOR * d)
 
-// The sun sits on the far end's floor line; its stripes thicken towards the bottom.
+// The sun sits on the far end's floor line. Its lower half is cut by
+// vaporwave stripes: thin and far apart near the middle, thicker and closer
+// together towards the horizon.
 const SUN_Y = VP.y + 12
-const sunStripes = [0, 1, 2, 3, 4].map((i) => ({ y: SUN_Y + 4 + i * 9, h: 1.5 + i * 1.2 }))
+const sunStripes: { y: number; h: number }[] = []
+for (let i = 0, y = SUN_Y - 30; i < 7; i++) {
+  const h = 1 + 0.57 * i
+  sunStripes.push({ y, h })
+  y += h + 7 - 0.9 * i // the band of sun before the next stripe narrows each time
+}
 
 // The wax: a circle with a few soft bulges, so it looks poured, not stamped.
 const waxPath = (() => {
