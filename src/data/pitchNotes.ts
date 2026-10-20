@@ -185,9 +185,9 @@ export const pitchNotes: PitchNote[] = [
     id: 'reading-lists',
     kind: 'fix',
     source: 'Finding 4',
-    title: 'Sourcing on every episode',
+    title: 'Sourcing on every episode and article',
     today: 'Some episodes have a reading list, in different shapes. Articles have none.',
-    here: 'The same reading list on every episode: type, title, source, year and when it came up. Free for everyone.',
+    here: 'The same reading list on every episode and at the end of every article: type, title, source and year, plus when it came up in an episode. Free for everyone.',
     page: episode,
   },
   {

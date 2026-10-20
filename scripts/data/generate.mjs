@@ -11,10 +11,12 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { articles as articleSources } from './articles.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const OUT = join(ROOT, 'public', 'data')
 const PAGE_SIZE = 50
+const ARTICLE_PAGE_SIZE = 24
 const DAY = 86_400_000
 
 // ---------- seeded randomness (same algorithm as src/utils/random.ts) ----------
@@ -411,7 +413,7 @@ const live = {
   startHour: 13,
 }
 
-write('meta.json', { generatedAt: generatedAt.toISOString(), pageSize: PAGE_SIZE, total: episodes.length })
+write('meta.json', { generatedAt: generatedAt.toISOString(), pageSize: PAGE_SIZE, total: episodes.length, articleCount: articleSources.length })
 write('shows.json', showMeta)
 write('hosts.json', hosts)
 write('series.json', series)
@@ -436,6 +438,26 @@ for (const show of shows) {
 }
 
 const newest = [...episodes].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+
+// ---------- articles ----------
+// Reading time from the length of the body, at about 200 words a minute.
+const articles = articleSources
+  .map(({ daysAgo, watchNext, ...a }) => {
+    const words = a.body.join(' ').split(/\s+/).length
+    const match = byShow
+      .get(watchNext.show)
+      .find((e) => e.title?.includes(watchNext.topic) || e.topics?.includes(watchNext.topic))
+    if (!match) throw new Error(`No ${watchNext.show} episode on "${watchNext.topic}" for ${a.id}.`)
+    return {
+      ...a,
+      publishedAt: at(new Date(generatedAt.getTime() - daysAgo * DAY), 10),
+      readMin: Math.max(2, Math.round(words / 200)),
+      watchNext: card(match),
+    }
+  })
+  .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+const articleCard = ({ body, readingList, watchNext, ...a }) => a
+const articleCategories = [...new Set(articles.map((a) => a.category))]
 const latestOf = (showId, access) => byShow.get(showId).find((e) => !access || e.access === access)
 
 // One request for everything the homepage shows first.
@@ -448,14 +470,33 @@ write('home.json', {
   latest: newest.slice(0, 60).map(card),
   rows: Object.fromEntries(shows.map((s) => [s.id, byShow.get(s.id).slice(0, 20).map(card)])),
   seriesSlugs: series.slice(0, 12).map((s) => s.slug),
+  articles: articles.slice(0, 12).map(articleCard),
 })
 
-// What search needs for each episode, with short keys to keep the file small.
+// Articles: lists of cards, 24 a page, newest first, for all articles, for each
+// category (?category=history) and for each author (?author=helen), plus one file per
+// article with its body, reading list and an episode to watch next.
+function writeArticlePages(folder, list) {
+  const pageCount = Math.max(1, Math.ceil(list.length / ARTICLE_PAGE_SIZE))
+  for (let p = 0; p < pageCount; p++) {
+    write(`${folder}/${p}.json`, { page: p, pageCount, total: list.length, items: list.slice(p * ARTICLE_PAGE_SIZE, (p + 1) * ARTICLE_PAGE_SIZE).map(articleCard) })
+  }
+}
+writeArticlePages('articles/pages/all', articles)
+for (const category of articleCategories) {
+  writeArticlePages(`articles/pages/${category.toLowerCase()}`, articles.filter((a) => a.category === category))
+}
+for (const authorId of new Set(articles.map((a) => a.authorId))) {
+  writeArticlePages(`articles/pages/author-${authorId}`, articles.filter((a) => a.authorId === authorId))
+}
+for (const a of articles) write(`articles/${a.id}.json`, a)
+
+// What search needs for each episode and article, with short keys to keep the file small.
 // i: id, t: title (empty for daily editions, which are titled by date),
-// s: show, h: hosts, x: extra searchable text (topics, series), d: date, a: access, e: daily edition.
-write(
-  'search-docs.json',
-  newest.map((e) => ({
+// s: show (or an article's category), h: hosts (or author), x: extra searchable text
+// (topics, series, or an article's standfirst), d: date, a: access, e: daily edition, k: "a" for an article.
+write('search-docs.json', [
+  ...newest.map((e) => ({
     i: e.id,
     t: e.title ?? '',
     s: e.showId,
@@ -465,7 +506,8 @@ write(
     a: e.access,
     ...(e.edition ? { e: 1 } : {}),
   })),
-)
+  ...articles.map((a) => ({ i: a.id, t: a.title, s: a.category, h: [a.authorId], x: a.standfirst, d: a.publishedAt, a: 'free', k: 'a' })),
+])
 
 const counts = Object.fromEntries(shows.map((s) => [s.id, byShow.get(s.id).length]))
 console.log('Episodes:', episodes.length, counts)

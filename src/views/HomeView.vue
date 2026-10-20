@@ -8,7 +8,7 @@ import EpisodeCard from '@/components/EpisodeCard.vue'
 import HeroBanner from '@/components/HeroBanner.vue'
 import SeriesCard from '@/components/SeriesCard.vue'
 import { getEpisodes, getHome } from '@/api/catalogue'
-import { articles, getSeries, getShow, listShows } from '@/data/catalogue'
+import { getSeries, getShow, listShows } from '@/data/catalogue'
 import type { Series } from '@/types/content'
 import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
@@ -99,7 +99,8 @@ const rowFor = (showId: string) => home.data.value?.rows[showId] ?? []
             See all
           </RouterLink>
         </template>
-        <ArticleCard v-for="article in articles" :key="article.id" :article="article" />
+        <CardSkeleton v-if="home.loading.value" :count="4" />
+        <ArticleCard v-for="article in home.data.value?.articles ?? []" :key="article.id" :article="article" />
       </ContentRow>
 
       <!-- What free gets, and what joining adds. Free viewers only. -->

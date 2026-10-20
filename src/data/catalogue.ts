@@ -1,4 +1,4 @@
-// Lookups shared across the site, plus the hand-written articles.
+// Lookups shared across the site.
 //
 // Shows, hosts, series and the live event come from the data API and are
 // loaded once before the app mounts (loadReference in src/api/catalogue.ts),
@@ -6,18 +6,12 @@
 // there are thousands, so pages fetch them through src/api/catalogue.ts.
 
 import { reference } from '@/api/catalogue'
-import type { Article, ArticleCategory, Episode, LiveEvent, Series, Show } from '@/types/content'
+import type { ArticleCategory, Episode, LiveEvent, Series, Show } from '@/types/content'
 import { toRoman } from '@/utils/format'
 
 const DAY_MS = 86_400_000
 
 /** An ISO date `days` ago at the given local hour. */
-function daysAgo(days: number, hour = 13): string {
-  const date = new Date()
-  date.setHours(hour, 0, 0, 0)
-  return new Date(date.getTime() - days * DAY_MS).toISOString()
-}
-
 export function listShows(): Show[] {
   return reference.shows
 }
@@ -81,108 +75,3 @@ export const articleCategoryColours: Record<ArticleCategory, { base: string; acc
   Culture: { base: '#170d2e', accent: '#8b5cf6' },
   Economics: { base: '#221c05', accent: '#d5b720' },
 }
-
-function article(
-  id: string,
-  title: string,
-  standfirst: string,
-  authorId: string,
-  category: ArticleCategory,
-  days: number,
-  readMin: number,
-): Article {
-  return { id, title, standfirst, authorId, category, publishedAt: daysAgo(days, 10), readMin }
-}
-
-export const articles: Article[] = [
-  article(
-    'centre-ground',
-    'The Quiet Collapse of the Centre Ground',
-    'Both main parties are losing the voters they once took for granted.',
-    'andrew',
-    'Politics',
-    0,
-    6,
-  ),
-  article(
-    'winter-bills',
-    'What the Energy Crunch Means for Winter Bills',
-    'A plain guide to the price cap, and who is most exposed.',
-    'rachel',
-    'Analysis',
-    1,
-    8,
-  ),
-  article(
-    'roman-generals',
-    'Why the Romans Feared Their Own Generals',
-    'A republic that won wars kept creating men too powerful to control.',
-    'helen',
-    'History',
-    2,
-    7,
-  ),
-  article(
-    'long-novel',
-    'In Defence of the Long Novel',
-    'Why the books that ask the most of us still give the most back.',
-    'richard',
-    'Culture',
-    3,
-    5,
-  ),
-  article(
-    'missing-middle',
-    'Rents, Wages and the Missing Middle',
-    'Where the money goes for people on average pay.',
-    'neil',
-    'Economics',
-    4,
-    9,
-  ),
-  article(
-    'local-elections',
-    'Local Elections Are Telling Us Something',
-    'Small swings in council seats point to a larger shift.',
-    'gary',
-    'Politics',
-    6,
-    6,
-  ),
-  article(
-    'shipping-lanes',
-    'The Shipping Lanes Nobody Talks About',
-    'Most of what we buy passes through a handful of narrow straits.',
-    'rachel',
-    'Analysis',
-    8,
-    7,
-  ),
-  article(
-    'british-sitcom',
-    'What Happened to the British Sitcom?',
-    'A golden age, a long decline, and a few signs of life.',
-    'tom',
-    'Culture',
-    10,
-    5,
-  ),
-  article(
-    'agincourt-myths',
-    'Agincourt Without the Myths',
-    'What the sources say about the battle, and what they leave out.',
-    'helen',
-    'History',
-    12,
-    10,
-  ),
-  article(
-    'national-debt',
-    'A Plain Guide to the National Debt',
-    'How big it is, who holds it, and why the interest matters.',
-    'sally',
-    'Economics',
-    14,
-    8,
-  ),
-]

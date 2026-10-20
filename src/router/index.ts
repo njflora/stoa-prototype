@@ -78,14 +78,14 @@ const router = createRouter({
     {
       path: '/articles',
       name: 'articles',
-      component: PlaceholderView,
+      component: () => import('../views/ArticlesView.vue'),
       meta: { title: 'Articles' },
     },
     {
+      // The page names the tab itself, after the article.
       path: '/articles/:id',
       name: 'article',
-      component: PlaceholderView,
-      meta: { title: 'Article', note: 'The article page and its reading list come in a later step.' },
+      component: () => import('../views/ArticleView.vue'),
     },
     {
       path: '/courses',

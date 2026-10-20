@@ -9,8 +9,8 @@
 import MiniSearch from 'minisearch'
 import { getJson } from './client'
 import { reference, shiftDate } from './catalogue'
-import { articles, hostNames } from '@/data/catalogue'
-import type { Access } from '@/types/content'
+import { hostNames } from '@/data/catalogue'
+import type { Access, ArticleCategory } from '@/types/content'
 import { formatEditionDate } from '@/utils/format'
 
 export type ResultKind = 'episode' | 'series' | 'show' | 'host' | 'article'
@@ -26,6 +26,7 @@ export interface SearchHit {
   access?: Access
   seriesName?: string
   hostIds?: string[]
+  category?: ArticleCategory
   /** The indexed words this result matched, for highlighting. */
   terms: string[]
 }
@@ -47,6 +48,8 @@ interface EpisodeDoc {
   d: string
   a: Access
   e?: 1
+  /** "a" for an article: then s is its category and h its author. */
+  k?: 'a'
 }
 
 interface Doc {
@@ -63,6 +66,7 @@ interface Doc {
   access?: Access
   seriesName?: string
   hostIds?: string[]
+  category?: ArticleCategory
 }
 
 /** Lower case, accents removed: "Crécy" and "crecy" match. */
@@ -78,7 +82,11 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
   const raw = await getJson<EpisodeDoc[]>('search-docs.json')
 
   const showName = (id: string) => reference.shows.find((s) => s.id === id)?.name ?? ''
-  const docs: Doc[] = raw.map((e) => {
+  const docs: Doc[] = raw.map((e): Doc => {
+    if (e.k === 'a') {
+      const category = e.s as ArticleCategory
+      return { id: `article:${e.i}`, kind: 'article', title: e.t, show: category, hosts: hostNames(e.h), text: e.x, to: `/articles/${e.i}`, publishedAt: shiftDate(e.d), hostIds: e.h, category }
+    }
     const series = e.x && reference.series.find((s) => e.x.includes(s.name))
     // Same date shift as the rest of the API, so results match the pages they open.
     const publishedAt = shiftDate(e.d)
@@ -108,9 +116,6 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
     const presents = reference.shows.filter((s) => s.hostIds.includes(h.id)).map((s) => s.name)
     docs.push({ id: `host:${h.id}`, kind: 'host', title: h.name, show: presents.join(' '), hosts: h.name, text: '', to: `/?search=${encodeURIComponent(h.name)}`, hostIds: [h.id] })
   }
-  for (const a of articles) {
-    docs.push({ id: `article:${a.id}`, kind: 'article', title: a.title, show: a.category, hosts: hostNames([a.authorId]), text: a.standfirst, to: `/articles/${a.id}`, publishedAt: a.publishedAt })
-  }
 
   const times = docs.filter((d) => d.publishedAt).map((d) => new Date(d.publishedAt!).getTime())
   newestMs = Math.max(...times)
@@ -118,7 +123,7 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
 
   const search = new MiniSearch<Doc>({
     fields: ['title', 'show', 'hosts', 'text'],
-    storeFields: ['kind', 'title', 'to', 'showId', 'publishedAt', 'access', 'seriesName', 'hostIds'],
+    storeFields: ['kind', 'title', 'to', 'showId', 'publishedAt', 'access', 'seriesName', 'hostIds', 'category'],
     processTerm: (term) => normalise(term),
   })
   search.addAll(docs)
@@ -166,6 +171,7 @@ export async function search(query: string): Promise<SearchResults> {
       access: r.access as Access | undefined,
       seriesName: r.seriesName as string | undefined,
       hostIds: r.hostIds as string[] | undefined,
+      category: r.category as ArticleCategory | undefined,
       terms: r.terms,
     })
   }

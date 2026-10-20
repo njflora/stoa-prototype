@@ -3,7 +3,7 @@ import { computed, useId } from 'vue'
 import PitchNote from './PitchNote.vue'
 import { RouterLink } from 'vue-router'
 import { readingListForThread } from '@/data/episodeExtras'
-import type { SourceType } from '@/data/readingLists'
+import type { ReadingItem, SourceType } from '@/data/readingLists'
 import type { Episode } from '@/types/content'
 import { formatClock } from '@/utils/format'
 
@@ -13,15 +13,19 @@ import { formatClock } from '@/utils/format'
 
 const props = defineProps<{
   /** Which list to show: an episode id, or a hand-written list such as "live-show". */
-  listId: string
+  listId?: string
   /** The episode, so its list can be generated. Not needed for hand-written lists. */
   episode?: Episode
+  /** The list itself, when the page already has it (articles bring their own). */
+  items?: ReadingItem[]
+  /** What the sources belong to, for the line under the heading. */
+  context?: 'episode' | 'article'
 }>()
 
 const headingId = useId()
 
 const items = computed(() =>
-  [...readingListForThread(props.listId, props.episode)].sort((a, b) => (a.at ?? 0) - (b.at ?? 0)),
+  [...(props.items ?? readingListForThread(props.listId ?? '', props.episode))].sort((a, b) => (a.at ?? 0) - (b.at ?? 0)),
 )
 
 const typeStyles: Record<SourceType, string> = {
@@ -40,7 +44,7 @@ const typeStyles: Record<SourceType, string> = {
       </h2>
       <PitchNote id="reading-lists" />
     </div>
-    <p class="text-sm text-muted">Sources mentioned in this episode</p>
+    <p class="text-sm text-muted">{{ context === 'article' ? 'The sources behind this article' : 'Sources mentioned in this episode' }}</p>
 
     <ol class="mt-4 space-y-4">
       <li v-for="item in items" :key="item.id" class="border-t border-white/5 pt-4 first:border-0 first:pt-0">

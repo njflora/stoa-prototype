@@ -4,7 +4,8 @@
 // API_BASE in client.ts.
 
 import { getJson } from './client'
-import type { Episode, Host, LiveEvent, Series, Show } from '@/types/content'
+import type { ReadingItem } from '@/data/readingLists'
+import type { Article, ArticleCategory, Episode, Host, LiveEvent, Series, Show } from '@/types/content'
 import { formatEditionDate } from '@/utils/format'
 
 interface Meta {
@@ -27,6 +28,24 @@ export interface Home {
   /** The first 20 episodes of each show, by show id. */
   rows: Record<string, Episode[]>
   seriesSlugs: string[]
+  /** The newest articles, for the homepage row. */
+  articles: Article[]
+}
+
+/** A full article: its card fields plus the body and what comes after it. */
+export interface ArticleDetail extends Article {
+  /** Paragraphs; a paragraph starting "## " is a subheading. */
+  body: string[]
+  readingList: ReadingItem[]
+  /** An episode on the same subject. */
+  watchNext: Episode
+}
+
+export interface ArticlePage {
+  page: number
+  pageCount: number
+  total: number
+  items: Article[]
 }
 
 /**
@@ -89,6 +108,30 @@ export async function getHome(): Promise<Home> {
     startHere: home.startHere.map((s) => ({ ...s, episode: normalise(s.episode) })),
     latest: home.latest.map(normalise),
     rows: Object.fromEntries(Object.entries(home.rows).map(([id, list]) => [id, list.map(normalise)])),
+    articles: home.articles.map(normaliseArticle),
+  }
+}
+
+const normaliseArticle = <T extends Article>(article: T): T => ({ ...article, publishedAt: shiftDate(article.publishedAt) })
+
+/** GET /api/articles?category={category}&author={authorId}&page={page}: 24 at a time, newest first. */
+export async function listArticles(
+  page = 0,
+  { category, authorId }: { category?: ArticleCategory; authorId?: string } = {},
+): Promise<ArticlePage> {
+  const folder = authorId ? `author-${authorId}` : category ? category.toLowerCase() : 'all'
+  const data = await getJson<ArticlePage>(`articles/pages/${folder}/${page}.json`)
+  return { ...data, items: data.items.map(normaliseArticle) }
+}
+
+/** GET /api/articles/{id}. Undefined if there is no such article. */
+export async function getArticle(id: string): Promise<ArticleDetail | undefined> {
+  if (!/^[a-z0-9-]+$/.test(id)) return undefined
+  try {
+    const article = await getJson<ArticleDetail>(`articles/${id}.json`)
+    return { ...normaliseArticle(article), watchNext: normalise(article.watchNext) }
+  } catch {
+    return undefined
   }
 }
 

@@ -2,6 +2,21 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-20: Articles, each ending with its sources
+
+### Added
+- /articles: every article, newest first, 24 a page. The newest piece leads, large. Category chips (Politics, Analysis, History, Culture, Economics) filter the list, and the choice is kept in the address.
+- /articles/:id: the full piece, set in a serif at a comfortable reading width. After the last paragraph come its reading list (Finding 4), an episode on the same subject to watch next, and more from the same writer.
+- Bodies for all 12 articles, including two new ones: "The Monks Who Kept the Books" and "What a Select Committee Actually Does". Reading time is worked out from the length (about 200 words a minute).
+
+### Changed
+- Articles are served like episodes: lists by page, category and author, plus one file per article. The homepage row now comes from the homepage request, and search reads articles from the search data. Nothing about articles is bundled into the app any more.
+- Article bodies are plain paragraphs, never rendered as HTML, so nothing in the data can inject markup.
+- The reading lists pitch note now covers articles too.
+
+### Notes
+- The plan put a newsletter sign-up at the end of each article. The footer already has one directly below, as on episode pages, so a second form was left out.
+
 ## 2026-10-20: Shows, every episode within reach
 
 ### Added

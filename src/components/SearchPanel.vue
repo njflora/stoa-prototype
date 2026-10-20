@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import PitchNote from './PitchNote.vue'
 import type { ResultKind, SearchHit } from '@/api/search'
-import { articleCategoryColours, articles, getShow, hostNames, listShows } from '@/data/catalogue'
+import { articleCategoryColours, getShow, hostNames, listShows } from '@/data/catalogue'
 import { artForEpisode, artForSeries, artForShow, mediaUrl } from '@/data/media'
 import { useSearch } from '@/composables/useSearch'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
@@ -156,16 +156,13 @@ function detail(hit: SearchHit): string {
       const presents = listShows().filter((s) => id && s.hostIds.includes(id)).map((s) => s.name)
       return presents.length ? `Presents ${presents.join(', ')}` : 'Writer'
     }
-    case 'article': {
-      const article = articles.find((a) => a.id === hit.id)
-      return article ? `Article · ${hostNames([article.authorId])} · ${article.category}` : 'Article'
-    }
+    case 'article':
+      return `Article · ${hostNames(hit.hostIds ?? [])} · ${hit.category ?? ''}`
   }
 }
 
 function articleColour(hit: SearchHit): string | undefined {
-  const article = articles.find((a) => a.id === hit.id)
-  return article && articleCategoryColours[article.category].accent
+  return hit.category && articleCategoryColours[hit.category].accent
 }
 
 const locked = (hit: SearchHit) => hit.kind === 'episode' && hit.access === 'premium' && !isMember.value
