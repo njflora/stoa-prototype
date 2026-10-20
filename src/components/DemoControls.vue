@@ -10,10 +10,11 @@ import { useWatchProgress } from '@/composables/useWatchProgress'
 import { useIntro } from '@/composables/useIntro'
 
 // Demo-only panel for pitching. It switches between a signed-out visitor,
-// a free account and a member, moves the live show through its phases,
+// a free account and a member (in Laravel mode, by signing in to a seeded
+// demo account on the server), moves the live show through its phases,
 // and clears or restores watch progress. It is not part of the site design.
 
-const { viewer, phase, setViewer, setPhase } = useViewer()
+const { viewer, phase, setViewer, switching, setPhase } = useViewer()
 const { clear, restoreSample } = useWatchProgress()
 
 // A short confirmation, so it is clear the button did something.
@@ -62,6 +63,7 @@ const off = 'text-white/70 hover:text-white'
             type="button"
             :class="[segment, viewer === v.id ? on : off]"
             :aria-pressed="viewer === v.id"
+            :disabled="switching"
             @click="setViewer(v.id)"
           >
             {{ v.label }}

@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Article;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 /**
  * Loads the demo catalogue from database/seed, which scripts/data/generate.mjs
@@ -99,6 +101,9 @@ class DatabaseSeeder extends Seeder
             'watch_next_id' => $a['watchNextId'],
         ], $this->read('articles')));
 
+        $this->seedAccounts();
+        $this->seedDiscussion();
+
         $live = $this->read('live');
         DB::table('live_events')->insert([
             'show_id' => $live['showId'],
@@ -108,6 +113,96 @@ class DatabaseSeeder extends Seeder
             'viewers' => $live['viewers'],
             'start_hour' => $live['startHour'],
         ]);
+    }
+
+    /** Name => user id, for the people who comment. */
+    private array $userIds = [];
+
+    /**
+     * The demo panel's three accounts, and an account for each invented
+     * commenter. Nobody signs in with a password: the demo sign-in picks an
+     * account, and every password is a long random string nobody knows.
+     */
+    private function seedAccounts(): void
+    {
+        $password = Hash::make(Str::random(64));
+        $accounts = [
+            ['name' => 'chris_m', 'email' => 'demo-free@stoa.test', 'tier' => null, 'is_staff' => false],
+            ['name' => 'chris_m', 'email' => 'demo-member@stoa.test', 'tier' => 'gold', 'is_staff' => false],
+            ['name' => 'stoa_desk', 'email' => 'demo-staff@stoa.test', 'tier' => null, 'is_staff' => true],
+        ];
+        $commenters = [];
+        $collect = function (array $comments) use (&$collect, &$commenters) {
+            foreach ($comments as $c) {
+                $commenters[$c['user']] = $c['tier'];
+                $collect($c['replies']);
+            }
+        };
+        foreach ($this->read('comments') as $thread) {
+            $collect($thread['comments']);
+        }
+        foreach ($commenters as $name => $tier) {
+            $accounts[] = [
+                'name' => $name,
+                'email' => Str::slug($name).'@community.stoa.test',
+                'tier' => in_array($tier, ['bronze', 'silver', 'gold'], true) ? $tier : null,
+                'is_staff' => $tier === 'staff',
+            ];
+        }
+        DB::table('users')->insert(array_map(fn (array $a) => [...$a, 'password' => $password, 'created_at' => now(), 'updated_at' => now()], $accounts));
+        $this->userIds = DB::table('users')->where('email', 'like', '%@community.stoa.test')->pluck('id', 'name')->all();
+    }
+
+    /** Comments (replies one level deep) and reading lists. */
+    private function seedDiscussion(): void
+    {
+        $rows = [];
+        $id = 0;
+        foreach ($this->read('comments') as $thread) {
+            foreach ($thread['comments'] as $c) {
+                $parentId = ++$id;
+                $rows[] = $this->commentRow($parentId, $thread['thread'], null, $c);
+                foreach ($c['replies'] as $reply) {
+                    $rows[] = $this->commentRow(++$id, $thread['thread'], $parentId, $reply);
+                }
+            }
+        }
+        foreach (array_chunk($rows, 1000) as $chunk) {
+            DB::table('comments')->insert($chunk);
+        }
+
+        $items = [];
+        foreach ($this->read('reading-lists') as $list) {
+            foreach ($list['items'] as $position => $item) {
+                $items[] = [
+                    'list' => $list['list'],
+                    'position' => $position,
+                    'type' => $item['type'],
+                    'title' => $item['title'],
+                    'source' => $item['source'],
+                    'year' => $item['year'],
+                    'at' => $item['at'] ?? null,
+                    'to' => $item['to'] ?? null,
+                ];
+            }
+        }
+        foreach (array_chunk($items, 1000) as $chunk) {
+            DB::table('reading_list_items')->insert($chunk);
+        }
+    }
+
+    private function commentRow(int $id, string $thread, ?int $parentId, array $c): array
+    {
+        return [
+            'id' => $id,
+            'thread' => $thread,
+            'parent_id' => $parentId,
+            'user_id' => $this->userIds[$c['user']],
+            'body' => $c['text'],
+            'likes' => $c['likes'],
+            'dislikes' => $c['dislikes'],
+            'posted_at' => $this->datetime($c['postedAt']),
+        ];
     }
 
     private function read(string $name): array

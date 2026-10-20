@@ -4,26 +4,44 @@ import AppIcon from './AppIcon.vue'
 import { useViewer } from '@/composables/useViewer'
 
 // Members-only content, seen by someone who is not a member: a blurred
-// glimpse of what is inside, behind an invitation, so it feels exclusive
-// (Nick's call). Used by comment sections and reading lists on members'
-// shows. The glimpse is inert: it cannot be read out, focused or clicked.
-// A real site would not send the hidden content at all, only a count.
+// glimpse behind an invitation, so it feels exclusive (Nick's call). Used by
+// comment sections and reading lists on members' shows.
+//
+// The glimpse is made of neutral placeholder shapes, not the real content:
+// the server only sends a count to non-members, so there is nothing real to
+// blur. The shapes are generated here and say nothing.
 
 defineProps<{
   /** Such as "The members' discussion". */
   title: string
   /** Such as "11 comments from members. Join to read them and have your say." */
   detail: string
+  /** What the placeholder rows look like. */
+  kind: 'comments' | 'sources'
 }>()
 
 const { isSignedIn } = useViewer()
+
+// Fixed widths, so the rows look like varied text without any text.
+const rows = [
+  ['w-24', 'w-11/12', 'w-3/5'],
+  ['w-32', 'w-4/5', 'w-2/3'],
+  ['w-20', 'w-10/12', 'w-1/2'],
+]
 </script>
 
 <template>
   <div class="relative min-h-72 overflow-hidden rounded-xl ring-1 ring-gold/30">
-    <div class="pointer-events-none p-4 blur-[7px] select-none" aria-hidden="true" inert>
-      <slot />
-    </div>
+    <ol class="pointer-events-none space-y-6 p-4 blur-[5px] select-none" aria-hidden="true" inert>
+      <li v-for="(widths, i) in rows" :key="i" class="flex gap-3">
+        <span v-if="kind === 'comments'" class="size-9 shrink-0 rounded-full bg-raised" />
+        <div class="min-w-0 flex-1 space-y-2">
+          <span class="block h-3 rounded" :class="[widths[0], kind === 'sources' ? 'bg-gold/30' : 'bg-white/25']" />
+          <span class="block h-3 rounded bg-white/15" :class="widths[1]" />
+          <span class="block h-3 rounded bg-white/10" :class="widths[2]" />
+        </div>
+      </li>
+    </ol>
     <div class="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/70 to-ink/95" />
     <div class="absolute inset-0 grid place-items-center p-4 text-center">
       <div class="max-w-sm">

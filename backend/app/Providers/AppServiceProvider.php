@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Discussion\Thread;
+use App\Policies\ThreadPolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Threads are not database models, so their policy is named here.
+        // EpisodePolicy is found by its name.
+        Gate::policy(Thread::class, ThreadPolicy::class);
     }
 }

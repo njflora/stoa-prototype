@@ -81,16 +81,10 @@ export const features: Feature[] = [
 export const TRIAL_DAYS = 7
 export const TRIAL_TIERS: TierId[] = ['bronze', 'silver']
 
-/**
- * Where free accounts may post (Nick's call). Casual spaces stay open to
- * everyone signed in; heated or specialist ones are for members, which
- * keeps them civil. Free accounts can post on the two free daily shows
- * (and the live show, which is The Stoa Podcast), under articles, and in
- * the Philosophy Circle's General discussion. Everything else is members'.
- */
-// The same shows keep their reading lists open to everyone; on other shows
-// the reading list is members-only too.
-export const FREE_POSTING_SHOWS = ['stoa-podcast', 'morning-brief']
+// Where free accounts may post, and which reading lists are open, is decided
+// by the server: backend/config/stoa.php. Casual spaces (the two free daily
+// shows and the live show, articles, the Philosophy Circle's General
+// discussion) are open to every account; the rest are members only.
 
 /** One members' episode, bought to keep (Nick's call): a way to try without a plan. */
 export const EPISODE_PRICE = 1.99

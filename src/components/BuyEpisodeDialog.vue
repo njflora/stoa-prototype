@@ -31,10 +31,22 @@ watch(open, async (isOpen) => {
   }
 })
 
-function confirmBuy() {
-  buy(props.episode.id)
-  open.value = false
-  emit('bought')
+// Saving the purchase can fail (in Laravel mode it goes to the server), so
+// the dialog stays open with a message instead of pretending it worked.
+const busy = ref(false)
+const failed = ref(false)
+async function confirmBuy() {
+  busy.value = true
+  failed.value = false
+  try {
+    await buy(props.episode.id)
+    open.value = false
+    emit('bought')
+  } catch {
+    failed.value = true
+  } finally {
+    busy.value = false
+  }
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -82,10 +94,17 @@ function onKeydown(event: KeyboardEvent) {
           <button type="button" class="min-h-10 rounded-lg px-4 text-sm font-semibold text-white/80 ring-1 ring-white/15 hover:bg-white/10" @click="open = false">
             Cancel
           </button>
-          <button ref="confirm" type="button" class="min-h-10 rounded-lg bg-white px-4 text-sm font-semibold text-ink hover:brightness-95" @click="confirmBuy">
+          <button
+            ref="confirm"
+            type="button"
+            class="min-h-10 rounded-lg bg-white px-4 text-sm font-semibold text-ink hover:brightness-95 disabled:opacity-60"
+            :disabled="busy"
+            @click="confirmBuy"
+          >
             Buy for {{ formatPrice(EPISODE_PRICE) }}
           </button>
         </div>
+        <p v-if="failed" class="mt-3 text-sm text-[#ff8a80]" role="alert">That did not go through. Please try again.</p>
       </section>
     </div>
   </Teleport>

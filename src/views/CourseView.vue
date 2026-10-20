@@ -7,7 +7,10 @@ import { getCourse, lessonCount, separatePrice, type Forum } from '@/data/course
 import { artworks, mediaUrl } from '@/data/media'
 import AppIcon from '@/components/AppIcon.vue'
 import PitchNote from '@/components/PitchNote.vue'
+import { API_MODE } from '@/api/client'
+import { listForumTopics, startForumTopic } from '@/api/discussion'
 import { useCommunity } from '@/composables/useCommunity'
+import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { formatPrice, formatTimeAgo } from '@/utils/format'
 
@@ -23,20 +26,56 @@ const saving = computed(() => {
   return separate && course.value?.price ? separate - course.value.price : 0
 })
 
-const { isSignedIn, isMember, user } = useViewer()
+const { viewer, isSignedIn, isMember, user } = useViewer()
 
-// Starting threads: anyone signed in in open forums, members in members' forums.
-// Kept on the page only, like comments: there is no server.
+// Starting threads: anyone signed in in open forums, members in members'
+// forums. In Laravel mode new threads are saved, and the server enforces
+// the same rule (backend/config/stoa.php). In the static preview they stay
+// on the page.
+type ForumThread = NonNullable<Forum['threads']>[number] & { at?: string }
 const canPostIn = (forum: Forum) => forum.status === 'open' && (isMember.value || (forum.posting === 'all' && isSignedIn.value))
+/** "philosophy-circle/general-discussion": how the server names a forum. */
+const forumId = (forum: Forum) => `${course.value?.id}/${forum.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
 const drafts = ref<Record<string, string>>({})
-const added = ref<Record<string, NonNullable<Forum['threads']>>>({})
-function startThread(forum: Forum) {
+const added = ref<Record<string, ForumThread[]>>({})
+const postError = ref<Record<string, string>>({})
+
+// Threads people have started, from the server. A members' forum answers
+// only to members, so anyone else simply sees none.
+const { data: saved } = useQuery(
+  () => `${course.value?.id}|${viewer.value}`,
+  async () => {
+    const open = API_MODE === 'laravel' ? (course.value?.community?.forums ?? []).filter((f) => f.status === 'open') : []
+    const lists = await Promise.all(open.map((f) => listForumTopics(forumId(f)).catch(() => [])))
+    return Object.fromEntries(
+      open.map((f, i): [string, ForumThread[]] => [f.name, lists[i]!.map((t) => ({ title: t.title, by: t.by, replies: t.replies, daysAgo: 0, at: t.createdAt }))]),
+    )
+  },
+)
+watch(saved, () => (added.value = {}))
+
+async function startThread(forum: Forum) {
   const title = drafts.value[forum.name]?.trim()
   if (!title) return
-  added.value[forum.name] = [{ title, by: user.value?.name ?? 'You', replies: 0, daysAgo: 0 }, ...(added.value[forum.name] ?? [])]
+  postError.value[forum.name] = ''
+  let thread: ForumThread = { title, by: user.value?.name ?? 'You', replies: 0, daysAgo: 0 }
+  if (API_MODE === 'laravel') {
+    try {
+      const topic = await startForumTopic(forumId(forum), title)
+      thread = { ...thread, by: topic.by, at: topic.createdAt }
+    } catch {
+      postError.value[forum.name] = 'Your thread was not posted. Please try again.'
+      return
+    }
+  }
+  added.value[forum.name] = [thread, ...(added.value[forum.name] ?? [])]
   drafts.value[forum.name] = ''
 }
-const threadsOf = (forum: Forum) => [...(added.value[forum.name] ?? []), ...(forum.threads ?? [])]
+const threadsOf = (forum: Forum): ForumThread[] => [
+  ...(added.value[forum.name] ?? []),
+  ...(saved.value?.[forum.name] ?? []),
+  ...(forum.threads ?? []),
+]
 const { isJoined, join, leave } = useCommunity()
 const joined = computed(() => !!course.value && isJoined(course.value.id))
 const members = computed(() => (course.value?.community?.members ?? 0) + (joined.value ? 1 : 0))
@@ -149,11 +188,12 @@ watchEffect(() => {
                 Post
               </button>
             </form>
-            <p v-else-if="forum.status === 'open' && isSignedIn" class="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/80">
+            <p v-if="postError[forum.name]" class="mt-2 text-sm text-[#ff8a80]" role="alert">{{ postError[forum.name] }}</p>
+            <p v-else-if="forum.status === 'open' && isSignedIn && !canPostIn(forum)" class="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/80">
               <AppIcon name="lock" class="!size-4 text-gold" /> Posting here is for members.
               <RouterLink to="/join" class="inline-flex min-h-6 items-center font-semibold text-gold underline">Upgrade</RouterLink>
             </p>
-            <p v-else-if="forum.status === 'open'" class="mt-3 text-sm text-white/80">
+            <p v-else-if="forum.status === 'open' && !isSignedIn" class="mt-3 text-sm text-white/80">
               <RouterLink to="/sign-in" class="font-semibold underline">Sign in</RouterLink> to post.
             </p>
 
@@ -161,13 +201,13 @@ watchEffect(() => {
               <li v-for="thread in threadsOf(forum)" :key="thread.title" class="py-2.5">
                 <p class="text-sm font-medium">{{ thread.title }}</p>
                 <p class="text-xs text-muted">
-                  {{ thread.by }} · {{ thread.replies }} replies · last reply {{ formatTimeAgo(daysAgoIso(thread.daysAgo)).toLowerCase() }}
+                  {{ thread.by }} · {{ thread.replies }} replies · last reply {{ formatTimeAgo(thread.at ?? daysAgoIso(thread.daysAgo)).toLowerCase() }}
                 </p>
               </li>
             </ul>
           </li>
         </ul>
-        <p class="mt-2 text-xs text-muted">New threads stay on this page only: the demo has no server.</p>
+        <p v-if="API_MODE !== 'laravel'" class="mt-2 text-xs text-muted">New threads stay on this page only in this preview.</p>
       </section>
 
       <section v-if="course.modules.length" aria-labelledby="course-modules">

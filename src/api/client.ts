@@ -19,6 +19,51 @@ export function query(params: Record<string, string | number | undefined>): stri
   return new URLSearchParams(set.map(([key, value]) => [key, String(value)])).toString()
 }
 
+async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const response = await fetch(API_BASE + path, {
+    ...init,
+    headers: { Accept: 'application/json', ...(init.body ? { 'Content-Type': 'application/json' } : {}), ...init.headers },
+  })
+  if (!response.ok) throw new ApiError(response.status, `Could not load ${path} (${response.status})`)
+  return response.json() as Promise<T>
+}
+
+export class ApiError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+  ) {
+    super(message)
+  }
+}
+
+/**
+ * Data that depends on who is signed in (threads, the account), so it is
+ * never cached: switching viewer and asking again gives the new answer.
+ */
+export function getFresh<T>(path: string): Promise<T> {
+  return request<T>(path)
+}
+
+// Laravel protects every change against cross-site requests (CSRF): it
+// sets an XSRF-TOKEN cookie, and each change sends it back in a header.
+let csrfReady: Promise<unknown> | null = null
+function xsrfToken(): string {
+  const cookie = document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN='))
+  return cookie ? decodeURIComponent(cookie.slice('XSRF-TOKEN='.length)) : ''
+}
+
+/** A change, such as posting a comment: POST (or DELETE) with a JSON body. Laravel mode only. */
+export async function send<T>(method: 'POST' | 'DELETE', path: string, body?: unknown): Promise<T> {
+  csrfReady ??= fetch('/sanctum/csrf-cookie').catch(() => (csrfReady = null))
+  await csrfReady
+  return request<T>(path, {
+    method,
+    body: body === undefined ? undefined : JSON.stringify(body),
+    headers: { 'X-XSRF-TOKEN': xsrfToken() },
+  })
+}
+
 // Each file is fetched at most once per visit. Storing the promise (not the
 // result) means two components asking at the same moment share one request.
 const cache = new Map<string, Promise<unknown>>()

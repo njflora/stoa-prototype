@@ -244,9 +244,9 @@ const flagship = computed(() => schedule.value.find((item) => item.id === show.i
     <div
       class="flex flex-col gap-10 px-4 pt-10 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-x-6 lg:px-8"
     >
-      <ReadingList list-id="live-show" class="lg:col-start-2 lg:row-start-1" />
+      <ReadingList :thread="{ type: 'live' }" class="lg:col-start-2 lg:row-start-1" />
       <!-- The live show is The Stoa Podcast, a free daily show: open to all accounts. -->
-      <CommentSection thread-id="live-show" open-to-free class="lg:col-start-1 lg:row-start-1" />
+      <CommentSection :thread="{ type: 'live' }" class="lg:col-start-1 lg:row-start-1" />
     </div>
   </main>
 </template>

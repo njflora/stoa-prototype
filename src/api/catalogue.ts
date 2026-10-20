@@ -249,14 +249,23 @@ export async function getEpisode(id: string): Promise<Episode | undefined> {
       return undefined
     }
   }
+  const place = storedPageOf(id)
+  if (!place) return undefined
+  const { items } = await listEpisodes(place.showId, place.page)
+  return items.find((e) => e.id === id)
+}
+
+/**
+ * Which newest-first page of its show an episode is on, from its id alone.
+ * The static preview stores episodes, and their comments, by these pages.
+ */
+export function storedPageOf(id: string): { showId: string; page: number } | undefined {
   const split = id.lastIndexOf('-')
   const showId = id.slice(0, split)
   const sequence = Number(id.slice(split + 1))
   const show = reference.shows.find((s) => s.id === showId)
   if (!show?.episodeCount || !Number.isInteger(sequence) || sequence < 1 || sequence > show.episodeCount) return undefined
-  const page = Math.floor((show.episodeCount - sequence) / reference.pageSize)
-  const { items } = await listEpisodes(showId, page)
-  return items.find((e) => e.id === id)
+  return { showId, page: Math.floor((show.episodeCount - sequence) / reference.pageSize) }
 }
 
 /** Several episodes by id, skipping any that no longer exist. Pages are shared through the cache. */

@@ -8,14 +8,16 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
+import { loadAccount } from './api/account'
 import { loadReference } from './api/catalogue'
+import { API_MODE } from './api/client'
 import router from './router'
 
 // Load the small reference data (shows, hosts, series, the live event)
-// before mounting, so every page can read it instantly. Top-level await:
-// the rest of this file waits for it.
+// before mounting, so every page can read it instantly. In Laravel mode,
+// also ask who is signed in. Top-level await: the rest of this file waits.
 try {
-  await loadReference()
+  await Promise.all([loadReference(), API_MODE === 'laravel' ? loadAccount() : null])
   createApp(App).use(router).mount('#app')
 } catch (error) {
   console.error(error)

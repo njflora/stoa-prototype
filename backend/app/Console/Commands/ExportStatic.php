@@ -3,8 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Catalogue\Catalogue;
+use App\Discussion\Discussions;
+use App\Discussion\Thread;
 use App\Models\Article;
 use App\Models\Contributor;
+use App\Models\Episode;
 use App\Models\Show;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -17,7 +20,9 @@ use Illuminate\Support\Facades\File;
  * the site's public/data, so the site runs on GitHub Pages with no server.
  * Each file comes from the same Catalogue method as the matching endpoint.
  * The preview is a snapshot, and it cannot enforce access: anyone can read
- * every file. The live site uses the API.
+ * every file. So discussion and reading lists are exported as a signed-out
+ * visitor sees them: members' threads as a count only. The live site uses
+ * the API, which answers for whoever is signed in.
  */
 #[Signature('stoa:export {--to= : The folder to write to (default: STOA_EXPORT_PATH)}')]
 #[Description('Write the static preview of the API to the site\'s public/data folder')]
@@ -27,7 +32,7 @@ class ExportStatic extends Command
 
     private int $written = 0;
 
-    public function handle(Catalogue $catalogue): int
+    public function handle(Catalogue $catalogue, Discussions $discussions): int
     {
         $this->out = rtrim($this->option('to') ?: config('stoa.export_path'), '/');
         File::ensureDirectoryExists($this->out);
@@ -83,9 +88,42 @@ class ExportStatic extends Command
 
         $this->write('search-docs.json', $catalogue->searchDocs());
 
+        $this->discussion($discussions);
+
         $this->info("Wrote {$this->written} files to {$this->out}");
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Comments and reading lists, as a signed-out visitor sees them. An
+     * episode's are grouped with the 49 others on its archive page
+     * (extras/episodes/{show}/{page}.json, newest first, as the episode
+     * pages are), so an episode page needs one small file.
+     */
+    private function discussion(Discussions $discussions): void
+    {
+        // A page of threads at a time, answered together.
+        $extras = function (array $threads) use ($discussions) {
+            $comments = $discussions->threads($threads, null);
+            $lists = $discussions->readingLists($threads, null);
+
+            return collect($threads)->mapWithKeys(fn (Thread $t) => [
+                $t->id => ['thread' => $comments[$t->key()], 'readingList' => $lists[$t->key()]],
+            ])->all();
+        };
+        foreach (Show::orderBy('position')->pluck('id') as $showId) {
+            Episode::where('show_id', $showId)->orderByDesc('seq')->pluck('id')
+                ->chunk(Catalogue::PAGE_SIZE)
+                ->each(fn ($ids, $number) => $this->write(
+                    "extras/episodes/{$showId}/{$number}.json",
+                    $extras($ids->map(fn (string $id) => Thread::forEpisode($id, $showId))->values()->all()),
+                ));
+        }
+        foreach (Article::pluck('id') as $id) {
+            $this->write("extras/articles/{$id}.json", ['thread' => $discussions->thread(Thread::find('article', $id), null)]);
+        }
+        $this->write('extras/live/live-show.json', $extras([Thread::find('live', 'live-show')])['live-show']);
     }
 
     /** Newest-first pages, and the popular list for each period. */

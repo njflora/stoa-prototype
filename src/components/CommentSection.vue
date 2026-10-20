@@ -1,20 +1,23 @@
 <script setup lang="ts">
-import { computed, ref, useId } from 'vue'
+import { computed, ref, useId, watch } from 'vue'
 import { RouterLink } from 'vue-router'
-import AppIcon from './AppIcon.vue'
 import PitchNote from './PitchNote.vue'
 import CommentItem from './CommentItem.vue'
 import MembersGate from './MembersGate.vue'
+import { API_MODE } from '@/api/client'
+import { getThread, postComment, voteOnComment, type ThreadRef } from '@/api/discussion'
 import { countComments, type Comment } from '@/data/comments'
-import { commentsForThread } from '@/data/episodeExtras'
-import type { Article, Episode } from '@/types/content'
+import type { Vote } from '@/types/content'
+import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { controversy, useVotes } from '@/composables/useVotes'
 
-// Comments on one episode. Everyone can read and see the votes.
-// Commenting is a members' perk, so members can post, vote and reply;
-// free accounts see an upgrade prompt and signed-out visitors a sign-in
-// prompt. Posts and votes are kept in the page only: no server.
+// Comments on an episode, an article or the live show. Who may read and post
+// is decided by the server (config/stoa.php): open threads are for every
+// account, the rest for members. A non-member asking about a members' thread
+// gets only its count, shown as a blurred gate with nothing real behind it.
+// In Laravel mode, posts and votes are saved on the account. In the static
+// preview they are kept in the page.
 
 type Sort = 'newest' | 'top' | 'controversial'
 
@@ -25,37 +28,54 @@ const sortOptions: { id: Sort; label: string }[] = [
 ]
 
 const props = defineProps<{
-  /** Which thread to show: an episode id, or a hand-written thread such as "live-show". */
-  threadId: string
-  /** The episode, so its comments can be generated. Not needed for hand-written threads. */
-  episode?: Episode
-  /** Or the article, for comments under a written piece. */
-  article?: Article
-  /** Free accounts may post here too (see FREE_POSTING_SHOWS). Otherwise members only. */
-  openToFree?: boolean
+  /** Which discussion: an episode's, an article's or the live show's. */
+  thread: ThreadRef
 }>()
 
 const PAGE_SIZE = 5
 
-const { isMember, isSignedIn, user } = useViewer()
-/** Post, reply and vote: members anywhere, free accounts in open spaces. */
-const canPost = computed(() => isMember.value || (props.openToFree && isSignedIn.value))
-/** A members-only discussion seen by someone who is not a member: see MembersGate. */
-const exclusive = computed(() => !props.openToFree && !isMember.value)
-const glimpse = computed(() => sorted.value.slice(0, 3))
+const { viewer, isMember, isSignedIn, user } = useViewer()
 const headingId = useId()
 
-// A copy, so posting here never changes the placeholder data.
-const comments = ref<Comment[]>(structuredClone(commentsForThread(props.threadId, props.episode, props.article)))
+// Asked again when the viewer changes: the answer depends on who is asking.
+const { data, loading, error, reload } = useQuery(
+  () => `${JSON.stringify(props.thread)}|${viewer.value}`,
+  () => getThread(props.thread),
+)
+
+const open = computed(() => data.value?.open ?? false)
+const locked = computed(() => data.value?.locked ?? false)
+/** Post, reply and vote: the server says, or in the static preview the same rule here. */
+const canPost = computed(() => {
+  const thread = data.value
+  if (!thread || thread.locked) return false
+  return API_MODE === 'laravel' ? Boolean(thread.canPost) : isMember.value || (thread.open && isSignedIn.value)
+})
+/** A members' thread seen by a non-member: the gate. */
+const gated = computed(() => locked.value && !isMember.value)
+/** Only in the static preview: a "member" viewing a thread it holds only the count of. */
+const countOnly = computed(() => locked.value && isMember.value)
+
+// A copy, so posting here never changes the loaded data.
+const comments = ref<Comment[]>([])
 const sort = ref<Sort>('newest')
 const shown = ref(PAGE_SIZE)
-const { vote, voteFor, totals } = useVotes()
+const { votes, vote: toggleVote, voteFor, totals } = useVotes()
 const draft = ref('')
 const replyingTo = ref<string | null>(null)
 const replyDraft = ref('')
+const postError = ref('')
 let localId = 0
 
-const total = computed(() => countComments(comments.value))
+watch(data, (thread) => {
+  comments.value = thread && !thread.locked ? structuredClone(thread.comments) : []
+  // The viewer's saved votes (Laravel mode); the counts already leave them out.
+  votes.value = Object.fromEntries(
+    comments.value.flatMap((c) => [c, ...c.replies]).flatMap((c) => (c.myVote ? [[c.id, c.myVote]] : [])),
+  )
+})
+
+const total = computed(() => (data.value?.locked ? data.value.count : countComments(comments.value)))
 
 function score(c: Comment): number {
   const { likes, dislikes } = totals(c.id, c.likes, c.dislikes)
@@ -70,23 +90,35 @@ const sorted = computed(() =>
 )
 const visible = computed(() => sorted.value.slice(0, shown.value))
 
-function newComment(text: string): Comment {
-  return {
-    id: `local-${++localId}`,
-    user: user.value?.name ?? 'You',
-    tier: user.value?.tier ?? 'free',
-    postedAt: new Date().toISOString(),
-    text: text.trim(),
-    likes: 0,
-    dislikes: 0,
-    replies: [],
-    mine: true,
+/** A new comment: saved on the server in Laravel mode, kept in the page otherwise. */
+async function save(text: string, parent?: Comment): Promise<Comment | null> {
+  postError.value = ''
+  if (API_MODE !== 'laravel') {
+    return {
+      id: `local-${++localId}`,
+      user: user.value?.name ?? 'You',
+      tier: user.value?.tier ?? 'free',
+      postedAt: new Date().toISOString(),
+      text: text.trim(),
+      likes: 0,
+      dislikes: 0,
+      replies: [],
+      mine: true,
+    }
+  }
+  try {
+    return await postComment(props.thread, text.trim(), parent?.id)
+  } catch {
+    postError.value = 'Your comment was not posted. Please try again.'
+    return null
   }
 }
 
-function post() {
+async function post() {
   if (!draft.value.trim()) return
-  comments.value.unshift(newComment(draft.value))
+  const saved = await save(draft.value)
+  if (!saved) return
+  comments.value.unshift(saved)
   draft.value = ''
   sort.value = 'newest'
 }
@@ -96,11 +128,28 @@ function startReply(id: string) {
   replyDraft.value = ''
 }
 
-function postReply(parent: Comment) {
+async function postReply(parent: Comment) {
   if (!replyDraft.value.trim()) return
-  parent.replies.push(newComment(replyDraft.value))
+  const saved = await save(replyDraft.value, parent)
+  if (!saved) return
+  parent.replies.push(saved)
   replyingTo.value = null
   replyDraft.value = ''
+}
+
+/** Shows the vote at once; in Laravel mode saves it, and takes it back if saving fails. */
+async function vote(id: string, direction: Vote) {
+  const before = voteFor(id)
+  toggleVote(id, direction)
+  if (API_MODE !== 'laravel' || id.startsWith('local-')) return
+  try {
+    await voteOnComment(id, voteFor(id))
+  } catch {
+    const next = { ...votes.value }
+    if (before) next[id] = before
+    else delete next[id]
+    votes.value = next
+  }
 }
 </script>
 
@@ -108,14 +157,14 @@ function postReply(parent: Comment) {
   <section :aria-labelledby="headingId">
     <div class="flex flex-wrap items-end justify-between gap-3">
       <h2 :id="headingId" class="text-lg font-semibold sm:text-xl">
-        Comments <span class="text-muted">({{ total }})</span>
+        Comments <span v-if="data" class="text-muted">({{ total }})</span>
       </h2>
       <PitchNote id="votes" class="ml-auto" />
-      <p class="w-full text-xs text-muted sm:order-last">
-        {{ openToFree ? 'Open to all accounts' : 'Members only' }}
+      <p v-if="data" class="w-full text-xs text-muted sm:order-last">
+        {{ open ? 'Open to all accounts' : 'Members only' }}
         <PitchNote id="open-spaces" class="ml-1 align-middle" />
       </p>
-      <div v-if="!exclusive" class="inline-flex rounded-lg bg-surface p-1 ring-1 ring-white/10" role="group" aria-label="Sort comments">
+      <div v-if="!locked" class="inline-flex rounded-lg bg-surface p-1 ring-1 ring-white/10" role="group" aria-label="Sort comments">
         <button
           v-for="option in sortOptions"
           :key="option.id"
@@ -130,8 +179,14 @@ function postReply(parent: Comment) {
       </div>
     </div>
 
+    <p v-if="loading && !data" class="mt-4 text-sm text-muted">Loading comments…</p>
+    <div v-else-if="error && !data" class="mt-4 flex items-center gap-3 text-sm text-muted">
+      Comments could not load.
+      <button type="button" class="font-semibold text-white underline underline-offset-2" @click="reload">Try again</button>
+    </div>
+
     <!-- Anyone allowed to post here: write a comment. -->
-    <form v-if="canPost" class="mt-4 flex gap-3" @submit.prevent="post">
+    <form v-else-if="canPost" class="mt-4 flex gap-3" @submit.prevent="post">
       <span class="grid size-9 shrink-0 place-items-center rounded-full bg-accent text-xs font-bold" aria-hidden="true">
         {{ user?.initials }}
       </span>
@@ -156,23 +211,24 @@ function postReply(parent: Comment) {
       </div>
     </form>
 
-    <!-- Members' discussion, seen by a non-member: a blurred glimpse behind an invitation. -->
+    <!-- Members' discussion, seen by a non-member: only its count came back. -->
     <MembersGate
-      v-else-if="exclusive"
+      v-else-if="gated"
       class="mt-4"
+      kind="comments"
       title="The members' discussion"
       :detail="`${total} ${total === 1 ? 'comment' : 'comments'} from members. Join to read them and have your say.`"
-    >
-      <ol class="space-y-6">
-        <li v-for="c in glimpse" :key="c.id">
-          <CommentItem :comment="c" :vote="null" :can-interact="false" />
-        </li>
-      </ol>
-    </MembersGate>
+    />
+
+    <!-- The static preview holds only the count of members' threads, whoever is viewing. -->
+    <p v-else-if="countOnly" class="mt-4 rounded-lg bg-surface p-4 text-sm text-white/85 ring-1 ring-white/10">
+      {{ total }} {{ total === 1 ? 'comment' : 'comments' }} from members. This preview carries only the count:
+      the live site serves members' comments to members only.
+    </p>
 
     <!-- Signed out, in an open space. -->
     <div
-      v-else
+      v-else-if="data"
       class="mt-4 flex flex-col gap-3 rounded-lg bg-surface p-4 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between"
     >
       <p class="text-sm text-white/85">Sign in to join the discussion.</p>
@@ -184,7 +240,9 @@ function postReply(parent: Comment) {
       </RouterLink>
     </div>
 
-    <ol v-if="!exclusive" class="mt-6 space-y-6">
+    <p v-if="postError" class="mt-3 text-sm text-[#ff8a80]" role="alert">{{ postError }}</p>
+
+    <ol v-if="!locked" class="mt-6 space-y-6">
       <li v-for="c in visible" :key="c.id">
         <CommentItem
           :comment="c"
@@ -232,7 +290,7 @@ function postReply(parent: Comment) {
     </ol>
 
     <button
-      v-if="!exclusive && shown < sorted.length"
+      v-if="!locked && shown < sorted.length"
       type="button"
       class="mt-6 w-full rounded-lg bg-surface py-2.5 text-sm font-medium ring-1 ring-white/10 hover:bg-raised"
       @click="shown += PAGE_SIZE"

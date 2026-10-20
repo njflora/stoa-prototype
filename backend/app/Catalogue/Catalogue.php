@@ -58,6 +58,18 @@ class Catalogue
         return $this->now ??= CarbonImmutable::parse(DB::table('catalogue_meta')->value('generated_at'), 'UTC');
     }
 
+    /**
+     * The time to stamp on something posted now. The site moves every date
+     * in the snapshot forward by whole weeks to the present, so a new post
+     * is stamped that many weeks earlier, and shows as "just now".
+     */
+    public function postingTime(): CarbonImmutable
+    {
+        $weeks = max(0, intdiv((int) $this->now()->diffInDays(CarbonImmutable::today(), absolute: false), 7));
+
+        return CarbonImmutable::now()->subWeeks($weeks);
+    }
+
     // ---------- reference data, loaded once when the site opens ----------
 
     public function meta(): array

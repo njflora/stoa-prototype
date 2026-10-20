@@ -91,9 +91,7 @@ watchEffect(() => {
       </div>
       <CommentSection
         :key="`comments-${piece.id}`"
-        :thread-id="`article-${piece.id}`"
-        :article="piece"
-        open-to-free
+        :thread="{ type: 'article', id: piece.id }"
         class="lg:col-start-1 lg:row-start-1"
       />
     </div>

@@ -14,6 +14,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { articles as articleSources } from './articles.mjs'
+import { buildExtras } from './extras.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const OUT = join(ROOT, 'backend', 'database', 'seed')
@@ -448,6 +449,12 @@ const articles = articleSources
   })
   .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 
+// ---------- comments and reading lists ----------
+// Built after the catalogue so each thread's size can follow its episode's
+// popularity; comment counts are then set to the real thread sizes.
+const allEpisodes = [...byShow.values()].flat()
+const extras = buildExtras({ episodes: allEpisodes, articles, now: generatedAt, seededRandom: seeded })
+
 // ---------- write the seed data ----------
 // This script only invents the catalogue. Laravel is the source of truth:
 // its seeder loads these files into the database, its API serves them, and
@@ -467,8 +474,12 @@ write(
   'series.json',
   series.map((s, position) => ({ slug: s.slug, name: s.name, showId: s.showId, description: s.description, position, episodeIds: s.episodes.map((e) => e.id) })),
 )
-write('episodes.json', [...byShow.values()].flat())
+write('episodes.json', allEpisodes)
 write('articles.json', articles)
+// Comments by thread ("episode:{id}", "article:{id}", "live:live-show"), replies nested.
+write('comments.json', extras.threads)
+// Reading lists by episode, and the live show's.
+write('reading-lists.json', extras.lists)
 write('live.json', {
   showId: 'stoa-podcast',
   number: 1531,
@@ -481,4 +492,5 @@ write('live.json', {
 const counts = Object.fromEntries(shows.map((s) => [s.id, byShow.get(s.id).length]))
 console.log('Episodes:', episodes.length, counts)
 console.log('Series:', series.length, '| Articles:', articles.length)
+console.log('Comments:', extras.threads.reduce((n, t) => n + t.comments.reduce((m, c) => m + 1 + c.replies.length, 0), 0), '| Reading list items:', extras.lists.reduce((n, l) => n + l.items.length, 0))
 console.log('Seed data written to', OUT)

@@ -1,21 +1,16 @@
-// Comments and reading lists for every episode.
+// Comments and reading lists for every episode, every article and the live
+// show, written into the seed data by generate.mjs. Laravel stores them and
+// decides who may read them.
 //
-// Hand-written threads (such as the live show's) are used where they
-// exist. Every other episode draws a stable mix from its show's pool of
-// placeholder comments and sources, seeded by the episode id, so each
-// episode looks different but the same on every visit. Real data can
-// replace this file without touching the pages.
-
-import type { ChatTier } from './chat'
-import { commentThreads, type Comment } from './comments'
-import { readingLists, type ReadingItem, type SourceType } from './readingLists'
-import type { Article, ArticleCategory, Episode } from '@/types/content'
-import { pickSome, randomInt, seededRandom } from '@/utils/random'
-
-type Commenter = [user: string, tier: ChatTier]
+// Each episode draws a stable mix from its show's pool of placeholder
+// comments and sources, seeded by its id, so episodes differ but every run
+// gives the same result. A thread's size follows how much the episode was
+// discussed: a handful on a quiet Morning Brief, a dozen on a busy Stoa
+// Podcast. Every username is invented. A few comments are deliberately
+// divisive, so the Controversial sort has something to show.
 
 /** Members who comment. Commenting is a members' perk, so no free tier. */
-const commenters: Commenter[] = [
+const commenters = [
   ['MargaretH', 'silver'],
   ['bookish_bill', 'gold'],
   ['teabreak_tim', 'bronze'],
@@ -30,7 +25,7 @@ const commenters: Commenter[] = [
   ['the_real_dave', 'bronze'],
 ]
 
-const commentPools: Record<string, string[]> = {
+const commentPools = {
   'stoa-podcast': [
     'Best episode in weeks. The opening segment set it up perfectly.',
     'Tom had the numbers ready again. That makes such a difference.',
@@ -100,7 +95,7 @@ const commentPools: Record<string, string[]> = {
 }
 
 // Comments under articles, by category. Invented for the demo.
-const articleCommentPools: Record<ArticleCategory, string[]> = {
+const articleCommentPools = {
   Politics: [
     'The point about loyalty no longer being inherited rings true in my family.',
     'Good piece, though I think you underrate how much the voting system protects the big two.',
@@ -153,7 +148,7 @@ const articleCommentPools: Record<ArticleCategory, string[]> = {
   ],
 }
 
-const replyPool: string[] = [
+const replyPool = [
   'Agreed, well put.',
   'Not sure about that, but fair point.',
   'Same here.',
@@ -163,9 +158,7 @@ const replyPool: string[] = [
   'Good shout. Seconded.',
 ]
 
-type Source = Omit<ReadingItem, 'id' | 'at'>
-
-const source = (type: SourceType, title: string, by: string, year: number, to?: string): Source => ({
+const source = (type, title, by, year, to) => ({
   type,
   title,
   source: by,
@@ -173,7 +166,7 @@ const source = (type: SourceType, title: string, by: string, year: number, to?: 
   to,
 })
 
-const sourcePools: Record<string, Source[]> = {
+const sourcePools = {
   'stoa-podcast': [
     source('Article', 'Local Elections Are Telling Us Something', 'Gary Lowther, Stoa', 2026, '/articles/local-elections'),
     source('Article', 'The Quiet Collapse of the Centre Ground', 'Andrew Pickering, Stoa', 2026, '/articles/centre-ground'),
@@ -226,7 +219,7 @@ const sourcePools: Record<string, Source[]> = {
 }
 
 /** Sources for a series, so each part cites its own period. */
-const seriesSourcePools: Record<string, Source[]> = {
+const seriesSourcePools = {
   'The Fall of the Republic': [
     source('Article', 'Why the Romans Feared Their Own Generals', 'Helen Thwaite, Stoa', 2026, '/articles/roman-generals'),
     source('Book', 'The Last Republic', 'A. J. Wexley', 2016),
@@ -248,8 +241,100 @@ const seriesSourcePools: Record<string, Source[]> = {
   ],
 }
 
+// ---------- the live show (hand-written) ----------
+// Times are minutes before the catalogue was generated.
+const comment = (user, tier, minutes, [likes, dislikes], text, replies = []) => ({ user, tier, minutes, likes, dislikes, text, replies })
+
+const liveThread = [
+  comment('MargaretH', 'silver', 12, [14, 1], 'The segment on council budgets was the clearest explanation I have heard anywhere. More of that please.', [
+    comment('GrumpyHistorian', 'silver', 8, [3, 0], 'Agreed. Tom had the figures ready, which helps.'),
+  ]),
+  comment('bookish_bill', 'gold', 25, [31, 2], 'Thanks for taking my question on the energy price cap. Answered better than I expected.', [
+    comment('Stoa_Producer', 'staff', 20, [9, 0], 'Glad it helped. The sources are in the reading list next to the comments.'),
+    comment('Wessex_Walker', 'gold', 18, [2, 0], 'Same question was on my list, so thank you both.'),
+  ]),
+  comment('teabreak_tim', 'bronze', 40, [9, 8], 'Could we get a follow-up on the housing figures? Felt like there was more to say.'),
+  comment('HollyFromHull', 'bronze', 55, [11, 0], 'First time watching live instead of catching up later. The chat makes a real difference.'),
+  comment('Brummie_Rob', 'bronze', 60, [40, 35], 'Hot take: the after-show should be free for everyone. The best discussion happens there.', [
+    comment('Wessex_Walker', 'gold', 58, [22, 6], 'Someone has to pay for it. The after-show is what the membership is for.'),
+    comment('NorthernLass', 'bronze', 50, [12, 9], 'A free taster once a month would be a fair middle ground.'),
+    comment('NorthernLad', 'bronze', 45, [31, 2], '@NorthernLass A free taster for everyone? Sounds a bit communist to me.'),
+  ]),
+  comment('quietreader', 'bronze', 70, [4, 3], 'Richard was on good form today. Looking forward to the after-show.'),
+  comment('Wessex_Walker', 'gold', 95, [22, 4], 'Good to see the schedule on the site now. Much easier than checking three different places.', [
+    comment('MargaretH', 'silver', 90, [5, 0], 'The reminders are handy too.'),
+  ]),
+  comment('GrumpyHistorian', 'silver', 130, [18, 16], 'Small correction: the 1976 figure Andrew mentioned was for the year, not the quarter. Does not change the point.'),
+  comment('teabreak_tim', 'bronze', 180, [4, 6], 'Audio was a bit quiet for the first five minutes, fine after that.'),
+  comment('bookish_bill', 'gold', 240, [17, 15], 'Would happily pay for a longer version of the budget breakdown as its own episode.'),
+  comment('HollyFromHull', 'bronze', 300, [3, 0], 'Has anyone found the article Richard mentioned? The one on the long novel.', [
+    comment('quietreader', 'bronze', 295, [4, 0], 'It is on the homepage under Latest articles.'),
+  ]),
+  comment('MargaretH', 'silver', 420, [7, 5], 'Lovely to hear the producer laughing in the background. Keeps it human.'),
+  comment('Wessex_Walker', 'gold', 600, [1, 0], 'Early comment from the countdown. See you all at one.'),
+]
+
+const liveReadingList = [
+  {
+    type: 'Data',
+    title: 'Council Spending Power, 2026 to 2027',
+    source: 'Local Finance Monitor',
+    year: 2026,
+    at: 840,
+  },
+  {
+    type: 'Book',
+    title: 'Britain in the 1970s: A Decade of Crisis',
+    source: 'J. R. Halloran',
+    year: 2018,
+    at: 1120,
+  },
+  {
+    type: 'Report',
+    title: 'Who Pays for Local Services?',
+    source: 'Civic Budget Institute',
+    year: 2025,
+    at: 1210,
+  },
+  {
+    type: 'Article',
+    title: 'What the Energy Crunch Means for Winter Bills',
+    source: 'Rachel Ashworth, Stoa',
+    year: 2026,
+    at: 1810,
+    to: '/articles/winter-bills',
+  },
+  {
+    type: 'Report',
+    title: 'How the Energy Price Cap Is Set',
+    source: 'Household Energy Review',
+    year: 2026,
+    at: 2150,
+  },
+  {
+    type: 'Book',
+    title: 'The Housing Trap',
+    source: 'M. A. Pembroke',
+    year: 2021,
+    at: 2600,
+  },
+]
+
+// ---------- generation ----------
+const randomInt = (random, min, max) => min + Math.floor(random() * (max - min + 1))
+
+/** `count` different items from a list, in a shuffled order. */
+function pickSome(random, items, count) {
+  const copy = [...items]
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1))
+    ;[copy[i], copy[j]] = [copy[j], copy[i]]
+  }
+  return copy.slice(0, Math.min(count, copy.length))
+}
+
 /** Likes and dislikes; now and then a deliberately divisive split. */
-function votes(random: () => number): [number, number] {
+function votes(random) {
   if (random() < 0.2) {
     const total = randomInt(random, 20, 60)
     const likes = Math.round(total * (0.5 + random() * 0.08))
@@ -258,69 +343,71 @@ function votes(random: () => number): [number, number] {
   return [randomInt(random, 0, 35), randomInt(random, 0, 3)]
 }
 
-/** A time between release and now (at most a week after release). */
-function postedAfter(random: () => number, publishedAt: string): string {
-  const start = new Date(publishedAt).getTime() + 10 * 60_000
-  const end = Math.min(Date.now() - 60_000, start + 7 * 86_400_000)
+/** A time after `from` (at most a week after), and before the catalogue was generated. */
+function postedAfter(random, from, now) {
+  const start = new Date(from).getTime() + 10 * 60_000
+  const end = Math.min(now.getTime() - 60_000, start + 7 * 86_400_000)
   return new Date(start + random() * Math.max(0, end - start)).toISOString()
 }
 
-/** A handful of comments from a pool, the same every time for a given thread. */
-function generateComments(threadId: string, pool: string[], publishedAt: string): Comment[] {
-  const random = seededRandom(`${threadId}:comments`)
-  const texts = pickSome(random, pool, randomInt(random, 4, Math.min(8, pool.length)))
-
-  return texts.map((text, i) => {
-    const [user, tier] = commenters[randomInt(random, 0, commenters.length - 1)]!
-    const id = `${threadId}-c${i}`
-    const postedAt = postedAfter(random, publishedAt)
+/**
+ * A thread of comments from a pool, the same every run for a given thread.
+ * `discussed` (the generated comment count) sets how many: popular episodes
+ * get more, up to the size of the pool.
+ */
+function thread(seed, pool, publishedAt, discussed, now) {
+  const random = seeded(`${seed}:comments`)
+  const count = Math.max(2, Math.min(pool.length, Math.round(Math.sqrt(discussed))))
+  return pickSome(random, pool, count).map((text) => {
+    const [user, tier] = commenters[randomInt(random, 0, commenters.length - 1)]
+    const postedAt = postedAfter(random, publishedAt, now)
     const [likes, dislikes] = votes(random)
     const replyCount = random() < 0.3 ? randomInt(random, 1, 2) : 0
-    const replies = pickSome(random, replyPool, replyCount).map((reply, j): Comment => {
-      const [replyUser, replyTier] = commenters[randomInt(random, 0, commenters.length - 1)]!
+    const replies = pickSome(random, replyPool, replyCount).map((reply) => {
+      const [replyUser, replyTier] = commenters[randomInt(random, 0, commenters.length - 1)]
       const [replyLikes, replyDislikes] = votes(random)
-      return {
-        id: `${id}-r${j}`,
-        user: replyUser,
-        tier: replyTier,
-        postedAt: postedAfter(random, postedAt),
-        text: reply,
-        likes: replyLikes,
-        dislikes: replyDislikes,
-        replies: [],
-      }
+      return { user: replyUser, tier: replyTier, postedAt: postedAfter(random, postedAt, now), text: reply, likes: replyLikes, dislikes: replyDislikes, replies: [] }
     })
-    return { id, user, tier, postedAt, text, likes, dislikes, replies }
+    return { user, tier, postedAt, text, likes, dislikes, replies }
   })
 }
 
-function generateReadingList(episode: Episode): ReadingItem[] {
-  const random = seededRandom(`${episode.id}:reading`)
-  const pool =
-    (episode.series && seriesSourcePools[episode.series.name]) || sourcePools[episode.showId] || []
+/** Sources for an episode, each placed at the moment it came up. */
+function readingList(episode) {
+  const random = seeded(`${episode.id}:reading`)
+  const pool = (episode.series && seriesSourcePools[episode.series.name]) || sourcePools[episode.showId] || []
   const picked = pickSome(random, pool, randomInt(random, 3, Math.min(5, pool.length)))
   const lengthSeconds = episode.durationMin * 60
-
-  return picked.map((item, i) => ({
-    ...item,
-    id: `${episode.id}-s${i}`,
-    // Somewhere after the opening and before the last few minutes.
-    at: Math.round(lengthSeconds * (0.05 + random() * 0.85)),
-  }))
+  // Somewhere after the opening and before the last few minutes.
+  return picked.map((item) => ({ ...item, at: Math.round(lengthSeconds * (0.05 + random() * 0.85)) }))
 }
 
-/** The comments for a hand-written thread id, or else for the given episode or article. */
-export function commentsForThread(threadId: string, episode?: Episode, article?: Article): Comment[] {
-  const handWritten = commentThreads[threadId]
-  if (handWritten) return handWritten
-  if (episode) return generateComments(episode.id, commentPools[episode.showId] ?? [], episode.publishedAt)
-  if (article) return generateComments(`article-${article.id}`, articleCommentPools[article.category], article.publishedAt)
-  return []
-}
+const size = (comments) => comments.reduce((total, c) => total + 1 + c.replies.length, 0)
+const minutesBefore = (now, minutes) => new Date(now.getTime() - minutes * 60_000).toISOString()
+const fromMinutes = (now) => ({ minutes, replies, ...c }) => ({ ...c, postedAt: minutesBefore(now, minutes), replies: replies.map(fromMinutes(now)) })
 
-/** The reading list for a hand-written list id, or else for the given episode. */
-export function readingListForThread(listId: string, episode?: Episode): ReadingItem[] {
-  const handWritten = readingLists[listId]
-  if (handWritten) return handWritten
-  return episode ? generateReadingList(episode) : []
+/**
+ * Every thread and reading list. Each episode's and article's comment count
+ * is set to its thread's real size, so cards and threads always agree.
+ * `seededRandom` is the generator's seeded() function.
+ */
+let seeded
+export function buildExtras({ episodes, articles, now, seededRandom }) {
+  seeded = seededRandom
+  const threads = []
+  const lists = []
+  for (const episode of episodes) {
+    const comments = thread(episode.id, commentPools[episode.showId] ?? [], episode.publishedAt, episode.comments, now)
+    episode.comments = size(comments)
+    threads.push({ thread: `episode:${episode.id}`, comments })
+    lists.push({ list: `episode:${episode.id}`, items: readingList(episode) })
+  }
+  for (const article of articles) {
+    const comments = thread(`article-${article.id}`, articleCommentPools[article.category], article.publishedAt, article.comments, now)
+    article.comments = size(comments)
+    threads.push({ thread: `article:${article.id}`, comments })
+  }
+  threads.push({ thread: 'live:live-show', comments: liveThread.map(fromMinutes(now)) })
+  lists.push({ list: 'live:live-show', items: liveReadingList })
+  return { threads, lists }
 }

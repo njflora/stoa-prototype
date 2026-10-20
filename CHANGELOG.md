@@ -2,6 +2,20 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-20: Real access control
+
+### Added
+- Members-only content never leaves the server for anyone else. Someone who may not read a members' discussion or reading list gets its count and nothing more: no text, no names. Someone who may not watch a members' episode gets no stream addresses. The rules are Laravel policies, and one file holds who may post where (backend/config/stoa.php).
+- Comments, votes, purchases, joined communities and new forum topics are saved on the account in Laravel mode. Posts show as "You", votes stay pressed after a reload, and a bought episode unlocks for that account only.
+- The demo panel's "Viewing as" signs in to one of three seeded accounts (free, member, staff) in Laravel mode, with no password typed. That route exists only in development and tests. Sign-in uses Laravel Sanctum's session cookie, with CSRF protection on every change.
+- Every episode, article and the live show has its discussion and reading list in the database: 31,363 comments and 20,346 sources, generated with the catalogue (scripts/data/extras.mjs).
+- 12 PHP feature tests prove the rules: a free account gets a count, not comments, on a members' show; a purchase unlocks one episode's streams and no others; a free account cannot post or vote in a members' thread or forum; signed-out visitors cannot post anywhere.
+
+### Changed
+- The blurred glimpse behind the members' gate is neutral placeholder shapes, not real comments or sources: there is nothing real to blur.
+- Each thread's size follows how much its episode was discussed, and every card's comment count is now the real size of its thread, so the two always agree. Counts are smaller than before (2 to 13 a thread).
+- The static preview holds discussion as a signed-out visitor sees it: members' threads and reading lists as a count only. A "member" in the preview sees a short note saying so.
+
 ## 2026-10-20: Laravel, every stream in one player, and the stoa intro
 
 ### Added

@@ -7,4 +7,24 @@ return [
     // /site-public (see compose.yaml).
     'export_path' => env('STOA_EXPORT_PATH', base_path('../public/data')),
 
+    /*
+    | Who may read and post where (Nick's call). Casual spaces are open to
+    | every account; heated or specialist ones are for members, which keeps
+    | them civil. Members, and staff, may post everywhere.
+    |
+    | On these shows, anyone can read the discussion and the reading list,
+    | and any account can post. On every other show both are members only.
+    | Articles and the live show are always open.
+    */
+    'open_shows' => ['stoa-podcast', 'morning-brief'],
+
+    // Community forums and who may post in each: "all" accounts or "members".
+    'forums' => [
+        'philosophy-circle/general-discussion' => 'all',
+        'philosophy-circle/ethics' => 'members',
+    ],
+
+    // Communities an account can join.
+    'communities' => ['philosophy-circle'],
+
 ];
