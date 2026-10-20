@@ -26,6 +26,11 @@ export interface Show {
   pageCount?: number
   /** A free episode from this show, for previews. */
   freePreview?: Episode
+  /** When new episodes arrive, such as "Live weekdays at 1:00 pm". */
+  schedule?: string
+  /** Episodes free to watch (free or free preview), and members-only ones. */
+  freeCount?: number
+  membersCount?: number
 }
 
 export interface SeriesInfo {

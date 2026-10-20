@@ -14,7 +14,11 @@ import { formatDuration } from '@/utils/format'
 // A whole series as one card. It links to the series page, which anyone
 // can browse; members' series show a small lock for free viewers.
 
-const props = defineProps<{ series: Series }>()
+const props = defineProps<{
+  series: Series
+  /** Fill a grid cell instead of the fixed width used in rows. */
+  fluid?: boolean
+}>()
 
 const { isMember } = useViewer()
 const { isWatched } = useWatchProgress()
@@ -28,7 +32,8 @@ const watched = computed(() => props.series.episodes.filter((e) => isWatched(e.i
 <template>
   <RouterLink
     :to="`/series/${series.slug}`"
-    class="group block w-60 flex-none snap-start outline-none sm:w-72"
+    class="group block outline-none"
+    :class="fluid ? 'min-w-0' : 'w-60 flex-none snap-start sm:w-72'"
     v-on="handlers"
   >
     <div

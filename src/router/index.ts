@@ -48,14 +48,14 @@ const router = createRouter({
     {
       path: '/shows',
       name: 'shows',
-      component: PlaceholderView,
-      meta: { title: 'Shows', note: 'Show pages and series views come in a later step.' },
+      component: () => import('../views/ShowsView.vue'),
+      meta: { title: 'Shows' },
     },
     {
+      // The page names the tab itself, after the show.
       path: '/shows/:id',
       name: 'show',
-      component: PlaceholderView,
-      meta: { title: 'Show', note: 'Every episode of a show, paged and filterable, comes in step 5.' },
+      component: () => import('../views/ShowView.vue'),
     },
     {
       path: '/series/:slug',
@@ -118,10 +118,15 @@ const router = createRouter({
       meta: { title: 'Page not found', note: 'That page does not exist.' },
     },
   ],
-  scrollBehavior: (_to, _from, saved) => saved ?? { top: 0 },
+  // Back and Forward return to where you were. A new page starts at the top,
+  // but a change on the same page (a filter, a page of results, opening
+  // search) keeps your place; the page scrolls itself if it needs to.
+  scrollBehavior: (to, from, saved) => saved ?? (to.path === from.path ? false : { top: 0 }),
 })
 
-router.afterEach((to) => {
+router.afterEach((to, from) => {
+  // Only on a new page, so titles a page sets itself (such as a show's name) stay.
+  if (to.path === from.path) return
   document.title = to.meta.title ? `${to.meta.title} · Stoa` : 'Stoa'
 })
 

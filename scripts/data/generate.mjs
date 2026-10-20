@@ -100,13 +100,13 @@ const hosts = [
 ]
 
 const shows = [
-  { id: 'stoa-podcast', name: 'The Stoa Podcast', tagline: 'The daily flagship, live every weekday', access: 'free', hostIds: ['andrew', 'richard', 'tom'], palette: ['#c04d93', '#2a0f22', '#f0a6ca'], streamedLive: true },
-  { id: 'morning-brief', name: 'Morning Brief', tagline: 'The day ahead, in short segments every weekday morning', access: 'free', hostIds: ['danny'], palette: ['#d5b720', '#2a2205', '#f6e7a1'], streamedLive: true },
-  { id: 'conversations', name: 'Conversations', tagline: 'Long-form interviews with interesting people', access: 'free', hostIds: ['richard'], palette: ['#8b5cf6', '#170d2e', '#d8c8ff'] },
-  { id: 'chronos', name: 'Chronos', tagline: 'History told in full, series by series', access: 'premium', hostIds: ['helen'], palette: ['#2a9d8f', '#08221f', '#e9c46a'] },
-  { id: 'statecraft', name: 'Statecraft', tagline: 'Geopolitics without the noise', access: 'premium', hostIds: ['rachel'], palette: ['#4f8fc0', '#0b1726', '#a8dadc'] },
-  { id: 'ledger', name: 'Ledger', tagline: 'Economics you can actually use', access: 'premium', hostIds: ['neil'], palette: ['#6a994e', '#101b0c', '#e3f0c8'] },
-  { id: 'the-forum', name: 'The Forum', tagline: 'The panel show, live for members', access: 'premium', hostIds: ['andrew', 'tom', 'danny', 'neil'], palette: ['#e76f51', '#260d06', '#f4a261'] },
+  { id: 'stoa-podcast', name: 'The Stoa Podcast', tagline: 'The daily flagship, live every weekday', access: 'free', hostIds: ['andrew', 'richard', 'tom'], palette: ['#c04d93', '#2a0f22', '#f0a6ca'], streamedLive: true, schedule: 'Live weekdays at 1:00 pm' },
+  { id: 'morning-brief', name: 'Morning Brief', tagline: 'The day ahead, in short segments every weekday morning', access: 'free', hostIds: ['danny'], palette: ['#d5b720', '#2a2205', '#f6e7a1'], streamedLive: true, schedule: 'Weekdays from 8:00 am' },
+  { id: 'conversations', name: 'Conversations', tagline: 'Long-form interviews with interesting people', access: 'free', hostIds: ['richard'], palette: ['#8b5cf6', '#170d2e', '#d8c8ff'], schedule: 'New interviews on Wednesdays' },
+  { id: 'chronos', name: 'Chronos', tagline: 'History told in full, series by series', access: 'premium', hostIds: ['helen'], palette: ['#2a9d8f', '#08221f', '#e9c46a'], schedule: 'New parts on Sundays' },
+  { id: 'statecraft', name: 'Statecraft', tagline: 'Geopolitics without the noise', access: 'premium', hostIds: ['rachel'], palette: ['#4f8fc0', '#0b1726', '#a8dadc'], schedule: 'Tuesdays at 3:00 pm' },
+  { id: 'ledger', name: 'Ledger', tagline: 'Economics you can actually use', access: 'premium', hostIds: ['neil'], palette: ['#6a994e', '#101b0c', '#e3f0c8'], schedule: 'Thursdays at 11:00 am' },
+  { id: 'the-forum', name: 'The Forum', tagline: 'The panel show, live for members', access: 'premium', hostIds: ['andrew', 'tom', 'danny', 'neil'], palette: ['#e76f51', '#260d06', '#f4a261'], schedule: 'Live on Fridays at 7:00 pm' },
 ]
 
 // ---------- topic pools ----------
@@ -391,9 +391,13 @@ const write = (path, data) => {
   writeFileSync(file, JSON.stringify(data))
 }
 
+// "Free to watch" covers free episodes and free previews; "Members" is the rest.
+const isFree = (e) => e.access !== 'premium'
 const showMeta = shows.map((s) => ({
   ...s,
   episodeCount: byShow.get(s.id).length,
+  freeCount: byShow.get(s.id).filter(isFree).length,
+  membersCount: byShow.get(s.id).filter((e) => !isFree(e)).length,
   pageCount: Math.ceil(byShow.get(s.id).length / PAGE_SIZE),
   freePreview: card(byShow.get(s.id).find((e) => e.access === 'freemium') ?? byShow.get(s.id)[0]),
 }))
@@ -413,10 +417,21 @@ write('hosts.json', hosts)
 write('series.json', series)
 write('live.json', live)
 
+function writePages(folder, list) {
+  for (let p = 0; p * PAGE_SIZE < list.length; p++) {
+    write(`${folder}/${p}.json`, { page: p, pageCount: Math.ceil(list.length / PAGE_SIZE), total: list.length, items: list.slice(p * PAGE_SIZE, (p + 1) * PAGE_SIZE).map(card) })
+  }
+}
 for (const show of shows) {
   const list = byShow.get(show.id)
-  for (let p = 0; p * PAGE_SIZE < list.length; p++) {
-    write(`episodes/${show.id}/${p}.json`, { page: p, pageCount: Math.ceil(list.length / PAGE_SIZE), total: list.length, items: list.slice(p * PAGE_SIZE, (p + 1) * PAGE_SIZE).map(card) })
+  writePages(`episodes/${show.id}`, list)
+  // Shows that mix free and members' episodes also get filtered pages,
+  // as an API would return for ?access=free or ?access=members.
+  const free = list.filter(isFree)
+  const members = list.filter((e) => !isFree(e))
+  if (free.length && members.length) {
+    writePages(`episodes/${show.id}/free`, free)
+    writePages(`episodes/${show.id}/members`, members)
   }
 }
 

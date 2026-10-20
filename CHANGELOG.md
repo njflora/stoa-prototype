@@ -2,6 +2,18 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-20: Shows, every episode within reach
+
+### Added
+- /shows: every show in a grid, free shows first. Each card has the show's painting and hover preview, hosts, episode count and schedule ("Live weekdays at 1:00 pm").
+- /shows/:id: a page for each show. A header with "Watch the latest" (or Upgrade and a free preview), "Search this show", the show's series, then every episode it has made (Finding 3).
+- The archive shows 50 episodes a page, with page numbers, Newest or Oldest first, and on mixed shows All, Free to watch or Members, with counts. The view lives in the address (?page=4&sort=oldest&access=free), so Back and shared links land on it.
+- The data includes filtered pages for shows that mix free and members' episodes, as an API would return for ?access=free. "Oldest first" reads the same pages from the other end.
+- A pitch note: "Every episode, sorted and filtered".
+
+### Changed
+- A change on the same page (a filter, a page of results, opening search) no longer scrolls to the top or resets the tab title.
+
 ## 2026-10-20: Instant search, over any page
 
 ### Added

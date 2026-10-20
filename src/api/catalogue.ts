@@ -92,10 +92,40 @@ export async function getHome(): Promise<Home> {
   }
 }
 
-/** GET /api/episodes?show={showId}&page={page}: 50 at a time, newest first. */
-export async function listEpisodes(showId: string, page = 0): Promise<EpisodePage> {
-  const data = await getJson<EpisodePage>(`episodes/${showId}/${page}.json`)
-  return { ...data, items: data.items.map(normalise) }
+export type AccessFilter = 'all' | 'free' | 'members'
+export type SortOrder = 'newest' | 'oldest'
+
+/** One stored page, newest first. Filtered pages exist only for shows that mix access. */
+async function storedPage(showId: string, access: AccessFilter, page: number): Promise<EpisodePage> {
+  const folder = access === 'all' ? `episodes/${showId}` : `episodes/${showId}/${access}`
+  return getJson<EpisodePage>(`${folder}/${page}.json`)
+}
+
+/**
+ * GET /api/episodes?show={showId}&access={access}&sort={sort}&page={page}
+ * 50 at a time. A real API sorts in the database; here "oldest first" reads
+ * the newest-first pages from the other end, joining at most two of them.
+ */
+export async function listEpisodes(
+  showId: string,
+  page = 0,
+  { access = 'all', sort = 'newest' }: { access?: AccessFilter; sort?: SortOrder } = {},
+): Promise<EpisodePage> {
+  if (sort === 'newest') {
+    const data = await storedPage(showId, access, page)
+    return { ...data, items: data.items.map(normalise) }
+  }
+  const first = await storedPage(showId, access, 0)
+  const { total, pageCount } = first
+  const size = reference.pageSize
+  // Positions in the newest-first list that make up this oldest-first page.
+  const end = total - page * size
+  const start = Math.max(0, end - size)
+  if (end <= 0) return { page, pageCount, total, items: [] }
+  const pages = [...new Set([Math.floor(start / size), Math.floor((end - 1) / size)])]
+  const loaded = await Promise.all(pages.map((p) => (p === 0 ? first : storedPage(showId, access, p))))
+  const items = loaded.flatMap((p) => p.items).slice(start - pages[0]! * size, end - pages[0]! * size)
+  return { page, pageCount, total, items: items.reverse().map(normalise) }
 }
 
 /**

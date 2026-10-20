@@ -9,7 +9,11 @@ import { formatPublished } from '@/utils/format'
 // icon, so articles read as "read" rather than "watch" next to episodes.
 // It matches the episode card's size so rows line up.
 
-const props = defineProps<{ article: Article }>()
+const props = defineProps<{
+  article: Article
+  /** Fill a grid cell instead of the fixed width used in rows. */
+  fluid?: boolean
+}>()
 
 const colours = computed(() => articleCategoryColours[props.article.category])
 </script>
@@ -17,7 +21,8 @@ const colours = computed(() => articleCategoryColours[props.article.category])
 <template>
   <RouterLink
     :to="`/articles/${article.id}`"
-    class="group block w-60 flex-none snap-start outline-none sm:w-72"
+    class="group block outline-none"
+    :class="fluid ? 'min-w-0' : 'w-60 flex-none snap-start sm:w-72'"
   >
     <div
       class="relative aspect-video overflow-hidden rounded-lg ring-1 ring-white/10 transition duration-300 group-hover:ring-white/30 group-focus-visible:ring-2 group-focus-visible:ring-accent-bright"

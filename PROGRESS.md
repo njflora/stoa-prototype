@@ -21,6 +21,7 @@ The pitch prototype is built and working locally. All three priority sections fr
 - **One top bar instead of the long side nav.** Left: Stoa, Live (with a red dot when on air), Home, Shows, Articles, Courses, Search. Right: a purple Shop button, a gold Upgrade button with a crown, then the account.
 - **Phones get an app-style tab bar** (Home, Live, Shows, Search, More), with More opening a sheet for Articles, Courses, Shop and the account. Every page was checked at 375px and 320px for overflow and tap-target size.
 - **Built for the real site's scale.** 5,521 generated episodes, each title unique within its show (The Stoa Podcast #1 to #1530, Morning Brief with three segments a weekday) served as a paged API from static JSON. Pages fetch only what they show; the homepage needs one request.
+- **Every show has a page** with its full archive: 50 episodes a page, newest or oldest first, and free or members-only on mixed shows. The view is kept in the address.
 - **Instant search over any page** (Finding 9). Press "/", the header button or the Search tab on phones. Results appear as you type, grouped as Episodes, Series, Shows, Hosts and Articles, in a see-through panel over the current page. Small typos are forgiven, the keyboard works throughout, and the search is kept in the address so it can be shared.
 - **Three viewer types**, switched from a demo panel since there is no real login:
   - Signed out: Upgrade and a "Sign in / Sign up" button.
@@ -100,7 +101,7 @@ The pitch prototype is built and working locally. All three priority sections fr
 - **Not deployed, on purpose.** Deployment is scheduled for week 6 with the PWA. GitHub Pages will need a small router change.
 - **Real Rumble and Odysee embeds are untested.** No embed URLs are set, so the placeholder shows. Rumble on phones (a key finding) needs a real embed to test.
 - **Real notifications are untested.** The test browser blocks them. The logic is in place.
-- **Pages still placeholders:** Shows, Articles index and article pages, Courses, Account, Shop, Sign in.
+- **Pages still placeholders:** Articles index and article pages, Courses, Account, Shop, Sign in.
 - **Not started:** installable PWA, the technical audit, the bug report and screen recording, the Topic 4 and 5 write-ups, the measurement page.
 
 ## Known limits of the prototype

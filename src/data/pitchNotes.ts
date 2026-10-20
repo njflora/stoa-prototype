@@ -28,6 +28,7 @@ const live = { name: 'Live page', to: '/live' }
 const episode = { name: 'Episode page', to: '/watch/stoa-podcast-1530' }
 const seriesEpisode = { name: 'Episode in a series', to: '/watch/chronos-111?series=the-fall-of-the-republic' }
 const join = { name: "Members' preview", to: '/join' }
+const showPage = { name: 'A show page', to: '/shows/chronos' }
 const searchPage = { name: 'Search, over any page', to: '/?search=rome' }
 
 export const pitchNotes: PitchNote[] = [
@@ -235,6 +236,15 @@ export const pitchNotes: PitchNote[] = [
     today: 'Bronze £5, Silver £10 and Gold £30 a month, with these perks.',
     here: 'Kept as they are. Yearly prices are still to collect.',
     page: join,
+  },
+  {
+    id: 'show-archive',
+    kind: 'fix',
+    source: 'Finding 3',
+    title: 'Every episode, sorted and filtered',
+    today: 'Listed as a gap in the planning doc.',
+    here: 'Each show lists every episode it has made, 50 to a page, newest or oldest first, and free or members-only. The view is kept in the address, so it can be shared.',
+    page: showPage,
   },
   {
     id: 'search',
