@@ -71,9 +71,11 @@ watch(
   { immediate: true },
 )
 
-// The scene is drawn in a 1200 by 800 box and fills the screen, cropping the
-// sides on tall phones (preserveAspectRatio "slice"). The seal button is
-// placed over the same point, so it is worked out from the screen size.
+// The scene is drawn in a 1200 by 800 box and fills the screen
+// (preserveAspectRatio "slice"), anchored to the top: tall phones lose a
+// little at the sides, wide screens a little floor at the bottom, and the
+// lintel with the name is never cut off. The seal button is placed over the
+// same point, so it is worked out from the screen size.
 const W = 1200
 const H = 800
 const SEAL = { x: 600, y: 420 } // the vanishing point, at the end of the corridor
@@ -91,10 +93,11 @@ onUnmounted(() => {
 const placement = computed(() => {
   const scale = Math.max(screen.value.w / W, screen.value.h / H)
   const x = (screen.value.w - W * scale) / 2 + SEAL.x * scale
-  const y = (screen.value.h - H * scale) / 2 + SEAL.y * scale
+  const y = SEAL.y * scale
   // Just below the entrance lintel, so the buttons never sit on the name.
-  const belowLintel = (screen.value.h - H * scale) / 2 + LINTEL * scale + 12
-  return { x, y, size: Math.max(56, 112 * scale), belowLintel }
+  const belowLintel = LINTEL * scale + 12
+  // At least 56px to tap on a phone, at most 150px on very wide screens.
+  return { x, y, size: Math.min(150, Math.max(56, 112 * scale)), belowLintel }
 })
 
 // ---------- the drawing ----------
@@ -182,7 +185,7 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
     >
       <!-- Everything that moves together as the view passes between the columns: the scene and the seal. -->
       <div class="scene absolute inset-0" :style="{ transformOrigin: `${placement.x}px ${placement.y}px` }">
-        <svg :viewBox="`0 0 ${W} ${H}`" preserveAspectRatio="xMidYMid slice" class="absolute inset-0 size-full" aria-hidden="true">
+        <svg :viewBox="`0 0 ${W} ${H}`" preserveAspectRatio="xMidYMin slice" class="absolute inset-0 size-full" aria-hidden="true">
           <defs>
             <linearGradient :id="id('sky')" x1="0" x2="0" y1="0" y2="1">
               <stop offset="0" stop-color="#1e0838" />
