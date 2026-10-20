@@ -2,6 +2,13 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-20: Courses inside the site
+
+### Added
+- /courses: a course shop in the reference site's format (type, title, description, price), filtered by Courses, Bundles or Community. Six invented products at their real price points: a philosophy community, a £325 virtue ethics course, a £375 trivium bundle, and three £150 courses.
+- /courses/:id: what each course covers, module by module, who teaches it, the price and links to related series. The bundle lists its three courses and the saving (£75). "Enrol" says that enrolment is not part of this demo.
+- A pitch note: "Courses inside the site". Today their courses live on a separate site.
+
 ## 2026-10-20: Articles, each ending with its sources
 
 ### Added

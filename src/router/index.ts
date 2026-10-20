@@ -90,8 +90,14 @@ const router = createRouter({
     {
       path: '/courses',
       name: 'courses',
-      component: PlaceholderView,
+      component: () => import('../views/CoursesView.vue'),
       meta: { title: 'Courses' },
+    },
+    {
+      // The page names the tab itself, after the course.
+      path: '/courses/:id',
+      name: 'course',
+      component: () => import('../views/CourseView.vue'),
     },
     {
       // Search is an overlay now (?search=). Old /search?q= links open it over the homepage.

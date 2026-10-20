@@ -29,6 +29,7 @@ const episode = { name: 'Episode page', to: '/watch/stoa-podcast-1530' }
 const seriesEpisode = { name: 'Episode in a series', to: '/watch/chronos-111?series=the-fall-of-the-republic' }
 const join = { name: "Members' preview", to: '/join' }
 const showPage = { name: 'A show page', to: '/shows/chronos' }
+const coursesPage = { name: 'Courses', to: '/courses' }
 const searchPage = { name: 'Search, over any page', to: '/?search=rome' }
 
 export const pitchNotes: PitchNote[] = [
@@ -245,6 +246,15 @@ export const pitchNotes: PitchNote[] = [
     today: 'Listed as a gap in the planning doc.',
     here: 'Each show lists every episode it has made, 50 to a page, newest or oldest first, and free or members-only. The view is kept in the address, so it can be shared.',
     page: showPage,
+  },
+  {
+    id: 'courses-inside',
+    kind: 'proposal',
+    source: 'Courses site',
+    title: 'Courses inside the site',
+    today: 'Courses sit on a separate site, with its own design and checkout.',
+    here: 'Courses live in the main site, with the same look, navigation and account, and link to related series. Same product types and price points as today.',
+    page: coursesPage,
   },
   {
     id: 'search',
