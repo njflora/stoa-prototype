@@ -2,6 +2,13 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-20: An account page from the demo's real state
+
+### Added
+- /account: the tier and monthly price for members (or an Upgrade button with the 7-day trial for free accounts), continue watching with "Clear history", live reminders with a switch to turn each off, the newsletter, and account settings.
+- It follows the demo panel: switch viewer, watch something or set a reminder, and the page changes to match.
+- Email, password, payment and cancelling say they are not part of this demo. Signed-out visitors are asked to sign in, with a pointer to the Demo button.
+
 ## 2026-10-20: One shop inside the site
 
 ### Added

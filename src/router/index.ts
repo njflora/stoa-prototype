@@ -36,8 +36,8 @@ const router = createRouter({
     {
       path: '/account',
       name: 'account',
-      component: PlaceholderView,
-      meta: { title: 'Your account', note: 'Account settings and membership tier come in a later step.' },
+      component: () => import('../views/AccountView.vue'),
+      meta: { title: 'Your account' },
     },
     {
       path: '/shop',

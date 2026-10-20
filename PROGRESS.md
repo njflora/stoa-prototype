@@ -25,6 +25,7 @@ The pitch prototype is built and working locally. All three priority sections fr
 - **Articles have an index and full pages.** Category filters, a lead piece, and at the end of each article its sources, an episode to watch next and more from the writer.
 - **Courses live inside the site**, in their course shop's format and at their price points, with a page per course.
 - **One shop inside the site**, using the real stores' product format and prices, with a store switch in place of three separate regional stores.
+- **An account page** built from the demo's state: membership, watch history, reminders and the newsletter. Billing and passwords say they are not part of the demo.
 - **Instant search over any page** (Finding 9). Press "/", the header button or the Search tab on phones. Results appear as you type, grouped as Episodes, Series, Shows, Hosts and Articles, in a see-through panel over the current page. Small typos are forgiven, the keyboard works throughout, and the search is kept in the address so it can be shared.
 - **Three viewer types**, switched from a demo panel since there is no real login:
   - Signed out: Upgrade and a "Sign in / Sign up" button.
@@ -104,7 +105,7 @@ The pitch prototype is built and working locally. All three priority sections fr
 - **Not deployed, on purpose.** Deployment is scheduled for week 6 with the PWA. GitHub Pages will need a small router change.
 - **Real Rumble and Odysee embeds are untested.** No embed URLs are set, so the placeholder shows. Rumble on phones (a key finding) needs a real embed to test.
 - **Real notifications are untested.** The test browser blocks them. The logic is in place.
-- **Pages still placeholders:** Account, Sign in.
+- **Pages still placeholders:** Sign in only (the demo panel switches viewers instead).
 - **Not started:** installable PWA, the technical audit, the bug report and screen recording, the Topic 4 and 5 write-ups, the measurement page.
 
 ## Known limits of the prototype
