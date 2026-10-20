@@ -6,12 +6,15 @@
 // the page never renders HTML from data.
 // watchNext: an episode on the same subject, found by show and title text
 // when the data is generated, so it survives any regeneration.
+// mood: "divisive" pieces split readers nearly evenly; "quiet" ones draw
+// little engagement. Used to generate reactions for the sorts.
 
 const src = (type, title, source, year, to) => ({ type, title, source, year, ...(to ? { to } : {}) })
 
 export const articles = [
   {
     id: 'centre-ground',
+    mood: 'divisive',
     title: 'The Quiet Collapse of the Centre Ground',
     standfirst: 'Both main parties are losing the voters they once took for granted.',
     authorId: 'andrew',
@@ -144,6 +147,7 @@ export const articles = [
   },
   {
     id: 'local-elections',
+    mood: 'divisive',
     title: 'Local Elections Are Telling Us Something',
     standfirst: 'Small swings in council seats point to a larger shift.',
     authorId: 'gary',
@@ -194,6 +198,7 @@ export const articles = [
   },
   {
     id: 'british-sitcom',
+    mood: 'divisive',
     title: 'What Happened to the British Sitcom?',
     standfirst: 'A golden age, a long decline, and a few signs of life.',
     authorId: 'tom',
@@ -246,6 +251,7 @@ export const articles = [
   },
   {
     id: 'national-debt',
+    mood: 'divisive',
     title: 'A Plain Guide to the National Debt',
     standfirst: 'How big it is, who holds it, and why the interest matters.',
     authorId: 'sally',
@@ -273,6 +279,7 @@ export const articles = [
   },
   {
     id: 'monks-and-books',
+    mood: 'quiet',
     title: 'The Monks Who Kept the Books',
     standfirst: 'How a few quiet scriptoria carried ancient learning through the early Middle Ages.',
     authorId: 'helen',

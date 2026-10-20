@@ -89,17 +89,28 @@ function datesBack(count, days, startOffset = 1) {
 }
 
 // ---------- reference data ----------
+// Contributors. Names, roles and bios are invented for the demo.
 const hosts = [
-  { id: 'andrew', name: 'Andrew Pickering' },
-  { id: 'richard', name: 'Richard Holloway' },
-  { id: 'tom', name: 'Tom Heywood' },
-  { id: 'rachel', name: 'Rachel Ashworth' },
-  { id: 'neil', name: 'Neil Barraclough' },
-  { id: 'helen', name: 'Helen Thwaite' },
-  { id: 'danny', name: 'Danny Shaw' },
-  { id: 'gary', name: 'Gary Lowther' },
-  { id: 'sally', name: 'Sally Dunmore' },
+  { id: 'andrew', name: 'Andrew Pickering', role: 'Presenter, The Stoa Podcast', bio: 'Andrew has presented The Stoa Podcast since its first episode. Before that he spent a decade in local radio, and he still thinks the best interviews happen after the microphones are meant to be off.' },
+  { id: 'richard', name: 'Richard Holloway', role: 'Presenter, Conversations', bio: 'Richard hosts Conversations, the long-form interview show. A former bookseller, he reads everything his guests have written before they sit down, and usually a few things they would rather he had not.' },
+  { id: 'tom', name: 'Tom Heywood', role: 'Presenter, The Stoa Podcast and The Forum', bio: 'Tom chairs The Forum and is a regular on The Stoa Podcast. He writes about culture and comedy, and keeps a running list of sitcoms that deserved a third series.' },
+  { id: 'rachel', name: 'Rachel Ashworth', role: 'Host, Statecraft', bio: 'Rachel hosts Statecraft, the geopolitics show. She worked in shipping insurance before turning to writing, which is why she can explain a strait closure in terms of who pays.' },
+  { id: 'neil', name: 'Neil Barraclough', role: 'Host, Ledger', bio: 'Neil hosts Ledger, the economics show for people who do not like economics shows. He spent years as a credit analyst and now tries to explain bond markets without using the word "yield" more than twice.' },
+  { id: 'helen', name: 'Helen Thwaite', role: 'Historian and host, Chronos', bio: 'Helen writes and presents Chronos, telling history in full, series by series. Her particular interests are the late Roman Republic and the Hundred Years\' War, and she has opinions about both.' },
+  { id: 'danny', name: 'Danny Shaw', role: 'Host, Morning Brief', bio: 'Danny gets up before everyone else to present Morning Brief, the day ahead in short segments. He has read more newspapers before eight o\'clock than most people read in a week.' },
+  { id: 'gary', name: 'Gary Lowther', role: 'Political correspondent', bio: 'Gary covers politics, from Westminster to the town hall. He is a regular on The Stoa Podcast and The Forum, and writes about elections, committees and the parts of Parliament that rarely make the news.' },
+  { id: 'sally', name: 'Sally Dunmore', role: 'Economics writer', bio: 'Sally writes about public money: debt, tax and spending. She sits in on The Stoa Podcast and covers Morning Brief when Danny is away.' },
 ]
+
+// Line-ups rotate, as they do on a real show. Their own random sequence,
+// so the rest of the catalogue stays the same as before.
+const rota = seeded('host-rotation')
+/** `count` hosts from `pool`, with `anchor` present most of the time, in pool order. */
+function lineup(pool, count, anchor, anchorChance) {
+  const chosen = new Set(rota() < anchorChance ? [anchor] : [])
+  while (chosen.size < count) chosen.add(pool[Math.floor(rota() * pool.length)])
+  return pool.filter((id) => chosen.has(id))
+}
 
 const shows = [
   { id: 'stoa-podcast', name: 'The Stoa Podcast', tagline: 'The daily flagship, live every weekday', access: 'free', hostIds: ['andrew', 'richard', 'tom'], palette: ['#c04d93', '#2a0f22', '#f0a6ca'], streamedLive: true, schedule: 'Live weekdays at 1:00 pm' },
@@ -243,7 +254,7 @@ function comments(viewCount, rate) {
       number,
       title: `The Stoa Podcast #${number}`,
       topics: [pick(newsTopics), pick(newsTopics), pick(newsTopics)].filter((t, j, a) => a.indexOf(t) === j),
-      hostIds: ['andrew', 'richard', 'tom'],
+      hostIds: lineup(['andrew', 'richard', 'tom', 'gary', 'sally'], 3, 'andrew', 0.85),
       publishedAt: at(date, 13),
       durationMin: between(80, 110),
       access: 'free',
@@ -263,10 +274,12 @@ const nextMorning = deck('morning-brief', morningTopics)
     const segments = [nextMorning(), nextMorning()]
     // The main edition is titled by its date when displayed, so it never goes stale.
     const edition = views(800, ageDays)
-    add('morning-brief', { edition: true, hostIds: ['danny'], publishedAt: at(date, 8), durationMin: 22, access: 'free', views: edition, comments: comments(edition, 0.008) })
+    // Sally covers some mornings.
+    const presenter = rota() < 0.85 ? ['danny'] : ['sally']
+    add('morning-brief', { edition: true, hostIds: presenter, publishedAt: at(date, 8), durationMin: 22, access: 'free', views: edition, comments: comments(edition, 0.008) })
     segments.forEach((topic, j) => {
       const v = views(350, ageDays)
-      add('morning-brief', { title: `Morning Brief | ${topic}`, hostIds: ['danny'], publishedAt: at(date, 8, 30 + j * 15), durationMin: between(6, 12), access: 'free', views: v, comments: comments(v, 0.006) })
+      add('morning-brief', { title: `Morning Brief | ${topic}`, hostIds: presenter, publishedAt: at(date, 8, 30 + j * 15), durationMin: between(6, 12), access: 'free', views: v, comments: comments(v, 0.006) })
     })
   })
 }
@@ -310,8 +323,8 @@ function weekly(showId, count, day, hour, makeTitle, base, duration, previewEver
     const v = views(base, ageDays)
     const preview = i % previewEvery === previewEvery - 1
     add(showId, {
-      ...makeTitle(count - i, preview),
       hostIds: shows.find((s) => s.id === showId).hostIds,
+      ...makeTitle(count - i, preview),
       publishedAt: at(date, hour),
       durationMin: preview ? between(12, 25) : between(duration[0], duration[1]),
       access: preview ? 'freemium' : 'premium',
@@ -326,7 +339,7 @@ const nextEcon = deck('ledger', combine(econTopics, econAngles))
 const nextForum = deck('the-forum', combine(forumTopics, forumEditions))
 weekly('statecraft', 200, 2, 15, (n) => ({ number: n, title: `Statecraft #${n} | ${nextGeo()}` }), 2300, [60, 85], 15)
 weekly('ledger', 200, 4, 11, (n) => ({ number: n, title: `Ledger #${n} | ${nextEcon()}` }), 2100, [45, 65], 15)
-weekly('the-forum', 200, 5, 19, (n, preview) => ({ number: n, title: preview ? `The Forum #${n} | The Best Bits of #${n - 1}` : `The Forum #${n} | ${nextForum()}`, live: !preview }), 3800, [95, 125], 20)
+weekly('the-forum', 200, 5, 19, (n, preview) => ({ number: n, title: preview ? `The Forum #${n} | The Best Bits of #${n - 1}` : `The Forum #${n} | ${nextForum()}`, live: !preview, hostIds: lineup(['andrew', 'tom', 'danny', 'neil', 'gary', 'sally'], 4, 'tom', 0.8) }), 3800, [95, 125], 20)
 
 // Conversations: long interviews, every week or so.
 {
@@ -338,7 +351,9 @@ weekly('the-forum', 200, 5, 19, (n, preview) => ({ number: n, title: preview ? `
     const topic = nextTopic()
     const guest = nextGuest()
     const v = views(1100, ageDays)
-    add('conversations', { title: `${topic} | Interview with ${guest}`, hostIds: ['richard'], publishedAt: at(date, 10), durationMin: between(55, 85), access: 'free', views: v, comments: comments(v, 0.008) })
+    const r = rota()
+    const interviewer = r < 0.8 ? 'richard' : r < 0.9 ? 'helen' : 'andrew'
+    add('conversations', { title: `${topic} | Interview with ${guest}`, hostIds: [interviewer], publishedAt: at(date, 10), durationMin: between(55, 85), access: 'free', views: v, comments: comments(v, 0.008) })
   })
 }
 
@@ -415,34 +430,85 @@ const live = {
 
 write('meta.json', { generatedAt: generatedAt.toISOString(), pageSize: PAGE_SIZE, total: episodes.length, articleCount: articleSources.length })
 write('shows.json', showMeta)
-write('hosts.json', hosts)
+write(
+  'hosts.json',
+  hosts.map((h) => ({
+    ...h,
+    showIds: shows.filter((s) => byShow.get(s.id).some((e) => e.hostIds.includes(h.id))).map((s) => s.id),
+    episodeCount: episodes.filter((e) => e.hostIds.includes(h.id)).length,
+    articleCount: articleSources.filter((a) => a.authorId === h.id).length,
+  })),
+)
 write('series.json', series)
 write('live.json', live)
 
+/** Pages of 50, newest first. An empty list still gets an empty first page. */
 function writePages(folder, list) {
-  for (let p = 0; p * PAGE_SIZE < list.length; p++) {
-    write(`${folder}/${p}.json`, { page: p, pageCount: Math.ceil(list.length / PAGE_SIZE), total: list.length, items: list.slice(p * PAGE_SIZE, (p + 1) * PAGE_SIZE).map(card) })
+  const pageCount = Math.max(1, Math.ceil(list.length / PAGE_SIZE))
+  for (let p = 0; p < pageCount; p++) {
+    write(`${folder}/${p}.json`, { page: p, pageCount, total: list.length, items: list.slice(p * PAGE_SIZE, (p + 1) * PAGE_SIZE).map(card) })
   }
 }
+
+// "Popular": the 50 most-watched episodes published within each period.
+const PERIODS = { week: 7, month: 30, year: 365, all: Infinity }
+function writePopular(folder, list) {
+  for (const [period, days] of Object.entries(PERIODS)) {
+    const items = list
+      .filter((e) => (generatedAt - new Date(e.publishedAt)) / DAY <= days)
+      .sort((a, b) => b.views - a.views)
+      .slice(0, PAGE_SIZE)
+    write(`${folder}/popular/${period}.json`, { page: 0, pageCount: 1, total: items.length, items: items.map(card) })
+  }
+}
+
+// Every combination of access and contributor a show page can ask for, as
+// an API would answer ?access=free&host=gary. A real API would run a query;
+// the static demo builds each answer ahead of time.
 for (const show of shows) {
   const list = byShow.get(show.id)
-  writePages(`episodes/${show.id}`, list)
-  // Shows that mix free and members' episodes also get filtered pages,
-  // as an API would return for ?access=free or ?access=members.
   const free = list.filter(isFree)
   const members = list.filter((e) => !isFree(e))
-  if (free.length && members.length) {
-    writePages(`episodes/${show.id}/free`, free)
-    writePages(`episodes/${show.id}/members`, members)
+  const accessLists = free.length && members.length ? { all: list, free, members } : { all: list }
+  const showHosts = [...new Set(list.flatMap((e) => e.hostIds))]
+  for (const [access, accessList] of Object.entries(accessLists)) {
+    const base = access === 'all' ? `episodes/${show.id}` : `episodes/${show.id}/${access}`
+    writePages(base, accessList)
+    writePopular(base, accessList)
+    if (showHosts.length < 2) continue
+    for (const hostId of showHosts) {
+      const withHost = accessList.filter((e) => e.hostIds.includes(hostId))
+      writePages(`${base}/host-${hostId}`, withHost)
+      writePopular(`${base}/host-${hostId}`, withHost)
+    }
   }
 }
 
 const newest = [...episodes].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 
+// Site-wide trending: the most-watched episodes of the last seven days.
+write('trending.json', {
+  items: newest
+    .filter((e) => (generatedAt - new Date(e.publishedAt)) / DAY <= 7)
+    .sort((a, b) => b.views - a.views)
+    .slice(0, 20)
+    .map(card),
+})
+
+// Each contributor's episodes across every show, for their profile page.
+for (const host of hosts) writePages(`episodes/by-host/${host.id}`, newest.filter((e) => e.hostIds.includes(host.id)))
+
 // ---------- articles ----------
 // Reading time from the length of the body, at about 200 words a minute.
+// Engagement (views, comments, likes, dislikes) is generated from each
+// piece's mood, with its own random sequence.
+const engagement = seeded('article-engagement')
 const articles = articleSources
-  .map(({ daysAgo, watchNext, ...a }) => {
+  .map(({ daysAgo, watchNext, mood, ...a }) => {
+    const reach = mood === 'quiet' ? 0.2 : 1
+    const articleViews = Math.round((2500 + engagement() * 9000) * Math.min(1, 0.35 + daysAgo / 10) * reach)
+    const reactions = Math.round(articleViews * (0.04 + engagement() * 0.03))
+    const dislikeShare = mood === 'divisive' || mood === 'quiet' ? 0.42 + engagement() * 0.14 : 0.05 + engagement() * 0.15
     const words = a.body.join(' ').split(/\s+/).length
     const match = byShow
       .get(watchNext.show)
@@ -452,6 +518,10 @@ const articles = articleSources
       ...a,
       publishedAt: at(new Date(generatedAt.getTime() - daysAgo * DAY), 10),
       readMin: Math.max(2, Math.round(words / 200)),
+      views: articleViews,
+      comments: Math.round(articleViews * (mood === 'divisive' ? 0.02 : 0.008) * (0.7 + engagement() * 0.6)),
+      likes: reactions - Math.round(reactions * dislikeShare),
+      dislikes: Math.round(reactions * dislikeShare),
       watchNext: card(match),
     }
   })
@@ -482,9 +552,26 @@ function writeArticlePages(folder, list) {
     write(`${folder}/${p}.json`, { page: p, pageCount, total: list.length, items: list.slice(p * ARTICLE_PAGE_SIZE, (p + 1) * ARTICLE_PAGE_SIZE).map(articleCard) })
   }
 }
-writeArticlePages('articles/pages/all', articles)
+// Sorted lists for each category: newest (the plain pages), popular in a
+// period, and controversial. Controversial uses the same score as comment
+// sections (src/composables/useVotes.ts), counting only pieces with at
+// least 100 reactions and comments: many votes, split close to evenly.
+const ARTICLE_PERIODS = { week: 7, month: 30, all: Infinity }
+const CONTROVERSIAL_MIN = 100
+const controversy = (likes, dislikes) =>
+  likes === 0 || dislikes === 0 ? 0 : (likes + dislikes) ** (Math.min(likes, dislikes) / Math.max(likes, dislikes))
+function writeArticleSorts(folder, list) {
+  writeArticlePages(folder, list)
+  for (const [period, days] of Object.entries(ARTICLE_PERIODS)) {
+    const within = list.filter((a) => (generatedAt - new Date(a.publishedAt)) / DAY <= days)
+    writeArticlePages(`${folder}/popular-${period}`, [...within].sort((a, b) => b.views - a.views))
+  }
+  const engaged = list.filter((a) => a.likes + a.dislikes + a.comments >= CONTROVERSIAL_MIN)
+  writeArticlePages(`${folder}/controversial`, [...engaged].sort((a, b) => controversy(b.likes, b.dislikes) - controversy(a.likes, a.dislikes)))
+}
+writeArticleSorts('articles/pages/all', articles)
 for (const category of articleCategories) {
-  writeArticlePages(`articles/pages/${category.toLowerCase()}`, articles.filter((a) => a.category === category))
+  writeArticleSorts(`articles/pages/${category.toLowerCase()}`, articles.filter((a) => a.category === category))
 }
 for (const authorId of new Set(articles.map((a) => a.authorId))) {
   writeArticlePages(`articles/pages/author-${authorId}`, articles.filter((a) => a.authorId === authorId))

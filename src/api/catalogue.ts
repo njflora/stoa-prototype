@@ -114,12 +114,25 @@ export async function getHome(): Promise<Home> {
 
 const normaliseArticle = <T extends Article>(article: T): T => ({ ...article, publishedAt: shiftDate(article.publishedAt) })
 
-/** GET /api/articles?category={category}&author={authorId}&page={page}: 24 at a time, newest first. */
+export type ArticleSort = 'newest' | 'popular' | 'controversial'
+export type ArticlePeriod = 'week' | 'month' | 'all'
+
+/**
+ * GET /api/articles?category=&author=&sort=&period=&page=: 24 at a time.
+ * "controversial" counts only pieces with enough engagement, then ranks
+ * them as comment sections do: many votes, split close to evenly.
+ */
 export async function listArticles(
   page = 0,
-  { category, authorId }: { category?: ArticleCategory; authorId?: string } = {},
+  {
+    category,
+    authorId,
+    sort = 'newest',
+    period = 'month',
+  }: { category?: ArticleCategory; authorId?: string; sort?: ArticleSort; period?: ArticlePeriod } = {},
 ): Promise<ArticlePage> {
-  const folder = authorId ? `author-${authorId}` : category ? category.toLowerCase() : 'all'
+  const base = authorId ? `author-${authorId}` : category ? category.toLowerCase() : 'all'
+  const folder = authorId || sort === 'newest' ? base : sort === 'popular' ? `${base}/popular-${period}` : `${base}/controversial`
   const data = await getJson<ArticlePage>(`articles/pages/${folder}/${page}.json`)
   return { ...data, items: data.items.map(normaliseArticle) }
 }
@@ -136,29 +149,48 @@ export async function getArticle(id: string): Promise<ArticleDetail | undefined>
 }
 
 export type AccessFilter = 'all' | 'free' | 'members'
-export type SortOrder = 'newest' | 'oldest'
+export type SortOrder = 'newest' | 'oldest' | 'popular'
+export type Period = 'week' | 'month' | 'year' | 'all'
 
-/** One stored page, newest first. Filtered pages exist only for shows that mix access. */
-async function storedPage(showId: string, access: AccessFilter, page: number): Promise<EpisodePage> {
-  const folder = access === 'all' ? `episodes/${showId}` : `episodes/${showId}/${access}`
-  return getJson<EpisodePage>(`${folder}/${page}.json`)
+export interface EpisodeFilters {
+  access?: AccessFilter
+  sort?: SortOrder
+  /** For "popular": how far back to look. */
+  period?: Period
+  /** Only episodes with this contributor. */
+  host?: string
+}
+
+/** Where the stored answer for a set of filters lives. Access and contributor
+ * folders exist for shows that mix access or have more than one presenter. */
+function folderFor(showId: string, access: AccessFilter, host?: string): string {
+  const base = access === 'all' ? `episodes/${showId}` : `episodes/${showId}/${access}`
+  return host ? `${base}/host-${host}` : base
 }
 
 /**
- * GET /api/episodes?show={showId}&access={access}&sort={sort}&page={page}
- * 50 at a time. A real API sorts in the database; here "oldest first" reads
- * the newest-first pages from the other end, joining at most two of them.
+ * GET /api/episodes?show=&access=&host=&sort=&period=&page=
+ * 50 at a time. A real API sorts and filters in the database; here each
+ * combination is a stored file. "Oldest first" reads the newest-first pages
+ * from the other end, joining at most two of them. "Popular" is the 50
+ * most-watched episodes published within the period.
  */
 export async function listEpisodes(
   showId: string,
   page = 0,
-  { access = 'all', sort = 'newest' }: { access?: AccessFilter; sort?: SortOrder } = {},
+  { access = 'all', sort = 'newest', period = 'month', host }: EpisodeFilters = {},
 ): Promise<EpisodePage> {
-  if (sort === 'newest') {
-    const data = await storedPage(showId, access, page)
+  const folder = folderFor(showId, access, host)
+  const stored = (p: number) => getJson<EpisodePage>(`${folder}/${p}.json`)
+  if (sort === 'popular') {
+    const data = await getJson<EpisodePage>(`${folder}/popular/${period}.json`)
     return { ...data, items: data.items.map(normalise) }
   }
-  const first = await storedPage(showId, access, 0)
+  if (sort === 'newest') {
+    const data = await stored(page)
+    return { ...data, items: data.items.map(normalise) }
+  }
+  const first = await stored(0)
   const { total, pageCount } = first
   const size = reference.pageSize
   // Positions in the newest-first list that make up this oldest-first page.
@@ -166,9 +198,21 @@ export async function listEpisodes(
   const start = Math.max(0, end - size)
   if (end <= 0) return { page, pageCount, total, items: [] }
   const pages = [...new Set([Math.floor(start / size), Math.floor((end - 1) / size)])]
-  const loaded = await Promise.all(pages.map((p) => (p === 0 ? first : storedPage(showId, access, p))))
+  const loaded = await Promise.all(pages.map((p) => (p === 0 ? first : stored(p))))
   const items = loaded.flatMap((p) => p.items).slice(start - pages[0]! * size, end - pages[0]! * size)
   return { page, pageCount, total, items: items.reverse().map(normalise) }
+}
+
+/** GET /api/episodes?host={hostId}&page={page}: one contributor's episodes across every show. */
+export async function listEpisodesByHost(hostId: string, page = 0): Promise<EpisodePage> {
+  const data = await getJson<EpisodePage>(`episodes/by-host/${hostId}/${page}.json`)
+  return { ...data, items: data.items.map(normalise) }
+}
+
+/** GET /api/trending: the most-watched episodes of the last seven days, across every show. */
+export async function getTrending(): Promise<Episode[]> {
+  const data = await getJson<{ items: Episode[] }>('trending.json')
+  return data.items.map(normalise)
 }
 
 /**

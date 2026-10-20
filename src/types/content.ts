@@ -8,6 +8,13 @@ export type Access = 'free' | 'freemium' | 'premium'
 export interface Host {
   id: string
   name: string
+  /** Such as "Presenter, The Stoa Podcast". */
+  role?: string
+  bio?: string
+  /** Shows they have appeared on. */
+  showIds?: string[]
+  episodeCount?: number
+  articleCount?: number
 }
 
 export interface Show {
@@ -85,6 +92,10 @@ export interface Article {
   /** ISO 8601 date string. */
   publishedAt: string
   readMin: number
+  views?: number
+  comments?: number
+  likes?: number
+  dislikes?: number
 }
 
 /** A like or a dislike, on comments and chat messages. */

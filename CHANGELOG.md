@@ -2,6 +2,17 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-20: Popular, contributors and members (Nick's feedback)
+
+### Changed
+- Line-ups rotate, as on a real show: The Stoa Podcast draws 3 of 5 presenters, The Forum 4 of 6 panellists, Conversations is usually Richard, and Sally covers some Morning Briefs. Ids, titles and dates are unchanged.
+- Contributors have profiles: a role, a short invented bio, the shows they appear on, and counts.
+
+### Added
+- Data for "Popular": the 50 most-watched episodes per show for this week, month, year and all time, for every access and contributor combination. A real API would run a query; the static demo stores each answer.
+- Each contributor's episodes across every show, paged, and a site-wide "trending this week" list.
+- Article engagement: views, comments, likes and dislikes, with sorted lists for popular (week, month, all time) and controversial.
+
 ## 2026-10-20: An account page from the demo's real state
 
 ### Added
