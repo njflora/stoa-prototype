@@ -7,6 +7,7 @@ import '@/composables/useReminders'
 import { usePitchMode } from '@/composables/usePitchMode'
 import { usePlayback } from '@/composables/usePlayback'
 import { useWatchProgress } from '@/composables/useWatchProgress'
+import { useIntro } from '@/composables/useIntro'
 
 // Demo-only panel for pitching. It switches between a signed-out visitor,
 // a free account and a member, moves the live show through its phases,
@@ -32,6 +33,7 @@ function restoreProgress() {
   confirm('Sample progress restored')
 }
 const { requestFinish } = usePlayback()
+const { replay: replayIntro } = useIntro()
 const { enabled: pitchMode } = usePitchMode()
 const route = useRoute()
 const open = ref(false)
@@ -107,6 +109,14 @@ const off = 'text-white/70 hover:text-white'
           <RouterLink to="/pitch" class="text-xs text-muted underline hover:text-white">All notes</RouterLink>
         </div>
       </div>
+
+      <button
+        type="button"
+        class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white"
+        @click="open = false; replayIntro()"
+      >
+        Replay intro
+      </button>
 
       <div>
         <p class="mb-1 text-xs font-semibold">Watch progress</p>

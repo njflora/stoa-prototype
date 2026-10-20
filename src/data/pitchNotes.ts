@@ -36,6 +36,16 @@ const searchPage = { name: 'Search, over any page', to: '/?search=rome' }
 
 export const pitchNotes: PitchNote[] = [
   {
+    id: 'intro',
+    kind: 'proposal',
+    source: 'New idea',
+    title: 'A welcome',
+    today: 'Visitors land straight on the homepage.',
+    here: 'A first-visit welcome: a stoa tied with a ribbon and a purple seal. Breaking the seal carries the visitor through the columns into the site. It plays once per device, can be skipped, and is a simple fade with "reduce motion" on.',
+    page: home,
+    hint: 'Demo panel: "Replay intro", or add ?intro=1 to any link.',
+  },
+  {
     id: 'hero-plays',
     kind: 'fix',
     source: 'Finding 12',

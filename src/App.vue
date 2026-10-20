@@ -6,6 +6,7 @@ import PitchNoteDrawer from './components/PitchNoteDrawer.vue'
 import SearchOverlay from './components/SearchOverlay.vue'
 import SiteFooter from './components/SiteFooter.vue'
 import SiteHeader from './components/SiteHeader.vue'
+import StoaIntro from './components/StoaIntro.vue'
 </script>
 
 <template>
@@ -16,4 +17,5 @@ import SiteHeader from './components/SiteHeader.vue'
   <DemoControls />
   <SearchOverlay />
   <PitchNoteDrawer />
+  <StoaIntro />
 </template>
