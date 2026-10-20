@@ -10,9 +10,9 @@ The pitch prototype is built and working locally. All three priority sections fr
 
 - **Project:** an unofficial, unbranded prototype of a modern media site, to pitch improvements to a media publisher.
 - **Planning doc:** kept privately(findings, topics, mini-projects, schedule).
-- **Stack:** Vue 3, TypeScript, Vite 8, Tailwind CSS v4, Vue Router. No backend.
+- **Stack:** Vue 3, TypeScript, Vite 8, Tailwind CSS v4, Vue Router. A Laravel 13 API in backend/, run with Docker, is the source of truth for the catalogue.
 - **Look:** their dark theme (near-black, magenta #9f3878, gold #d5b720), Poppins for text and a serif for the wordmark. No logos, names or footage.
-- **Run it:** `npm install` then `npm run dev` in the project folder.
+- **Run it:** `npm install` then `npm run dev` in the project folder for the static preview. For the Laravel API, run `docker compose up -d app` in backend/, then `npm run dev:laravel`.
 
 ## What is built
 
@@ -20,7 +20,7 @@ The pitch prototype is built and working locally. All three priority sections fr
 
 - **One top bar instead of the long side nav.** Left: Stoa, Live (with a red dot when on air), Home, Shows, Articles, Courses, Search. Right: a purple Shop button, a gold Upgrade button with a crown, then the account.
 - **Phones get an app-style tab bar** (Home, Live, Shows, Search, More), with More opening a sheet for Articles, Courses, Shop and the account. Every page was checked at 375px and 320px for overflow and tap-target size.
-- **Built for the real site's scale.** 5,521 generated episodes, each title unique within its show (The Stoa Podcast #1 to #1530, Morning Brief with three segments a weekday) served as a paged API from static JSON. Pages fetch only what they show; the homepage needs one request.
+- **Built for the real site's scale.** 5,521 generated episodes, each title unique within its show (The Stoa Podcast #1 to #1530, Morning Brief with three segments a weekday) served by a paged Laravel API, or by its static snapshot in public/data. Pages fetch only what they show; the homepage needs one request.
 - **Every show has a page** with its full archive: 50 episodes a page, newest, oldest or most watched (this week, month, year or all time), filtered by access and by contributor. The view is kept in the address.
 - **Contributor profiles.** Every presenter and writer has a page with a bio, their shows, series, articles and episodes. Their names link there across the site, and the footer lists them alongside FAQ and Contact.
 - **The Shows page suits members.** Members get Continue watching, Trending this week and Latest first; free viewers see the shows to try.
@@ -101,6 +101,8 @@ The pitch prototype is built and working locally. All three priority sections fr
 | Built for real scale: 5,521 generated episodes, paged through an API layer | The real site has 1,500+ mainline episodes and daily shows with 3+ segments a day |
 | Search opens over the current page, in a see-through panel | Nick's call: you keep your place, and the page stays visible behind |
 | The search index is built in the browser on first use, not pre-built | Keeps the search settings in one file; takes about 0.4 seconds once. The real site can swap in a server engine behind the same search() function |
+| Laravel is the source of truth; public/data is a snapshot exported from it | They use Laravel. The API and the export share one code path, so the static preview can never disagree with the API |
+| The static preview stays, with a banner | It runs on GitHub Pages with no server. It cannot enforce access, and the banner says so |
 | Public-domain and CC0 media only, from Wikimedia Commons | Safe for a public repo; every file is credited |
 | Ocean-waves loop for the hero video | The smallest option (0.7 MB), chosen over clouds and an Earth timelapse |
 | No deployment until Nick says so | A free GitHub Pages site is public |
@@ -115,9 +117,10 @@ The pitch prototype is built and working locally. All three priority sections fr
 
 ## Known limits of the prototype
 
-- **Pre-built filter answers take disk space.** Every combination of show, access, contributor and period is stored as a file, so public/data is about 10 MB on disk. Each page fetched is still a few KB. A real API would run queries instead.
+- **The static preview pre-builds its answers.** Every combination of show, access, contributor and period is stored as a file, so public/data is about 10 MB on disk. The Laravel API runs queries instead.
 
-- No server. Comments, votes, reminders and watch progress live in the browser only.
+- Comments, votes, reminders and watch progress still live in the browser only. They move to the API with access control (stage D).
+- **Generated dates skip and repeat a day at each clock change.** The generator steps back 24 hours at a time, so twice in the archive two Chronos episodes share a Sunday. A fix changes many archive dates, so it waits for Nick's go-ahead.
 - Notifications only appear while the site is open in a tab. Real reminders need Web Push, which belongs with the PWA work.
 - Comments, chat and reading lists are placeholders. Each episode draws a stable mix from pools that fit its show. Real data can replace them in one file each.
 

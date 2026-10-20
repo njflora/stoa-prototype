@@ -3,6 +3,7 @@
 #   docker compose up -d app                      start the API on http://localhost:8000
 #   docker compose run --rm composer install      install PHP packages
 #   docker compose run --rm app php artisan ...   run any artisan command
+#   docker compose run --rm app php artisan stoa:export   write the static preview to ../public/data
 #
 # Installed packages (vendor/) live in a Docker volume, not in this folder:
 # on Windows, a mounted folder is slow and Composer cannot always delete
@@ -15,6 +16,10 @@ services:
     volumes:
       - ./:/var/www
       - vendor:/var/www/vendor
+      # The site's public folder, where stoa:export writes the static preview.
+      - ../public:/site-public
+    environment:
+      STOA_EXPORT_PATH: /site-public/data
     ports:
       - "8000:8000"
     command: php artisan serve --host=0.0.0.0 --port=8000

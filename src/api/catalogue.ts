@@ -1,9 +1,9 @@
 // The catalogue API. Every page gets its episodes through these functions,
-// never by importing a list. Each one names the endpoint it stands in for,
-// so the real site can serve the same shapes from Laravel and change only
-// API_BASE in client.ts.
+// never by importing a list. Each one names its Laravel endpoint, and asks
+// either that endpoint or the static file that stands in for it (see
+// client.ts). Both give the same shapes.
 
-import { getJson } from './client'
+import { API_MODE, getJson, pick, query } from './client'
 import type { ReadingItem } from '@/data/readingLists'
 import type { Article, ArticleCategory, Episode, Host, LiveEvent, Series, Show } from '@/types/content'
 import { formatEditionDate } from '@/utils/format'
@@ -78,8 +78,16 @@ function normalise(episode: Episode): Episode {
   return { ...episode, publishedAt, title: `${show?.name ?? ''} | ${formatEditionDate(new Date(publishedAt))}` }
 }
 
-/** GET /api/shows, /api/hosts, /api/series, /api/live. Called once, before the app mounts. */
-export async function loadReference(): Promise<void> {
+interface Reference {
+  meta: Meta
+  shows: Show[]
+  hosts: Host[]
+  series: Series[]
+  live: LiveEvent
+}
+
+/** The static preview keeps each part of the reference data in its own file. */
+async function staticReference(): Promise<Reference> {
   const [meta, shows, hosts, series, live] = await Promise.all([
     getJson<Meta>('meta.json'),
     getJson<Show[]>('shows.json'),
@@ -87,6 +95,12 @@ export async function loadReference(): Promise<void> {
     getJson<Series[]>('series.json'),
     getJson<LiveEvent>('live.json'),
   ])
+  return { meta, shows, hosts, series, live }
+}
+
+/** GET /api/reference: shows, hosts, series and the live event. Called once, before the app mounts. */
+export async function loadReference(): Promise<void> {
+  const { meta, shows, hosts, series, live } = API_MODE === 'laravel' ? await getJson<Reference>('reference') : await staticReference()
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   shiftMs = Math.max(0, Math.floor((today.getTime() - new Date(meta.generatedAt).getTime()) / WEEK_MS)) * WEEK_MS
@@ -101,7 +115,7 @@ export async function loadReference(): Promise<void> {
 
 /** GET /api/home: everything the homepage shows first, in one request. */
 export async function getHome(): Promise<Home> {
-  const home = await getJson<Home>('home.json')
+  const home = await getJson<Home>(pick('home', 'home.json'))
   return {
     ...home,
     featured: home.featured.map(normalise),
@@ -133,7 +147,9 @@ export async function listArticles(
 ): Promise<ArticlePage> {
   const base = authorId ? `author-${authorId}` : category ? category.toLowerCase() : 'all'
   const folder = authorId || sort === 'newest' ? base : sort === 'popular' ? `${base}/popular-${period}` : `${base}/controversial`
-  const data = await getJson<ArticlePage>(`articles/pages/${folder}/${page}.json`)
+  const data = await getJson<ArticlePage>(
+    pick(`articles?${query({ category, author: authorId, sort, period, page })}`, `articles/pages/${folder}/${page}.json`),
+  )
   return { ...data, items: data.items.map(normaliseArticle) }
 }
 
@@ -141,7 +157,7 @@ export async function listArticles(
 export async function getArticle(id: string): Promise<ArticleDetail | undefined> {
   if (!/^[a-z0-9-]+$/.test(id)) return undefined
   try {
-    const article = await getJson<ArticleDetail>(`articles/${id}.json`)
+    const article = await getJson<ArticleDetail>(pick(`articles/${id}`, `articles/${id}.json`))
     return { ...normaliseArticle(article), watchNext: normalise(article.watchNext) }
   } catch {
     return undefined
@@ -170,8 +186,8 @@ function folderFor(showId: string, access: AccessFilter, host?: string): string 
 
 /**
  * GET /api/episodes?show=&access=&host=&sort=&period=&page=
- * 50 at a time. A real API sorts and filters in the database; here each
- * combination is a stored file. "Oldest first" reads the newest-first pages
+ * 50 at a time. Laravel sorts and filters in the database; in the static
+ * preview each combination is a stored file. "Oldest first" reads the newest-first pages
  * from the other end, joining at most two of them. "Popular" is the 50
  * most-watched episodes published within the period.
  */
@@ -180,6 +196,10 @@ export async function listEpisodes(
   page = 0,
   { access = 'all', sort = 'newest', period = 'month', host }: EpisodeFilters = {},
 ): Promise<EpisodePage> {
+  if (API_MODE === 'laravel') {
+    const data = await getJson<EpisodePage>(`episodes?${query({ show: showId, access, host, sort, period, page })}`)
+    return { ...data, items: data.items.map(normalise) }
+  }
   const folder = folderFor(showId, access, host)
   const stored = (p: number) => getJson<EpisodePage>(`${folder}/${p}.json`)
   if (sort === 'popular') {
@@ -205,22 +225,30 @@ export async function listEpisodes(
 
 /** GET /api/episodes?host={hostId}&page={page}: one contributor's episodes across every show. */
 export async function listEpisodesByHost(hostId: string, page = 0): Promise<EpisodePage> {
-  const data = await getJson<EpisodePage>(`episodes/by-host/${hostId}/${page}.json`)
+  const data = await getJson<EpisodePage>(pick(`episodes?${query({ host: hostId, page })}`, `episodes/by-host/${hostId}/${page}.json`))
   return { ...data, items: data.items.map(normalise) }
 }
 
 /** GET /api/trending: the most-watched episodes of the last seven days, across every show. */
 export async function getTrending(): Promise<Episode[]> {
-  const data = await getJson<{ items: Episode[] }>('trending.json')
+  const data = await getJson<{ items: Episode[] }>(pick('trending', 'trending.json'))
   return data.items.map(normalise)
 }
 
 /**
  * GET /api/episodes/{id}. Ids are "{show}-{sequence}", where the sequence
- * counts up from the show's first episode, so the page holding any episode
- * can be worked out without a separate lookup.
+ * counts up from the show's first episode, so the static preview can work
+ * out which stored page holds any episode without a separate lookup.
  */
 export async function getEpisode(id: string): Promise<Episode | undefined> {
+  if (API_MODE === 'laravel') {
+    if (!/^[a-z0-9-]+$/.test(id)) return undefined
+    try {
+      return normalise(await getJson<Episode>(`episodes/${id}`))
+    } catch {
+      return undefined
+    }
+  }
   const split = id.lastIndexOf('-')
   const showId = id.slice(0, split)
   const sequence = Number(id.slice(split + 1))

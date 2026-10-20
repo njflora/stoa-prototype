@@ -7,7 +7,7 @@
 // with Meilisearch: the page only sees SearchResults.
 
 import MiniSearch from 'minisearch'
-import { getJson } from './client'
+import { getJson, pick } from './client'
 import { reference, shiftDate } from './catalogue'
 import { hostNames } from '@/data/catalogue'
 import type { Access, ArticleCategory } from '@/types/content'
@@ -79,7 +79,7 @@ let newestMs = 0
 let oldestMs = 0
 
 async function buildIndex(): Promise<MiniSearch<Doc>> {
-  const raw = await getJson<EpisodeDoc[]>('search-docs.json')
+  const raw = await getJson<EpisodeDoc[]>(pick('search-docs', 'search-docs.json'))
 
   const showName = (id: string) => reference.shows.find((s) => s.id === id)?.name ?? ''
   const docs: Doc[] = raw.map((e): Doc => {

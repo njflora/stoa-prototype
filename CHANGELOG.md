@@ -5,12 +5,18 @@ All notable changes to this prototype are listed here. Newest first.
 ## 2026-10-20: Laravel, every stream in one player, and the stoa intro
 
 ### Added
+- Laravel is now the source of truth for the catalogue. A Laravel 13 API lives in backend/ and runs in Docker, so nothing needs installing on the host. The generator writes seed data (backend/database/seed); the seeder loads it into the database (SQLite in development): shows, contributors, series, 5,521 episodes with their credits, articles and the live event.
+- A read API in the shapes the site already uses: /api/reference, /api/home, /api/trending, /api/episodes (by show, access, contributor, sort, period and page), /api/episodes/{id}, /api/articles (by category, author, sort, period and page), /api/articles/{id} and /api/search-docs. Bad filters get a clear error; unknown ids get a 404.
+- `php artisan stoa:export` writes the static preview to public/data from the same code as the API, so the two cannot drift apart. Its 755 files match the old generator's output, checked file by file.
+- Two ways to run the site: `npm run dev` reads the static preview, as before; `npm run dev:laravel` reads the Laravel API through Vite. Both give identical answers, checked across the homepage, show archives, contributors, articles, episodes and search. The static preview says so in a slim line above the header: "Preview: data is a snapshot and access is not enforced."
+- "Controversial" articles are an indexed sort. Each article stores its score and the model updates it whenever the votes change.
 - A welcome: on the first visit, a full-screen view down a Greek stoa, like standing in the Stoa of Attalos, in a modern, vaporwave style. Seen from low down, looking up: fluted Doric columns tower on both sides, ceiling beams run overhead and a neon grid covers the floor, all leading to the middle of the screen, where a striped sun sets behind a purple wax seal. Above, a strip of night sky with "στοά" in it sits over a slim lintel. Breaking the seal (a real button) cracks it, makes the neon flare, sends the columns rushing past and carries the view down the corridor into the light and into the site, which has been loading behind. About two seconds.
 - The intro covers the whole screen, keeps focus inside (the page behind is inert), opens with Enter or Space, skips with "Skip intro" or Escape, and is a short fade with "reduce motion" on. It plays once per device; "Replay intro" in the demo panel or ?intro=1 in any link plays it again. A pitch note: "A welcome". The seal is always in the middle of the screen, and the sky band with the name is pinned to the top, so it is never cut off on wide screens or phones.
 
 ### Fixed
 - The live page's "Coming up live" contradicted the show pages (The Forum on Thursdays, Statecraft on Fridays). Each show now has one slot (days, hour, and whether it airs live) that drives its episode dates, its schedule line and the live page, so they can never disagree. "Coming up live" lists the shows that air live: The Stoa Podcast, Morning Brief and The Forum, soonest first. Episode data is unchanged.
 - Times on the live page use the site's style ("1:00 pm", "Friday 23rd October") instead of "13:00".
+- A series listed part 2 of "Athens and Sparta" before part 1, because two Chronos episodes shared a timestamp. Series now list their parts in part order.
 - The intro's sun showed only one stripe beside the seal. It now has seven vaporwave stripes across its lower half, thin and far apart near the middle and thicker towards the horizon, so they show on both sides of the seal. Its size and position are unchanged.
 
 ## 2026-10-20: Preview sound and a shorter credits page

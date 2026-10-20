@@ -1,5 +1,7 @@
-// Generates a catalogue at the real site's scale and writes it to
-// public/data as static JSON, laid out like a paged API.
+// Generates a catalogue at the real site's scale and writes it as seed data
+// for the Laravel API (backend/database/seed). Laravel is the source of
+// truth: it loads these files, serves them, and exports the static preview
+// in public/data (`php artisan stoa:export`).
 //
 //   node scripts/data/generate.mjs
 //
@@ -14,9 +16,7 @@ import { fileURLToPath } from 'node:url'
 import { articles as articleSources } from './articles.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
-const OUT = join(ROOT, 'public', 'data')
-const PAGE_SIZE = 50
-const ARTICLE_PAGE_SIZE = 24
+const OUT = join(ROOT, 'backend', 'database', 'seed')
 const DAY = 86_400_000
 
 // ---------- seeded randomness (same algorithm as src/utils/random.ts) ----------
@@ -244,7 +244,6 @@ const guests = combine(guestFirst, guestLast, (f, l) => `${f} ${l}`)
 
 // ---------- episodes ----------
 const episodes = []
-const seqByShow = new Map()
 
 function add(showId, fields) {
   episodes.push({ showId, ...fields })
@@ -388,7 +387,6 @@ for (const show of shows) {
     e.id = `${show.id}-${e.seq}`
   })
   byShow.set(show.id, list)
-  seqByShow.set(show.id, list.length)
 }
 
 /** What a list card needs. The full record is the same here; a real API might trim more. */
@@ -421,104 +419,6 @@ for (const s of series) {
 }
 series.sort((a, b) => b.episodes.at(-1).publishedAt.localeCompare(a.episodes.at(-1).publishedAt))
 
-// ---------- write ----------
-rmSync(OUT, { recursive: true, force: true })
-const write = (path, data) => {
-  const file = join(OUT, path)
-  mkdirSync(dirname(file), { recursive: true })
-  writeFileSync(file, JSON.stringify(data))
-}
-
-// "Free to watch" covers free episodes and free previews; "Members" is the rest.
-const isFree = (e) => e.access !== 'premium'
-const showMeta = shows.map((s) => ({
-  ...s,
-  episodeCount: byShow.get(s.id).length,
-  freeCount: byShow.get(s.id).filter(isFree).length,
-  membersCount: byShow.get(s.id).filter((e) => !isFree(e)).length,
-  pageCount: Math.ceil(byShow.get(s.id).length / PAGE_SIZE),
-  freePreview: card(byShow.get(s.id).find((e) => e.access === 'freemium') ?? byShow.get(s.id)[0]),
-}))
-
-const live = {
-  showId: 'stoa-podcast',
-  number: 1531,
-  title: 'The Stoa Podcast #1531',
-  hostIds: ['andrew', 'richard', 'tom'],
-  viewers: 1984,
-  startHour: slotOf('stoa-podcast').hour,
-}
-
-write('meta.json', { generatedAt: generatedAt.toISOString(), pageSize: PAGE_SIZE, total: episodes.length, articleCount: articleSources.length })
-write('shows.json', showMeta)
-write(
-  'hosts.json',
-  hosts.map((h) => ({
-    ...h,
-    showIds: shows.filter((s) => byShow.get(s.id).some((e) => e.hostIds.includes(h.id))).map((s) => s.id),
-    episodeCount: episodes.filter((e) => e.hostIds.includes(h.id)).length,
-    articleCount: articleSources.filter((a) => a.authorId === h.id).length,
-  })),
-)
-write('series.json', series)
-write('live.json', live)
-
-/** Pages of 50, newest first. An empty list still gets an empty first page. */
-function writePages(folder, list) {
-  const pageCount = Math.max(1, Math.ceil(list.length / PAGE_SIZE))
-  for (let p = 0; p < pageCount; p++) {
-    write(`${folder}/${p}.json`, { page: p, pageCount, total: list.length, items: list.slice(p * PAGE_SIZE, (p + 1) * PAGE_SIZE).map(card) })
-  }
-}
-
-// "Popular": the 50 most-watched episodes published within each period.
-const PERIODS = { week: 7, month: 30, year: 365, all: Infinity }
-function writePopular(folder, list) {
-  for (const [period, days] of Object.entries(PERIODS)) {
-    const items = list
-      .filter((e) => (generatedAt - new Date(e.publishedAt)) / DAY <= days)
-      .sort((a, b) => b.views - a.views)
-      .slice(0, PAGE_SIZE)
-    write(`${folder}/popular/${period}.json`, { page: 0, pageCount: 1, total: items.length, items: items.map(card) })
-  }
-}
-
-// Every combination of access and contributor a show page can ask for, as
-// an API would answer ?access=free&host=gary. A real API would run a query;
-// the static demo builds each answer ahead of time.
-for (const show of shows) {
-  const list = byShow.get(show.id)
-  const free = list.filter(isFree)
-  const members = list.filter((e) => !isFree(e))
-  const accessLists = free.length && members.length ? { all: list, free, members } : { all: list }
-  const showHosts = [...new Set(list.flatMap((e) => e.hostIds))]
-  for (const [access, accessList] of Object.entries(accessLists)) {
-    const base = access === 'all' ? `episodes/${show.id}` : `episodes/${show.id}/${access}`
-    writePages(base, accessList)
-    writePopular(base, accessList)
-    if (showHosts.length < 2) continue
-    for (const hostId of showHosts) {
-      const withHost = accessList.filter((e) => e.hostIds.includes(hostId))
-      writePages(`${base}/host-${hostId}`, withHost)
-      writePopular(`${base}/host-${hostId}`, withHost)
-    }
-  }
-}
-
-const newest = [...episodes].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-
-// Site-wide trending: the most-watched episodes of the last seven days.
-write('trending.json', {
-  items: newest
-    .filter((e) => (generatedAt - new Date(e.publishedAt)) / DAY <= 7)
-    .sort((a, b) => b.views - a.views)
-    .slice(0, 20)
-    .map(card),
-})
-
-// Each contributor's episodes across every show, for their profile page.
-for (const host of hosts) writePages(`episodes/by-host/${host.id}`, newest.filter((e) => e.hostIds.includes(host.id)))
-
 // ---------- articles ----------
 // Reading time from the length of the body, at about 200 words a minute.
 // Engagement (views, comments, likes, dislikes) is generated from each
@@ -543,80 +443,42 @@ const articles = articleSources
       comments: Math.round(articleViews * (mood === 'divisive' ? 0.02 : 0.008) * (0.7 + engagement() * 0.6)),
       likes: reactions - Math.round(reactions * dislikeShare),
       dislikes: Math.round(reactions * dislikeShare),
-      watchNext: card(match),
+      watchNextId: match.id,
     }
   })
   .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-const articleCard = ({ body, readingList, watchNext, ...a }) => a
-const articleCategories = [...new Set(articles.map((a) => a.category))]
-const latestOf = (showId, access) => byShow.get(showId).find((e) => !access || e.access === access)
 
-// One request for everything the homepage shows first.
-write('home.json', {
-  featured: [latestOf('stoa-podcast'), latestOf('chronos', 'premium'), latestOf('conversations'), latestOf('statecraft', 'freemium')].map(card),
-  startHere: shows.map((s) => ({
-    showId: s.id,
-    episode: card(s.access === 'free' ? byShow.get(s.id)[0] : (byShow.get(s.id).find((e) => e.access === 'freemium') ?? byShow.get(s.id).at(-1))),
-  })),
-  latest: newest.slice(0, 60).map(card),
-  rows: Object.fromEntries(shows.map((s) => [s.id, byShow.get(s.id).slice(0, 20).map(card)])),
-  seriesSlugs: series.slice(0, 12).map((s) => s.slug),
-  articles: articles.slice(0, 12).map(articleCard),
+// ---------- write the seed data ----------
+// This script only invents the catalogue. Laravel is the source of truth:
+// its seeder loads these files into the database, its API serves them, and
+// `php artisan stoa:export` writes the static preview in public/data.
+rmSync(OUT, { recursive: true, force: true })
+const write = (path, data) => {
+  const file = join(OUT, path)
+  mkdirSync(dirname(file), { recursive: true })
+  writeFileSync(file, JSON.stringify(data))
+}
+
+write('meta.json', { generatedAt: generatedAt.toISOString() })
+write('shows.json', shows)
+write('hosts.json', hosts)
+// Series in display order (newest first), with their episodes listed by id, oldest part first.
+write(
+  'series.json',
+  series.map((s, position) => ({ slug: s.slug, name: s.name, showId: s.showId, description: s.description, position, episodeIds: s.episodes.map((e) => e.id) })),
+)
+write('episodes.json', [...byShow.values()].flat())
+write('articles.json', articles)
+write('live.json', {
+  showId: 'stoa-podcast',
+  number: 1531,
+  title: 'The Stoa Podcast #1531',
+  hostIds: ['andrew', 'richard', 'tom'],
+  viewers: 1984,
+  startHour: slotOf('stoa-podcast').hour,
 })
-
-// Articles: lists of cards, 24 a page, newest first, for all articles, for each
-// category (?category=history) and for each author (?author=helen), plus one file per
-// article with its body, reading list and an episode to watch next.
-function writeArticlePages(folder, list) {
-  const pageCount = Math.max(1, Math.ceil(list.length / ARTICLE_PAGE_SIZE))
-  for (let p = 0; p < pageCount; p++) {
-    write(`${folder}/${p}.json`, { page: p, pageCount, total: list.length, items: list.slice(p * ARTICLE_PAGE_SIZE, (p + 1) * ARTICLE_PAGE_SIZE).map(articleCard) })
-  }
-}
-// Sorted lists for each category: newest (the plain pages), popular in a
-// period, and controversial. Controversial uses the same score as comment
-// sections (src/composables/useVotes.ts), counting only pieces with at
-// least 100 reactions and comments: many votes, split close to evenly.
-const ARTICLE_PERIODS = { week: 7, month: 30, all: Infinity }
-const CONTROVERSIAL_MIN = 100
-const controversy = (likes, dislikes) =>
-  likes === 0 || dislikes === 0 ? 0 : (likes + dislikes) ** (Math.min(likes, dislikes) / Math.max(likes, dislikes))
-function writeArticleSorts(folder, list) {
-  writeArticlePages(folder, list)
-  for (const [period, days] of Object.entries(ARTICLE_PERIODS)) {
-    const within = list.filter((a) => (generatedAt - new Date(a.publishedAt)) / DAY <= days)
-    writeArticlePages(`${folder}/popular-${period}`, [...within].sort((a, b) => b.views - a.views))
-  }
-  const engaged = list.filter((a) => a.likes + a.dislikes + a.comments >= CONTROVERSIAL_MIN)
-  writeArticlePages(`${folder}/controversial`, [...engaged].sort((a, b) => controversy(b.likes, b.dislikes) - controversy(a.likes, a.dislikes)))
-}
-writeArticleSorts('articles/pages/all', articles)
-for (const category of articleCategories) {
-  writeArticleSorts(`articles/pages/${category.toLowerCase()}`, articles.filter((a) => a.category === category))
-}
-for (const authorId of new Set(articles.map((a) => a.authorId))) {
-  writeArticlePages(`articles/pages/author-${authorId}`, articles.filter((a) => a.authorId === authorId))
-}
-for (const a of articles) write(`articles/${a.id}.json`, a)
-
-// What search needs for each episode and article, with short keys to keep the file small.
-// i: id, t: title (empty for daily editions, which are titled by date),
-// s: show (or an article's category), h: hosts (or author), x: extra searchable text
-// (topics, series, or an article's standfirst), d: date, a: access, e: daily edition, k: "a" for an article.
-write('search-docs.json', [
-  ...newest.map((e) => ({
-    i: e.id,
-    t: e.title ?? '',
-    s: e.showId,
-    h: e.hostIds,
-    x: [...(e.topics ?? []), e.series?.name ?? ''].join(' ').trim(),
-    d: e.publishedAt,
-    a: e.access,
-    ...(e.edition ? { e: 1 } : {}),
-  })),
-  ...articles.map((a) => ({ i: a.id, t: a.title, s: a.category, h: [a.authorId], x: a.standfirst, d: a.publishedAt, a: 'free', k: 'a' })),
-])
 
 const counts = Object.fromEntries(shows.map((s) => [s.id, byShow.get(s.id).length]))
 console.log('Episodes:', episodes.length, counts)
-console.log('Series:', series.length)
+console.log('Series:', series.length, '| Articles:', articles.length)
+console.log('Seed data written to', OUT)
