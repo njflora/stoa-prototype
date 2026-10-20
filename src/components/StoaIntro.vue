@@ -4,10 +4,10 @@ import PitchNote from './PitchNote.vue'
 import { useIntro } from '@/composables/useIntro'
 
 // The welcome: the view down a Greek stoa, like standing in the Stoa of
-// Attalos, in a modern, vaporwave style. Rows of Doric columns on both
-// sides and the ceiling beams all run to one point at the far end, where a
-// striped sun is setting and the purple wax seal waits, so every line in
-// the picture leads to the seal. Breaking it (a real button) makes the neon
+// Attalos, in a modern, vaporwave style, seen from low down and looking up.
+// Rows of towering Doric columns on both sides and the ceiling beams all
+// run to one point in the middle of the screen, where a striped sun is
+// setting and the purple wax seal waits, so every line leads to the seal. Breaking it (a real button) makes the neon
 // flare, and the view moves down the colonnade into the light and into the
 // site, which has been loading behind.
 // - Keyboard: the seal has focus; Enter or Space opens it, Escape skips.
@@ -71,15 +71,20 @@ watch(
   { immediate: true },
 )
 
-// The scene is drawn in a 1200 by 800 box and fills the screen
-// (preserveAspectRatio "slice"), anchored to the top: tall phones lose a
-// little at the sides, wide screens a little floor at the bottom, and the
-// lintel with the name is never cut off. The seal button is placed over the
-// same point, so it is worked out from the screen size.
+// The corridor is drawn in a 1200 by 800 box and fills the screen
+// (preserveAspectRatio "slice"), centred, so the vanishing point and the
+// seal on it are always in the middle of the screen. The night sky, the
+// name and the lintel are a separate band pinned to the top, so the name is
+// never cropped whatever the screen's shape. The seal button and the band's
+// height are worked out from the screen size.
 const W = 1200
 const H = 800
-const SEAL = { x: 600, y: 420 } // the vanishing point, at the end of the corridor
-const LINTEL = 92 // the height of the entrance lintel, with the name on it
+const SEAL = { x: 600, y: 400 } // the vanishing point: the middle of the box
+const BAND = { w: 1200, h: 64, sky: 50 } // the top band: sky from 0 to 50, then the lintel
+const topStars = [
+  [60, 14, 1.2], [150, 34, 0.9], [240, 10, 1.1], [330, 28, 0.8], [420, 16, 1], [780, 20, 1], [870, 36, 0.9],
+  [960, 12, 1.2], [1050, 30, 0.8], [1140, 18, 1.1], [500, 40, 0.7], [700, 8, 0.8],
+] as const
 const screen = ref({ w: window.innerWidth, h: window.innerHeight })
 function measure() {
   screen.value = { w: window.innerWidth, h: window.innerHeight }
@@ -93,37 +98,51 @@ onUnmounted(() => {
 const placement = computed(() => {
   const scale = Math.max(screen.value.w / W, screen.value.h / H)
   const x = (screen.value.w - W * scale) / 2 + SEAL.x * scale
-  const y = SEAL.y * scale
-  // Just below the entrance lintel, so the buttons never sit on the name.
-  const belowLintel = LINTEL * scale + 12
-  // At least 56px to tap on a phone, at most 150px on very wide screens.
-  return { x, y, size: Math.min(150, Math.max(56, 112 * scale)), belowLintel }
+  const y = (screen.value.h - H * scale) / 2 + SEAL.y * scale
+  // The band keeps its proportions on wide screens and never gets thinner than 52px.
+  const band = Math.min(110, Math.max(52, (BAND.h * screen.value.w) / BAND.w))
+  return {
+    x,
+    y,
+    // At least 56px to tap on a phone, at most 150px on very wide screens.
+    size: Math.min(150, Math.max(56, 112 * scale)),
+    band,
+    // Just below the band, so the buttons never sit on the name.
+    belowLintel: band + 12,
+  }
 })
 
 // ---------- the drawing ----------
-// One-point perspective. Everything is placed by its depth: `d` is 1 at the
-// entrance and shrinks towards 0 down the corridor. A point at depth d sits
-// at VP + offset * d, so all lines meet at the vanishing point, VP.
-const VP = { x: 600, y: 420 }
+// One-point perspective, seen from low down, close to the floor and looking
+// up: the floor is near eye level and the ceiling high above, so the columns
+// tower overhead. Everything is placed by its depth: `d` is 1 at the
+// entrance and shrinks towards 0 down the corridor; above 1 is nearer than
+// the entrance. A point at depth d sits at VP + offset * d, so all lines meet
+// at the vanishing point, VP, where the seal waits.
+const VP = { x: 600, y: 400 }
 const HALF_WIDTH = 560 // from the middle of the floor to a column's centre, at the entrance
-const FLOOR = 360 // below VP, at the entrance
-const CEILING = 380 // above VP, at the entrance
+const FLOOR = 160 // below eye level, at the entrance: a low viewpoint
+const CEILING = 520 // above eye level, at the entrance
 const FAR = 0.155 // the depth of the far end, where the corridor opens to the sunset
+const NEAR = 2.6 // nearer than the entrance, far enough for the floor to reach the bottom of the screen
 
 const at = (offsetX: number, offsetY: number, d: number) => `${VP.x + offsetX * d},${VP.y + offsetY * d}`
+
+// Heights above eye level (negative is up) for each part of a column.
+const SHAFT_TOP = -440
+const ECHINUS_TOP = -460
+const ABACUS_TOP = -474
 
 /** One Doric column at depth d on the given side: a tapering fluted shaft, its cushion and slab. */
 function column(side: -1 | 1, d: number) {
   const x = side * HALF_WIDTH
-  const bottom = FLOOR
-  const shaftTop = -262
   return {
     key: `${side}${d}`,
     d,
-    shaft: [at(x - 38, bottom, d), at(x + 38, bottom, d), at(x + 31, shaftTop, d), at(x - 31, shaftTop, d)].join(' '),
-    echinus: [at(x - 31, shaftTop, d), at(x + 31, shaftTop, d), at(x + 48, shaftTop - 20, d), at(x - 48, shaftTop - 20, d)].join(' '),
-    abacus: [at(x - 50, shaftTop - 20, d), at(x + 50, shaftTop - 20, d), at(x + 50, shaftTop - 34, d), at(x - 50, shaftTop - 34, d)].join(' '),
-    flutes: d > 0.3 ? [-19, -6, 6, 19].map((f) => ({ x1: VP.x + (x + f) * d, x2: VP.x + (x + f * 0.82) * d, y1: VP.y + bottom * d, y2: VP.y + shaftTop * d })) : [],
+    shaft: [at(x - 38, FLOOR, d), at(x + 38, FLOOR, d), at(x + 30, SHAFT_TOP, d), at(x - 30, SHAFT_TOP, d)].join(' '),
+    echinus: [at(x - 30, SHAFT_TOP, d), at(x + 30, SHAFT_TOP, d), at(x + 48, ECHINUS_TOP, d), at(x - 48, ECHINUS_TOP, d)].join(' '),
+    abacus: [at(x - 50, ECHINUS_TOP, d), at(x + 50, ECHINUS_TOP, d), at(x + 50, ABACUS_TOP, d), at(x - 50, ABACUS_TOP, d)].join(' '),
+    flutes: d > 0.3 ? [-19, -6, 6, 19].map((f) => ({ x1: VP.x + (x + f) * d, x2: VP.x + (x + f * 0.8) * d, y1: VP.y + FLOOR * d, y2: VP.y + SHAFT_TOP * d })) : [],
   }
 }
 // Columns at evenly spaced steps down the corridor, drawn far to near so
@@ -131,11 +150,9 @@ function column(side: -1 | 1, d: number) {
 const steps = Array.from({ length: 14 }, (_, k) => 1 / (1 + 0.42 * k)).filter((d) => d > FAR)
 const columns = [...steps].reverse().flatMap((d) => [column(-1, d), column(1, d)])
 // Ceiling beams, closer together than the columns, as in the real stoa.
-const beams = Array.from({ length: 30 }, (_, k) => 1 / (1 + 0.2 * k)).filter((d) => d > FAR)
+const beams = Array.from({ length: 34 }, (_, k) => 1.2 / (1 + 0.2 * k)).filter((d) => d > FAR)
 
-// The big shapes, each a quadrilateral from the entrance (depth 1.1, just
-// off-screen) to the far end.
-const NEAR = 1.1
+// The big shapes, each a quadrilateral from near the viewer to the far end.
 const quad = (a: [number, number], b: [number, number]) =>
   [at(a[0], a[1], NEAR), at(b[0], b[1], NEAR), at(b[0], b[1], FAR), at(a[0], a[1], FAR)].join(' ')
 const floor = quad([-HALF_WIDTH - 60, FLOOR], [HALF_WIDTH + 60, FLOOR])
@@ -143,8 +160,8 @@ const ceiling = quad([-HALF_WIDTH - 60, -CEILING], [HALF_WIDTH + 60, -CEILING])
 const leftWall = quad([-HALF_WIDTH - 60, -CEILING], [-HALF_WIDTH - 60, FLOOR])
 const rightWall = quad([HALF_WIDTH + 60, -CEILING], [HALF_WIDTH + 60, FLOOR])
 // The architrave running along the tops of each row of columns.
-const leftBeam = quad([-HALF_WIDTH - 50, -CEILING], [-HALF_WIDTH - 50, -296])
-const rightBeam = quad([HALF_WIDTH + 50, -CEILING], [HALF_WIDTH + 50, -296])
+const leftBeam = quad([-HALF_WIDTH - 50, -CEILING], [-HALF_WIDTH - 50, ABACUS_TOP])
+const rightBeam = quad([HALF_WIDTH + 50, -CEILING], [HALF_WIDTH + 50, ABACUS_TOP])
 // The far end: the opening where the corridor meets the sunset.
 const end = {
   x: VP.x - (HALF_WIDTH + 60) * FAR,
@@ -153,12 +170,18 @@ const end = {
   h: (CEILING + FLOOR) * FAR,
 }
 // The neon floor: lines running to the vanishing point, and cross lines at
-// each column, crowding together into the distance.
-const floorRays = Array.from({ length: 21 }, (_, i) => i - 10).map((j) => ({ x1: VP.x + j * 9, y1: VP.y + FLOOR * FAR, x2: VP.x + j * 130, y2: H }))
-const floorLines = steps.map((d) => VP.y + FLOOR * d)
+// each column and nearer, crowding together into the distance.
+const floorRays = Array.from({ length: 25 }, (_, i) => (i - 12) * 70).map((offset) => ({
+  x1: VP.x + offset * FAR,
+  y1: VP.y + FLOOR * FAR,
+  x2: VP.x + offset * NEAR,
+  y2: VP.y + FLOOR * NEAR,
+}))
+const floorLines = [...steps, 1.3, 1.65, 2.1, 2.6].map((d) => VP.y + FLOOR * d)
 
-// The sun's stripes, thicker towards the bottom, as on a vaporwave sunset.
-const sunStripes = [0, 1, 2, 3, 4].map((i) => ({ y: 422 + i * 9, h: 1.5 + i * 1.2 }))
+// The sun sits on the far end's floor line; its stripes thicken towards the bottom.
+const SUN_Y = VP.y + 12
+const sunStripes = [0, 1, 2, 3, 4].map((i) => ({ y: SUN_Y + 4 + i * 9, h: 1.5 + i * 1.2 }))
 
 // The wax: a circle with a few soft bulges, so it looks poured, not stamped.
 const waxPath = (() => {
@@ -185,7 +208,7 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
     >
       <!-- Everything that moves together as the view passes between the columns: the scene and the seal. -->
       <div class="scene absolute inset-0" :style="{ transformOrigin: `${placement.x}px ${placement.y}px` }">
-        <svg :viewBox="`0 0 ${W} ${H}`" preserveAspectRatio="xMidYMin slice" class="absolute inset-0 size-full" aria-hidden="true">
+        <svg :viewBox="`0 0 ${W} ${H}`" preserveAspectRatio="xMidYMid slice" class="absolute inset-0 size-full" aria-hidden="true">
           <defs>
             <linearGradient :id="id('sky')" x1="0" x2="0" y1="0" y2="1">
               <stop offset="0" stop-color="#1e0838" />
@@ -202,7 +225,7 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
               <stop offset="1" stop-color="#ff9be3" stop-opacity="0" />
             </radialGradient>
             <mask :id="id('stripes')">
-              <rect x="480" y="300" width="240" height="240" fill="#fff" />
+              <rect x="480" :y="SUN_Y - 80" width="240" height="160" fill="#fff" />
               <rect v-for="(st, i) in sunStripes" :key="i" x="480" :y="st.y" width="240" :height="st.h" fill="#000" />
             </mask>
             <linearGradient :id="id('floor')" x1="0" x2="0" y1="1" y2="0">
@@ -231,7 +254,7 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
           <!-- The far end: sunset sky and a striped sun, glowing behind the seal -->
           <rect :width="W" :height="H" :fill="`url(#${id('sky')})`" />
           <circle class="halo" :cx="VP.x" :cy="VP.y" r="190" :fill="`url(#${id('halo')})`" />
-          <circle class="sun" :cx="VP.x" :cy="VP.y + 10" r="66" :fill="`url(#${id('sun')})`" :mask="`url(#${id('stripes')})`" />
+          <circle class="sun" :cx="VP.x" :cy="SUN_Y" r="66" :fill="`url(#${id('sun')})`" :mask="`url(#${id('stripes')})`" />
 
           <!-- Walls, ceiling and floor of the stoa, running to the far end -->
           <polygon :points="leftWall" fill="#16051f" />
@@ -252,8 +275,8 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
               :key="d"
               :x1="VP.x - (HALF_WIDTH + 50) * d"
               :x2="VP.x + (HALF_WIDTH + 50) * d"
-              :y1="VP.y - (CEILING - 20) * d"
-              :y2="VP.y - (CEILING - 20) * d"
+              :y1="VP.y - (CEILING - 16) * d"
+              :y2="VP.y - (CEILING - 16) * d"
               :stroke-width="Math.max(1, 14 * d)"
               :stroke-opacity="0.25 + 0.35 * d"
             />
@@ -281,19 +304,46 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
             <rect :x="end.x" :y="end.y" :width="end.w" :height="end.h" stroke-width="1.5" />
           </g>
 
-          <!-- The entrance lintel, with the name inscribed on it -->
-          <rect x="0" y="0" :width="W" :height="LINTEL" fill="#2a0a3f" />
-          <line x1="0" :x2="W" :y1="LINTEL" :y2="LINTEL" stroke="#f472d0" stroke-width="3" :filter="`url(#${id('glow')})`" />
+        </svg>
+
+        <!-- The band at the top: a strip of night sky with the name in it, then a slim lintel -->
+        <svg
+          :viewBox="`0 0 ${BAND.w} ${BAND.h}`"
+          preserveAspectRatio="xMidYMid slice"
+          class="absolute inset-x-0 top-0 w-full"
+          :style="{ height: `${placement.band}px` }"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient :id="id('night')" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#07021a" />
+              <stop offset="1" stop-color="#1e0838" />
+            </linearGradient>
+            <filter :id="id('band-glow')" x="-20%" y="-40%" width="140%" height="180%">
+              <feGaussianBlur stdDeviation="2.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <rect :width="BAND.w" :height="BAND.sky" :fill="`url(#${id('night')})`" />
+          <circle v-for="([x, y, r], i) in topStars" :key="i" class="star" :cx="x" :cy="y" :r="r" fill="#fff" :style="{ animationDelay: `${(i * 0.41) % 3}s` }" />
+          <rect :y="BAND.sky" :width="BAND.w" :height="BAND.h - BAND.sky" fill="#4a1460" />
+          <g stroke="#f472d0" :filter="`url(#${id('band-glow')})`">
+            <line x1="0" :x2="BAND.w" :y1="BAND.sky" :y2="BAND.sky" stroke-width="1.5" />
+            <line x1="0" :x2="BAND.w" :y1="BAND.h - 1.5" :y2="BAND.h - 1.5" stroke-width="2.5" />
+          </g>
           <text
-            :x="VP.x"
-            y="70"
+            :x="BAND.w / 2"
+            y="40"
             text-anchor="middle"
             class="font-serif"
-            font-size="58"
+            font-size="40"
             font-weight="700"
-            letter-spacing="8"
+            letter-spacing="6"
             fill="#ffd6f2"
-            :filter="`url(#${id('glow')})`"
+            :filter="`url(#${id('band-glow')})`"
           >στοά</text>
         </svg>
 
@@ -363,7 +413,15 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
   background: #07021a;
 }
 
-/* Waiting: the sun shimmers and the seal glows at the end of the corridor, inviting a click. */
+/* Waiting: stars twinkle, the sun shimmers and the seal glows at the end of the corridor, inviting a click. */
+.star {
+  animation: twinkle 3s ease-in-out infinite;
+}
+@keyframes twinkle {
+  50% {
+    opacity: 0.35;
+  }
+}
 .sun,
 .halo {
   animation: shimmer 4s ease-in-out infinite;
@@ -483,6 +541,7 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
   opacity: 0;
 }
 @media (prefers-reduced-motion: reduce) {
+  .star,
   .halo,
   .sun,
   .seal {
