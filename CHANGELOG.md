@@ -5,7 +5,7 @@ All notable changes to this prototype are listed here. Newest first.
 ## 2026-10-20: Laravel, every stream in one player, and the stoa intro
 
 ### Added
-- A welcome: on the first visit, a full-screen scene of a stoa in a modern, vaporwave style. Purple Greco-Roman arches with pilasters, archivolts and keystones stand under a pediment, with "στοά" in neon above, a striped sunset behind and a neon grid floor. A purple wax seal sits in the central arch. Breaking it (a real button) cracks the seal, makes the neon flare, sends the arches down the colonnade rushing past, and carries the view through the central arch into the site, which has been loading behind. About two seconds.
+- A welcome: on the first visit, a full-screen view down a Greek stoa, like standing in the Stoa of Attalos, in a modern, vaporwave style. Fluted Doric columns line both sides, ceiling beams run overhead and a neon grid covers the floor, all leading to the far end, where a striped sun sets behind a purple wax seal. "στοά" is inscribed on the entrance lintel. Breaking the seal (a real button) cracks it, makes the neon flare, sends the columns rushing past and carries the view down the corridor into the light and into the site, which has been loading behind. About two seconds.
 - The intro covers the whole screen, keeps focus inside (the page behind is inert), opens with Enter or Space, skips with "Skip intro" or Escape, and is a short fade with "reduce motion" on. It plays once per device; "Replay intro" in the demo panel or ?intro=1 in any link plays it again. A pitch note: "A welcome".
 
 ### Fixed

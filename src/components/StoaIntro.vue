@@ -3,11 +3,13 @@ import { computed, nextTick, onMounted, onUnmounted, ref, useId, watch } from 'v
 import PitchNote from './PitchNote.vue'
 import { useIntro } from '@/composables/useIntro'
 
-// The welcome: a stoa of purple arches in a modern, vaporwave style, under a
-// striped sunset and over a neon grid. It covers the whole screen until the
-// visitor breaks the purple wax seal (a real button). Then the seal falls
-// away, the arches flare, and the view moves through the central arch,
-// down the colonnade, into the site, which has been loading behind.
+// The welcome: the view down a Greek stoa, like standing in the Stoa of
+// Attalos, in a modern, vaporwave style. Rows of Doric columns on both
+// sides and the ceiling beams all run to one point at the far end, where a
+// striped sun is setting and the purple wax seal waits, so every line in
+// the picture leads to the seal. Breaking it (a real button) makes the neon
+// flare, and the view moves down the colonnade into the light and into the
+// site, which has been loading behind.
 // - Keyboard: the seal has focus; Enter or Space opens it, Escape skips.
 // - "Reduce motion": nothing falls, flares or moves, just a short fade.
 // - While open, the page behind is inert, so focus cannot wander into it.
@@ -74,7 +76,8 @@ watch(
 // placed over the same point, so it is worked out from the screen size.
 const W = 1200
 const H = 800
-const SEAL = { x: 600, y: 468 }
+const SEAL = { x: 600, y: 420 } // the vanishing point, at the end of the corridor
+const LINTEL = 92 // the height of the entrance lintel, with the name on it
 const screen = ref({ w: window.innerWidth, h: window.innerHeight })
 function measure() {
   screen.value = { w: window.innerWidth, h: window.innerHeight }
@@ -89,69 +92,70 @@ const placement = computed(() => {
   const scale = Math.max(screen.value.w / W, screen.value.h / H)
   const x = (screen.value.w - W * scale) / 2 + SEAL.x * scale
   const y = (screen.value.h - H * scale) / 2 + SEAL.y * scale
-  return { x, y, size: Math.max(56, 118 * scale) }
+  // Just below the entrance lintel, so the buttons never sit on the name.
+  const belowLintel = (screen.value.h - H * scale) / 2 + LINTEL * scale + 12
+  return { x, y, size: Math.max(56, 112 * scale), belowLintel }
 })
 
 // ---------- the drawing ----------
-const HORIZON = 520
-const BASE = 600 // where the arcade stands
+// One-point perspective. Everything is placed by its depth: `d` is 1 at the
+// entrance and shrinks towards 0 down the corridor. A point at depth d sits
+// at VP + offset * d, so all lines meet at the vanishing point, VP.
+const VP = { x: 600, y: 420 }
+const HALF_WIDTH = 560 // from the middle of the floor to a column's centre, at the entrance
+const FLOOR = 360 // below VP, at the entrance
+const CEILING = 380 // above VP, at the entrance
+const FAR = 0.155 // the depth of the far end, where the corridor opens to the sunset
 
-/** An arch-shaped outline: up the left side, over the semicircle, down the right. */
-function arch(cx: number, width: number, spring: number, bottom: number) {
-  const r = width / 2
-  return `M${cx - r},${bottom} V${spring} A${r},${r} 0 0 1 ${cx + r},${spring} V${bottom}`
+const at = (offsetX: number, offsetY: number, d: number) => `${VP.x + offsetX * d},${VP.y + offsetY * d}`
+
+/** One Doric column at depth d on the given side: a tapering fluted shaft, its cushion and slab. */
+function column(side: -1 | 1, d: number) {
+  const x = side * HALF_WIDTH
+  const bottom = FLOOR
+  const shaftTop = -262
+  return {
+    key: `${side}${d}`,
+    d,
+    shaft: [at(x - 38, bottom, d), at(x + 38, bottom, d), at(x + 31, shaftTop, d), at(x - 31, shaftTop, d)].join(' '),
+    echinus: [at(x - 31, shaftTop, d), at(x + 31, shaftTop, d), at(x + 48, shaftTop - 20, d), at(x - 48, shaftTop - 20, d)].join(' '),
+    abacus: [at(x - 50, shaftTop - 20, d), at(x + 50, shaftTop - 20, d), at(x + 50, shaftTop - 34, d), at(x - 50, shaftTop - 34, d)].join(' '),
+    flutes: d > 0.3 ? [-19, -6, 6, 19].map((f) => ({ x1: VP.x + (x + f) * d, x2: VP.x + (x + f * 0.82) * d, y1: VP.y + bottom * d, y2: VP.y + shaftTop * d })) : [],
+  }
 }
+// Columns at evenly spaced steps down the corridor, drawn far to near so
+// nearer columns overlap the ones behind.
+const steps = Array.from({ length: 14 }, (_, k) => 1 / (1 + 0.42 * k)).filter((d) => d > FAR)
+const columns = [...steps].reverse().flatMap((d) => [column(-1, d), column(1, d)])
+// Ceiling beams, closer together than the columns, as in the real stoa.
+const beams = Array.from({ length: 30 }, (_, k) => 1 / (1 + 0.2 * k)).filter((d) => d > FAR)
 
-// A Roman arcade under a Greek pediment: wide piers faced with pilasters
-// (each with a capital and a base), semicircular arches with an archivolt,
-// an impost where each arch springs and a keystone at the top, and a full
-// entablature (architrave, frieze, cornice) carrying the pediment.
-const WALL_TOP = 300
-const pilasters = [130, 260, 480, 720, 940, 1070]
-const PILASTER = 34
-// The five openings, one per bay: a large central arch flanked by smaller ones.
-const openings = [
-  { cx: 195, w: 70, spring: 480 },
-  { cx: 370, w: 140, spring: 448 },
-  { cx: 600, w: 168, spring: 420 },
-  { cx: 830, w: 140, spring: 448 },
-  { cx: 1005, w: 70, spring: 480 },
-]
-// The wall with the openings cut out of it (evenodd fill).
-const facade = `M108,${WALL_TOP} H1092 V${BASE} H108 Z ` + openings.map((o) => `${arch(o.cx, o.w, o.spring, BASE)} Z`).join(' ')
-/** The moulded band around an arch, just outside the opening. */
-function archivolt(o: { cx: number; w: number; spring: number }) {
-  const r = o.w / 2 + 11
-  return `M${o.cx - r},${o.spring} A${r},${r} 0 0 1 ${o.cx + r},${o.spring}`
+// The big shapes, each a quadrilateral from the entrance (depth 1.1, just
+// off-screen) to the far end.
+const NEAR = 1.1
+const quad = (a: [number, number], b: [number, number]) =>
+  [at(a[0], a[1], NEAR), at(b[0], b[1], NEAR), at(b[0], b[1], FAR), at(a[0], a[1], FAR)].join(' ')
+const floor = quad([-HALF_WIDTH - 60, FLOOR], [HALF_WIDTH + 60, FLOOR])
+const ceiling = quad([-HALF_WIDTH - 60, -CEILING], [HALF_WIDTH + 60, -CEILING])
+const leftWall = quad([-HALF_WIDTH - 60, -CEILING], [-HALF_WIDTH - 60, FLOOR])
+const rightWall = quad([HALF_WIDTH + 60, -CEILING], [HALF_WIDTH + 60, FLOOR])
+// The architrave running along the tops of each row of columns.
+const leftBeam = quad([-HALF_WIDTH - 50, -CEILING], [-HALF_WIDTH - 50, -296])
+const rightBeam = quad([HALF_WIDTH + 50, -CEILING], [HALF_WIDTH + 50, -296])
+// The far end: the opening where the corridor meets the sunset.
+const end = {
+  x: VP.x - (HALF_WIDTH + 60) * FAR,
+  y: VP.y - CEILING * FAR,
+  w: (HALF_WIDTH + 60) * 2 * FAR,
+  h: (CEILING + FLOOR) * FAR,
 }
-/** The wedge-shaped stone at the top of an arch. */
-function keystone(o: { cx: number; w: number; spring: number }) {
-  const top = o.spring - o.w / 2
-  return `${o.cx - 9},${top - 16} ${o.cx + 9},${top - 16} ${o.cx + 6},${top + 3} ${o.cx - 6},${top + 3}`
-}
-const centre = openings[2]!
-
-// Arches further down the colonnade, seen through the central arch,
-// shrinking towards the vanishing point on the horizon.
-const corridor = [0.78, 0.6, 0.46, 0.35, 0.27, 0.2].map((s) => {
-  const bottom = HORIZON + (BASE - HORIZON) * s
-  const height = (BASE - centre.spring) * s
-  return { d: arch(600, centre.w * s, bottom - height, bottom), s }
-})
-
-// The neon floor: lines running to the vanishing point, and cross lines that
-// crowd together towards the horizon.
-const floorRays = Array.from({ length: 29 }, (_, i) => i - 14).map((j) => ({ x1: 600 + j * 7, x2: 600 + j * 95 }))
-const floorLines = Array.from({ length: 11 }, (_, i) => HORIZON + (H - HORIZON) * ((i + 1) / 11) ** 2.1)
+// The neon floor: lines running to the vanishing point, and cross lines at
+// each column, crowding together into the distance.
+const floorRays = Array.from({ length: 21 }, (_, i) => i - 10).map((j) => ({ x1: VP.x + j * 9, y1: VP.y + FLOOR * FAR, x2: VP.x + j * 130, y2: H }))
+const floorLines = steps.map((d) => VP.y + FLOOR * d)
 
 // The sun's stripes, thicker towards the bottom, as on a vaporwave sunset.
-const sunStripes = [0, 1, 2, 3, 4, 5].map((i) => ({ y: 430 + i * 17, h: 2 + i * 1.6 }))
-
-const stars = [
-  [80, 70, 1.4], [170, 140, 1], [260, 40, 1.2], [340, 110, 0.8], [450, 60, 1.3], [520, 150, 0.9],
-  [690, 50, 1.1], [760, 120, 1.4], [850, 70, 0.9], [940, 140, 1.2], [1030, 50, 1], [1120, 120, 1.3],
-  [120, 200, 0.8], [1080, 210, 0.9], [380, 30, 0.7], [620, 95, 0.8],
-] as const
+const sunStripes = [0, 1, 2, 3, 4].map((i) => ({ y: 422 + i * 9, h: 1.5 + i * 1.2 }))
 
 // The wax: a circle with a few soft bulges, so it looks poured, not stamped.
 const waxPath = (() => {
@@ -176,32 +180,40 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
       aria-modal="true"
       aria-labelledby="intro-title"
     >
-      <!-- Everything that moves through the arch together: the scene and the seal. -->
+      <!-- Everything that moves together as the view passes between the columns: the scene and the seal. -->
       <div class="scene absolute inset-0" :style="{ transformOrigin: `${placement.x}px ${placement.y}px` }">
         <svg :viewBox="`0 0 ${W} ${H}`" preserveAspectRatio="xMidYMid slice" class="absolute inset-0 size-full" aria-hidden="true">
           <defs>
             <linearGradient :id="id('sky')" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stop-color="#07021a" />
-              <stop offset="0.4" stop-color="#1e0838" />
-              <stop offset="0.62" stop-color="#4a1150" />
-              <stop offset="0.65" stop-color="#7a1f6e" />
+              <stop offset="0" stop-color="#1e0838" />
+              <stop offset="0.6" stop-color="#7a1f6e" />
+              <stop offset="1" stop-color="#ff6ec7" />
             </linearGradient>
             <linearGradient :id="id('sun')" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stop-color="#ffd6f2" />
-              <stop offset="0.45" stop-color="#ff6ec7" />
-              <stop offset="1" stop-color="#9f3878" />
+              <stop offset="0" stop-color="#fff0fa" />
+              <stop offset="0.45" stop-color="#ff8fd2" />
+              <stop offset="1" stop-color="#c04d93" />
             </linearGradient>
+            <radialGradient :id="id('halo')">
+              <stop offset="0" stop-color="#ff9be3" stop-opacity="0.75" />
+              <stop offset="1" stop-color="#ff9be3" stop-opacity="0" />
+            </radialGradient>
             <mask :id="id('stripes')">
-              <rect x="400" y="250" width="400" height="300" fill="#fff" />
-              <rect v-for="(s, i) in sunStripes" :key="i" x="400" :y="s.y" width="400" :height="s.h" fill="#000" />
+              <rect x="480" y="300" width="240" height="240" fill="#fff" />
+              <rect v-for="(st, i) in sunStripes" :key="i" x="480" :y="st.y" width="240" :height="st.h" fill="#000" />
             </mask>
-            <linearGradient :id="id('floor')" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stop-color="#2a0b3a" />
-              <stop offset="1" stop-color="#0b0216" />
+            <linearGradient :id="id('floor')" x1="0" x2="0" y1="1" y2="0">
+              <stop offset="0" stop-color="#1a0628" />
+              <stop offset="1" stop-color="#3a0f4f" />
             </linearGradient>
-            <linearGradient :id="id('wall')" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stop-color="#6d1f86" />
-              <stop offset="1" stop-color="#2a0a3f" />
+            <linearGradient :id="id('ceiling')" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#12041e" />
+              <stop offset="1" stop-color="#3a0f4f" />
+            </linearGradient>
+            <linearGradient :id="id('column')" x1="0" x2="1">
+              <stop offset="0" stop-color="#5d1d7a" />
+              <stop offset="0.45" stop-color="#b06ad4" />
+              <stop offset="1" stop-color="#4a1462" />
             </linearGradient>
             <filter :id="id('glow')" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="4" result="blur" />
@@ -210,89 +222,79 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
-            <clipPath :id="id('through')">
-              <path :d="`${arch(centre.cx, centre.w, centre.spring, BASE)} Z`" />
-            </clipPath>
+            <clipPath :id="id('floor-clip')"><polygon :points="floor" /></clipPath>
           </defs>
 
-          <!-- Sky, stars and the striped sun sitting on the horizon -->
-          <rect :width="W" :height="HORIZON" :fill="`url(#${id('sky')})`" />
-          <circle v-for="([x, y, r], i) in stars" :key="i" class="star" :cx="x" :cy="y" :r="r" fill="#fff" :style="{ animationDelay: `${(i * 0.37) % 3}s` }" />
-          <circle class="sun" cx="600" cy="420" r="165" :fill="`url(#${id('sun')})`" :mask="`url(#${id('stripes')})`" />
+          <!-- The far end: sunset sky and a striped sun, glowing behind the seal -->
+          <rect :width="W" :height="H" :fill="`url(#${id('sky')})`" />
+          <circle class="halo" :cx="VP.x" :cy="VP.y" r="190" :fill="`url(#${id('halo')})`" />
+          <circle class="sun" :cx="VP.x" :cy="VP.y + 10" r="66" :fill="`url(#${id('sun')})`" :mask="`url(#${id('stripes')})`" />
+
+          <!-- Walls, ceiling and floor of the stoa, running to the far end -->
+          <polygon :points="leftWall" fill="#16051f" />
+          <polygon :points="rightWall" fill="#16051f" />
+          <polygon :points="ceiling" :fill="`url(#${id('ceiling')})`" />
+          <polygon :points="floor" :fill="`url(#${id('floor')})`" />
 
           <!-- The neon floor -->
-          <rect :y="HORIZON" :width="W" :height="H - HORIZON" :fill="`url(#${id('floor')})`" />
-          <g class="grid" stroke="#ff4fd8" stroke-width="1.5" :filter="`url(#${id('glow')})`">
-            <line v-for="(r, i) in floorRays" :key="`r${i}`" :x1="r.x1" :y1="HORIZON" :x2="r.x2" :y2="H" stroke-opacity="0.55" />
-            <line v-for="(y, i) in floorLines" :key="`l${i}`" x1="0" :x2="W" :y1="y" :y2="y" stroke-opacity="0.55" />
+          <g class="grid" :clip-path="`url(#${id('floor-clip')})`" stroke="#ff4fd8" stroke-width="1.5" stroke-opacity="0.55" :filter="`url(#${id('glow')})`">
+            <line v-for="(r, i) in floorRays" :key="`r${i}`" :x1="r.x1" :y1="r.y1" :x2="r.x2" :y2="r.y2" />
+            <line v-for="(y, i) in floorLines" :key="`l${i}`" x1="0" :x2="W" :y1="y" :y2="y" />
           </g>
-          <line x1="0" :x2="W" :y1="HORIZON" :y2="HORIZON" stroke="#ff9be3" stroke-width="2" :filter="`url(#${id('glow')})`" />
 
-          <!-- Down the colonnade: further arches, seen through the central one -->
-          <g :clip-path="`url(#${id('through')})`">
-            <path
-              v-for="(c, i) in corridor"
-              :key="i"
-              class="corridor"
-              :d="c.d"
-              fill="none"
-              stroke="#c084fc"
-              :stroke-width="3 * c.s + 1"
-              :stroke-opacity="0.9 - i * 0.12"
-              :filter="`url(#${id('glow')})`"
-              :style="{ animationDelay: `${0.25 + i * 0.07}s` }"
+          <!-- Ceiling beams -->
+          <g class="beams" stroke="#c084fc" stroke-linecap="round">
+            <line
+              v-for="d in beams"
+              :key="d"
+              :x1="VP.x - (HALF_WIDTH + 50) * d"
+              :x2="VP.x + (HALF_WIDTH + 50) * d"
+              :y1="VP.y - (CEILING - 20) * d"
+              :y2="VP.y - (CEILING - 20) * d"
+              :stroke-width="Math.max(1, 14 * d)"
+              :stroke-opacity="0.25 + 0.35 * d"
             />
           </g>
 
-          <!-- The name, in Greek, above the building -->
+          <!-- The architrave along the top of each row of columns -->
+          <polygon :points="leftBeam" fill="#4a1460" />
+          <polygon :points="rightBeam" fill="#4a1460" />
+
+          <!-- The columns, far to near -->
+          <g class="columns">
+            <g v-for="c in columns" :key="c.key">
+              <polygon :points="c.shaft" :fill="`url(#${id('column')})`" />
+              <line v-for="(f, i) in c.flutes" :key="i" :x1="f.x1" :x2="f.x2" :y1="f.y1" :y2="f.y2" stroke="#3a0f4f" stroke-opacity="0.55" :stroke-width="3 * c.d" />
+              <polygon :points="c.echinus" fill="#8a3aa8" />
+              <polygon :points="c.abacus" fill="#b06ad4" />
+            </g>
+          </g>
+
+          <!-- Neon edges, all leading the eye to the far end -->
+          <g class="neon" fill="none" stroke="#f472d0" stroke-linejoin="round" :filter="`url(#${id('glow')})`">
+            <polygon v-for="c in columns" :key="`n${c.key}`" :points="c.shaft" :stroke-width="Math.max(1, 3 * c.d)" />
+            <polygon :points="leftBeam" stroke-width="2.5" />
+            <polygon :points="rightBeam" stroke-width="2.5" />
+            <rect :x="end.x" :y="end.y" :width="end.w" :height="end.h" stroke-width="1.5" />
+          </g>
+
+          <!-- The entrance lintel, with the name inscribed on it -->
+          <rect x="0" y="0" :width="W" :height="LINTEL" fill="#2a0a3f" />
+          <line x1="0" :x2="W" :y1="LINTEL" :y2="LINTEL" stroke="#f472d0" stroke-width="3" :filter="`url(#${id('glow')})`" />
           <text
-            x="600"
-            y="150"
+            :x="VP.x"
+            y="70"
             text-anchor="middle"
             class="font-serif"
-            font-size="64"
+            font-size="58"
             font-weight="700"
             letter-spacing="8"
             fill="#ffd6f2"
             :filter="`url(#${id('glow')})`"
           >στοά</text>
-
-          <!-- The arcade: a purple wall with five arches cut out of it -->
-          <path :d="facade" fill-rule="evenodd" :fill="`url(#${id('wall')})`" />
-
-          <!-- Pilasters between the bays, each with a base and a capital -->
-          <g v-for="x in pilasters" :key="x">
-            <rect :x="x - PILASTER / 2" :y="WALL_TOP + 16" :width="PILASTER" :height="BASE - WALL_TOP - 30" fill="#7d2a96" />
-            <rect :x="x - PILASTER / 2 - 6" :y="WALL_TOP" :width="PILASTER + 12" height="16" fill="#9a3cb4" />
-            <rect :x="x - PILASTER / 2 - 6" :y="BASE - 14" :width="PILASTER + 12" height="14" fill="#9a3cb4" />
-          </g>
-
-          <!-- Entablature: architrave, frieze and a projecting cornice, then the pediment -->
-          <rect x="108" y="286" width="984" :height="WALL_TOP - 286" fill="#5a1a72" />
-          <rect x="108" y="268" width="984" height="18" fill="#4a1460" />
-          <rect x="92" y="256" width="1016" height="12" fill="#8a33a6" />
-          <polygon points="92,256 600,178 1108,256" fill="#4a1460" />
-          <polygon points="150,249 600,190 1050,249" fill="#3a0f4f" />
-
-          <!-- Keystones -->
-          <polygon v-for="o in openings" :key="`k${o.cx}`" :points="keystone(o)" fill="#9a3cb4" />
-
-          <!-- Neon edges: arches, archivolts, imposts, pilasters, entablature and pediment -->
-          <g class="neon" fill="none" stroke="#f472d0" stroke-width="3" stroke-linejoin="round" :filter="`url(#${id('glow')})`">
-            <path v-for="o in openings" :key="`a${o.cx}`" :d="arch(o.cx, o.w, o.spring, BASE)" />
-            <path v-for="o in openings" :key="`v${o.cx}`" :d="archivolt(o)" stroke-width="2" />
-            <template v-for="o in openings" :key="`i${o.cx}`">
-              <line :x1="o.cx - o.w / 2 - 12" :x2="o.cx - o.w / 2" :y1="o.spring" :y2="o.spring" />
-              <line :x1="o.cx + o.w / 2" :x2="o.cx + o.w / 2 + 12" :y1="o.spring" :y2="o.spring" />
-            </template>
-            <rect v-for="x in pilasters" :key="`p${x}`" :x="x - PILASTER / 2" :y="WALL_TOP + 16" :width="PILASTER" :height="BASE - WALL_TOP - 30" stroke-width="2" />
-            <line x1="108" x2="1092" y1="286" y2="286" stroke-width="2" />
-            <rect x="92" y="256" width="1016" :height="WALL_TOP - 256" />
-            <polygon points="92,256 600,178 1108,256" />
-          </g>
         </svg>
 
-        <!-- The seal: a real button over the central arch. Its halves fall away when it breaks. -->
+        <!-- The seal: a real button in the middle of the colonnade. Its halves fall away when it breaks. -->
         <button
           ref="seal"
           type="button"
@@ -337,12 +339,13 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
 
       <button
         type="button"
-        class="skip absolute top-4 right-4 z-10 min-h-9 rounded-full bg-black/30 px-4 text-sm font-medium text-white/80 ring-1 ring-white/25 backdrop-blur hover:bg-white/10 hover:text-white"
+        class="skip absolute right-4 z-10 min-h-9 rounded-full bg-black/30 px-4 text-sm font-medium text-white/80 ring-1 ring-white/25 backdrop-blur hover:bg-white/10 hover:text-white"
+        :style="{ top: `${placement.belowLintel}px` }"
         @click="done"
       >
         Skip intro
       </button>
-      <PitchNote id="intro" class="absolute top-4 left-4" />
+      <PitchNote id="intro" class="absolute left-4" :style="{ top: `${placement.belowLintel}px` }" />
 
       <div class="caption pointer-events-none absolute inset-x-0 bottom-[max(2rem,env(safe-area-inset-bottom))] px-4 text-center">
         <h2 id="intro-title" class="font-serif text-4xl font-bold tracking-tight text-white drop-shadow sm:text-5xl">Stoa</h2>
@@ -357,16 +360,9 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
   background: #07021a;
 }
 
-/* Waiting: stars twinkle, the sun shimmers and the seal glows, inviting a click. */
-.star {
-  animation: twinkle 3s ease-in-out infinite;
-}
-@keyframes twinkle {
-  50% {
-    opacity: 0.35;
-  }
-}
-.sun {
+/* Waiting: the sun shimmers and the seal glows at the end of the corridor, inviting a click. */
+.sun,
+.halo {
   animation: shimmer 4s ease-in-out infinite;
 }
 @keyframes shimmer {
@@ -387,9 +383,10 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
 .half {
   transform-box: fill-box;
 }
-.corridor {
+.columns,
+.beams {
   transform-box: view-box;
-  transform-origin: 600px 520px;
+  transform-origin: 600px 420px;
 }
 
 /* Opening, about two seconds in all. */
@@ -435,17 +432,27 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
     stroke-width: 4.5;
   }
 }
-/* The arches down the colonnade rush towards the viewer, one after another. */
-.is-opening .corridor {
-  animation: rush 1.1s cubic-bezier(0.5, 0, 0.9, 0.4) forwards;
+/* The columns and beams start to rush past, as if walking down the colonnade... */
+.is-opening .columns,
+.is-opening .beams {
+  animation: rush 1.2s cubic-bezier(0.5, 0, 0.9, 0.4) 0.25s forwards;
 }
 @keyframes rush {
   to {
-    transform: scale(4);
+    transform: scale(2.4);
     opacity: 0;
   }
 }
-/* And the view moves through the central arch. */
+.is-opening .halo {
+  animation: dawn 0.9s ease-out 0.2s forwards;
+}
+@keyframes dawn {
+  to {
+    transform: scale(2.2);
+    opacity: 1;
+  }
+}
+/* ...and the whole view moves down the corridor, into the light. */
 .is-opening .scene {
   animation: push 1.2s cubic-bezier(0.55, 0, 0.85, 0.35) 0.6s forwards;
 }
@@ -473,7 +480,7 @@ const laurel = Array.from({ length: 16 }, (_, i) => (i / 16) * 360)
   opacity: 0;
 }
 @media (prefers-reduced-motion: reduce) {
-  .star,
+  .halo,
   .sun,
   .seal {
     animation: none;
