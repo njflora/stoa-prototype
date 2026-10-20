@@ -10,7 +10,8 @@ import { getArticle, listArticles } from '@/api/catalogue'
 import { articleCategoryColours, hostNames } from '@/data/catalogue'
 import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
-import { formatPublished } from '@/utils/format'
+import { formatCount, formatPublished } from '@/utils/format'
+import AppIcon from '@/components/AppIcon.vue'
 
 // One article. After the last paragraph come its sources (Finding 4),
 // an episode on the same subject, and more from the same writer.
@@ -59,6 +60,11 @@ watchEffect(() => {
           <p class="mt-4 text-lg text-white/85 sm:text-xl">{{ piece.standfirst }}</p>
           <p class="mt-4 text-sm text-white/70">
             <ContributorNames :ids="[piece.authorId]" /> · {{ piece.readMin }} min read · {{ formatPublished(piece.publishedAt) }}
+          </p>
+          <p v-if="piece.views !== undefined" class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/70 [&_svg]:size-4">
+            <span class="inline-flex items-center gap-1"><AppIcon name="eye" /> {{ formatCount(piece.views) }} views</span>
+            <span class="inline-flex items-center gap-1"><AppIcon name="chat" /> {{ formatCount(piece.comments ?? 0) }} comments</span>
+            <span>{{ formatCount(piece.likes ?? 0) }} likes · {{ formatCount(piece.dislikes ?? 0) }} dislikes</span>
           </p>
         </div>
       </header>
