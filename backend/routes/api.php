@@ -16,6 +16,8 @@ Route::controller(CatalogueController::class)->group(function () {
     Route::get('/episodes/{id}', 'episode');
     Route::get('/articles', 'articles');
     Route::get('/articles/{id}', 'article');
+    Route::get('/search', 'search');
+    // What the static preview's in-browser search indexes.
     Route::get('/search-docs', 'searchDocs');
 });
 

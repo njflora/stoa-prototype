@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 /** A programme: The Stoa Podcast, Chronos, Ledger and so on. */
 class Show extends Model
 {
+    use Searchable;
+
     protected $keyType = 'string';
 
     public $incrementing = false;
@@ -23,6 +26,17 @@ class Show extends Model
             'palette' => 'array',
             'slot' => 'array',
             'streamed_live' => 'boolean',
+        ];
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->name,
+            'show' => $this->name,
+            'hosts' => Contributor::whereIn('id', $this->host_ids)->pluck('name')->implode(' '),
+            'text' => $this->tagline,
         ];
     }
 

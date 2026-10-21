@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 /**
  * One episode, whichever platforms it is published on. Its id is
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Episode extends Model
 {
+    use Searchable;
+
     protected $keyType = 'string';
 
     public $incrementing = false;
@@ -80,6 +83,35 @@ class Episode extends Model
     {
         // Within a show, seq breaks a tie on the date.
         $query->orderByDesc('published_at')->orderByDesc('seq')->orderBy('id');
+    }
+
+    /**
+     * What search indexes, in the four fields every index shares (title,
+     * show, hosts, text), plus what a result shows. A daily edition has no
+     * title of its own, so it is found by show name and date.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title ?? "{$this->show->name} {$this->published_at->format('l j F')}",
+            'show' => $this->show->name,
+            'hosts' => $this->contributors->pluck('name')->implode(' '),
+            'text' => trim(implode(' ', [...($this->topics ?? []), $this->series?->name ?? ''])),
+            'published_ts' => $this->published_at->getTimestamp(),
+            'showId' => $this->show_id,
+            'access' => $this->access,
+            'edition' => (bool) $this->edition,
+            'hostIds' => $this->contributors->pluck('id')->all(),
+            'seriesSlug' => $this->series_slug,
+            'seriesName' => $this->series?->name,
+        ];
+    }
+
+    /** Load what the search document needs, a chunk at a time. */
+    protected function makeAllSearchableUsing(Builder $query): Builder
+    {
+        return $query->with(['show', 'contributors', 'series']);
     }
 
     /**

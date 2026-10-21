@@ -302,8 +302,9 @@ class Catalogue
      * What search needs for each episode and article, with short keys to keep
      * it small. i: id, t: title (empty for daily editions), s: show (or an
      * article's category), h: hosts (or author), x: extra text (topics, series,
-     * or a standfirst), d: date, a: access, e: daily edition, k: "a" for an article.
-     * Replaced by Meilisearch in stage G.
+     * or a standfirst), d: date, a: access, e: daily edition, sl: series slug,
+     * k: "a" for an article. The Laravel version searches with Meilisearch
+     * instead (App\Search\SiteSearch); the static preview searches these.
      */
     public function searchDocs(): array
     {
@@ -316,6 +317,7 @@ class Catalogue
             'd' => self::iso($e->published_at),
             'a' => $e->access,
             ...($e->edition ? ['e' => 1] : []),
+            ...($e->series_slug ? ['sl' => $e->series_slug] : []),
         ]);
         $articles = Article::orderByDesc('published_at')->get()->map(fn (Article $a) => [
             'i' => $a->id,

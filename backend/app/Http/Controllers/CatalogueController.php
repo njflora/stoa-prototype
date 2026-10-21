@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Catalogue\Catalogue;
+use App\Search\SiteSearch;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -77,6 +78,14 @@ class CatalogueController extends Controller
     public function article(string $id): JsonResponse
     {
         return response()->json($this->catalogue->article($id) ?? abort(404));
+    }
+
+    /** GET /api/search?q=: everything that matches, grouped by kind. */
+    public function search(Request $request, SiteSearch $search): JsonResponse
+    {
+        $q = $request->validate(['q' => ['required', 'string', 'max:200']])['q'];
+
+        return response()->json($search->search($q));
     }
 
     public function searchDocs(): JsonResponse

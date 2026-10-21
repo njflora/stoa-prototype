@@ -4,6 +4,7 @@
 #   docker compose run --rm composer install      install PHP packages
 #   docker compose run --rm app php artisan ...   run any artisan command
 #   docker compose run --rm app php artisan stoa:export   write the static preview to ../public/data
+#   docker compose run --rm app php artisan stoa:index    rebuild the search index (Meilisearch)
 #
 # Installed packages (vendor/) live in a Docker volume, not in this folder:
 # on Windows, a mounted folder is slow and Composer cannot always delete
@@ -20,9 +21,26 @@ services:
       - ../public:/site-public
     environment:
       STOA_EXPORT_PATH: /site-public/data
+      # Search runs in the meilisearch service below.
+      MEILISEARCH_HOST: http://meilisearch:7700
+    depends_on:
+      - meilisearch
     ports:
       - "8000:8000"
     command: php artisan serve --host=0.0.0.0 --port=8000
+
+  # The search engine, for Laravel Scout. Its index lives in a Docker volume
+  # and is rebuilt from the database with `php artisan stoa:index`.
+  meilisearch:
+    image: getmeili/meilisearch:v1.11
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_KEY:-stoa-local-development-key}
+      MEILI_ENV: development
+      MEILI_NO_ANALYTICS: "true"
+    ports:
+      - "7700:7700"
+    volumes:
+      - meili:/meili_data
 
   composer:
     image: composer:2
@@ -34,3 +52,4 @@ services:
 
 volumes:
   vendor:
+  meili:

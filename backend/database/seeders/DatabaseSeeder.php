@@ -143,6 +143,8 @@ class DatabaseSeeder extends Seeder
                 'synced_at' => $this->datetime($s['syncedAt']),
             ], $chunk));
         }
+
+        $this->index();
     }
 
     /** Name => user id, for the people who comment. */
@@ -233,6 +235,14 @@ class DatabaseSeeder extends Seeder
             'dislikes' => $c['dislikes'],
             'posted_at' => $this->datetime($c['postedAt']),
         ];
+    }
+
+    /** Rebuild the search index, when search runs in Meilisearch (not in tests). */
+    private function index(): void
+    {
+        if (config('scout.driver') === 'meilisearch') {
+            $this->command->call('stoa:index');
+        }
     }
 
     private function read(string $name): array

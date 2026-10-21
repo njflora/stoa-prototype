@@ -45,7 +45,14 @@ const groups = computed(() =>
   order
     .map(({ kind, label }) => {
       const all = results.value?.groups[kind] ?? []
-      return { kind, label, total: all.length, hits: kind === 'episode' ? all.slice(0, episodeLimit.value) : all }
+      return {
+        kind,
+        label,
+        // How many matched in all; the server sends only the best of them.
+        total: results.value?.counts?.[kind] ?? all.length,
+        loaded: all.length,
+        hits: kind === 'episode' ? all.slice(0, episodeLimit.value) : all,
+      }
     })
     .filter((g) => g.total > 0),
 )
@@ -284,13 +291,16 @@ const suggestions = ['Rome', 'energy', 'Helen Thwaite', 'The Forum', '1530', 'Ro
             </li>
           </ul>
           <button
-            v-if="group.kind === 'episode' && group.total > group.hits.length"
+            v-if="group.kind === 'episode' && group.loaded > group.hits.length"
             type="button"
             class="mt-2 min-h-9 w-full rounded-lg bg-white/10 text-sm font-medium ring-1 ring-white/10 hover:bg-white/20"
             @click="episodeLimit += EPISODES_MORE"
           >
-            Show more episodes ({{ (group.total - group.hits.length).toLocaleString('en-GB') }} more)
+            Show more episodes ({{ (group.loaded - group.hits.length).toLocaleString('en-GB') }} more)
           </button>
+          <p v-else-if="group.total > group.loaded" class="mt-2 text-xs text-muted">
+            The best {{ group.loaded }} of {{ group.total.toLocaleString('en-GB') }}. Add a word to narrow it down.
+          </p>
         </section>
       </div>
     </div>

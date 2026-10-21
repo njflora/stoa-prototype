@@ -88,11 +88,13 @@ Effort: **S** is under an hour, **M** is a few hours to a day, **L** is several 
 - **Where:** `src/api/search.ts` line 116.
 - **What I saw:** a host's "presents" text is built from each show's `hostIds`, the regulars. Gary and Sally appear on hundreds of episodes but are not regulars anywhere, so their search entry has no shows. Searching "Gary Forum" misses his profile.
 - **Suggested fix:** use `h.showIds` from `hosts.json`, which the profile pages already use. **S**
+- **Addressed (21 October):** both searches now index every show a contributor appears on. "Gary Forum" finds Gary.
 
 ### 10. Search guesses an episode's series by substring
 - **Where:** `src/api/search.ts` line 90.
 - **What I saw:** `e.x.includes(s.name)` finds the series by checking whether the episode's extra text contains a series name. A topic containing a series name (for example "Hannibal") could attach the wrong series.
 - **Suggested fix:** write the series slug into `search-docs.json` in the generator, and read it directly. **S**
+- **Addressed (21 October):** the series slug is stored with each episode's search entry (`sl` in `search-docs.json`, `seriesSlug` in Meilisearch) and read directly.
 
 ### 11. The "Preview" chip assumes a mute button its parent may not add
 - **Where:** `src/components/TitleCard.vue` lines 3 and 84 to 89.

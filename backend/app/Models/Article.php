@@ -5,9 +5,12 @@ namespace App\Models;
 use App\Catalogue\Catalogue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 class Article extends Model
 {
+    use Searchable;
+
     protected $keyType = 'string';
 
     public $incrementing = false;
@@ -54,6 +57,21 @@ class Article extends Model
     public function watchNext(): BelongsTo
     {
         return $this->belongsTo(Episode::class, 'watch_next_id');
+    }
+
+    /** What search indexes: the category stands in for a show, the author for hosts. */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'show' => $this->category,
+            'hosts' => $this->author?->name ?? '',
+            'text' => $this->standfirst,
+            'published_ts' => $this->published_at->getTimestamp(),
+            'category' => $this->category,
+            'hostIds' => [$this->author_id],
+        ];
     }
 
     /** What a list of articles shows. */

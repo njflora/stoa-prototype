@@ -1,13 +1,14 @@
 // Search across episodes, series, shows, hosts and articles.
 //
-// The prototype searches in the browser with MiniSearch (MIT licence), over
-// public/data/search-docs.json. The index is built the first time someone
-// searches, never on other pages. The real site can keep this search()
-// function and swap its insides for a server engine such as Laravel Scout
-// with Meilisearch: the page only sees SearchResults.
+// Two engines, one answer (SearchResults), so the search panel is the same:
+// - Laravel mode: GET /api/search, Laravel Scout with Meilisearch on the
+//   server (backend/app/Search/SiteSearch.php).
+// - Static preview: MiniSearch (MIT licence) in the browser, over
+//   public/data/search-docs.json. The index is built the first time someone
+//   searches, never on other pages.
 
 import MiniSearch from 'minisearch'
-import { getJson, pick } from './client'
+import { API_MODE, getFresh, getJson, query as queryString } from './client'
 import { reference, shiftDate } from './catalogue'
 import { hostNames } from '@/data/catalogue'
 import type { Access, ArticleCategory } from '@/types/content'
@@ -37,6 +38,8 @@ export interface SearchResults {
   /** Milliseconds the search itself took, for the record. */
   tookMs: number
   groups: Record<ResultKind, SearchHit[]>
+  /** How many matched in all, when a group holds only the best matches (the server). */
+  counts?: Record<ResultKind, number>
 }
 
 interface EpisodeDoc {
@@ -48,6 +51,8 @@ interface EpisodeDoc {
   d: string
   a: Access
   e?: 1
+  /** The episode's series, by slug. */
+  sl?: string
   /** "a" for an article: then s is its category and h its author. */
   k?: 'a'
 }
@@ -79,7 +84,7 @@ let newestMs = 0
 let oldestMs = 0
 
 async function buildIndex(): Promise<MiniSearch<Doc>> {
-  const raw = await getJson<EpisodeDoc[]>(pick('search-docs', 'search-docs.json'))
+  const raw = await getJson<EpisodeDoc[]>('search-docs.json')
 
   const showName = (id: string) => reference.shows.find((s) => s.id === id)?.name ?? ''
   const docs: Doc[] = raw.map((e): Doc => {
@@ -87,7 +92,8 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
       const category = e.s as ArticleCategory
       return { id: `article:${e.i}`, kind: 'article', title: e.t, show: category, hosts: hostNames(e.h), text: e.x, to: `/articles/${e.i}`, publishedAt: shiftDate(e.d), hostIds: e.h, category }
     }
-    const series = e.x && reference.series.find((s) => e.x.includes(s.name))
+    // By the slug stored with the episode, never guessed from its text (review note 10).
+    const series = e.sl ? reference.series.find((s) => s.slug === e.sl) : undefined
     // Same date shift as the rest of the API, so results match the pages they open.
     const publishedAt = shiftDate(e.d)
     return {
@@ -113,7 +119,8 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
     docs.push({ id: `show:${s.id}`, kind: 'show', title: s.name, show: s.name, hosts: hostNames(s.hostIds), text: s.tagline, to: `/shows/${s.id}`, showId: s.id })
   }
   for (const h of reference.hosts) {
-    const presents = reference.shows.filter((s) => s.hostIds.includes(h.id)).map((s) => s.name)
+    // Every show they appear on, not only those they present regularly (review note 9).
+    const presents = reference.shows.filter((s) => h.showIds?.includes(s.id)).map((s) => s.name)
     docs.push({ id: `host:${h.id}`, kind: 'host', title: h.name, show: presents.join(' '), hosts: h.name, text: '', to: `/contributors/${h.id}`, hostIds: [h.id] })
   }
 
@@ -132,10 +139,29 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
 
 const emptyGroups = (): Record<ResultKind, SearchHit[]> => ({ episode: [], series: [], show: [], host: [], article: [] })
 
-/** Search everything. The first call loads and builds the index. */
+/**
+ * The server's answer, with dates moved forward like the rest of the API, and
+ * daily editions titled by their date as everywhere else.
+ */
+async function searchOnServer(query: string): Promise<SearchResults> {
+  const results = await getFresh<SearchResults & { groups: Record<ResultKind, (SearchHit & { edition?: boolean })[]> }>(
+    `search?${queryString({ q: query })}`,
+  )
+  const showName = (id?: string) => reference.shows.find((s) => s.id === id)?.name ?? ''
+  for (const hits of Object.values(results.groups)) {
+    for (const hit of hits) {
+      if (hit.publishedAt) hit.publishedAt = shiftDate(hit.publishedAt)
+      if (hit.edition && hit.publishedAt) hit.title = `${showName(hit.showId)} | ${formatEditionDate(new Date(hit.publishedAt))}`
+    }
+  }
+  return { ...results, query }
+}
+
+/** Search everything. In the static preview, the first call loads and builds the index. */
 export async function search(query: string): Promise<SearchResults> {
   const trimmed = query.trim()
   if (!trimmed) return { query, total: 0, tookMs: 0, groups: emptyGroups() }
+  if (API_MODE === 'laravel') return searchOnServer(trimmed)
 
   index ??= buildIndex()
   // A failed load is forgotten, so the next search tries again.

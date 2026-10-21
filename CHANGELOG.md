@@ -2,6 +2,21 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Search on the server
+
+### Added
+- In Laravel mode, search runs on the server: Laravel Scout with Meilisearch, in Docker (the meilisearch service). One index each for episodes, articles, series, shows and contributors, searching title, show, hosts and text, with typos forgiven, the start of words matched, every word required, and newer items ahead on equal matches. GET /api/search answers in the search panel's shape, so the panel is unchanged. Each search takes about a millisecond.
+- `php artisan stoa:index` rebuilds the index from the database; a fresh seed runs it.
+- When a group holds only the best matches (50 episodes), its heading still says how many matched, and a line says to add a word to narrow it down.
+- 4 PHP tests for the search answer (using Scout's in-memory driver, so tests need no search server).
+
+### Changed
+- The static preview keeps searching in the browser (MiniSearch), over the same fields.
+
+### Fixed
+- Search found a contributor only by the shows they present regularly, so "Gary Forum" missed Gary. Both searches now use every show they appear on (review note 9).
+- Search guessed an episode's series from its text, which a topic could fool. Both searches now read the series from the episode's record (review note 10).
+
 ## 2026-10-21: The content desk and the platform sync
 
 ### Added
