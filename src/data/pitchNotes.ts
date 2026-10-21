@@ -386,6 +386,16 @@ export const pitchNotes: PitchNote[] = [
     hint: 'On a phone, or a narrow window.',
   },
   {
+    id: 'installable-app',
+    kind: 'proposal',
+    source: "Nick's feedback",
+    title: 'An app that installs from the site and works offline',
+    today: 'The site has a basic web manifest but no service worker, so it does not work offline. The Android app on Google Play was last updated on 9 February 2024.',
+    here: '"Install app" in the footer and the phone\'s More sheet, with a Home Screen hint on iPhone. Pages already opened work offline, the player says when there is no connection, and a new version asks before it reloads. One site to keep up to date, rather than a separate app.',
+    page: home,
+    hint: 'In the deployed preview, in Chrome or Edge, or on a phone. The option is hidden once installed.',
+  },
+  {
     id: 'footer',
     kind: 'kept',
     source: 'Their site',

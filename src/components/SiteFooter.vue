@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import NewsletterSignup from './NewsletterSignup.vue'
 import { brand } from '@/config/brand'
 import BrandLogo from './BrandLogo.vue'
+import InstallApp from './InstallApp.vue'
 import PitchNote from './PitchNote.vue'
 
 // The real site's footer links, in their order, plus Contributors and Pitch notes.
@@ -29,7 +30,9 @@ const links = [
         <li v-for="link in links" :key="link.label">
           <RouterLink :to="link.to" class="inline-flex min-h-6 items-center text-white/75 hover:text-white">{{ link.label }}</RouterLink>
         </li>
+        <InstallApp button-class="inline-flex min-h-6 items-center text-white/75 hover:text-white" />
       </ul>
+      <PitchNote id="installable-app" class="mt-2 block" />
     </nav>
     <p class="md:max-w-sm md:pt-1">
       <PitchNote id="footer" class="mb-2 block" />

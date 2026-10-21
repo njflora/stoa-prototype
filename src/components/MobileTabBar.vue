@@ -5,6 +5,7 @@ import AppIcon, { type IconName } from './AppIcon.vue'
 import { tierStyles } from '@/data/chat'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
 import { useViewer } from '@/composables/useViewer'
+import InstallApp from './InstallApp.vue'
 import PitchNote from './PitchNote.vue'
 
 // Phones only (below 768px): an app-style tab bar fixed to the bottom of
@@ -162,6 +163,7 @@ const tabClass = 'flex h-full flex-col items-center justify-center gap-0.5 text-
                 Content desk <AppIcon name="chevron-right" class="text-muted" />
               </RouterLink>
             </li>
+            <InstallApp button-class="flex h-12 w-full items-center text-base" />
           </ul>
 
           <RouterLink
