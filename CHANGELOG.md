@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The README's opening, reworded
+
+### Changed
+- The README's opening now says how their content on every platform could be brought together, so it no longer reads as if their real content is in the prototype.
+
 ## 2026-10-21: The intro plays only on the homepage
 
 ### Changed
