@@ -18,5 +18,9 @@ export function useIntro() {
   function replay() {
     open.value = true
   }
-  return { open, finish, replay }
+  /** Forget the visit, so the next page load is a first visit again. */
+  function forget() {
+    writeJson(SEEN_KEY, false)
+  }
+  return { open, finish, replay, forget }
 }

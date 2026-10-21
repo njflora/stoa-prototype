@@ -33,7 +33,12 @@ function restoreProgress() {
   confirm('Sample progress restored')
 }
 const { requestFinish } = usePlayback()
-const { replay: replayIntro } = useIntro()
+const { replay: replayIntro, forget: forgetVisit } = useIntro()
+// Reloads the page as a brand-new visitor would arrive, to test the first visit.
+function resetFirstVisit() {
+  forgetVisit()
+  window.location.reload()
+}
 const { enabled: pitchMode } = usePitchMode()
 const route = useRoute()
 const open = ref(false)
@@ -126,13 +131,22 @@ const off = 'text-white/70 hover:text-white'
         </div>
       </div>
 
-      <button
-        type="button"
-        class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white"
-        @click="open = false; replayIntro()"
-      >
-        Replay intro
-      </button>
+      <div class="flex flex-wrap gap-x-3 gap-y-1">
+        <button
+          type="button"
+          class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white"
+          @click="open = false; replayIntro()"
+        >
+          Replay intro
+        </button>
+        <button
+          type="button"
+          class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white"
+          @click="resetFirstVisit"
+        >
+          Reset first visit
+        </button>
+      </div>
 
       <div>
         <p class="mb-1 text-xs font-semibold">Watch progress</p>

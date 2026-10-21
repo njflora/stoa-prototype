@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Reset first visit, in the demo panel
+
+### Added
+- A "Reset first visit" button in the demo panel, beside "Replay intro". It forgets that this browser has seen the intro and reloads the page, so the page opens as it would for a new visitor. It works in the static preview and the Laravel version.
+
 ## 2026-10-21: The intro plays on any first page again
 
 ### Changed
