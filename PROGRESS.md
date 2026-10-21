@@ -81,6 +81,10 @@ The pitch prototype is built and working locally, in two versions. The site runs
 - A 7-day free trial, shown as a proposal from the benchmark.
 - A "what free gets, and what members add" comparison table, and a short FAQ.
 
+## Scope
+
+SCOPE.md lists every feature, page and backend capability, with its status and whether a pitch note labels it. It is the checklist for the pitch materials.
+
 ## Since the second brief: Laravel and one source of truth
 
 Nick's direction: show that the site slots into their current setup, with a clear plan to bring their separate streams into one source of truth, in Laravel, ready to take on their brand. Done in nine stages, each committed and checked in both versions and on phones:

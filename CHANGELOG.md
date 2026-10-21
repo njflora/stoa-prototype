@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The scope, in one place
+
+### Added
+- SCOPE.md: every feature, page and backend capability, one table per area, with what it does, where it lives, which version has it, what it answers in the planning doc, its status and whether a pitch note labels it. It ends with what is out of scope and what is planned for week 6.
+
 ## 2026-10-21: Answers to the open questions
 
 ### Added
