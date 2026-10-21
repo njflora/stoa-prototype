@@ -23,7 +23,7 @@ class WatchController extends Controller
 
         return response()->json([
             'locked' => false,
-            'sources' => EpisodeSource::where('episode_id', $episode->id)->orderBy('id')->get()->map->toData()->all(),
+            'sources' => EpisodeSource::where('episode_id', $episode->id)->get()->sortBy(fn ($s) => EpisodeSource::ORDER[$s->platform] ?? 9)->values()->map->toData()->all(),
         ]);
     }
 }

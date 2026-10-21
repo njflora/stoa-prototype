@@ -114,7 +114,7 @@ The pitch prototype is built and working locally. All three priority sections fr
 ## Not done or not tested
 
 - **Not deployed, on purpose.** Deployment is scheduled for week 6 with the PWA. GitHub Pages will need a small router change.
-- **Real Rumble and Odysee embeds are untested.** No embed URLs are set, so the placeholder shows. Rumble on phones (a key finding) needs a real embed to test.
+- **Real Rumble, Odysee and BitChute embeds are untested.** No embed URLs are set, so the placeholder shows for those platforms. The site's own video (VOD) plays a CC0 clip. Rumble on phones (a key finding) needs a real embed to test.
 - **Real notifications are untested.** The test browser blocks them. The logic is in place.
 - **Pages still placeholders:** Sign in only (the demo panel switches viewers instead).
 - **Not started:** installable PWA, the technical audit, the bug report and screen recording, the Topic 4 and 5 write-ups, the measurement page.
@@ -128,6 +128,7 @@ The pitch prototype is built and working locally. All three priority sections fr
   | | Static preview (GitHub Pages) | Laravel version |
   |---|---|---|
   | Members' comments and reading lists | In the files; the page shows the gate to non-members | Sent to members only; others get a count |
+  | Members' stream links | In the files; the page shows the lock | Sent only to those who may watch |
   | Comments, votes, forum threads | Saved in this browser | Saved on the account |
   | Purchases, communities | Saved in this browser | Saved on the account |
   | Who can see what | Checked in the page | Checked on the server, with tests |
@@ -158,7 +159,7 @@ Each idea maps to a finding in the planning doc. Effort is S (hours), M (a day o
 1. **Which review notes should be fixed first?** REVIEW-NOTES.md lists 24. The suggestion is notes 1, 2, 4 and 5 (the live schedule mismatch, missing and out-of-date pitch notes, the article error state, and a pause button on the hero carousel). Each is small.
 2. **Pitch notes for your feedback features.** Contributor profiles, the members' gate, article comments, the preview mute button and the members' Shows page have no pitch note. Should they be labelled as proposals with the source "Nick's feedback", or tied to a finding in the planning doc?
 3. **The exact wording of Findings 3 and 9.** The pitch notes for the show archive and search only say "Listed as a gap in the planning doc". Can you paste the findings' wording, so the "today" line is specific?
-4. **Real Rumble and Odysee embed URLs.** Finding 1 (the black screen) and Rumble on phones cannot be tested without them. Do you have test videos that are fine to use in a public repo?
+4. **Real Rumble, Odysee and BitChute embed URLs.** Finding 1 (the black screen) and Rumble on phones cannot be tested without them. Do you have test videos that are fine to use in a public repo?
 5. **Deployment in week 6.** What should the GitHub repository be called (it sets the site's address and the `base` setting), and is adding `vite-plugin-pwa` for the installable app approved?
 6. **Live chat replay for The Forum and Statecraft.** Both are described as live shows. Should they get chat replay too, like The Stoa Podcast and Morning Brief?
 7. **Votes.** Likes and dislikes are forgotten when you leave a page, unlike watch progress and purchases. Save them, or say in the pitch that they are not saved in the demo?

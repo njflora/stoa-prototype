@@ -11,8 +11,10 @@ import EpisodeCard from '@/components/EpisodeCard.vue'
 import LiveChat from '@/components/LiveChat.vue'
 import ReadingList from '@/components/ReadingList.vue'
 import SeriesQueue from '@/components/SeriesQueue.vue'
+import SourcePlayer from '@/components/SourcePlayer.vue'
 import TitleCard from '@/components/TitleCard.vue'
 import { getEpisode, listEpisodes } from '@/api/catalogue'
+import { getPlay } from '@/api/discussion'
 import { getSeries, getShow, seriesOf } from '@/data/catalogue'
 import { useQuery } from '@/composables/useQuery'
 import { usePlayback } from '@/composables/usePlayback'
@@ -22,16 +24,16 @@ import { artForEpisode } from '@/data/media'
 import { EPISODE_PRICE } from '@/data/membership'
 import { formatDuration, formatPrice, formatPublished, toRoman } from '@/utils/format'
 
-// An episode page. Series episodes get the series queue beside the
-// player, and when a part ends the next one plays after a short
-// countdown, unless autoplay is off. The player is a placeholder here;
-// on a real site this is where their own video player would sit.
+// An episode page. The player offers every platform the episode is on
+// (Rumble, Odysee, BitChute and the site's own VOD). Series episodes get
+// the series queue beside the player, and when a part ends the next one
+// plays after a short countdown, unless autoplay is off.
 
 const UP_NEXT_SECONDS = 8
 
 const route = useRoute()
 const router = useRouter()
-const { canWatch, isSignedIn } = useViewer()
+const { viewer, canWatch, isSignedIn } = useViewer()
 const { progressFor, setProgress, markWatched } = useWatchProgress()
 const { autoplay, finishSignal } = usePlayback()
 
@@ -45,6 +47,14 @@ const series = computed(() => {
 })
 const locked = computed(() => !!episode.value && !canWatch(episode.value))
 const buying = ref(false)
+
+// Where to watch it: asked only when the viewer may watch, and again when
+// that changes (a purchase, or a different viewer).
+const play = useQuery(
+  () => `${episode.value?.id}|${viewer.value}|${locked.value}`,
+  async () => (episode.value && !locked.value ? getPlay(episode.value.id) : null),
+)
+const sources = computed(() => (play.data.value && !play.data.value.locked ? play.data.value.sources : []))
 
 const partIndex = computed(() =>
   series.value && episode.value ? series.value.episodes.findIndex((e) => e.id === episode.value!.id) : -1,
@@ -133,18 +143,85 @@ watchEffect(() => {
       :class="sideColumn ? 'lg:grid-cols-[minmax(0,1fr)_360px]' : 'lg:grid-cols-1'"
     >
       <div>
-        <!-- The player. -->
-        <div class="relative aspect-video w-full overflow-hidden bg-black lg:rounded-xl">
+        <!-- The player: every platform this episode is on, in one frame. -->
+        <SourcePlayer
+          v-if="!locked"
+          :key="episode.id"
+          :show="show"
+          :title="episode.title"
+          :sources="sources"
+          :mode="episode.live ? 'recording' : 'episode'"
+        >
+          <template #placeholder>
+            <TitleCard :show="show" :art="artForEpisode(episode)" :show-text="false" size="hero" :animated="!ended" />
+          </template>
+          <template v-if="ended" #overlay>
+            <!-- Up next, once the episode ends. -->
+            <div
+              class="absolute inset-0 grid place-items-center bg-black/70 px-4 text-center"
+              role="status"
+            >
+              <div v-if="nextPart && canWatch(nextPart)">
+                <p class="text-xs font-semibold tracking-widest text-accent-bright uppercase">Up next</p>
+                <p class="mt-2 text-lg font-semibold sm:text-2xl">
+                  Part {{ toRoman(nextPart.series!.part) }}: {{ nextPart.title }}
+                </p>
+                <p v-if="counting" class="mt-1 text-sm text-white/75 tabular-nums">
+                  Playing in {{ secondsLeft }}s
+                </p>
+                <div class="mt-4 flex justify-center gap-2">
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+                    @click="playNext"
+                  >
+                    <AppIcon name="play" />
+                    Play now
+                  </button>
+                  <button
+                    type="button"
+                    class="rounded-lg bg-white/15 px-5 py-2.5 text-sm font-semibold hover:bg-white/25"
+                    @click="cancelNext"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              <div v-else-if="series">
+                <p class="text-lg font-semibold sm:text-2xl">You've finished {{ series.name }}</p>
+                <RouterLink
+                  :to="`/series/${series.slug}`"
+                  class="mt-4 inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+                >
+                  Back to the series
+                </RouterLink>
+              </div>
+              <div v-else>
+                <p class="text-lg font-semibold sm:text-2xl">Thanks for watching</p>
+                <button
+                  type="button"
+                  class="mt-4 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+                  @click="ended = false"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </template>
+        </SourcePlayer>
+
+        <!-- Members only: the artwork, blurred, and two ways in. No stream addresses are fetched. -->
+        <div v-else class="relative aspect-video w-full overflow-hidden bg-black lg:rounded-xl">
           <TitleCard
             :show="show"
             :art="artForEpisode(episode)"
             :show-text="false"
             size="hero"
-            :animated="!locked && !ended"
-            :class="locked ? 'scale-110 blur-xl brightness-75' : ''"
+            :animated="false"
+            class="scale-110 blur-xl brightness-75"
           />
 
-          <div v-if="locked" class="absolute inset-0 grid place-items-center px-4 text-center">
+          <div class="absolute inset-0 grid place-items-center px-4 text-center">
             <div>
               <!-- Phones: compact, so everything fits in a 16:9 frame 320px wide. -->
               <span class="mx-auto grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/20 max-sm:hidden">
@@ -178,66 +255,6 @@ watchEffect(() => {
               </div>
               <PitchNote id="buy-episode" class="mt-2 sm:mt-3" />
               <BuyEpisodeDialog v-if="episode" v-model="buying" :episode="episode" />
-            </div>
-          </div>
-
-          <div v-else-if="!ended" class="absolute inset-0 grid place-items-center px-4 text-center">
-            <div>
-              <p class="font-serif text-2xl font-bold sm:text-4xl">{{ show.name }}</p>
-              <p class="mt-2 text-[11px] tracking-widest text-white/70 uppercase">Placeholder video</p>
-            </div>
-          </div>
-
-          <!-- Up next, once the episode ends. -->
-          <div
-            v-else
-            class="absolute inset-0 grid place-items-center bg-black/70 px-4 text-center"
-            role="status"
-          >
-            <div v-if="nextPart && canWatch(nextPart)">
-              <p class="text-xs font-semibold tracking-widest text-accent-bright uppercase">Up next</p>
-              <p class="mt-2 text-lg font-semibold sm:text-2xl">
-                Part {{ toRoman(nextPart.series!.part) }}: {{ nextPart.title }}
-              </p>
-              <p v-if="counting" class="mt-1 text-sm text-white/75 tabular-nums">
-                Playing in {{ secondsLeft }}s
-              </p>
-              <div class="mt-4 flex justify-center gap-2">
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
-                  @click="playNext"
-                >
-                  <AppIcon name="play" />
-                  Play now
-                </button>
-                <button
-                  type="button"
-                  class="rounded-lg bg-white/15 px-5 py-2.5 text-sm font-semibold hover:bg-white/25"
-                  @click="cancelNext"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-            <div v-else-if="series">
-              <p class="text-lg font-semibold sm:text-2xl">You've finished {{ series.name }}</p>
-              <RouterLink
-                :to="`/series/${series.slug}`"
-                class="mt-4 inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
-              >
-                Back to the series
-              </RouterLink>
-            </div>
-            <div v-else>
-              <p class="text-lg font-semibold sm:text-2xl">Thanks for watching</p>
-              <button
-                type="button"
-                class="mt-4 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
-                @click="ended = false"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

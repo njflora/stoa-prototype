@@ -8,6 +8,7 @@ use App\Discussion\Thread;
 use App\Models\Article;
 use App\Models\Contributor;
 use App\Models\Episode;
+use App\Models\EpisodeSource;
 use App\Models\Show;
 use App\Models\User;
 use Illuminate\Console\Attributes\Description;
@@ -113,8 +114,16 @@ class ExportStatic extends Command
             $comments = $discussions->threads($threads, $member);
             $lists = $discussions->readingLists($threads, $member);
 
+            $sources = EpisodeSource::whereIn('episode_id', array_map(fn (Thread $t) => $t->id, $threads))->get()
+                ->sortBy(fn (EpisodeSource $s) => EpisodeSource::ORDER[$s->platform] ?? 9)
+                ->groupBy('episode_id');
+
             return collect($threads)->mapWithKeys(fn (Thread $t) => [
-                $t->id => ['thread' => $comments[$t->key()], 'readingList' => $lists[$t->key()]],
+                $t->id => [
+                    'thread' => $comments[$t->key()],
+                    'readingList' => $lists[$t->key()],
+                    'play' => ['locked' => false, 'sources' => ($sources[$t->id] ?? collect())->values()->map->toData()->all()],
+                ],
             ])->all();
         };
         foreach (Show::orderBy('position')->pluck('id') as $showId) {
@@ -128,7 +137,9 @@ class ExportStatic extends Command
         foreach (Article::pluck('id') as $id) {
             $this->write("extras/articles/{$id}.json", ['thread' => $discussions->thread(Thread::find('article', $id), $member)]);
         }
-        $this->write('extras/live/live-show.json', $extras([Thread::find('live', 'live-show')])['live-show']);
+        $live = $extras([Thread::find('live', 'live-show')])['live-show'];
+        unset($live['play']); // the live stream's sources come with the reference data
+        $this->write('extras/live/live-show.json', $live);
     }
 
     /** Newest-first pages, and the popular list for each period. */

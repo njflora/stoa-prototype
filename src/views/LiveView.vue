@@ -7,7 +7,7 @@ import PitchNote from '@/components/PitchNote.vue'
 import CommentSection from '@/components/CommentSection.vue'
 import LiveChat from '@/components/LiveChat.vue'
 import LiveCountdown from '@/components/LiveCountdown.vue'
-import LivePlayer from '@/components/LivePlayer.vue'
+import SourcePlayer from '@/components/SourcePlayer.vue'
 import MemberHandoff from '@/components/MemberHandoff.vue'
 import ReadingList from '@/components/ReadingList.vue'
 import ReminderButton from '@/components/ReminderButton.vue'
@@ -168,10 +168,11 @@ const flagship = computed(() => schedule.value.find((item) => item.id === show.i
           </div>
         </div>
 
-        <LivePlayer
+        <SourcePlayer
           v-else
           :show="show"
           :title="title"
+          :sources="event.sources"
           :mode="phase === 'ended' ? 'recording' : 'live'"
           :viewers="phase === 'members' ? 642 : event.viewers"
         />

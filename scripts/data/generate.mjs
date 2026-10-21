@@ -15,6 +15,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { articles as articleSources } from './articles.mjs'
 import { buildExtras } from './extras.mjs'
+import { buildSources, liveSources } from './sources.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const OUT = join(ROOT, 'backend', 'database', 'seed')
@@ -454,6 +455,8 @@ const articles = articleSources
 // popularity; comment counts are then set to the real thread sizes.
 const allEpisodes = [...byShow.values()].flat()
 const extras = buildExtras({ episodes: allEpisodes, articles, now: generatedAt, seededRandom: seeded })
+// Where each episode is published (Rumble, Odysee, BitChute, VOD).
+const sources = buildSources({ episodes: allEpisodes, now: generatedAt, seededRandom: seeded })
 
 // ---------- write the seed data ----------
 // This script only invents the catalogue. Laravel is the source of truth:
@@ -480,6 +483,7 @@ write('articles.json', articles)
 write('comments.json', extras.threads)
 // Reading lists by episode, and the live show's.
 write('reading-lists.json', extras.lists)
+write('sources.json', sources)
 write('live.json', {
   showId: 'stoa-podcast',
   number: 1531,
@@ -487,10 +491,12 @@ write('live.json', {
   hostIds: ['andrew', 'richard', 'tom'],
   viewers: 1984,
   startHour: slotOf('stoa-podcast').hour,
+  sources: liveSources,
 })
 
 const counts = Object.fromEntries(shows.map((s) => [s.id, byShow.get(s.id).length]))
 console.log('Episodes:', episodes.length, counts)
 console.log('Series:', series.length, '| Articles:', articles.length)
+console.log('Sources:', Object.entries(sources.reduce((n, s) => ({ ...n, [s.status]: (n[s.status] ?? 0) + 1 }), {})).map(([k, v]) => `${k} ${v}`).join(', '))
 console.log('Comments:', extras.threads.reduce((n, t) => n + t.comments.reduce((m, c) => m + 1 + c.replies.length, 0), 0), '| Reading list items:', extras.lists.reduce((n, l) => n + l.items.length, 0))
 console.log('Seed data written to', OUT)

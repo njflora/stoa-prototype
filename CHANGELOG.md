@@ -2,6 +2,21 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: One player for every stream
+
+### Added
+- One player for Rumble, Odysee, BitChute and the site's own video on demand (VOD), on the live page and every episode page. It offers only the platforms an episode is on, and shows any still processing greyed out. Every switch builds a fresh player, so it never goes black.
+- Every episode's platforms are in the database (episode_sources): 19,814 links. The Stoa Podcast and Morning Brief are on all four platforms; Conversations on Rumble, Odysee and VOD; members' shows on VOD only, with free previews also on Rumble. The newest episodes are still processing on the mirrors, and a few links are missing or failed, ready for the content desk.
+- The site's own player really plays: VOD points at the CC0 ocean clip already in the site. The platform links are invented, so their frames show a placeholder unless a real test embed is set in .env.local. BitChute embeds are accepted only from bitchute.com/embed.
+- A pitch note: "Every stream, one player" (Finding 1).
+
+### Changed
+- Stream links for members' episodes come from /api/episodes/{id}/play, and only for viewers who may watch: a members' episode sends nobody else even the list of platforms. The static preview holds every episode's sources and checks in the page.
+- The episode page uses the same player as the live page instead of its own placeholder.
+
+### Fixed
+- The intro's pitch note described the old version (a stoa tied with a ribbon). It now describes the view down the colonnade.
+
 ## 2026-10-20: Real access control
 
 ### Added

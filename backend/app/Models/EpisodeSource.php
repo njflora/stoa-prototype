@@ -10,6 +10,9 @@ class EpisodeSource extends Model
 {
     public $timestamps = false;
 
+    /** The order the player lists them in. */
+    public const ORDER = ['rumble' => 0, 'odysee' => 1, 'bitchute' => 2, 'vod' => 3];
+
     protected $guarded = [];
 
     protected function casts(): array

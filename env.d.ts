@@ -8,6 +8,8 @@ interface ImportMetaEnv {
   readonly VITE_RUMBLE_EMBED_URL?: string
   /** Full embed URL copied from Odysee's Share → Embed option. */
   readonly VITE_ODYSEE_EMBED_URL?: string
+  /** Full embed URL copied from BitChute's Share → Embed option. */
+  readonly VITE_BITCHUTE_EMBED_URL?: string
 }
 
 interface ImportMeta {

@@ -14,6 +14,7 @@ import { shiftDate, storedPageOf } from './catalogue'
 import type { ChatTier } from '@/data/chat'
 import type { Comment } from '@/data/comments'
 import type { ReadingItem } from '@/data/readingLists'
+import type { EpisodeSource } from '@/data/streams'
 import { readJson, writeJson } from '@/composables/storage'
 import type { Vote } from '@/types/content'
 
@@ -24,6 +25,9 @@ export type ThreadRef = { type: 'episode'; id: string } | { type: 'article'; id:
 export type Thread =
   | { locked: true; open: boolean; count: number }
   | { locked: false; open: boolean; count: number; canPost?: boolean; comments: Comment[] }
+
+/** Where to watch an episode. Locked: nothing at all, not even which platforms. */
+export type PlayAnswer = { locked: true } | { locked: false; sources: EpisodeSource[] }
 
 export type ReadingListAnswer =
   | { locked: true; open: boolean; count: number }
@@ -46,18 +50,26 @@ const POSTS_KEY = 'stoa-posts'
 const VOTES_KEY = 'stoa-votes'
 const TOPICS_KEY = 'stoa-forum-topics'
 
+/** What the static preview stores for each episode, grouped by archive page. */
+export interface StoredExtras {
+  thread: Thread
+  readingList: ReadingListAnswer
+  play: PlayAnswer
+}
+
+/** An episode's comments, reading list and sources in the static preview. */
+export async function storedExtras(episodeId: string): Promise<StoredExtras> {
+  const place = storedPageOf(episodeId)
+  if (!place) throw new Error(`No episode ${episodeId}`)
+  const page = await getJson<Record<string, StoredExtras>>(`extras/episodes/${place.showId}/${place.page}.json`)
+  const extras = page[episodeId]
+  if (!extras) throw new Error(`No episode ${episodeId}`)
+  return extras
+}
+
 /** Where the static preview keeps a thread and its reading list. */
 async function stored(ref: ThreadRef): Promise<{ thread: Thread; readingList?: ReadingListAnswer }> {
-  if (ref.type === 'episode') {
-    const place = storedPageOf(ref.id)
-    if (!place) throw new Error(`No episode ${ref.id}`)
-    const page = await getJson<Record<string, { thread: Thread; readingList: ReadingListAnswer }>>(
-      `extras/episodes/${place.showId}/${place.page}.json`,
-    )
-    const extras = page[ref.id]
-    if (!extras) throw new Error(`No episode ${ref.id}`)
-    return extras
-  }
+  if (ref.type === 'episode') return storedExtras(ref.id)
   return getJson(ref.type === 'article' ? `extras/articles/${ref.id}.json` : 'extras/live/live-show.json')
 }
 
@@ -118,6 +130,16 @@ export async function getReadingList(ref: ThreadRef): Promise<ReadingListAnswer>
   const { readingList } = await stored(ref)
   if (!readingList) throw new Error('No reading list here')
   return readingList
+}
+
+/**
+ * GET /api/episodes/{id}/play: the episode's platforms. In Laravel mode a
+ * viewer who may not watch gets `{ locked: true }`; the static preview holds
+ * every episode's sources and the page checks who can watch.
+ */
+export async function getPlay(episodeId: string): Promise<PlayAnswer> {
+  if (API_MODE === 'laravel') return getFresh<PlayAnswer>(`episodes/${episodeId}/play`)
+  return (await storedExtras(episodeId)).play
 }
 
 // ---------- changes ----------

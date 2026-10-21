@@ -2,6 +2,8 @@
 // planning doc (show, hosts, date, free or premium, series and part), so
 // real feed data can replace the placeholder catalogue without code changes.
 
+import type { EpisodeSource } from '@/data/streams'
+
 /** Who can watch an episode. Freemium is a free preview from a premium show. */
 export type Access = 'free' | 'freemium' | 'premium'
 
@@ -121,4 +123,6 @@ export interface LiveEvent {
   viewers: number
   /** Local hour the show starts each day, used for the countdown. */
   startHour: number
+  /** The platforms it streams on, at the same time. */
+  sources: EpisodeSource[]
 }

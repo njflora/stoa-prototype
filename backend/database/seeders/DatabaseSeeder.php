@@ -112,7 +112,20 @@ class DatabaseSeeder extends Seeder
             'host_ids' => json_encode($live['hostIds']),
             'viewers' => $live['viewers'],
             'start_hour' => $live['startHour'],
+            'sources' => json_encode($live['sources']),
         ]);
+
+        // Where each episode is published: one row per episode and platform.
+        foreach (array_chunk($this->read('sources'), 1000) as $chunk) {
+            DB::table('episode_sources')->insert(array_map(fn (array $s) => [
+                'episode_id' => $s['episodeId'],
+                'platform' => $s['platform'],
+                'status' => $s['status'],
+                'external_id' => $s['externalId'] ?? null,
+                'embed_url' => $s['embedUrl'] ?? null,
+                'synced_at' => $this->datetime($s['syncedAt']),
+            ], $chunk));
+        }
     }
 
     /** Name => user id, for the people who comment. */
