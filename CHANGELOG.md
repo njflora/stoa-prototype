@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The intro plays on any first page again
+
+### Changed
+- The stoa intro plays once per visitor again, on whichever page they arrive first. A direct link, such as /live, shows it too. The homepage-only rule is removed. After it has been seen or skipped once, it does not show again on that device. "Replay intro" in the demo panel and ?intro=1 still play it.
+
 ## 2026-10-21: The footer matches their site
 
 ### Changed

@@ -701,7 +701,7 @@ const forced = new URLSearchParams(window.location.search).get('intro') === '1'
 const open = ref<boolean>(forced || (onHomepage && !readJson(SEEN_KEY, false)))
 ```
 
-It plays when a visitor lands on the homepage and the browser has not seen it, or when the link says `?intro=1`. A direct link to any other page goes straight there. The demo panel's "Replay intro" sets `open` again.
+It plays on a visitor's first page, whichever link they followed, when the browser has not seen it. It also plays when the link says `?intro=1`. The demo panel's "Replay intro" sets `open` again.
 
 Accessibility, in short:
 - the page behind is `inert` while the intro is open

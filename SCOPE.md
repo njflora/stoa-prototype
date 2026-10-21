@@ -138,7 +138,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
-| The stoa intro | First visit only, and only when landing on the homepage: the view down a stoa to a wax seal, broken to enter; Skip intro; Replay intro in the demo panel | `StoaIntro.vue`, `useIntro.ts` | Both | Proposal: Nick's idea | Built | Yes |
+| The stoa intro | First visit only, on whichever page the visitor arrives: the view down a stoa to a wax seal, broken to enter; Skip intro; Replay intro in the demo panel | `StoaIntro.vue`, `useIntro.ts` | Both | Proposal: Nick's idea | Built | Yes |
 
 ## Pitch mode
 
