@@ -10,6 +10,7 @@ import { articleCategoryColours, hostNames } from '@/data/catalogue'
 import { useQuery } from '@/composables/useQuery'
 import type { ArticleCategory } from '@/types/content'
 import { formatPublished } from '@/utils/format'
+import PitchNote from '@/components/PitchNote.vue'
 
 // Every article, 24 to a page: newest, most read in a period, or most
 // controversial. The newest piece leads. Category, sort and page live in
@@ -80,7 +81,7 @@ const rest = computed(() => (articles.data.value?.items ?? []).slice(lead.value 
 
 <template>
   <main class="px-4 pt-8 sm:px-8">
-    <h1 class="text-3xl font-bold sm:text-4xl">Articles</h1>
+    <h1 class="text-3xl font-bold sm:text-4xl">Articles <PitchNote id="articles-index" class="align-middle" /></h1>
     <p class="mt-2 max-w-2xl text-white/75">Written pieces from the presenters, each ending with its sources. Free to read.</p>
 
     <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">

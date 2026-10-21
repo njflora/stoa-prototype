@@ -16,6 +16,7 @@ import { useReminders } from '@/composables/useReminders'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import { formatPrice } from '@/utils/format'
+import PitchNote from '@/components/PitchNote.vue'
 
 // The account page, built from the demo's real state: it changes as you
 // watch, set reminders or switch viewer in the demo panel. Billing, email
@@ -56,7 +57,7 @@ const settings = [
     <div class="flex items-center gap-4">
       <span class="grid size-14 place-items-center rounded-full bg-accent text-lg font-bold">{{ user.initials }}</span>
       <div>
-        <h1 class="text-2xl font-bold sm:text-3xl">{{ user.name }}</h1>
+        <h1 class="text-2xl font-bold sm:text-3xl">{{ user.name }} <PitchNote id="account-page" class="align-middle" /></h1>
         <p class="text-sm text-muted">{{ tier ? `${tier.name} member` : 'Free account' }}</p>
       </div>
     </div>

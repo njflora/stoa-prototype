@@ -5,6 +5,7 @@ import AppIcon, { type IconName } from './AppIcon.vue'
 import { tierStyles } from '@/data/chat'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
 import { useViewer } from '@/composables/useViewer'
+import PitchNote from './PitchNote.vue'
 
 // Phones only (below 768px): an app-style tab bar fixed to the bottom of
 // the screen, within reach of a thumb. "More" opens a sheet with the rest.
@@ -128,6 +129,7 @@ const tabClass = 'flex h-full flex-col items-center justify-center gap-0.5 text-
           :style="{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }"
         >
           <div class="mx-auto mb-3 h-1 w-10 rounded-full bg-white/25" aria-hidden="true" />
+          <PitchNote id="phone-tabs" class="mb-2" />
           <ul class="divide-y divide-white/5">
             <li>
               <RouterLink to="/articles" class="flex h-12 items-center justify-between text-base">

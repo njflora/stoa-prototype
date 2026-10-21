@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { reference } from '@/api/catalogue'
+import PitchNote from '@/components/PitchNote.vue'
 
 // Everyone who presents, writes or appears regularly. Initials instead of
 // photos: the contributors are invented, and no real likeness is used.
@@ -11,7 +12,7 @@ const initials = (name: string) => name.split(' ').map((w) => w[0]).join('').sli
 
 <template>
   <main class="px-4 pt-8 sm:px-8">
-    <h1 class="text-3xl font-bold sm:text-4xl">Contributors</h1>
+    <h1 class="text-3xl font-bold sm:text-4xl">Contributors <PitchNote id="contributor-profiles" class="align-middle" /></h1>
     <p class="mt-2 max-w-2xl text-white/75">The people behind the shows and articles. Open a profile to see everything they have made.</p>
 
     <ul class="mt-8 grid grid-cols-1 gap-4 min-[560px]:grid-cols-2 lg:grid-cols-3">

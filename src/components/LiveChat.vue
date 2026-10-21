@@ -157,6 +157,7 @@ onUnmounted(() => {
           {{ mode === 'replay' ? 'Chat replay' : mode === 'locked' ? "Members' chat" : 'Live chat' }}
         </h2>
         <PitchNote v-if="mode === 'replay'" id="chat-replay" />
+        <PitchNote v-if="following" id="chat-sync" />
         <PitchNote v-else-if="mode === 'live'" id="chat-kept" />
       </div>
       <span v-if="mode === 'replay'" class="text-xs text-muted">Synced to the recording</span>

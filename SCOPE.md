@@ -13,8 +13,8 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
 | Top bar | Five links, search, Shop and Upgrade in one short bar | `SiteHeader.vue` | Both | Finding 2 | Built | Yes |
-| Phone tab bar | Home, Live, Shows, Search and More, within reach of a thumb | `MobileTabBar.vue` | Both | Proposal: Nick's idea | Built | No |
-| Footer | Contributors, FAQ and contact links, credits, newsletter sign-up | `SiteFooter.vue`, `NewsletterSignup.vue` | Both | Proposal: Nick's idea | Built (the newsletter sends nothing) | No |
+| Phone tab bar | Home, Live, Shows, Search and More, within reach of a thumb | `MobileTabBar.vue` | Both | Proposal: Nick's idea | Built | Yes |
+| Footer | Contributors, FAQ and contact links, credits, newsletter sign-up | `SiteFooter.vue`, `NewsletterSignup.vue` | Both | Proposal: Nick's idea | Built (the newsletter sends nothing) | Yes |
 | Account menu and tier badge | The signed-in name, tier badge and reminders bell | `SiteHeader.vue`, `UserBadge.vue`, `NotificationBell.vue` | Both | Finding 11 (reminders) | Built | Partly (reminders) |
 | Sign in | An honest page: no passwords; the demo panel is the easier way | `SignInView.vue` | Both | Demo only | Placeholder | No (demo only) |
 | Contact | Placeholder addresses | `ContactView.vue` | Both | Proposal: Nick's idea | Placeholder | No |
@@ -35,7 +35,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 | Series row | Multi-part series, played in order | `HomeView.vue`, `SeriesCard.vue` | Both | Finding 10 | Built | Yes |
 | Card previews, with sound on demand | Cards play a preview on hover (or in view on phones); a mute button | `EpisodeCard.vue`, `PreviewAnimation.vue`, `PreviewSoundButton.vue` | Both | Finding 12 (proposal) | Built | Yes |
 | Members' shows rows | Members' shows in full, locked for free viewers, with a free preview | `HomeView.vue` | Both | Topic 3 | Built | Yes |
-| Latest articles row | The newest articles | `HomeView.vue`, `ArticleCard.vue` | Both | Proposal: Nick's idea | Built | No |
+| Latest articles row | The newest articles | `HomeView.vue`, `ArticleCard.vue` | Both | Proposal: Nick's idea | Built | Yes |
 
 ## Live page
 
@@ -54,12 +54,12 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
 | One player for every stream | Rumble, Odysee, BitChute and Stoa; only the platforms an episode is on; never goes black | `SourcePlayer.vue`, `src/data/streams.ts` | Both | Finding 1 | Built (real embeds untested) | Yes |
-| Stoa player controls | Their style: progress, volume, quality, speed, full screen | `VodPlayer.vue` | Both | Proposal: Nick's idea | Built | No |
-| Player sized to the screen | Player and chat always fit on screen | `src/assets/main.css` (`--player-max-w`) | Both | Proposal: Nick's idea | Built | No |
+| Stoa player controls | Their style: progress, volume, quality, speed, full screen | `VodPlayer.vue` | Both | Proposal: Nick's idea | Built | Yes |
+| Player sized to the screen | Player and chat always fit on screen | `src/assets/main.css` (`--player-max-w`) | Both | Proposal: Nick's idea | Built | Yes (with the player) |
 | Locked episodes | Blurred art, Upgrade, or buy this one | `WatchView.vue` | Both | Topic 3 | Built | Yes |
 | Buy a single episode | £1.89, kept on the account; the server unlocks that one | `BuyEpisodeDialog.vue`, `usePurchases.ts`, `AccountController.php` | Both | Kept (their site) | Built (no payment taken) | Yes |
 | Chat replay | The live chat beside the recording | `LiveChat.vue` | Both | Finding 11 | Built | Yes |
-| Chat replay synced with the player | Seek, pause and speed move both ways; can be unsynced | `usePlayerClock.ts`, `LiveChat.vue` | Both | Proposal: Nick's idea | Built | No |
+| Chat replay synced with the player | Seek, pause and speed move both ways; can be unsynced | `usePlayerClock.ts`, `LiveChat.vue` | Both | Proposal: Nick's idea | Built | Yes |
 | Comments | Votes, sorting, replies; open or members only | `CommentSection.vue`, `DiscussionController.php` | Both | Proposal (votes); kept (comments) | Built | Yes |
 | Open and members' spaces | Free accounts post in casual spaces only | `config/stoa.php`, `ThreadPolicy.php` | Both | Proposal: Nick's idea | Built | Yes |
 | Reading list | Sources in one shape, with when they came up | `ReadingList.vue` | Both | Finding 4 | Built | Yes |
@@ -85,7 +85,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
-| Contributors page | Everyone who presents or writes | `ContributorsView.vue` | Both | Kept (their site), upgraded | Built | No |
+| Contributors page | Everyone who presents or writes | `ContributorsView.vue` | Both | Kept (their site), upgraded | Built | Yes |
 | Profile pages | Bio, shows, series, articles, every episode | `ContributorView.vue` | Both | Kept (their site), upgraded | Built | Yes |
 | Name links | Every name links to its profile | `ContributorNames.vue` | Both | Kept, upgraded | Built | Yes (with profiles) |
 
@@ -93,7 +93,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
-| Articles index | Newest, trending, popular by period and controversial; categories; a lead piece | `ArticlesView.vue` | Both | Proposal: Nick's idea | Built | No |
+| Articles index | Newest, trending, popular by period and controversial; categories; a lead piece | `ArticlesView.vue` | Both | Proposal: Nick's idea | Built | Yes |
 | Article page | The piece, its sources, an episode to watch next, more from the writer | `ArticleView.vue` | Both | Finding 4 | Built | Yes |
 | Comments under articles | Open to every account, with votes and sorting | `CommentSection.vue` | Both | Kept (their site) | Built | Yes |
 | Reading lists on articles | Every article ends with its sources | `ReadingList.vue` | Both | Proposal: Nick's idea | Built | Yes |
@@ -116,7 +116,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
-| Account page | Membership, communities, bought episodes, watch history, reminders, newsletter | `AccountView.vue` | Both | Proposal: Nick's idea | Built (billing and passwords are placeholders) | No |
+| Account page | Membership, communities, bought episodes, watch history, reminders, newsletter | `AccountView.vue` | Both | Proposal: Nick's idea | Built (billing and passwords are placeholders) | Yes |
 
 ## Members' page
 

@@ -1,6 +1,6 @@
 # Review notes
 
-Things noticed while reading the code for the walkthrough on 20 October 2026. The most important come first. Notes marked **Addressed** have been fixed since: 1, 3, 9, 10 and 24.
+Things noticed while reading the code for the walkthrough on 20 October 2026. The most important come first. Notes marked **Addressed** have been fixed since: 1, 2, 3, 9, 10 and 24.
 
 Effort: **S** is under an hour, **M** is a few hours to a day, **L** is several days.
 
@@ -33,6 +33,7 @@ Effort: **S** is under an hour, **M** is a few hours to a day, **L** is several 
   - Add notes for each feature, marked `proposal` with source "Nick's feedback" where no finding applies.
   - Update `show-archive`.
   - Copy the actual wording of Findings 3 and 9 from the planning doc into "today". **S**
+- **Addressed (21 October):** every feature in SCOPE.md now has a note where it makes sense, `show-archive` is up to date, and Findings 3 and 9 are quoted exactly.
 
 ### 3. Members-only content is protected only in the browser
 - **Where:**

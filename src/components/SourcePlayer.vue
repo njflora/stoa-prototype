@@ -223,6 +223,7 @@ async function share() {
       </div>
 
       <PitchNote id="every-stream" />
+      <PitchNote v-if="active?.platform === 'vod'" id="own-player" />
       <PitchNote id="player-switch" />
 
       <button type="button" class="ml-auto" :class="pillClass" @click="share">

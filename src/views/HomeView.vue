@@ -94,7 +94,7 @@ const rowFor = (showId: string) => home.data.value?.rows[showId] ?? []
         />
       </ContentRow>
 
-      <ContentRow title="Latest articles" subtitle="Free to read">
+      <ContentRow title="Latest articles" subtitle="Free to read" pitch="latest-articles">
         <template #action>
           <RouterLink to="/articles" class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white">
             See all

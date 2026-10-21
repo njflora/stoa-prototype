@@ -2,6 +2,16 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: A pitch note for every feature
+
+### Added
+- Pitch notes for the features that had none, all proposals from Nick's feedback: the phone tab bar, the footer, articles on the homepage, the site's own player, the chat replay in step with the video, the articles index and the account page. The contributors page shows the profiles note too. All 44 notes are placed: 19 answer findings, 20 are proposals and 5 credit what their site already does.
+
+### Changed
+- The intro's note is now "Brand moment (optional)": a proposal, noting that the homepage loads behind it and plays on arrival.
+- The show archive's note covers Popular by period and the contributor filter.
+- The "today" lines for Findings 3 and 9 quote the planning doc exactly.
+
 ## 2026-10-21: The scope, in one place
 
 ### Added

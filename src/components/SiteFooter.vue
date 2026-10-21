@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import NewsletterSignup from './NewsletterSignup.vue'
 import { brand } from '@/config/brand'
 import BrandLogo from './BrandLogo.vue'
+import PitchNote from './PitchNote.vue'
 
 // The way to everything not in the top bar: contributors, help and the small print.
 const links = [
@@ -28,6 +29,7 @@ const links = [
       </ul>
     </nav>
     <p class="md:max-w-sm md:pt-1">
+      <PitchNote id="footer" class="mb-2 block" />
       <BrandLogo class="text-sm text-white" />
       {{ brand.footerLine }}
       <RouterLink to="/credits" class="mt-1 inline-flex min-h-6 items-center underline hover:text-white">Image and video credits</RouterLink>
