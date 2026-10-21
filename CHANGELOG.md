@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Archive dates across clock changes
+
+### Fixed
+- The generator stepped back through the calendar 24 hours at a time, so at each clock change it landed on one day twice. Twice in the archive, two Chronos episodes shared a Sunday, and "Athens and Sparta" had part 2 dated with part 1. It now steps back by calendar days. 44 episodes from before March 2026 moved; nothing newer changed. Every weekly show now has one episode a week.
+
 ## 2026-10-21: Documentation for the Laravel version
 
 ### Added

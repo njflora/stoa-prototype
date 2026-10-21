@@ -85,7 +85,9 @@ function datesBack(count, days, startOffset = 1) {
   const d = new Date(generatedAt.getTime() - startOffset * DAY)
   while (out.length < count) {
     if (days.includes(d.getDay())) out.push(new Date(d))
-    d.setTime(d.getTime() - DAY)
+    // A calendar day back, not 24 hours: across a clock change, 24 hours
+    // lands on the same day twice or skips one.
+    d.setDate(d.getDate() - 1)
   }
   return out // newest first
 }

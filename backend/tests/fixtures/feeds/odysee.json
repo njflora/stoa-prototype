@@ -246,87 +246,78 @@
       },
       {
         "claim_id": "589671cd62639741a4024382b7c78456f507b9b8",
-        "name": "morning-brief-tue-31-dec-2024",
-        "canonical_url": "lbry://@stoa#0/morning-brief-tue-31-dec-2024#5",
-        "value": {
-          "title": "Morning Brief | Tue, 31 Dec 2024 - Stoa",
-          "release_time": "1735634607"
-        }
-      },
-      {
-        "claim_id": "728f13bafde76b142411a60e1f60082dfcf3ff48",
         "name": "morning-brief-cost-of-living-ministers-respond",
-        "canonical_url": "lbry://@stoa#0/morning-brief-cost-of-living-ministers-respond#7",
+        "canonical_url": "lbry://@stoa#0/morning-brief-cost-of-living-ministers-respond#5",
         "value": {
           "title": "Morning Brief | Cost of Living: Ministers Respond - Stoa",
           "release_time": "1734599135"
         }
       },
       {
-        "claim_id": "d5f871156d88f04281422a9e0583520648947190",
+        "claim_id": "728f13bafde76b142411a60e1f60082dfcf3ff48",
         "name": "the-stoa-podcast-1040",
-        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-1040#d",
+        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-1040#7",
         "value": {
           "title": "The Stoa Podcast #1040 - Stoa",
           "release_time": "1733148740"
         }
       },
       {
-        "claim_id": "8399031d090aaaf9e31d60f4a87c114d0d566ccb",
+        "claim_id": "d5f871156d88f04281422a9e0583520648947190",
         "name": "morning-brief-the-trade-deal-the-hidden-cost",
-        "canonical_url": "lbry://@stoa#0/morning-brief-the-trade-deal-the-hidden-cost#8",
+        "canonical_url": "lbry://@stoa#0/morning-brief-the-trade-deal-the-hidden-cost#d",
         "value": {
           "title": "Morning Brief | The Trade Deal: The Hidden Cost - Stoa",
           "release_time": "1727337601"
         }
       },
       {
-        "claim_id": "05f7e804b48134c8966eb8f5f9e7dcc916881104",
+        "claim_id": "8399031d090aaaf9e31d60f4a87c114d0d566ccb",
         "name": "the-stoa-podcast-929",
-        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-929#0",
+        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-929#8",
         "value": {
           "title": "The Stoa Podcast #929 - Stoa",
           "release_time": "1719578174"
         }
       },
       {
-        "claim_id": "f48efe8e85895fed1af3eb89389d7dd968bccbf3",
+        "claim_id": "05f7e804b48134c8966eb8f5f9e7dcc916881104",
         "name": "morning-brief-the-census-results-a-week-on",
-        "canonical_url": "lbry://@stoa#0/morning-brief-the-census-results-a-week-on#f",
+        "canonical_url": "lbry://@stoa#0/morning-brief-the-census-results-a-week-on#0",
         "value": {
           "title": "Morning Brief | The Census Results: A Week On - Stoa",
           "release_time": "1715848432"
         }
       },
       {
-        "claim_id": "272affeb8eab51d28fcd62e1d0444e312435b909",
+        "claim_id": "f48efe8e85895fed1af3eb89389d7dd968bccbf3",
         "name": "the-stoa-podcast-820",
-        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-820#2",
+        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-820#f",
         "value": {
           "title": "The Stoa Podcast #820 - Stoa",
           "release_time": "1706535787"
         }
       },
       {
-        "claim_id": "88f1dec4a1c67a7070febe760afb2fd0d2c99e4d",
+        "claim_id": "272affeb8eab51d28fcd62e1d0444e312435b909",
         "name": "morning-brief-party-conference-season-what-happens-next",
-        "canonical_url": "lbry://@stoa#0/morning-brief-party-conference-season-what-happens-next#8",
+        "canonical_url": "lbry://@stoa#0/morning-brief-party-conference-season-what-happens-next#2",
         "value": {
           "title": "Morning Brief | Party Conference Season: What Happens Next - Stoa",
           "release_time": "1702892222"
         }
       },
       {
-        "claim_id": "7d128b4b0611a9b6a63611cb82106f58f8ebae40",
+        "claim_id": "88f1dec4a1c67a7070febe760afb2fd0d2c99e4d",
         "name": "morning-brief-crime-and-the-cities-the-promise",
-        "canonical_url": "lbry://@stoa#0/morning-brief-crime-and-the-cities-the-promise#7",
+        "canonical_url": "lbry://@stoa#0/morning-brief-crime-and-the-cities-the-promise#8",
         "value": {
           "title": "Morning Brief | Crime and the Cities: The Promise - Stoa",
           "release_time": "1701767432"
         }
       },
       {
-        "claim_id": "784b4a7f3721d2dfb82c06351838c2308ec62687",
+        "claim_id": "7d128b4b0611a9b6a63611cb82106f58f8ebae40",
         "name": "the-stoa-podcast-760",
         "canonical_url": "lbry://@stoa#0/the-stoa-podcast-760#7",
         "value": {
@@ -335,43 +326,43 @@
         }
       },
       {
-        "claim_id": "e6adc8a455043f93bd6491a0f6e80ab04d1a5b6c",
+        "claim_id": "784b4a7f3721d2dfb82c06351838c2308ec62687",
         "name": "morning-brief-farmers-on-the-march-what-the-papers-say",
-        "canonical_url": "lbry://@stoa#0/morning-brief-farmers-on-the-march-what-the-papers-say#e",
+        "canonical_url": "lbry://@stoa#0/morning-brief-farmers-on-the-march-what-the-papers-say#7",
         "value": {
           "title": "Morning Brief | Farmers on the March: What the Papers Say - Stoa",
           "release_time": "1698656919"
         }
       },
       {
-        "claim_id": "ff233d1f3857db7cc4472c4e179cffccf6707a3e",
+        "claim_id": "e6adc8a455043f93bd6491a0f6e80ab04d1a5b6c",
         "name": "morning-brief-the-housing-question-what-the-papers-say",
-        "canonical_url": "lbry://@stoa#0/morning-brief-the-housing-question-what-the-papers-say#f",
+        "canonical_url": "lbry://@stoa#0/morning-brief-the-housing-question-what-the-papers-say#e",
         "value": {
           "title": "Morning Brief | The Housing Question: What the Papers Say - Stoa",
           "release_time": "1698050571"
         }
       },
       {
-        "claim_id": "8df47e4ec1692774655be7aa3828840cc0606b60",
+        "claim_id": "ff233d1f3857db7cc4472c4e179cffccf6707a3e",
         "name": "morning-brief-the-assisted-dying-bill-the-letters-page",
-        "canonical_url": "lbry://@stoa#0/morning-brief-the-assisted-dying-bill-the-letters-page#8",
+        "canonical_url": "lbry://@stoa#0/morning-brief-the-assisted-dying-bill-the-letters-page#f",
         "value": {
           "title": "Morning Brief | The Assisted Dying Bill: The Letters Page - Stoa",
           "release_time": "1692691959"
         }
       },
       {
-        "claim_id": "704b5f273f52c988ec1df65728e9a777185cbf5d",
+        "claim_id": "8df47e4ec1692774655be7aa3828840cc0606b60",
         "name": "morning-brief-the-cost-of-net-zero-the-deadline-looms",
-        "canonical_url": "lbry://@stoa#0/morning-brief-the-cost-of-net-zero-the-deadline-looms#7",
+        "canonical_url": "lbry://@stoa#0/morning-brief-the-cost-of-net-zero-the-deadline-looms#8",
         "value": {
           "title": "Morning Brief | The Cost of Net Zero: The Deadline Looms - Stoa",
           "release_time": "1689755819"
         }
       },
       {
-        "claim_id": "7cf62b1eff5274130537c305d09065c14089825c",
+        "claim_id": "704b5f273f52c988ec1df65728e9a777185cbf5d",
         "name": "morning-brief-grid-failures-the-small-print",
         "canonical_url": "lbry://@stoa#0/morning-brief-grid-failures-the-small-print#7",
         "value": {
@@ -380,16 +371,16 @@
         }
       },
       {
-        "claim_id": "b93ec5dc62dabf1995d3695cd78f774665b0d7bb",
+        "claim_id": "7cf62b1eff5274130537c305d09065c14089825c",
         "name": "the-stoa-podcast-610",
-        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-610#b",
+        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-610#7",
         "value": {
           "title": "The Stoa Podcast #610 - Stoa",
           "release_time": "1681131739"
         }
       },
       {
-        "claim_id": "b3585322327cc0c571db020fb60297abe1f1b06a",
+        "claim_id": "b93ec5dc62dabf1995d3695cd78f774665b0d7bb",
         "name": "the-stoa-podcast-559",
         "canonical_url": "lbry://@stoa#0/the-stoa-podcast-559#b",
         "value": {
@@ -398,61 +389,61 @@
         }
       },
       {
-        "claim_id": "d8af7a4821b358b2345762fe96eecd5ddc2d748f",
+        "claim_id": "b3585322327cc0c571db020fb60297abe1f1b06a",
         "name": "the-stoa-podcast-552",
-        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-552#d",
+        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-552#b",
         "value": {
           "title": "The Stoa Podcast #552 - Stoa",
           "release_time": "1674048618"
         }
       },
       {
-        "claim_id": "8aa8949af173c871ab6572957f808be8a461e7fd",
+        "claim_id": "d8af7a4821b358b2345762fe96eecd5ddc2d748f",
         "name": "morning-brief-the-assisted-dying-bill-the-hidden-cost",
-        "canonical_url": "lbry://@stoa#0/morning-brief-the-assisted-dying-bill-the-hidden-cost#8",
+        "canonical_url": "lbry://@stoa#0/morning-brief-the-assisted-dying-bill-the-hidden-cost#d",
         "value": {
           "title": "Morning Brief | The Assisted Dying Bill: The Hidden Cost - Stoa",
           "release_time": "1671530360"
         }
       },
       {
-        "claim_id": "de4ff275f26a17be7b2aac6538deed198c85ce66",
+        "claim_id": "8aa8949af173c871ab6572957f808be8a461e7fd",
         "name": "morning-brief-the-interest-rate-call-the-regional-view",
-        "canonical_url": "lbry://@stoa#0/morning-brief-the-interest-rate-call-the-regional-view#d",
+        "canonical_url": "lbry://@stoa#0/morning-brief-the-interest-rate-call-the-regional-view#8",
         "value": {
           "title": "Morning Brief | The Interest Rate Call: The Regional View - Stoa",
           "release_time": "1669974889"
         }
       },
       {
-        "claim_id": "83f584511f35158fe6a6d3dd7919e2f207050239",
+        "claim_id": "de4ff275f26a17be7b2aac6538deed198c85ce66",
         "name": "the-stoa-podcast-354",
-        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-354#8",
+        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-354#d",
         "value": {
           "title": "The Stoa Podcast #354 - Stoa",
           "release_time": "1650027117"
         }
       },
       {
-        "claim_id": "d04cbb4e14a4fd37aadde7599a010b239b07d5dd",
+        "claim_id": "83f584511f35158fe6a6d3dd7919e2f207050239",
         "name": "the-stoa-podcast-137",
-        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-137#d",
+        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-137#8",
         "value": {
           "title": "The Stoa Podcast #137 - Stoa",
           "release_time": "1623850125"
         }
       },
       {
-        "claim_id": "24ecbf6d9536d562c54191d7a509a78710b7e3e5",
+        "claim_id": "d04cbb4e14a4fd37aadde7599a010b239b07d5dd",
         "name": "the-stoa-podcast-10",
-        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-10#2",
+        "canonical_url": "lbry://@stoa#0/the-stoa-podcast-10#d",
         "value": {
           "title": "The Stoa Podcast #10 - Stoa",
           "release_time": "1608558478"
         }
       },
       {
-        "claim_id": "27be8d12b6d9c0dbdc31485622e411d1b7396551",
+        "claim_id": "24ecbf6d9536d562c54191d7a509a78710b7e3e5",
         "name": "clip-tom-on-the-budget",
         "canonical_url": null,
         "value": {
@@ -461,7 +452,7 @@
         }
       },
       {
-        "claim_id": "58267fb28c702604961bb45d863490211087efc6",
+        "claim_id": "27be8d12b6d9c0dbdc31485622e411d1b7396551",
         "name": "highlights-of-the-week",
         "canonical_url": null,
         "value": {
@@ -470,7 +461,7 @@
         }
       },
       {
-        "claim_id": "b46111b7c74085c4a4c790905de300840defa936",
+        "claim_id": "58267fb28c702604961bb45d863490211087efc6",
         "name": "behind-the-scenes-at-stoa",
         "canonical_url": null,
         "value": {

@@ -157,7 +157,6 @@ Nick's direction: show that the site slots into their current setup, with a clea
 
 - Reminders and watch progress live in the browser in both versions.
 - Showing the Laravel version to others needs a PHP host. GitHub Pages carries the static preview.
-- **Generated dates skip and repeat a day at each clock change.** The generator steps back 24 hours at a time, so twice in the archive two Chronos episodes share a Sunday. A fix changes many archive dates, so it waits for Nick's go-ahead.
 - Notifications only appear while the site is open in a tab. Real reminders need Web Push, which belongs with the PWA work.
 - Comments, chat and reading lists are placeholders. Each episode draws a stable mix from pools that fit its show. Real data can replace them in one file each.
 
