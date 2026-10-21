@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CatalogueController;
+use App\Http\Controllers\DeskController;
 use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\WatchController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/purchases', [AccountController::class, 'purchase']);
     Route::post('/communities/{community}', [AccountController::class, 'join']);
     Route::delete('/communities/{community}', [AccountController::class, 'leave']);
+
+    // The content desk, for staff.
+    Route::get('/desk', [DeskController::class, 'index']);
+    Route::post('/desk/sync', [DeskController::class, 'sync']);
 });
 
 // The demo panel's "Viewing as": signs in as a seeded account with no

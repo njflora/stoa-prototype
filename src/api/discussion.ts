@@ -11,6 +11,7 @@
 
 import { API_MODE, getFresh, getJson, send } from './client'
 import { shiftDate, storedPageOf } from './catalogue'
+import { withSavedSync } from './desk'
 import type { ChatTier } from '@/data/chat'
 import type { Comment } from '@/data/comments'
 import type { ReadingItem } from '@/data/readingLists'
@@ -139,7 +140,9 @@ export async function getReadingList(ref: ThreadRef): Promise<ReadingListAnswer>
  */
 export async function getPlay(episodeId: string): Promise<PlayAnswer> {
   if (API_MODE === 'laravel') return getFresh<PlayAnswer>(`episodes/${episodeId}/play`)
-  return (await storedExtras(episodeId)).play
+  const play = (await storedExtras(episodeId)).play
+  // A re-sync from the content desk, saved in this browser, may have linked more platforms.
+  return play.locked ? play : { ...play, sources: withSavedSync(episodeId, play.sources) }
 }
 
 // ---------- changes ----------

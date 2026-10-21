@@ -13,7 +13,7 @@ import { useViewer } from '@/composables/useViewer'
 type TabId = 'home' | 'live' | 'shows' | 'search' | 'more'
 
 const route = useRoute()
-const { isLive, user } = useViewer()
+const { isLive, isStaff, user } = useViewer()
 const { isOpen: searchOpen, openSearch } = useSearchOverlay()
 
 const tabs: { id: Exclude<TabId, 'search' | 'more'>; label: string; to: string; icon: IconName }[] = [
@@ -29,7 +29,7 @@ const current = computed<TabId | null>(() => {
   if (path === '/') return 'home'
   if (path.startsWith('/live')) return 'live'
   if (path.startsWith('/shows') || path.startsWith('/series') || path.startsWith('/watch')) return 'shows'
-  if (['/articles', '/courses', '/shop', '/account', '/sign-in', '/join', '/pitch', '/credits'].some((p) => path.startsWith(p)))
+  if (['/articles', '/courses', '/shop', '/account', '/sign-in', '/join', '/pitch', '/credits', '/desk'].some((p) => path.startsWith(p)))
     return 'more'
   return null
 })
@@ -137,6 +137,11 @@ const tabClass = 'flex h-full flex-col items-center justify-center gap-0.5 text-
             <li>
               <RouterLink to="/courses" class="flex h-12 items-center justify-between text-base">
                 Courses <AppIcon name="chevron-right" class="text-muted" />
+              </RouterLink>
+            </li>
+            <li v-if="isStaff">
+              <RouterLink to="/desk" class="flex h-12 items-center justify-between text-base">
+                Content desk <AppIcon name="chevron-right" class="text-muted" />
               </RouterLink>
             </li>
           </ul>

@@ -15,7 +15,7 @@ import { useIntro } from '@/composables/useIntro'
 // demo account on the server), moves the live show through its phases,
 // and clears or restores watch progress. It is not part of the site design.
 
-const { viewer, phase, setViewer, switching, setPhase } = useViewer()
+const { viewer, isStaff, phase, setViewer, switching, setPhase } = useViewer()
 const { clear, restoreSample } = useWatchProgress()
 
 // A short confirmation, so it is clear the button did something.
@@ -82,6 +82,10 @@ const off = 'text-white/70 hover:text-white'
           </button>
         </div>
       </div>
+
+      <RouterLink v-if="isStaff" to="/desk" class="block text-xs font-semibold text-accent-bright underline underline-offset-2">
+        Open the content desk
+      </RouterLink>
 
       <div>
         <p class="mb-1 text-xs font-semibold">Live show</p>

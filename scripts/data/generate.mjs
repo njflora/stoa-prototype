@@ -15,7 +15,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { articles as articleSources } from './articles.mjs'
 import { buildExtras } from './extras.mjs'
-import { buildSources, liveSources } from './sources.mjs'
+import { buildFeeds, buildSources, liveSources } from './sources.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const OUT = join(ROOT, 'backend', 'database', 'seed')
@@ -484,6 +484,20 @@ write('comments.json', extras.threads)
 // Reading lists by episode, and the live show's.
 write('reading-lists.json', extras.lists)
 write('sources.json', sources)
+
+// Sample platform feeds for the sync, kept with the backend's tests.
+{
+  const feeds = buildFeeds({ episodes: allEpisodes, sources, shows, now: generatedAt, seededRandom: seeded })
+  const dir = join(ROOT, 'backend', 'tests', 'fixtures', 'feeds')
+  rmSync(dir, { recursive: true, force: true })
+  mkdirSync(dir, { recursive: true })
+  const asJson = (data) => `${JSON.stringify(data, null, 2)}\n`
+  writeFileSync(join(dir, 'rumble.json'), asJson(feeds.rumble))
+  writeFileSync(join(dir, 'odysee.json'), asJson(feeds.odysee))
+  writeFileSync(join(dir, 'bitchute.xml'), feeds.bitchute)
+  writeFileSync(join(dir, 'vod.json'), asJson(feeds.vod))
+}
+
 write('live.json', {
   showId: 'stoa-podcast',
   number: 1531,

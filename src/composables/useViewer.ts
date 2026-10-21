@@ -13,12 +13,13 @@ import { usePurchases } from './usePurchases'
 // account on the server, so the server's access rules apply for real. In
 // the static preview it is kept on this device.
 
-export type ViewerType = 'signed-out' | 'free' | 'member'
+export type ViewerType = 'signed-out' | 'free' | 'member' | 'staff'
 
 export const viewerTypes: { id: ViewerType; label: string }[] = [
   { id: 'signed-out', label: 'Signed out' },
   { id: 'free', label: 'Free account' },
   { id: 'member', label: 'Member' },
+  { id: 'staff', label: 'Staff' },
 ]
 
 /**
@@ -62,11 +63,12 @@ const state = ref<DemoState>(load())
 
 watch(state, (value) => writeJson(STORAGE_KEY, value), { deep: true })
 
-/** In Laravel mode: the signed-in account's viewer type. Staff see what members see. */
+/** In Laravel mode: the signed-in account's viewer type. */
 function accountViewer(): ViewerType {
   const user = account.value.user
   if (!user) return 'signed-out'
-  return user.tier || user.staff ? 'member' : 'free'
+  if (user.staff) return 'staff'
+  return user.tier ? 'member' : 'free'
 }
 
 /** True while the demo panel is signing in to a different account. */
@@ -75,7 +77,9 @@ const switching = ref(false)
 export function useViewer() {
   const viewer = computed(() => (API_MODE === 'laravel' ? accountViewer() : state.value.viewer))
   const isSignedIn = computed(() => viewer.value !== 'signed-out')
-  const isMember = computed(() => viewer.value === 'member')
+  /** Staff see everything members see, and the content desk too. */
+  const isMember = computed(() => viewer.value === 'member' || viewer.value === 'staff')
+  const isStaff = computed(() => viewer.value === 'staff')
   const phase = computed(() => state.value.phase)
   /** On air: the free stream or the members' after-show. */
   const isLive = computed(() => phase.value === 'live' || phase.value === 'members')
@@ -85,6 +89,7 @@ export function useViewer() {
       const signedIn = account.value.user
       return signedIn && { name: signedIn.name, initials: signedIn.initials, tier: signedIn.tier }
     }
+    if (isStaff.value) return { name: 'stoa_desk', initials: 'SD', tier: null }
     return isSignedIn.value ? { name: 'chris_m', initials: 'CM', tier: isMember.value ? 'gold' : null } : null
   })
 
@@ -114,5 +119,5 @@ export function useViewer() {
     state.value.phase = next
   }
 
-  return { viewer, isSignedIn, isMember, isLive, phase, user, canWatch, setViewer, switching, setPhase }
+  return { viewer, isSignedIn, isMember, isStaff, isLive, phase, user, canWatch, setViewer, switching, setPhase }
 }

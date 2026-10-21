@@ -3,7 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Catalogue\Catalogue;
+use App\Desk\Desk;
 use App\Discussion\Discussions;
+use App\Jobs\SyncPlatform;
+use App\Sources\SourceAdapter;
 use App\Discussion\Thread;
 use App\Models\Article;
 use App\Models\Contributor;
@@ -36,7 +39,7 @@ class ExportStatic extends Command
 
     private int $written = 0;
 
-    public function handle(Catalogue $catalogue, Discussions $discussions): int
+    public function handle(Catalogue $catalogue, Discussions $discussions, Desk $desk): int
     {
         $this->out = rtrim($this->option('to') ?: config('stoa.export_path'), '/');
         File::ensureDirectoryExists($this->out);
@@ -93,6 +96,7 @@ class ExportStatic extends Command
         $this->write('search-docs.json', $catalogue->searchDocs());
 
         $this->discussion($discussions);
+        $this->desk($desk);
 
         $this->info("Wrote {$this->written} files to {$this->out}");
 
@@ -140,6 +144,40 @@ class ExportStatic extends Command
         $live = $extras([Thread::find('live', 'live-show')])['live-show'];
         unset($live['play']); // the live stream's sources come with the reference data
         $this->write('extras/live/live-show.json', $live);
+    }
+
+    /**
+     * The content desk: its totals, the latest syncs, and pages of episodes
+     * for each filter it offers. Plus what a re-sync would do right now, so
+     * the preview's Re-sync button can show it: the sync runs for real
+     * against the sample feeds, its changes are written out, and then it is
+     * rolled back, so the database is left as it was.
+     */
+    private function desk(Desk $desk): void
+    {
+        $this->write('desk/summary.json', $desk->summary());
+        $this->write('desk/runs.json', $desk->runs());
+        foreach ($desk->filters() as $filter) {
+            $this->pages("desk/{$filter}", fn (int $page) => $desk->rows($filter, $page));
+        }
+
+        $key = fn (EpisodeSource $s) => "{$s->episode_id}|{$s->platform}";
+        $before = EpisodeSource::all()->mapWithKeys(fn (EpisodeSource $s) => [$key($s) => "{$s->status}|{$s->external_id}"]);
+        DB::beginTransaction();
+        try {
+            $runs = array_map(fn (string $p) => app()->call([new SyncPlatform($p, fixtures: true), 'handle'])->toData(), array_keys(SourceAdapter::all()));
+            $changes = EpisodeSource::all()
+                ->filter(fn (EpisodeSource $s) => ($before[$key($s)] ?? null) !== "{$s->status}|{$s->external_id}")
+                ->map(fn (EpisodeSource $s) => ['episodeId' => $s->episode_id, ...$s->toData()])
+                ->values()->all();
+            $this->write('desk/sync.json', ['runs' => $runs, 'changes' => $changes, 'summary' => $desk->summary()]);
+            // The desk's pages as they stand after that sync.
+            foreach ($desk->filters() as $filter) {
+                $this->pages("desk/synced/{$filter}", fn (int $page) => $desk->rows($filter, $page));
+            }
+        } finally {
+            DB::rollBack();
+        }
     }
 
     /** Newest-first pages, and the popular list for each period. */

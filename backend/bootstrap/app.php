@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Sign-in by session cookie for the site's own pages (Sanctum's SPA
         // mode), with CSRF protection on every change.
         $middleware->statefulApi();
+        // The API has no login page to send guests to: they get a 401.
+        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('api/*') ? null : '/sign-in');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

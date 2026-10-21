@@ -14,7 +14,7 @@ import { useViewer } from '@/composables/useViewer'
 // On phones (below 768px) the links move to the bottom tab bar
 // (MobileTabBar.vue). Stoa, Upgrade, the bell and the account stay here.
 
-const { isMember, isLive, user } = useViewer()
+const { isMember, isStaff, isLive, user } = useViewer()
 
 const links = [
   { label: 'Live', to: '/live' },
@@ -74,6 +74,9 @@ const activeClass = '!text-white font-semibold'
               />
               {{ link.label }}
             </RouterLink>
+          </li>
+          <li v-if="isStaff">
+            <RouterLink to="/desk" :class="linkClass" :exact-active-class="activeClass">Desk</RouterLink>
           </li>
           <li>
             <button

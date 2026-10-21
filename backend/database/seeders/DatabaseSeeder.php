@@ -115,6 +115,23 @@ class DatabaseSeeder extends Seeder
             'sources' => json_encode($live['sources']),
         ]);
 
+        // The last hourly sync before the snapshot, 20 minutes earlier, read
+        // from the sample feeds: nothing new to link, and three clips that
+        // are not episodes on each platform.
+        $lastSync = gmdate('Y-m-d H:i:s', strtotime($meta['generatedAt']) - 20 * 60);
+        DB::table('ingest_runs')->insert(array_map(fn (string $platform) => [
+            'platform' => $platform,
+            'fixtures' => true,
+            'status' => 'ok',
+            'fetched' => $platform === 'vod' ? 12 : 15,
+            'matched' => 12,
+            'linked' => 0,
+            'unmatched' => $platform === 'vod' ? 0 : 3,
+            'notes' => json_encode($platform === 'vod' ? [] : ['Clip: Tom on the budget', 'Highlights of the week', 'Behind the scenes at Stoa']),
+            'started_at' => $lastSync,
+            'finished_at' => $lastSync,
+        ], ['rumble', 'odysee', 'bitchute', 'vod']));
+
         // Where each episode is published: one row per episode and platform.
         foreach (array_chunk($this->read('sources'), 1000) as $chunk) {
             DB::table('episode_sources')->insert(array_map(fn (array $s) => [

@@ -148,6 +148,16 @@ export const pitchNotes: PitchNote[] = [
     hint: 'Shows that air live are on Rumble, Odysee and the site\'s own player; the rest on Rumble, BitChute and the site\'s own player.',
   },
   {
+    id: 'one-source',
+    kind: 'proposal',
+    source: 'Consolidation',
+    title: 'One source of truth',
+    today: 'Each platform holds its own copy of the catalogue, kept in step by hand.',
+    here: 'One record per episode, in Laravel, lists every platform it is on. A sync reads each platform\'s feed every hour, matches each upload to its episode by show, time and title, and links it. The desk shows what is missing, still processing or failed, and can re-sync on demand.',
+    page: { name: 'Content desk', to: '/desk' },
+    hint: 'Demo panel: switch to "Staff", then open the content desk.',
+  },
+  {
     id: 'live-handoff',
     kind: 'fix',
     source: 'Finding 11',

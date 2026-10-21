@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * One episode, whichever platforms it is published on. Its id is
@@ -39,6 +40,12 @@ class Episode extends Model
     public function show(): BelongsTo
     {
         return $this->belongsTo(Show::class);
+    }
+
+    /** Where it is published: one row per platform. */
+    public function sources(): HasMany
+    {
+        return $this->hasMany(EpisodeSource::class);
     }
 
     public function series(): BelongsTo

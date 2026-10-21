@@ -103,6 +103,8 @@ The pitch prototype is built and working locally. All three priority sections fr
 | The search index is built in the browser on first use, not pre-built | Keeps the search settings in one file; takes about 0.4 seconds once. The real site can swap in a server engine behind the same search() function |
 | Laravel is the source of truth; public/data is a snapshot exported from it | They use Laravel. The API and the export share one code path, so the static preview can never disagree with the API |
 | In Laravel mode, members-only content never leaves the server; non-members get a count only | Review note 3: a blurred glimpse of real text was still sent to the browser. The gate now blurs placeholder shapes |
+| The platform sync reads recorded sample feeds, not the live platforms | Which public feed or API each platform offers is still to verify; the adapters isolate that, so connecting one changes one class |
+| Episodes are matched to uploads by time and title, not by an id the platforms share | The platforms share no id with the site; matching by show, time and normalised title is how the desk can link a catalogue it did not upload |
 | The static preview keeps every feature, checked and saved in the browser | Nick's call: the client will most likely see the static site, so it must behave like the real one. The demo panel and banner say where the real checks run |
 | Thread sizes follow popularity, and card counts equal real thread sizes | Generating the 111,000 comments the old counts implied would repeat the same phrases in every thread |
 | The demo sign-in picks a seeded account with no password, and exists only in development | The plan rules out credential flows; the tier checks themselves are real |
@@ -133,6 +135,7 @@ The pitch prototype is built and working locally. All three priority sections fr
   | Purchases, communities | Saved in this browser | Saved on the account |
   | Who can see what | Checked in the page | Checked on the server, with tests |
   | Viewing as | Switches on this device | Signs in to a seeded demo account |
+  | Content desk Re-sync | Replays the export's recorded sync, saved in this browser | Runs the sync against the sample feeds |
 
 - Reminders and watch progress live in the browser in both versions.
 - Showing the Laravel version to others needs a PHP host. GitHub Pages carries the static preview.

@@ -136,6 +136,12 @@ const router = createRouter({
       meta: { title: 'Credits' },
     },
     {
+      path: '/desk',
+      name: 'desk',
+      component: () => import('../views/DeskView.vue'),
+      meta: { title: 'Content desk' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: PlaceholderView,

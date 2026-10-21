@@ -24,6 +24,10 @@ return [
         'philosophy-circle/ethics' => 'members',
     ],
 
+    // The recorded sample feeds the platform sync reads with --fixtures
+    // (written by scripts/data/generate.mjs).
+    'fixtures_path' => base_path('tests/fixtures/feeds'),
+
     // Communities an account can join.
     'communities' => ['philosophy-circle'],
 

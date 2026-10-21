@@ -2,6 +2,20 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The content desk and the platform sync
+
+### Added
+- A content desk at /desk, for staff: every episode, newest first, with its link on Rumble, Odysee, BitChute and the site's own player (linked, processing, missing or failed, and when it was last synced). Totals per platform, filters (Needs attention, All, and each platform's problems), pages of 50, the latest syncs, and Re-sync now. A card per episode on phones.
+- "Staff" in the demo panel's Viewing as. Staff see everything members see, plus a Desk link in the header and the phone's More sheet.
+- The platform sync in Laravel. An adapter per platform reads its feed in that platform's shape (Odysee's claim_search JSON, BitChute's RSS, a Rumble list, the site's own storage listing). EpisodeMatcher links each upload to its episode by time (within 12 hours) and title, compared without the platforms' habits (capitals, "|" or "-", a channel name on the end); daily editions match by show and date. Uploads that are not episodes, such as clips, are counted and listed. Every run is recorded (ingest_runs).
+- `php artisan stoa:sync {platform?} --fixtures`, an hourly schedule, and POST /api/desk/sync for staff. The live feeds are not connected: the sync reads recorded sample feeds in backend/tests/fixtures/feeds, written by the generator. Which public feed or API each platform offers is still to verify.
+- The desk works in the static preview too. Its Re-sync replays the sync the export ran against the same feeds (then rolled back), saved in this browser, and the episode player picks up the new links.
+- 6 PHP tests: title normalising, a missing upload linked and a clip left unmatched, a daily edition matched by date, a second sync linking nothing new, the desk for staff only, and Re-sync from the desk.
+- A pitch note: "One source of truth".
+
+### Fixed
+- An API request from a signed-out visitor without a JSON header got a server error instead of 401.
+
 ## 2026-10-21: The chat replay follows the Stoa player
 
 ### Added
