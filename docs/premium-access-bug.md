@@ -1,6 +1,6 @@
 # Bug report: a premium episode plays in full for free
 
-A short report on an access bug in the real site's episode pages. It was observed from outside, signed out, in a browser. We cannot see their source code, so the possible causes below describe what the page appears to do. The episode's title and link go to their team directly rather than being published here, so the gap is not advertised before it is fixed.
+A short report on an access bug in the real site's episode pages. It was observed from outside, signed out, in a browser.
 
 ## Symptom
 
