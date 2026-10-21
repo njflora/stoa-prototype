@@ -857,8 +857,6 @@ It already has one, in your framework: a Laravel 13 API in `backend/`, with the 
 - **Dates:** the snapshot's dates are moved forward to today; real data would not need it.
 
 **7. How was each change checked?**
-
-
 - **What I decided:** the plan, the features and the wording. For example, the episode numbering and the trial tiers were my calls.
 - **How each change was checked:**
   - a type-check and a production build

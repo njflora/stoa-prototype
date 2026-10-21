@@ -183,10 +183,10 @@ Each idea maps to a finding in the planning doc. Effort is S (hours), M (a day o
 2. **Pitch notes for your feedback features.** Answered: contributor profiles and article comments are kept (their site has them); the members' Shows page, card previews and their mute button, the members' gate and article reading lists are proposals. Buying a single episode is kept, at their £1.89. Was: Contributor profiles, the members' gate, article comments, the preview mute button and the members' Shows page have no pitch note. Should they be labelled as proposals with the source "Nick's feedback", or tied to a finding in the planning doc?
 3. **The exact wording of Findings 3 and 9.** Answered: now quoted in the pitch notes. Was: The pitch notes for the show archive and search only say "Listed as a gap in the planning doc". Can you paste the findings' wording, so the "today" line is specific?
 4. **Real Rumble, Odysee and BitChute embed URLs.** Finding 1 (the black screen) and Rumble on phones cannot be tested without them. Do you have test videos that are fine to use in a public repo?
-5. **Deployment in week 6.** What should the GitHub repository be called (it sets the site's address and the `base` setting)? (`vite-plugin-pwa` for the installable app is approved.)
+5. **Deployment in week 6.** What should the GitHub repository be called (it sets the site's address and the `base` setting (`vite-plugin-pwa` for the installable app is approved.)
 6. **Live chat replay.** Answered: The Forum has it too. Was: **Live chat replay for The Forum and Statecraft.** Both are described as live shows. Should they get chat replay too, like The Stoa Podcast and Morning Brief?
 7. **Votes.** Answered: comment votes are now saved (on the account, or in the browser in the static preview).
 8. **Sign in.** Answered: a small honest page that says the demo panel is the easier way, with the same choices.
 
-10. **Hosting the Laravel version.** To decide after testing it locally. GitHub Pages can carry only the static preview. Should the Laravel version be shown on a small PHP host (with Meilisearch), or only demonstrated from this machine?
-11. **The real platform feeds.** Can their team say how they list a channel's uploads on Rumble, Odysee and BitChute today (an API, a feed, or by hand)? CONSOLIDATION.md lists what needs verifying.
+9. **Hosting the Laravel version.** To decide after testing it locally. GitHub Pages can carry only the static preview. Should the Laravel version be shown on a small PHP host (with Meilisearch), or only demonstrated from this machine?
+10. **The real platform feeds.** Can their team say how they list a channel's uploads on Rumble, Odysee and BitChute today (an API, a feed, or by hand CONSOLIDATION.md lists what needs verifying.
