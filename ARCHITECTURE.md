@@ -32,7 +32,7 @@ Laravel is the only producer of the site's data. The API and the static export c
 | Static preview | `npm run dev` | Reads `public/data`. Everything a visitor does is saved in their browser |
 | Laravel version | `cd backend`, `docker compose up -d app`, then `npm run dev:laravel` in the project folder | Starts the API on port 8000 and Meilisearch on 7700. Sign-in, access and saving are real |
 
-Both versions offer the same features (Nick's call). The static preview checks access in the page; the Laravel version checks it on the server. The demo panel says which version is running, and the static preview has a slim banner saying so.
+Both versions offer the same features (a design decision). The static preview checks access in the page; the Laravel version checks it on the server. The demo panel says which version is running, and the static preview has a slim banner saying so.
 
 ## Folder by folder
 

@@ -4,7 +4,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 **Columns**
 - **Version:** *Static* is the static preview (GitHub Pages, no server). *Laravel* is the full version with the API. *Both* means the feature works in each; in Laravel it is also saved or enforced on the server.
-- **Answers:** a finding or topic in the planning doc, a real feature of their site that is kept, or "Proposal: Nick's idea" where no finding applies.
+- **Answers:** a finding or topic in the planning doc, a real feature of their site that is kept, or "Proposal: new idea" where no finding applies.
 - **Status:** built, partial, placeholder, or planned (week 6).
 - **Note:** whether a pitch note labels it.
 
@@ -13,15 +13,15 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
 | Top bar | Five links, search, Shop and Upgrade in one short bar | `SiteHeader.vue` | Both | Finding 2 | Built | Yes |
-| Phone tab bar | Home, Live, Shows, Search and More, within reach of a thumb | `MobileTabBar.vue` | Both | Proposal: Nick's idea | Built | Yes |
+| Phone tab bar | Home, Live, Shows, Search and More, within reach of a thumb | `MobileTabBar.vue` | Both | Proposal: new idea | Built | Yes |
 | Footer | Their footer links (terms, privacy, cookies, About us, Find Us, contact, FAQ), plus Contributors and pitch notes, credits, newsletter sign-up. The policy and About pages are placeholders | `SiteFooter.vue`, `NewsletterSignup.vue` | Both | Kept: their site has a footer | Built (the newsletter sends nothing) | Yes |
-| Installable app | Install from the site, with a Home Screen hint on iPhone; pages already opened work offline; the player and unsaved pages say when there is no connection; a new version asks before it reloads | `vite.config.ts`, `InstallApp.vue`, `OfflineNotice.vue`, `UpdatePrompt.vue` | Static preview | Proposal: Nick's idea | Built (not in `npm run dev`) | Yes |
+| Installable app | Install from the site, with a Home Screen hint on iPhone; pages already opened work offline; the player and unsaved pages say when there is no connection; a new version asks before it reloads | `vite.config.ts`, `InstallApp.vue`, `OfflineNotice.vue`, `UpdatePrompt.vue` | Static preview | Proposal: new idea | Built (not in `npm run dev`) | Yes |
 | Account menu and tier badge | The signed-in name, tier badge and reminders bell | `SiteHeader.vue`, `UserBadge.vue`, `NotificationBell.vue` | Both | Finding 11 (reminders) | Built | Partly (reminders) |
 | Sign in | An honest page: no passwords; the demo panel is the easier way | `SignInView.vue` | Both | Demo only | Placeholder | No (demo only) |
-| Contact | Placeholder addresses | `ContactView.vue` | Both | Proposal: Nick's idea | Placeholder | No |
+| Contact | Placeholder addresses | `ContactView.vue` | Both | Proposal: new idea | Placeholder | No |
 | Credits | Every image and video, with its licence | `CreditsView.vue`, `CREDITS.md` | Both | Licence hygiene | Built | No (not a product feature) |
 | Static preview banner | Says the preview saves in the browser and checks access in the page | `PreviewBanner.vue` | Static | Demo only | Built | No (demo only) |
-| Branding in one file | Name, wording and logo from one file and one component | `src/config/brand.ts`, `BrandLogo.vue` | Both | Proposal: Nick's idea | Built | No (for the team, not visitors) |
+| Branding in one file | Name, wording and logo from one file and one component | `src/config/brand.ts`, `BrandLogo.vue` | Both | Proposal: new idea | Built | No (for the team, not visitors) |
 | Phone layouts | Every page checked at 375 px and 320 px | All views | Both | Finding 11 (phones) and the brief | Built | Partly (live page) |
 | Reduce motion | Video and animation stay still with "reduce motion" on | `HeroVideo.vue`, `usePreview.ts`, `StoaIntro.vue` | Both | Accessibility | Built | No |
 
@@ -55,16 +55,16 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
 | One player for every stream | Rumble, Odysee, BitChute and Stoa; only the platforms an episode is on; never goes black | `SourcePlayer.vue`, `src/data/streams.ts` | Both | Finding 1 | Built (real embeds untested) | Yes |
-| Stoa player controls | Their style: progress, volume, quality, speed, full screen | `VodPlayer.vue` | Both | Proposal: Nick's idea | Built | Yes |
-| Player sized to the screen | Player and chat always fit on screen | `src/assets/main.css` (`--player-max-w`) | Both | Proposal: Nick's idea | Built | Yes (with the player) |
+| Stoa player controls | Their style: progress, volume, quality, speed, full screen | `VodPlayer.vue` | Both | Proposal: new idea | Built | Yes |
+| Player sized to the screen | Player and chat always fit on screen | `src/assets/main.css` (`--player-max-w`) | Both | Proposal: new idea | Built | Yes (with the player) |
 | Locked episodes | Blurred art, Upgrade, or buy this one | `WatchView.vue` | Both | Topic 3 | Built | Yes |
 | Buy a single episode | £1.89, kept on the account; the server unlocks that one | `BuyEpisodeDialog.vue`, `usePurchases.ts`, `AccountController.php` | Both | Kept (their site) | Built (no payment taken) | Yes |
 | Chat replay | The live chat beside the recording | `LiveChat.vue` | Both | Finding 11 | Built | Yes |
-| Chat replay synced with the player | Seek, pause and speed move both ways; can be unsynced | `usePlayerClock.ts`, `LiveChat.vue` | Both | Proposal: Nick's idea | Built | Yes |
+| Chat replay synced with the player | Seek, pause and speed move both ways; can be unsynced | `usePlayerClock.ts`, `LiveChat.vue` | Both | Proposal: new idea | Built | Yes |
 | Comments | Votes, sorting, replies; open or members only | `CommentSection.vue`, `DiscussionController.php` | Both | Proposal (votes); kept (comments) | Built | Yes |
-| Open and members' spaces | Free accounts post in casual spaces only | `config/stoa.php`, `ThreadPolicy.php` | Both | Proposal: Nick's idea | Built | Yes |
+| Open and members' spaces | Free accounts post in casual spaces only | `config/stoa.php`, `ThreadPolicy.php` | Both | Proposal: new idea | Built | Yes |
 | Reading list | Sources in one shape, with when they came up | `ReadingList.vue` | Both | Finding 4 | Built | Yes |
-| The members' gate | Members' discussion and lists behind a blurred gate; the server sends a count | `MembersGate.vue`, `Discussions.php` | Both | Proposal: Nick's idea | Built | Yes |
+| The members' gate | Members' discussion and lists behind a blurred gate; the server sends a count | `MembersGate.vue`, `Discussions.php` | Both | Proposal: new idea | Built | Yes |
 | Watch progress and Up next | Progress saved; the next part plays after a countdown | `WatchView.vue`, `useWatchProgress.ts`, `usePlayback.ts` | Both | Finding 10, Finding 12 | Built | Yes |
 
 ## Series
@@ -78,7 +78,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
-| Shows page, for members | Continue watching, trending and latest for members; shows to try for others | `ShowsView.vue` | Both | Proposal: Nick's idea | Built | Yes |
+| Shows page, for members | Continue watching, trending and latest for members; shows to try for others | `ShowsView.vue` | Both | Proposal: new idea | Built | Yes |
 | Show archive | Every episode, 50 a page; newest, oldest or most watched by period; by access and contributor | `ShowView.vue`, `FilterChips.vue`, `PageNav.vue` | Both | Finding 3 | Built | Yes |
 | Schedule line | When each show airs, from its slot | `ShowView.vue`, `src/utils/schedule.ts` | Both | Finding 11 | Built | Partly (live page) |
 
@@ -94,10 +94,10 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
-| Articles index | Newest, trending, popular by period and controversial; categories; a lead piece | `ArticlesView.vue` | Both | Proposal: Nick's idea | Built | Yes |
+| Articles index | Newest, trending, popular by period and controversial; categories; a lead piece | `ArticlesView.vue` | Both | Proposal: new idea | Built | Yes |
 | Article page | The piece, its sources, an episode to watch next, more from the writer | `ArticleView.vue` | Both | Finding 4 | Built | Yes |
 | Comments under articles | Open to every account, with votes and sorting | `CommentSection.vue` | Both | Kept (their site) | Built | Yes |
-| Reading lists on articles | Every article ends with its sources | `ReadingList.vue` | Both | Proposal: Nick's idea | Built | Yes |
+| Reading lists on articles | Every article ends with its sources | `ReadingList.vue` | Both | Proposal: new idea | Built | Yes |
 
 ## Courses
 
@@ -117,7 +117,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
-| Account page | Membership, communities, bought episodes, watch history, reminders, newsletter | `AccountView.vue` | Both | Proposal: Nick's idea | Built (billing and passwords are placeholders) | Yes |
+| Account page | Membership, communities, bought episodes, watch history, reminders, newsletter | `AccountView.vue` | Both | Proposal: new idea | Built (billing and passwords are placeholders) | Yes |
 
 ## Members' page
 
@@ -139,7 +139,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
-| The stoa intro | First visit only, on whichever page the visitor arrives: the view down a stoa to a wax seal, broken to enter; Skip intro; Replay intro in the demo panel | `StoaIntro.vue`, `useIntro.ts` | Both | Proposal: Nick's idea | Built | Yes |
+| The stoa intro | First visit only, on whichever page the visitor arrives: the view down a stoa to a wax seal, broken to enter; Skip intro; Replay intro in the demo panel | `StoaIntro.vue`, `useIntro.ts` | Both | Proposal: new idea | Built | Yes |
 
 ## Pitch mode
 
@@ -163,8 +163,8 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 |---|---|---|---|---|---|---|
 | Source of truth | The catalogue in a database; every answer from one class | `backend/app/Catalogue/Catalogue.php`, migrations, seeder | Laravel | Consolidation | Built (SQLite; MySQL in production) | Yes (one source) |
 | Read API | Reference, home, episodes, articles, trending | `CatalogueController.php`, `routes/api.php` | Laravel | Scale (Finding 3) | Built | No (behind the scenes) |
-| Access control | Policies; non-members get counts and no stream links | `ThreadPolicy.php`, `EpisodePolicy.php`, `Discussions.php` | Laravel | Proposal: Nick's idea (members' gate) | Built, 12 tests | Yes (members' gate) |
-| Saved activity | Comments, votes, purchases, communities, forum topics | `DiscussionController.php`, `AccountController.php` | Laravel | Proposal: Nick's idea | Built | Partly |
+| Access control | Policies; non-members get counts and no stream links | `ThreadPolicy.php`, `EpisodePolicy.php`, `Discussions.php` | Laravel | Proposal: new idea (members' gate) | Built, 12 tests | Yes (members' gate) |
+| Saved activity | Comments, votes, purchases, communities, forum topics | `DiscussionController.php`, `AccountController.php` | Laravel | Proposal: new idea | Built | Partly |
 | Demo sign-in | Seeded accounts, no passwords, development only | `AccountController.php`, Sanctum | Laravel | Demo only | Built | Not applicable |
 | Static export | Writes the static preview from the same classes | `ExportStatic.php` (`stoa:export`) | Laravel | Hosting on GitHub Pages | Built | No (behind the scenes) |
 

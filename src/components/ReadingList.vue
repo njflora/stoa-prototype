@@ -13,7 +13,7 @@ import { formatClock } from '@/utils/format'
 // The sources behind an episode, in the order they came up. The same
 // block can sit on any episode or article, so sourcing looks the same
 // everywhere. Free on the free shows and articles; on members' shows it is
-// for members, behind the same gate as the discussion (Nick's call). In
+// for members, behind the same gate as the discussion (a design decision). In
 // Laravel mode the server decides, and sends a non-member the count only;
 // the static preview applies the same rule in the page.
 

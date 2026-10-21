@@ -3,7 +3,7 @@
 // Laravel stores one row per episode and platform (episode_sources), and
 // the platform sync (stage F) keeps them current.
 //
-// Which platforms carry which shows (Nick's call):
+// Which platforms carry which shows (a design decision):
 // - Shows that air live (The Stoa Podcast, Morning Brief, The Forum), and
 //   the live stream itself: Rumble, Odysee and VOD.
 // - Shows that do not (Chronos, Ledger, Statecraft, Conversations):

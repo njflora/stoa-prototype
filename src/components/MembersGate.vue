@@ -5,7 +5,7 @@ import { useViewer } from '@/composables/useViewer'
 import PitchNote from './PitchNote.vue'
 
 // Members-only content, seen by someone who is not a member: a blurred
-// glimpse behind an invitation, so it feels exclusive (Nick's call). Used by
+// glimpse behind an invitation, so it feels exclusive (a design decision). Used by
 // comment sections and reading lists on members' shows.
 //
 // The glimpse is made of neutral placeholder shapes, not the real content:

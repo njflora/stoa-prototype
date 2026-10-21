@@ -8,7 +8,7 @@ return [
     'export_path' => env('STOA_EXPORT_PATH', base_path('../public/data')),
 
     /*
-    | Who may read and post where (Nick's call). Casual spaces are open to
+    | Who may read and post where (a design decision). Casual spaces are open to
     | every account; heated or specialist ones are for members, which keeps
     | them civil. Members, and staff, may post everywhere.
     |

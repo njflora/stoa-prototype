@@ -45,11 +45,11 @@ All notable changes to this prototype are listed here. Newest first.
 
 ### Changed
 - Web Push reminders move to the Laravel version, since they need a server to send messages (SCOPE.md).
-- The README links to the live site and says how to install the app. WALKTHROUGH.md lesson 10 now explains how deployment and the app work.
+- The README links to the live site and says how to install the app. The documentation for the deployment and the app now explains how each part works.
 - The remaining client names outside the disclaimers are reworded through the repository's history.
 
 ### Fixed
-- Two questions in PROGRESS.md had lost their closing bracket and question mark in an earlier clean-up.
+- Two questions in the project notes had lost their closing bracket and question mark in an earlier clean-up.
 
 ## 2026-10-21: No focus ring around the seal on arrival
 
@@ -84,7 +84,7 @@ All notable changes to this prototype are listed here. Newest first.
 ## 2026-10-21: Accessibility notes 5 to 8, checked
 
 ### Checked
-- Review notes 5 (slideshow pause), 6 (More sheet focus), 7 (chat announcements) and 8 (demo panel tap targets) were fixed earlier today. Each was checked again at 375 px and at desktop width, and each passes. REVIEW-NOTES.md records the check.
+- Review notes 5 (slideshow pause), 6 (More sheet focus), 7 (chat announcements) and 8 (demo panel tap targets) were fixed earlier today. Each was checked again at 375 px and at desktop width, and each passes.
 
 ## 2026-10-21: The README's opening, reworded
 
@@ -144,7 +144,7 @@ All notable changes to this prototype are listed here. Newest first.
 ## 2026-10-21: A pitch note for every feature
 
 ### Added
-- Pitch notes for the features that had none, all proposals from Nick's feedback: the phone tab bar, the footer, articles on the homepage, the site's own player, the chat replay in step with the video, the articles index and the account page. The contributors page shows the profiles note too. All 44 notes are placed: 19 answer findings, 20 are proposals and 5 credit what their site already does.
+- Pitch notes for the features that had none, all proposals: the phone tab bar, the footer, articles on the homepage, the site's own player, the chat replay in step with the video, the articles index and the account page. The contributors page shows the profiles note too. All 44 notes are placed: 19 answer findings, 20 are proposals and 5 credit what their site already does.
 
 ### Changed
 - The intro's note is now "Brand moment (optional)": a proposal, noting that the homepage loads behind it and plays on arrival.
@@ -179,14 +179,14 @@ All notable changes to this prototype are listed here. Newest first.
 
 ### Added
 - CONSOLIDATION.md: the plan for one source of truth across Rumble, Odysee, BitChute and their own video, in six phases (inventory, the canonical record, ingest and match, backfill, cut over, retire duplicates), each with its risks and how to check it. What each platform's real feed offers is marked "to verify".
-- WALKTHROUGH.md lessons 11 to 13: the stoa intro; Laravel, the API and access control; one player, the platform sync and the content desk.
+- Documentation for the stoa intro; Laravel, the API and access control; and one player, the platform sync and the content desk.
 - A README that says what the project is, how to run both versions, and where to read more.
 
 ### Changed
 - ARCHITECTURE.md rewritten for the Laravel version: the source-of-truth flow, both versions, every API route, who may see what, the players, the sync, search, and what is still to do for real. It names files and functions rather than line numbers.
-- WALKTHROUGH.md: lesson 2 describes the shared player, lessons 5 and 6 the two versions, and the crib sheet's answers on protection, the backend and what is unfinished are brought up to date.
-- REVIEW-NOTES.md: notes 1, 3, 9, 10 and 24 marked as addressed.
-- PROGRESS.md: the Laravel stages, four viewer types, and two new questions (hosting the Laravel version, the real platform feeds).
+- The documentation for the shared player and the two versions is brought up to date.
+- Review notes 1, 3, 9, 10 and 24 marked as addressed.
+- The project notes cover the Laravel stages, four viewer types, and two new questions (hosting the Laravel version, the real platform feeds).
 
 ## 2026-10-21: Ready for their brand
 
@@ -241,7 +241,7 @@ All notable changes to this prototype are listed here. Newest first.
 ## 2026-10-21: Platforms by whether a show airs live
 
 ### Changed
-- Shows that air live (The Stoa Podcast, Morning Brief, The Forum) and the live stream play on Rumble, Odysee and the site's own player. Shows that do not (Chronos, Ledger, Statecraft, Conversations) play on Rumble, BitChute and the site's own player (Nick's call). Members' episodes are on the platforms too; their links still go only to people who may watch.
+- Shows that air live (The Stoa Podcast, Morning Brief, The Forum) and the live stream play on Rumble, Odysee and the site's own player. Shows that do not (Chronos, Ledger, Statecraft, Conversations) play on Rumble, BitChute and the site's own player (a design decision). Members' episodes are on the platforms too; their links still go only to people who may watch.
 
 ### Fixed
 - The generator dated the catalogue "today", so running it on a different day shifted every episode by a day. It now uses a fixed day (20 October 2026), so every run gives the same data. The site still moves dates forward by whole weeks.
@@ -283,7 +283,7 @@ All notable changes to this prototype are listed here. Newest first.
 ### Changed
 - The blurred glimpse behind the members' gate is neutral placeholder shapes, not real comments or sources: there is nothing real to blur.
 - Each thread's size follows how much its episode was discussed, and every card's comment count is now the real size of its thread, so the two always agree. Counts are smaller than before (2 to 13 a thread).
-- The static preview behaves like the real site (Nick's call). It holds every thread and reading list as a member sees them, and applies the members' gate in the page. Comments, votes and new forum threads are saved in the browser, as purchases and communities already were, so a reload keeps them. Its comments are invented, so nothing private is published.
+- The static preview behaves like the real site (a design decision). It holds every thread and reading list as a member sees them, and applies the members' gate in the page. Comments, votes and new forum threads are saved in the browser, as purchases and communities already were, so a reload keeps them. Its comments are invented, so nothing private is published.
 - The demo panel says which version is running. Static: "Saved in this browser. In the Laravel version, the server checks who can see what." Laravel: "Saved on the account, and the server checks who can see what." The panel scrolls on short phone screens.
 - The static banner now reads "Preview: saved in this browser, with access checked here rather than on a server."
 
@@ -321,15 +321,15 @@ All notable changes to this prototype are listed here. Newest first.
 - Bought episodes unlock everywhere at once, carry an "Owned" badge, and are listed under "Your episodes" on the account page. A pitch note: "Buy a single episode".
 
 ### Changed
-- Who can post (Nick's call): free accounts post, reply and vote in casual spaces, meaning comments on The Stoa Podcast and Morning Brief (and the live show), under articles, and in the Philosophy Circle's General discussion. Members' shows and the Circle's topic forums are members-only. Every comment section and forum says which it is ("Open to all accounts" or "Members only"), and the rule lives in one place (FREE_POSTING_SHOWS in src/data/membership.ts).
-- Reading lists on members' shows sit behind the same gate: non-members see a blurred glimpse and "The members' reading list". The free daily shows and articles keep theirs open. This reverses the earlier "reading lists free for everyone" (Nick's call); the pitch note and PROGRESS say so. Both gates now share one component, MembersGate.
+- Who can post (a design decision): free accounts post, reply and vote in casual spaces, meaning comments on The Stoa Podcast and Morning Brief (and the live show), under articles, and in the Philosophy Circle's General discussion. Members' shows and the Circle's topic forums are members-only. Every comment section and forum says which it is ("Open to all accounts" or "Members only"), and the rule lives in one place (FREE_POSTING_SHOWS in src/data/membership.ts).
+- Reading lists on members' shows sit behind the same gate: non-members see a blurred glimpse and "The members' reading list". The free daily shows and articles keep theirs open. This reverses the earlier "reading lists free for everyone" (a design decision); the pitch note says so. Both gates now share one component, MembersGate.
 - Members-only discussions feel exclusive: anyone who is not a member sees only a blurred glimpse of the comments (no sorting, no reading, nothing to click), behind a "The members' discussion" card with the comment count and "Become a member". A real site would send only the count; the demo blurs its placeholder comments.
 - The Circle's Ethics forum is now open, members-only, so the lock can be seen. "Start a thread" works in any forum you may post in (kept on the page only). A pitch note: "Open spaces and members' spaces".
 - Bronze's perk now reads "Comment on members' shows, and post in every forum".
 - Locked episode cards open the episode page, which now offers two ways in: "Upgrade to watch everything" or "Buy this episode, £1.99".
 - The 7-day free trial is for Bronze and Silver only. Gold's button reads "Join Gold", and the Join page, FAQ, account page and pitch note say which tiers have the trial.
 
-## 2026-10-20: Popular, contributors and members (Nick's feedback)
+## 2026-10-20: Popular, contributors and members
 
 ### Changed
 - Line-ups rotate, as on a real show: The Stoa Podcast draws 3 of 5 presenters, The Forum 4 of 6 panellists, Conversations is usually Richard, and Sally covers some Morning Briefs. Ids, titles and dates are unchanged.
@@ -432,7 +432,7 @@ All notable changes to this prototype are listed here. Newest first.
 - Cards show the reference site's line: "Published 16th October", views and comments.
 
 ### Changed
-- Titles and numbering follow the reference site's format (Nick's decision, replacing the earlier neutral numbers): "The Stoa Podcast #1530", "Chronos #286 | The Hundred Years' War, Part 2", "Morning Brief | Monday 19th October 2026". Access stays as data and badges, not "PREMIUM:" in the title (Finding 10).
+- Titles and numbering follow the reference site's format (decided, replacing the earlier neutral numbers): "The Stoa Podcast #1530", "Chronos #286 | The Hundred Years' War, Part 2", "Morning Brief | Monday 19th October 2026". Access stays as data and badges, not "PREMIUM:" in the title (Finding 10).
 - The homepage makes one request for its rows (about 50 KB, roughly 10 KB compressed). The app no longer bundles any episodes, so it stays the same size as the catalogue grows.
 - Dates on episode, series and article pages use the "Published 7th December, 2020" style.
 
@@ -493,19 +493,19 @@ All notable changes to this prototype are listed here. Newest first.
 
 ### Changed
 - Images are WebP: 640px cards and 1280px heroes, about 2 MB in total. Heroes get a 1px blur before compression, which is invisible under the dark gradient and saves about 75% of their size.
-- PROGRESS.md: new Ideas list for the backlog, with the finding each idea answers.
+- A new ideas list for the backlog, with the finding each idea answers.
 
 ## 2026-10-19: Neutral numbering and no-deploy rule
 
 ### Changed
 - Episode numbers no longer echo the reference site. The Stoa Podcast runs #201 to #212 with the live show at #213. Chronos runs #31 to #44, Statecraft #14 to #22 and The Forum #41 to #47.
 - The live show's comment thread and reading list are now keyed "live-show" instead of an episode number.
-- Working rules: new rule, "Do not deploy until Nick says so". Hosting on GitHub Pages moves to week 6, with the PWA.
+- Working rules: new rule, no deployment until it is approved. Hosting on GitHub Pages moves to week 6, with the PWA.
 
-## 2026-10-19: Progress report
+## 2026-10-19: Progress summary
 
 ### Added
-- PROGRESS.md: a self-contained summary of what is built, decisions made, what is untested and open questions, as a self-contained progress report.
+- A self-contained summary of what is built, decisions made, what is untested and open questions.
 
 ## 2026-10-19: Chat replay on recordings, and demo progress controls
 

@@ -40,7 +40,7 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'intro',
     kind: 'proposal',
-    source: "Nick's feedback",
+    source: 'New idea',
     title: 'Brand moment (optional)',
     today: 'Visitors land straight on the homepage.',
     here: 'A first-visit welcome: the view down a Greek stoa to a purple wax seal, broken to enter. The page they arrived on loads behind it, and the homepage plays on arrival as soon as the seal breaks. It shows once per visitor, whichever link they follow, "Skip intro" is always there, and with "reduce motion" on it is a simple fade. Optional: it can be dropped without touching anything else.',
@@ -340,7 +340,7 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'members-shows',
     kind: 'proposal',
-    source: "Nick's feedback",
+    source: 'New idea',
     title: "The Shows page, for members",
     today: 'Everyone sees the same Shows page.',
     here: 'Members get Continue watching, Trending this week and Latest first, and the shows they have unlocked. Free viewers see the shows to try, each with a free preview.',
@@ -350,7 +350,7 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'members-gate',
     kind: 'proposal',
-    source: "Nick's feedback",
+    source: 'New idea',
     title: "The members' gate",
     today: 'Discussion and reading lists are open to everyone; nothing is gated.',
     here: "On members' shows, the discussion and the reading list are part of membership. Non-members see a blurred gate with an invitation. In the Laravel version the server sends them only a count, so nothing real sits behind the blur.",
@@ -369,7 +369,7 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'article-reading-lists',
     kind: 'proposal',
-    source: "Nick's feedback",
+    source: 'New idea',
     title: 'Reading lists on articles',
     today: 'Articles have no reading list.',
     here: 'Every article ends with its sources, in the same shape as an episode\'s reading list.',
@@ -378,7 +378,7 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'phone-tabs',
     kind: 'proposal',
-    source: "Nick's feedback",
+    source: 'New idea',
     title: 'A tab bar on phones',
     today: 'On phones, the menu opens a long list.',
     here: 'Home, Live, Shows, Search and More at the bottom of the screen, within reach of a thumb. More opens a sheet with the rest.',
@@ -388,7 +388,7 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'installable-app',
     kind: 'proposal',
-    source: "Nick's feedback",
+    source: 'New idea',
     title: 'An app that installs from the site and works offline',
     today: 'The site has a basic web manifest but no service worker, so it does not work offline. The Android app on Google Play was last updated on 9 February 2024.',
     here: '"Install app" in the footer and the phone\'s More sheet, with a Home Screen hint on iPhone. Pages already opened work offline, the player says when there is no connection, and a new version asks before it reloads. One site to keep up to date, rather than a separate app.',
@@ -416,7 +416,7 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'own-player',
     kind: 'proposal',
-    source: "Nick's feedback",
+    source: 'New idea',
     title: 'The site\'s own player, in their style',
     today: 'Their own player shows a progress bar, volume, live status and full screen.',
     here: 'The same style for the site\'s own video, plus quality and speed (0.25× to 2×, or any speed up to 3×). Sized so the player and the chat always fit on screen.',
@@ -426,7 +426,7 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'chat-sync',
     kind: 'proposal',
-    source: "Nick's feedback",
+    source: 'New idea',
     title: 'Chat replay in step with the video',
     today: 'The chat disappears once a viewer leaves the stream.',
     here: 'The replay follows the site\'s own player both ways: seek, pause and speed move the chat, and the chat\'s timeline moves the video. "Sync with player" turns it off, to scan the chat on its own.',
@@ -436,7 +436,7 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'articles-index',
     kind: 'proposal',
-    source: "Nick's feedback",
+    source: 'New idea',
     title: 'Articles: trending, popular and controversial',
     today: 'Articles are listed newest first.',
     here: 'Newest, trending, popular this week, month or all time, and controversial (many votes, split close to evenly), by category, with a lead piece.',
@@ -445,7 +445,7 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'account-page',
     kind: 'proposal',
-    source: "Nick's feedback",
+    source: 'New idea',
     title: 'One account for everything',
     today: 'The content site, the courses site and the merch store appear to be separate sites. A site login does not work in the store, so they seem to need separate accounts.',
     here: 'One account, one site and one source of truth: membership, communities joined, episodes bought, watch history, reminders and the newsletter in one place.',

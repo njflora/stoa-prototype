@@ -75,7 +75,7 @@ export const features: Feature[] = [
 
 /**
  * A proposal from the benchmark: most comparable outlets offer a trial.
- * Bronze and Silver only (Nick's call): Gold's extras, such as video
+ * Bronze and Silver only (a design decision): Gold's extras, such as video
  * questions and the monthly call, are not something to give away free.
  */
 export const TRIAL_DAYS = 7
@@ -86,7 +86,7 @@ export const TRIAL_TIERS: TierId[] = ['bronze', 'silver']
 // shows and the live show, articles, the Philosophy Circle's General
 // discussion) are open to every account; the rest are members only.
 
-/** One members' episode, bought to keep (Nick's call): a way to try without a plan. */
+/** One members' episode, bought to keep (a design decision): a way to try without a plan. */
 export const EPISODE_PRICE = 1.89
 
 export function hasTrial(tier: TierId): boolean {
