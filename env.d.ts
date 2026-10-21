@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+/// <reference types="vite-plugin-pwa/vue" />
 
 // Settings read from .env files. Only names starting with VITE_ reach the page.
 interface ImportMetaEnv {
