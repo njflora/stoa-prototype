@@ -90,7 +90,7 @@ Viewers see little change here. Staff get the content desk, which shows where ea
 - **Reminders before each live show**, sent to phones through the installable site (Web Push).
 - **A decision on the Android app**, which was last updated in February 2024: update it, or replace it with the installable site.
 - **A community space**, if the team wants one, to replace the current Philosophy Community page.
-- - **Automation**, Finding ways to increase capacity through bespoke, proprietary solutions.
+- **Automation**, Finding ways to increase capacity through bespoke, proprietary solutions.
 
 ## Throughout
 
