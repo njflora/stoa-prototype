@@ -142,6 +142,15 @@ Nick's direction: show that the site slots into their current setup, with a clea
 - **Checked** in a build under /stoa-prototype/: a refreshed deep link, pitch mode, /pitch, the demo panel and the intro. Offline, with the server stopped: a visited show page loaded in full from the cache, an unvisited page showed the offline notice, and the live player showed its offline message. The install option was checked with a simulated install event, because the test browser does not offer installs. It needs a real check in Chrome once deployed.
 - **History.** The remaining client names outside the disclaimers were reworded through all history, checked against a backup.
 
+## Security hardening
+
+- **The API has rate limits** (300 requests, 60 searches and 20 changes a minute) and security headers on every response.
+- **The built site has a Content Security Policy:** its own scripts and data only, and frames only from the three video platforms.
+- **Each model lists its fillable fields.** No request can set an account's tier or staff role.
+- **Tests:** 30, including the rate limits, the headers, the fillable rule, and that the demo sign-in is absent in production.
+- **Automatic checks** on every push: the build, the tests, and npm and Composer audits. Dependabot proposes updates, and every action is pinned to a commit.
+- **SECURITY.md** sets out what protects the prototype, what is demo-only, and the checklist for hosting the Laravel version for real users.
+
 ## Not done or not tested
 
 - **Not live yet.** The Pages build and workflow are ready. The site goes live once the repository is public and Pages is set to GitHub Actions. Pages carries only the static preview: showing the Laravel version to others needs a PHP host.

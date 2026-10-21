@@ -2,6 +2,21 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Security hardening
+
+### Added
+- Rate limits on the Laravel API: 300 requests a minute, 60 searches and 20 changes, per account or per address. Over the limit, it answers 429.
+- Security headers on every API response: nosniff, a strict referrer policy, no framing, no camera or location, HSTS over HTTPS, and a Content Security Policy that lets nothing load from the API.
+- A Content Security Policy in every built page of the site. Scripts, data and media come only from the site itself, and frames only from Rumble, Odysee and BitChute. It was checked across the site with no violations, and a frame from any other site is blocked.
+- A test that the password-less demo sign-in does not exist in production. It fails if the route is allowed there.
+- A checks workflow on every push and pull request: the site builds, the Laravel tests pass, and npm and Composer report no known security problems. Dependabot proposes updates weekly.
+- SECURITY.md: what protects the prototype, what is demo-only, a production checklist, and what real accounts and payments would need. backend/.env.production.example holds safe production settings. The README links to SECURITY.md.
+
+### Changed
+- Every model lists the fields a request may set. Tier and staff can no longer be mass-assigned. Outside production, setting any other field is an error, which caught one place in the export: it now sets its stand-in member's tier on purpose.
+- Every GitHub Action in both workflows is pinned to an exact commit.
+- 30 Laravel tests now, up from 24.
+
 ## 2026-10-21: A roadmap
 
 ### Added
