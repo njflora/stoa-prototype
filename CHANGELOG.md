@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The intro plays only on the homepage
+
+### Changed
+- The stoa intro plays only when a visitor lands on the homepage. A direct link to any other page, such as /live?pitch=1, goes straight to that page. It still shows once per device, ?intro=1 still forces it, and "Replay intro" in the demo panel still works.
+
 ## 2026-10-21: The account note, corrected
 
 ### Changed

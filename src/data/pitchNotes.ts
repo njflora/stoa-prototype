@@ -43,7 +43,7 @@ export const pitchNotes: PitchNote[] = [
     source: "Nick's feedback",
     title: 'Brand moment (optional)',
     today: 'Visitors land straight on the homepage.',
-    here: 'A first-visit welcome: the view down a Greek stoa to a purple wax seal, broken to enter. The homepage loads behind it and plays on arrival as soon as the seal breaks. It shows once per visitor, "Skip intro" is always there, and with "reduce motion" on it is a simple fade. Optional: it can be dropped without touching anything else.',
+    here: 'A first-visit welcome: the view down a Greek stoa to a purple wax seal, broken to enter. The homepage loads behind it and plays on arrival as soon as the seal breaks. It shows once per visitor, only when they land on the homepage, "Skip intro" is always there, and with "reduce motion" on it is a simple fade. Optional: it can be dropped without touching anything else.',
     page: home,
     hint: 'Demo panel: "Replay intro", or add ?intro=1 to any link.',
   },

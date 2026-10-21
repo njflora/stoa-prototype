@@ -698,10 +698,10 @@ The whole drawing is one-point perspective from this one line. Every point has a
 // src/composables/useIntro.ts
 const forced = new URLSearchParams(window.location.search).get('intro') === '1'
 
-const open = ref<boolean>(forced || !readJson(SEEN_KEY, false))
+const open = ref<boolean>(forced || (onHomepage && !readJson(SEEN_KEY, false)))
 ```
 
-It plays if the browser has not seen it, or if the link says `?intro=1`. The demo panel's "Replay intro" sets `open` again.
+It plays when a visitor lands on the homepage and the browser has not seen it, or when the link says `?intro=1`. A direct link to any other page goes straight there. The demo panel's "Replay intro" sets `open` again.
 
 Accessibility, in short:
 - the page behind is `inert` while the intro is open
