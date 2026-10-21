@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import AppIcon from './AppIcon.vue'
 import type { Rendition } from '@/data/streams'
-import { releaseClock, reportClock } from '@/composables/usePlayerClock'
+import { releaseClock, reportClock, usePlayerRequests } from '@/composables/usePlayerClock'
 
 // The site's own video player, for its own hosting (VOD). Custom controls in
 // the site's skin, after the reference site's player: a pink progress bar
@@ -83,6 +83,7 @@ function onLoaded() {
   const v = video.value!
   duration.value = v.duration
   v.playbackRate = speed.value
+  report()
   if (resumeAt) {
     v.currentTime = Math.min(resumeAt.time, v.duration || resumeAt.time)
     if (resumeAt.play) v.play().catch(() => {})
@@ -142,6 +143,25 @@ function report() {
   if (!props.live && video.value) reportClock(video.value)
 }
 onMounted(report)
+// Requests from the chat replay: seek (stopping at the end) and play or pause.
+const requests = usePlayerRequests()
+watch(
+  () => requests.seek.n,
+  () => {
+    const v = video.value
+    if (!v || props.live) return
+    v.currentTime = Math.min(requests.seek.to, v.duration || 0)
+  },
+)
+watch(
+  () => requests.play.n,
+  () => {
+    const v = video.value
+    if (!v || props.live) return
+    if (requests.play.on) v.play().catch(() => {})
+    else v.pause()
+  },
+)
 onUnmounted(() => {
   if (!props.live) releaseClock()
   document.removeEventListener('fullscreenchange', onFullscreenChange)
