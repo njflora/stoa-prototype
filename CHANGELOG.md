@@ -5,7 +5,7 @@ All notable changes to this prototype are listed here. Newest first.
 ## 2026-10-21: Articles on the homepage are kept
 
 ### Changed
-- The "Articles on the homepage" pitch note is marked kept: their homepage already shows the latest articles. That makes 20 notes that answer findings or propose, 19 proposals and 6 kept.
+- The "Articles on the homepage" pitch note is marked kept: their homepage already shows the latest articles. The 44 notes are now 19 that answer findings, 19 proposals and 6 kept.
 
 ## 2026-10-21: Loose ends from the review notes
 
