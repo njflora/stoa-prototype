@@ -201,7 +201,7 @@ Decided against, or outside the prototype:
 - **Forum replies and moderation.** Topics can be started; threads and moderation are not built.
 - **Hosting the Laravel version.** To decide after testing it locally.
 
-## Week 6
+## Final Stage
 
 - **Deployment: built.** A GitHub Actions workflow builds the static preview under /stoa-prototype/ and publishes it to GitHub Pages on every push to main. A refreshed deep link works, through a copy of index.html saved as 404.html. It goes live once the repository is public and Pages is set to GitHub Actions.
 - **The installable app (PWA): built.** The manifest takes its name from the brand file and its colours from the theme tokens. The app shell is saved for offline use, data is refreshed in the background, and images are kept for 30 days. Video and third-party players are never saved.
