@@ -92,4 +92,5 @@ Open the address it prints, usually http://localhost:5173. The demo panel should
 | [CONSOLIDATION.md](CONSOLIDATION.md) | The plan for one source of truth across their platforms |
 | [BRANDING.md](BRANDING.md) | How it would take on their identity |
 | [docs/player-bug.md](docs/player-bug.md) | A bug report: the real site's Rumble player goes black after switching sources |
+| [docs/premium-access-bug.md](docs/premium-access-bug.md) | A bug report: a premium episode plays in full for a signed-out visitor |
 | [CREDITS.md](CREDITS.md) | Every image and video, with its licence |

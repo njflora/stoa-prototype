@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: A second bug report
+
+### Added
+- docs/premium-access-bug.md: a premium episode on the real site plays in full for a signed-out visitor, although the page offers to sell access. It covers the steps, the expected result, two possible causes and how the prototype checks access on the server. The episode is described rather than named, so the gap is not advertised before their team hears of it. The README links to it.
+
 ## 2026-10-21: The bug report, tightened
 
 ### Changed
