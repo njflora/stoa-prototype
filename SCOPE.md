@@ -35,7 +35,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 | Series row | Multi-part series, played in order | `HomeView.vue`, `SeriesCard.vue` | Both | Finding 10 | Built | Yes |
 | Card previews, with sound on demand | Cards play a preview on hover (or in view on phones); a mute button | `EpisodeCard.vue`, `PreviewAnimation.vue`, `PreviewSoundButton.vue` | Both | Finding 12 (proposal) | Built | Yes |
 | Members' shows rows | Members' shows in full, locked for free viewers, with a free preview | `HomeView.vue` | Both | Topic 3 | Built | Yes |
-| Latest articles row | The newest articles | `HomeView.vue`, `ArticleCard.vue` | Both | Proposal: Nick's idea | Built | Yes |
+| Latest articles row | The newest articles | `HomeView.vue`, `ArticleCard.vue` | Both | Kept (their site) | Built | Yes |
 
 ## Live page
 

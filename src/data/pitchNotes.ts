@@ -396,11 +396,11 @@ export const pitchNotes: PitchNote[] = [
   },
   {
     id: 'latest-articles',
-    kind: 'proposal',
-    source: "Nick's feedback",
+    kind: 'kept',
+    source: 'Their site',
     title: 'Articles on the homepage',
-    today: 'Articles sit apart from the shows.',
-    here: 'The newest articles in a row on the homepage, free to read.',
+    today: 'The homepage shows the latest articles.',
+    here: 'The same: the newest articles in a row on the homepage, free to read.',
     page: home,
   },
   {
