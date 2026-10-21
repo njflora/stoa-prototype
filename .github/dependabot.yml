@@ -1,0 +1,25 @@
+# Dependabot opens a pull request when a package or action has an update,
+# and at once for a security fix. Minor and patch updates come grouped, one
+# pull request per ecosystem a week. The Checks workflow tests each one.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: composer
+    directory: /backend
+    schedule:
+      interval: weekly
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
