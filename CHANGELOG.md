@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: A bug report on the real site's player
+
+### Added
+- docs/player-bug.md: switching the real site's player from Rumble to Odysee and back leaves it black until a refresh. It covers the steps to reproduce, what the page appears to do, three possible fixes and how the prototype avoids it. A short note records the Rumble player not loading on a phone during the 19 October live stream, cause not yet diagnosed. The README links to it.
+
 ## 2026-10-21: Week 6: GitHub Pages and the installable app
 
 ### Added
