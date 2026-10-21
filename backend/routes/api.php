@@ -16,7 +16,7 @@ Route::controller(CatalogueController::class)->group(function () {
     Route::get('/episodes/{id}', 'episode');
     Route::get('/articles', 'articles');
     Route::get('/articles/{id}', 'article');
-    Route::get('/search', 'search');
+    Route::get('/search', 'search')->middleware('throttle:search');
     // What the static preview's in-browser search indexes.
     Route::get('/search-docs', 'searchDocs');
 });
@@ -33,19 +33,19 @@ Route::controller(DiscussionController::class)->group(function () {
     Route::get('/forums/{community}/{forum}/topics', 'topics');
 });
 
-// Changes need a signed-in account.
-Route::middleware('auth:sanctum')->group(function () {
+// Changes need a signed-in account, and have a stricter rate limit.
+Route::middleware(['auth:sanctum', 'throttle:writes'])->group(function () {
     Route::post('/threads/{type}/{id}/comments', [DiscussionController::class, 'store']);
     Route::post('/comments/{comment}/vote', [DiscussionController::class, 'vote']);
     Route::post('/forums/{community}/{forum}/topics', [DiscussionController::class, 'startTopic']);
     Route::post('/purchases', [AccountController::class, 'purchase']);
     Route::post('/communities/{community}', [AccountController::class, 'join']);
     Route::delete('/communities/{community}', [AccountController::class, 'leave']);
-
-    // The content desk, for staff.
-    Route::get('/desk', [DeskController::class, 'index']);
     Route::post('/desk/sync', [DeskController::class, 'sync']);
 });
+
+// The content desk, for staff.
+Route::get('/desk', [DeskController::class, 'index'])->middleware('auth:sanctum');
 
 // The demo panel's "Viewing as": signs in as a seeded account with no
 // password. Development and tests only: it does not exist in production.
