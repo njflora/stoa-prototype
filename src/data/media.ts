@@ -54,7 +54,8 @@ export function artForSeries(name: string): Artwork | undefined {
  * The artwork for one episode: its series artwork if it has one, otherwise a
  * painting from its show, picked by the episode id so it never changes.
  */
-export function artForEpisode(episode: Episode): Artwork {
+/** An episode's painting. Needs only its id, show and series name, so search results can use it too. */
+export function artForEpisode(episode: Pick<Episode, 'id' | 'showId'> & { series?: { name: string } }): Artwork {
   const series = episode.series && bySeries.get(episode.series.name)
   if (series) return series
   const pool = artForShow(episode.showId)

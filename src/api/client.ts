@@ -67,17 +67,25 @@ export async function send<T>(method: 'POST' | 'DELETE', path: string, body?: un
 // Each file is fetched at most once per visit. Storing the promise (not the
 // result) means two components asking at the same moment share one request.
 const cache = new Map<string, Promise<unknown>>()
+/** Enough for any page and the way back, without growing for ever on a long visit. */
+const CACHE_LIMIT = 200
 
 export function getJson<T>(path: string): Promise<T> {
   let request = cache.get(path) as Promise<T> | undefined
+  if (request) {
+    // Used again: move it to the end, so the oldest unused files go first.
+    cache.delete(path)
+    cache.set(path, request)
+  }
   if (!request) {
     request = fetch(API_BASE + path, { headers: { Accept: 'application/json' } }).then((response) => {
-      if (!response.ok) throw new Error(`Could not load ${path} (${response.status})`)
+      if (!response.ok) throw new ApiError(response.status, `Could not load ${path} (${response.status})`)
       return response.json() as Promise<T>
     })
     // A failed request is forgotten, so "Try again" really tries again.
     request.catch(() => cache.delete(path))
     cache.set(path, request)
+    if (cache.size > CACHE_LIMIT) cache.delete(cache.keys().next().value!)
   }
   return request
 }

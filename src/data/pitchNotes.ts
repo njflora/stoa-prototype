@@ -391,7 +391,7 @@ export const pitchNotes: PitchNote[] = [
     source: "Nick's feedback",
     title: 'A footer with the essentials',
     today: 'Contributors, FAQ and contact are hard to find.',
-    here: 'Contributors, FAQ, contact, courses and the shop in the footer of every page, with credits and a newsletter sign-up.',
+    here: 'Contributors, FAQ and contact in the footer of every page, with credits and a newsletter sign-up. Courses and the shop are in the top bar.',
     page: home,
   },
   {

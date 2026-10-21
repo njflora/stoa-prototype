@@ -56,6 +56,22 @@ watch(() => route.fullPath, () => closeSheet(false))
 
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') closeSheet()
+  // A modal sheet: Tab and Shift+Tab go round its links and buttons, never behind it.
+  if (event.key !== 'Tab' || !open.value || !sheet.value) return
+  const items = [...sheet.value.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')]
+  const first = items[0]
+  const last = items.at(-1)
+  if (!first || !last) return
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault()
+    first.focus()
+  } else if (!sheet.value.contains(document.activeElement)) {
+    event.preventDefault()
+    first.focus()
+  }
 }
 onMounted(() => document.addEventListener('keydown', onKeydown))
 onUnmounted(() => document.removeEventListener('keydown', onKeydown))

@@ -28,6 +28,7 @@ const { root, previewing, handlers } = usePreview(() => true)
           :label="`${show.episodeCount?.toLocaleString('en-GB')} episodes`"
           :animated="previewing"
           :preview="previewing"
+          sound-button
           class="transition duration-500 group-hover:scale-105"
         />
         <span

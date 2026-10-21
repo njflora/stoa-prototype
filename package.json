@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "dev:laravel": "vite --mode laravel",
+    "data": "node scripts/data/generate.mjs",
+    "media": "python scripts/media/fetch_media.py",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",

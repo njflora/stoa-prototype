@@ -14,7 +14,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 |---|---|---|---|---|---|---|
 | Top bar | Five links, search, Shop and Upgrade in one short bar | `SiteHeader.vue` | Both | Finding 2 | Built | Yes |
 | Phone tab bar | Home, Live, Shows, Search and More, within reach of a thumb | `MobileTabBar.vue` | Both | Proposal: Nick's idea | Built | Yes |
-| Footer | Contributors, FAQ and contact links, credits, newsletter sign-up | `SiteFooter.vue`, `NewsletterSignup.vue` | Both | Proposal: Nick's idea | Built (the newsletter sends nothing) | Yes |
+| Footer | Contributors, FAQ and contact links (courses and shop are in the top bar), credits, newsletter sign-up | `SiteFooter.vue`, `NewsletterSignup.vue` | Both | Proposal: Nick's idea | Built (the newsletter sends nothing) | Yes |
 | Account menu and tier badge | The signed-in name, tier badge and reminders bell | `SiteHeader.vue`, `UserBadge.vue`, `NotificationBell.vue` | Both | Finding 11 (reminders) | Built | Partly (reminders) |
 | Sign in | An honest page: no passwords; the demo panel is the easier way | `SignInView.vue` | Both | Demo only | Placeholder | No (demo only) |
 | Contact | Placeholder addresses | `ContactView.vue` | Both | Proposal: Nick's idea | Placeholder | No |

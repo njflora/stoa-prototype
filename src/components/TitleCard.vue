@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import AppIcon from './AppIcon.vue'
 import PreviewAnimation from './PreviewAnimation.vue'
 import { artForShow, mediaUrl, type Artwork } from '@/data/media'
 import type { Show } from '@/types/content'
@@ -20,11 +19,13 @@ const props = withDefaults(
     animated?: boolean
     /** Hover preview: the show's themed animation, a progress bar and a "Preview" chip. */
     preview?: boolean
+    /** The card adds its mute button in the corner, so the chip moves left of it. */
+    soundButton?: boolean
     /** Hide the text when the parent overlays its own, as the hero does. */
     showText?: boolean
     size?: 'card' | 'hero'
   }>(),
-  { art: undefined, label: '', animated: true, preview: false, showText: true, size: 'card' },
+  { art: undefined, label: '', animated: true, preview: false, soundButton: false, showText: true, size: 'card' },
 )
 
 const root = ref<HTMLElement>()
@@ -83,8 +84,11 @@ const tint = computed(() => props.show.palette[0])
 
     <template v-if="preview">
       <PreviewAnimation :show-id="show.id" />
-      <!-- Left of the card's mute button (PreviewSoundButton), which sits in the corner. -->
-      <span class="absolute top-2.5 right-11 rounded bg-black/65 px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase">
+      <!-- In the corner, or left of the card's mute button (PreviewSoundButton) when there is one. -->
+      <span
+        class="absolute top-2.5 rounded bg-black/65 px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase"
+        :class="soundButton ? 'right-11' : 'right-2.5'"
+      >
         Preview
       </span>
       <div class="absolute inset-x-0 bottom-0 z-10 h-1 bg-white/20">

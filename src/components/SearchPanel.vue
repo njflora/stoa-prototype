@@ -10,7 +10,6 @@ import { artForEpisode, artForSeries, artForShow, mediaUrl } from '@/data/media'
 import { useSearch } from '@/composables/useSearch'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
 import { useViewer } from '@/composables/useViewer'
-import type { Episode } from '@/types/content'
 import { formatPublished } from '@/utils/format'
 import { highlight } from '@/utils/highlight'
 
@@ -115,21 +114,10 @@ function onPanelKeydown(event: KeyboardEvent) {
 }
 
 // Detail and artwork for each kind of result.
-function asEpisode(hit: SearchHit): Episode {
-  return {
-    id: hit.id,
-    showId: hit.showId ?? '',
-    title: hit.title,
-    hostIds: hit.hostIds ?? [],
-    publishedAt: hit.publishedAt ?? '',
-    durationMin: 0,
-    access: hit.access ?? 'free',
-    series: hit.seriesName ? { name: hit.seriesName, part: 1, of: 1 } : undefined,
-  }
-}
-
 function thumb(hit: SearchHit): string | undefined {
-  if (hit.kind === 'episode' && hit.showId) return mediaUrl(artForEpisode(asEpisode(hit)).card)
+  if (hit.kind === 'episode' && hit.showId) {
+    return mediaUrl(artForEpisode({ id: hit.id, showId: hit.showId, series: hit.seriesName ? { name: hit.seriesName } : undefined }).card)
+  }
   if (hit.kind === 'series' && hit.seriesName) {
     const art = artForSeries(hit.seriesName) ?? (hit.showId ? artForShow(hit.showId)[0] : undefined)
     return art && mediaUrl(art.card)

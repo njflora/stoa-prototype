@@ -78,6 +78,7 @@ const { root, previewing, handlers } = usePreview(() => !props.locked)
           :label="variant === 'show' ? '' : episodeLabel(episode)"
           :animated="previewing"
           :preview="previewing"
+          sound-button
           class="transition duration-500"
           :class="locked ? 'scale-110 blur-md brightness-75' : 'group-hover:scale-105'"
         />

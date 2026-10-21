@@ -11,7 +11,6 @@ import { toRoman } from '@/utils/format'
 
 const DAY_MS = 86_400_000
 
-/** An ISO date `days` ago at the given local hour. */
 export function listShows(): Show[] {
   return reference.shows
 }

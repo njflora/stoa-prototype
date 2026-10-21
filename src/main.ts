@@ -11,6 +11,7 @@ import App from './App.vue'
 import { loadAccount } from './api/account'
 import { loadReference } from './api/catalogue'
 import { API_MODE } from './api/client'
+import { startReminders } from './composables/useReminders'
 import router from './router'
 import { brand } from './config/brand'
 
@@ -20,6 +21,8 @@ import { brand } from './config/brand'
 try {
   await Promise.all([loadReference(), API_MODE === 'laravel' ? loadAccount() : null])
   createApp(App).use(router).mount('#app')
+  // The demo's "live now" notification, from any page.
+  startReminders()
 } catch (error) {
   console.error(error)
   document.getElementById('app')!.innerHTML =

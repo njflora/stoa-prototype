@@ -64,8 +64,9 @@ const nextPart = computed(() => (series.value ? series.value.episodes[partIndex.
 
 // Shows streamed live keep their chat: a replay beside the recording.
 const chatOpen = ref(false)
-const hasChatReplay = computed(() => !!show.value?.streamedLive && !locked.value)
 const showQueue = computed(() => !!series.value && partIndex.value >= 0)
+// The replay and the series queue share the side column, so the queue wins.
+const hasChatReplay = computed(() => !!show.value?.streamedLive && !locked.value && !showQueue.value)
 const sideColumn = computed(() => showQueue.value || (hasChatReplay.value && chatOpen.value))
 
 // The first page of the same show: 50 episodes, of which we show 10.

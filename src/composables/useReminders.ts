@@ -57,14 +57,21 @@ function schedule(target: ReminderTarget) {
   )
 }
 
-// Demo: moving the show to Live in the demo panel fires the real
-// notification, so the reminder can be shown in a pitch.
-const { phase, isMember } = useViewer()
-watch(phase, (next) => {
-  if (!isMember.value || !reminders.value.includes('stoa-podcast')) return
-  if (next === 'live') liveNow('The Stoa Podcast')
-  if (next === 'members') liveNow("The Stoa Podcast members' after-show")
-})
+/**
+ * Demo: moving the show to Live in the demo panel fires the real
+ * notification, so the reminder can be shown in a pitch. Called once, in main.ts.
+ */
+let started = false
+export function startReminders() {
+  if (started) return
+  started = true
+  const { phase, isMember } = useViewer()
+  watch(phase, (next) => {
+    if (!isMember.value || !reminders.value.includes('stoa-podcast')) return
+    if (next === 'live') liveNow('The Stoa Podcast')
+    if (next === 'members') liveNow("The Stoa Podcast members' after-show")
+  })
+}
 
 export function useReminders() {
   function isOn(id: string): boolean {

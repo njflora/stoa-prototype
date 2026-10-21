@@ -192,8 +192,8 @@ onUnmounted(() => {
       <ol
         ref="list"
         class="min-h-0 flex-1 overflow-y-auto px-4 py-2"
-        :role="mode === 'live' ? 'log' : undefined"
-        :aria-live="mode === 'live' ? 'polite' : undefined"
+        aria-label="Chat messages"
+        :aria-live="mode === 'live' ? 'off' : undefined"
         @scroll.passive="onScroll"
       >
         <li v-if="mode === 'replay' && !messages.length" class="py-6 text-center text-sm text-muted">

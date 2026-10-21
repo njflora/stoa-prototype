@@ -3,7 +3,7 @@
 // either that endpoint or the static file that stands in for it (see
 // client.ts). Both give the same shapes.
 
-import { API_MODE, getJson, pick, query } from './client'
+import { API_MODE, ApiError, getJson, pick, query } from './client'
 import type { ReadingItem } from '@/data/readingLists'
 import type { Article, ArticleCategory, Episode, Host, LiveEvent, Series, Show } from '@/types/content'
 import { formatEditionDate } from '@/utils/format'
@@ -12,6 +12,7 @@ interface Meta {
   generatedAt: string
   pageSize: number
   total: number
+  articleCount: number
 }
 
 export interface EpisodePage {
@@ -108,7 +109,6 @@ export async function loadReference(): Promise<void> {
   reference.pageSize = meta.pageSize
   reference.hosts = hosts
   reference.live = live
-  reference.shows = shows
   reference.shows = shows.map((s) => ({ ...s, freePreview: s.freePreview && normalise(s.freePreview) }))
   reference.series = series.map((s) => ({ ...s, episodes: s.episodes.map(normalise) }))
 }
@@ -159,8 +159,11 @@ export async function getArticle(id: string): Promise<ArticleDetail | undefined>
   try {
     const article = await getJson<ArticleDetail>(pick(`articles/${id}`, `articles/${id}.json`))
     return { ...normaliseArticle(article), watchNext: normalise(article.watchNext) }
-  } catch {
-    return undefined
+  } catch (error) {
+    // Not found: a 404, or (on the dev server) the site's own page instead of JSON.
+    // Anything else, such as a dropped connection, reaches the page's "Try again".
+    if ((error instanceof ApiError && error.status === 404) || error instanceof SyntaxError) return undefined
+    throw error
   }
 }
 

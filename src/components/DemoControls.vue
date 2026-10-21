@@ -3,8 +3,6 @@ import { ref } from 'vue'
 import { API_MODE } from '@/api/client'
 import { RouterLink, useRoute } from 'vue-router'
 import { livePhases, useViewer, viewerTypes } from '@/composables/useViewer'
-// Loaded here so the demo's "live now" notification works from any page.
-import '@/composables/useReminders'
 import { usePitchMode } from '@/composables/usePitchMode'
 import { usePlayback } from '@/composables/usePlayback'
 import { useWatchProgress } from '@/composables/useWatchProgress'
@@ -124,7 +122,7 @@ const off = 'text-white/70 hover:text-white'
               On
             </button>
           </div>
-          <RouterLink to="/pitch" class="text-xs text-muted underline hover:text-white">All notes</RouterLink>
+          <RouterLink to="/pitch" class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white">All notes</RouterLink>
         </div>
       </div>
 
@@ -139,10 +137,10 @@ const off = 'text-white/70 hover:text-white'
       <div>
         <p class="mb-1 text-xs font-semibold">Watch progress</p>
         <div class="flex flex-wrap gap-x-3 gap-y-1">
-          <button type="button" class="text-xs text-muted underline hover:text-white" @click="clearProgress">
+          <button type="button" class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white" @click="clearProgress">
             Clear watch progress
           </button>
-          <button type="button" class="text-xs text-muted underline hover:text-white" @click="restoreProgress">
+          <button type="button" class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white" @click="restoreProgress">
             Restore sample progress
           </button>
         </div>

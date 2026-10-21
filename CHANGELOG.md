@@ -2,6 +2,28 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Loose ends from the review notes
+
+### Changed
+- The footer no longer lists Courses and Shop: both are in the top bar, which is almost always on screen.
+
+### Fixed
+- An article that fails to load shows "Try again"; only a missing article shows "not found" (note 4).
+- The homepage slideshow has a pause and play button (note 5).
+- On phones, the More sheet keeps keyboard focus inside it (note 6).
+- The live chat no longer reads out every new message to screen readers (note 7).
+- Every link and button in the demo panel is at least 24 px tall (note 8).
+- The "Preview" chip sits in the corner unless a mute button is there (note 11).
+- A series episode from a live show no longer offers a chat replay it cannot show (note 12).
+- A stale comment, a duplicated line and a missing field tidied (note 13).
+- Search finds artwork without building a fake episode (note 16).
+- The browser keeps the last 200 data files, not every file ever loaded (note 19).
+- `npm run data` and `npm run media` run the scripts (note 21).
+- Reminders start openly in `main.ts`, not through a hidden import (note 23).
+
+### Review notes
+- Every note is marked addressed or deferred with its reason. Deferred: 14 and 15 (refactors with nothing visible), 17 (static preview only), and the new notes 25 to 29 found while building SCOPE.md.
+
 ## 2026-10-21: A README for reviewers
 
 ### Changed

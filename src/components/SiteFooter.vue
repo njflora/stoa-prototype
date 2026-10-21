@@ -10,8 +10,6 @@ const links = [
   { label: 'Contributors', to: '/contributors' },
   { label: 'FAQ', to: { path: '/join', hash: '#faq-heading' } },
   { label: 'Contact', to: '/contact' },
-  { label: 'Courses', to: '/courses' },
-  { label: 'Shop', to: '/shop' },
   { label: 'Pitch notes', to: '/pitch' },
 ]
 </script>

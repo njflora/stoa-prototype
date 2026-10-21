@@ -47,6 +47,7 @@ const watched = computed(() => props.series.episodes.filter((e) => isWatched(e.i
           :label="`${series.episodes.length} parts · ${formatDuration(series.totalMin)}`"
           :animated="previewing"
           :preview="previewing"
+          sound-button
           class="transition duration-500 group-hover:scale-105"
         />
         <span

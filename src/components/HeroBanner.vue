@@ -98,6 +98,8 @@ const slides = computed<Slide[]>(() => {
 const index = ref(0)
 const current = computed(() => slides.value[index.value] ?? slides.value[0]!)
 const paused = ref(false)
+/** Paused by the viewer's own choice, not just while hovered or focused. */
+const stopped = ref(false)
 const muted = ref(true)
 
 watch(isLive, () => (index.value = 0))
@@ -107,7 +109,7 @@ onMounted(() => {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (reduceMotion) return
   timer = setInterval(() => {
-    if (paused.value || slides.value.length < 2) return
+    if (paused.value || stopped.value || slides.value.length < 2) return
     index.value = (index.value + 1) % slides.value.length
   }, ROTATE_MS)
 })
@@ -207,7 +209,16 @@ onUnmounted(() => clearInterval(timer))
       </div>
     </div>
 
-    <div v-if="slides.length > 1" class="absolute right-4 bottom-10 flex gap-2 sm:right-8 sm:bottom-14">
+    <div v-if="slides.length > 1" class="absolute right-4 bottom-10 flex items-center gap-2 sm:right-8 sm:bottom-14">
+      <button
+        type="button"
+        class="mr-1 grid size-6 place-items-center rounded-full bg-black/40 text-white/85 ring-1 ring-white/20 hover:text-white [&>svg]:size-3.5"
+        :aria-label="stopped ? 'Play the slideshow' : 'Pause the slideshow'"
+        :aria-pressed="stopped"
+        @click="stopped = !stopped"
+      >
+        <AppIcon :name="stopped ? 'play' : 'pause'" />
+      </button>
       <button
         v-for="(slide, i) in slides"
         :key="slide.key"
