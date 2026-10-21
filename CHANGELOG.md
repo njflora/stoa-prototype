@@ -2,6 +2,20 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Docs brought up to date for reviewers
+
+### Changed
+- Working notes are kept out of the public repository, and the docs no longer link to them. Past changelog entries describe those changes without naming the notes.
+- Decisions are described neutrally: "a design decision" in the docs and code comments, "New idea" on pitch notes, and "Proposal: new idea" in SCOPE.md.
+- The README's opening is reworded. The bug report's note on the phone during the live stream is removed as outdated. SCOPE.md's last section is now "Final Stage", and the automation discussion is removed from the roadmap.
+- README: the Node.js versions the site needs (24.12 or later, or 22.18 or later), the real clone address, and 30 server tests.
+- ARCHITECTURE.md: new sections on security and on deployment and the installable app, plus the Pages build, the footer pages, the new folders and 30 tests.
+- SCOPE.md: the live address, the security work (rate limits, security headers, fillable fields and the Content Security Policy), and no "planned" status left.
+- BRANDING.md: the installed app's name, colours and icons, and how to replace the icons.
+- The production settings template uses MySQL, as the docs say. The example settings no longer include a local network address.
+- The site's package is named stoa-prototype, and the API's Composer package stoa/api.
+- Dependabot skips major updates of TypeScript, because vue-tsc cannot run on TypeScript 7 yet, and of @types/node, so the types match the Node 24 build. Minor and patch updates still come.
+
 ## 2026-10-21: Security hardening
 
 ### Added

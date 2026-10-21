@@ -18,14 +18,14 @@ The full version adds the server: real sign-in to demo accounts, members-only ac
 
 **You need:**
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/), installed and running (Windows or Mac)
-- [Node.js](https://nodejs.org/) 20 or later
+- [Node.js](https://nodejs.org/) 24 (24.12 or later) or 22 (22.18 or later)
 - [Git](https://git-scm.com/)
 
 **1. Get the code.** In a terminal (PowerShell on Windows, Terminal on Mac):
 
 ```sh
-git clone <repository address>
-cd <repository folder>
+git clone https://github.com/njflora/stoa-prototype.git
+cd stoa-prototype
 npm install
 ```
 
@@ -75,7 +75,7 @@ Open the address it prints, usually http://localhost:5173. The demo panel should
 
 | Command | What it does |
 |---|---|
-| `docker compose run --rm app php artisan test` | Runs the 24 server tests |
+| `docker compose run --rm app php artisan test` | Runs the 30 server tests |
 | `docker compose run --rm app php artisan migrate:fresh --seed` | Resets everything to the starting data |
 | `docker compose run --rm app php artisan stoa:sync --fixtures` | Runs the platform sync against the sample feeds |
 | `docker compose down` | Stops the server |

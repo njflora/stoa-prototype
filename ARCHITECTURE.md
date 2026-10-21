@@ -31,6 +31,7 @@ Laravel is the only producer of the site's data. The API and the static export c
 |---|---|---|
 | Static preview | `npm run dev` | Reads `public/data`. Everything a visitor does is saved in their browser |
 | Laravel version | `cd backend`, `docker compose up -d app`, then `npm run dev:laravel` in the project folder | Starts the API on port 8000 and Meilisearch on 7700. Sign-in, access and saving are real |
+| Pages build | `npm run build:pages`, then `npm run preview:pages` | The static preview as GitHub Pages serves it: under `/stoa-prototype/`, with the service worker. `npm run dev` never registers it |
 
 Both versions offer the same features (a design decision). The static preview checks access in the page; the Laravel version checks it on the server. The demo panel says which version is running, and the static preview has a slim banner saying so.
 
@@ -54,8 +55,10 @@ Both versions offer the same features (a design decision). The static preview ch
 | `src/assets/main.css` | Tailwind, the colour and font tokens, layout variables |
 | `scripts/data/` | The generator: `generate.mjs` (catalogue), `articles.mjs`, `extras.mjs` (comments and reading lists), `sources.mjs` (platform links and sample feeds) |
 | `scripts/media/` | `fetch_media.py`: licence check, image conversion, the demo video's sizes |
+| `scripts/icons/` | `make_icons.py`: the installable app's icons, drawn from the wordmark |
 | `public/data/` | The static preview, written by `stoa:export`: about 31 MB, 1,122 files |
 | `public/media/` | WebP images and the CC0 video in 480p, 360p and 240p |
+| `.github/` | The deploy and checks workflows, and Dependabot's settings |
 
 ### The server (`backend/`)
 
@@ -74,9 +77,10 @@ Both versions offer the same features (a design decision). The static preview ch
 | `app/Desk/Desk.php` | The content desk's answers |
 | `app/Search/SiteSearch.php` | Search with Scout and Meilisearch |
 | `app/Http/Controllers/` | Thin controllers: each hands a request to one of the classes above |
+| `app/Http/Middleware/SecurityHeaders.php` | Security headers on every response |
 | `app/Console/Commands/` | `stoa:export`, `stoa:sync`, `stoa:index` |
 | `config/stoa.php` | Who may post where, the communities, the export folder, the sample feeds |
-| `tests/Feature/` | 24 tests: access, the sync and desk, search |
+| `tests/Feature/` | 29 tests: access, the sync and desk, search, security, and the app as it runs in production. With `tests/Unit/`, 30 in all |
 
 ## The data
 
@@ -182,6 +186,7 @@ All routes are in `src/router/index.ts`. Every page except the homepage loads on
 | `/desk` | `DeskView` | The content desk, for staff. `?filter=`, `?page=` |
 | `/join`, `/shop`, `/account`, `/contact`, `/pitch`, `/credits` | | |
 | `/sign-in` | `PlaceholderView` | The demo panel switches viewers instead |
+| `/terms`, `/privacy`, `/cookies`, `/about`, `/find-us` | `PlaceholderView` | Their footer pages, as placeholders |
 
 Search is not a route: it is an overlay over any page, controlled by `?search=`.
 
@@ -212,11 +217,22 @@ Shared state is a `ref` declared at the top of a composable file, so every compo
 - **Media:** `scripts/media/fetch_media.py` refuses anything on Wikimedia Commons that is not public domain or CC0, then writes WebP images, the video sizes, a manifest and CREDITS.md.
 - **Branding:** the site's name and wording come from `src/config/brand.ts`, the wordmark from `BrandLogo.vue`, the colours from the theme tokens. BRANDING.md explains how to take on a client's identity.
 
+## Security
+
+The Laravel API limits requests: 300 a minute, 60 searches and 20 changes, per account or address. It sends security headers on every response (`app/Http/Middleware/SecurityHeaders.php`). Each model lists the fields a request may set, so no request can grant a tier or the staff role. Every built page carries a Content Security Policy (`vite.config.ts`): scripts and data come only from the site, and frames only from the three video platforms. SECURITY.md has the full list, what is demo-only, and the checklist for production.
+
+## Deployment and the installable app
+
+- **GitHub Pages.** `npm run build:pages` builds under `/stoa-prototype/`. Every address in the site follows `import.meta.env.BASE_URL`, so the same code runs at `/` in development. Pages has no server rewrites, so the build saves a copy of `index.html` as `404.html`: a refreshed deep link loads the app, and the router shows the page.
+- **The workflows.** `.github/workflows/deploy.yml` builds and publishes on every push to main. `.github/workflows/ci.yml` builds the site, runs the Laravel tests and audits the packages on every push and pull request. Each action is pinned to an exact commit, and Dependabot proposes updates.
+- **The installable app.** `vite-plugin-pwa` writes the manifest from `brand.ts` and the theme tokens, and builds the service worker. It saves the app shell for offline use, refreshes the data in the background, and keeps images for 30 days. It never saves video or third-party players.
+- **In the page.** `UpdatePrompt.vue` registers the service worker and asks before a new version reloads. `InstallApp.vue` offers "Install app", with a Home Screen hint on iPhone. `OfflineNotice.vue` and the player say when there is no connection (`useOnline.ts`).
+
 ## Going live: what is still to do
 
 | Today | For real |
 |---|---|
-| SQLite in Docker | MySQL, and a PHP host. GitHub Pages can carry only the static preview |
+| SQLite in Docker | MySQL, and a PHP host set up from SECURITY.md's checklist. GitHub Pages can carry only the static preview |
 | Sample platform feeds | The live feeds or APIs of Rumble, Odysee and BitChute, one adapter at a time (CONSOLIDATION.md) |
 | The sync run by hand or by `schedule:run` | A queue worker and the scheduler running on the server |
 | Demo sign-in, no passwords | Their real accounts and login |

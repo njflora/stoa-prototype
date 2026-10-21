@@ -5,7 +5,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 **Columns**
 - **Version:** *Static* is the static preview (GitHub Pages, no server). *Laravel* is the full version with the API. *Both* means the feature works in each; in Laravel it is also saved or enforced on the server.
 - **Answers:** a finding or topic in the planning doc, a real feature of their site that is kept, or "Proposal: new idea" where no finding applies.
-- **Status:** built, partial, placeholder, or planned (week 6).
+- **Status:** built, partial or placeholder.
 - **Note:** whether a pitch note labels it.
 
 ## Site-wide
@@ -16,6 +16,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 | Phone tab bar | Home, Live, Shows, Search and More, within reach of a thumb | `MobileTabBar.vue` | Both | Proposal: new idea | Built | Yes |
 | Footer | Their footer links (terms, privacy, cookies, About us, Find Us, contact, FAQ), plus Contributors and pitch notes, credits, newsletter sign-up. The policy and About pages are placeholders | `SiteFooter.vue`, `NewsletterSignup.vue` | Both | Kept: their site has a footer | Built (the newsletter sends nothing) | Yes |
 | Installable app | Install from the site, with a Home Screen hint on iPhone; pages already opened work offline; the player and unsaved pages say when there is no connection; a new version asks before it reloads | `vite.config.ts`, `InstallApp.vue`, `OfflineNotice.vue`, `UpdatePrompt.vue` | Static preview | Proposal: new idea | Built (not in `npm run dev`) | Yes |
+| Content Security Policy | Scripts and data only from the site itself; frames only from Rumble, Odysee and BitChute | `vite.config.ts` | Both (built pages) | Proposal: new idea | Built | No (behind the scenes) |
 | Account menu and tier badge | The signed-in name, tier badge and reminders bell | `SiteHeader.vue`, `UserBadge.vue`, `NotificationBell.vue` | Both | Finding 11 (reminders) | Built | Partly (reminders) |
 | Sign in | An honest page: no passwords; the demo panel is the easier way | `SignInView.vue` | Both | Demo only | Placeholder | No (demo only) |
 | Contact | Placeholder addresses | `ContactView.vue` | Both | Proposal: new idea | Placeholder | No |
@@ -165,7 +166,10 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 | Read API | Reference, home, episodes, articles, trending | `CatalogueController.php`, `routes/api.php` | Laravel | Scale (Finding 3) | Built | No (behind the scenes) |
 | Access control | Policies; non-members get counts and no stream links | `ThreadPolicy.php`, `EpisodePolicy.php`, `Discussions.php` | Laravel | Proposal: new idea (members' gate) | Built, 12 tests | Yes (members' gate) |
 | Saved activity | Comments, votes, purchases, communities, forum topics | `DiscussionController.php`, `AccountController.php` | Laravel | Proposal: new idea | Built | Partly |
-| Demo sign-in | Seeded accounts, no passwords, development only | `AccountController.php`, Sanctum | Laravel | Demo only | Built | Not applicable |
+| Demo sign-in | Seeded accounts, no passwords, development only; a test proves it is absent in production | `AccountController.php`, Sanctum | Laravel | Demo only | Built, tested | Not applicable |
+| Rate limits | 300 requests, 60 searches and 20 changes a minute, per account or address | `AppServiceProvider.php` | Laravel | Proposal: new idea | Built, tested | No (behind the scenes) |
+| Security headers | nosniff, a strict referrer policy, no framing, HSTS over HTTPS; the API's own policy lets nothing load | `SecurityHeaders.php` | Laravel | Proposal: new idea | Built, tested | No (behind the scenes) |
+| Fillable fields | Each model lists what a request may set; tier and staff are never among them | `app/Models` | Laravel | Proposal: new idea | Built, tested | No (behind the scenes) |
 | Static export | Writes the static preview from the same classes | `ExportStatic.php` (`stoa:export`) | Laravel | Hosting on GitHub Pages | Built | No (behind the scenes) |
 
 ## Content desk
@@ -203,6 +207,7 @@ Decided against, or outside the prototype:
 
 ## Final Stage
 
-- **Deployment: built.** A GitHub Actions workflow builds the static preview under /stoa-prototype/ and publishes it to GitHub Pages on every push to main. A refreshed deep link works, through a copy of index.html saved as 404.html. It goes live once the repository is public and Pages is set to GitHub Actions.
+- **Deployment: built.** A GitHub Actions workflow builds the static preview under /stoa-prototype/ and publishes it to GitHub Pages on every push to main. A refreshed deep link works, through a copy of index.html saved as 404.html. It is live at [njflora.github.io/stoa-prototype](https://njflora.github.io/stoa-prototype/).
 - **The installable app (PWA): built.** The manifest takes its name from the brand file and its colours from the theme tokens. The app shell is saved for offline use, data is refreshed in the background, and images are kept for 30 days. Video and third-party players are never saved.
 - **Web Push reminders: moved to the Laravel version.** A reminder that reaches a closed app needs a server to keep subscriptions and send messages, so the static preview cannot do it. Reminders still work while a tab is open.
+- **Security hardening: built.** Rate limits, security headers and explicit fillable fields on the server, a Content Security Policy in every built page, and automatic checks on every push: the build, the tests and package audits. SECURITY.md has the details.
