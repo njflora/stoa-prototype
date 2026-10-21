@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The shop note, corrected
+
+### Changed
+- The "One shop inside the site" note now describes their store as it is: one separate store, styled on its own, apart from the main content site. The proposal is to bring it into the main site with everything else.
+
 ## 2026-10-21: Articles on the homepage are kept
 
 ### Changed

@@ -293,10 +293,10 @@ export const pitchNotes: PitchNote[] = [
   {
     id: 'shop-inside',
     kind: 'proposal',
-    source: 'Merch stores',
+    source: 'Merch store',
     title: 'One shop inside the site',
-    today: 'Merch sits on three separate regional stores (UK, Europe and Worldwide, USA and Canada), each at its own address.',
-    here: "One shop in the main site. A store switch changes titles, prices and currency in place, using the real stores' current prices.",
+    today: 'Merch is sold in a separate store, styled on its own and run apart from the main content site.',
+    here: "The shop inside the main site, in the same design and with the same account, as part of bringing everything into one site. A region switch changes prices and currency in place, using the store's current prices.",
     page: shopPage,
   },
   {

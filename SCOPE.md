@@ -110,7 +110,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
-| One shop inside the site | Their stores' product format and prices, with a region switch | `ShopView.vue`, `src/data/shop.ts` | Both | Proposal (merch stores) | Built (no checkout) | Yes |
+| One shop inside the site | Their stores' product format and prices, with a region switch | `ShopView.vue`, `src/data/shop.ts` | Both | Proposal (separate merch store) | Built (no checkout) | Yes |
 
 ## Account
 

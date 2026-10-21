@@ -7,8 +7,9 @@ import { artworks, mediaUrl } from '@/data/media'
 import { productPrice, products, productTitle, regions, type Region } from '@/data/shop'
 import { formatPrice } from '@/utils/format'
 
-// One shop inside the site. Today the merch sits on three regional stores;
-// here a store switch changes titles, prices and currency in place.
+// One shop inside the site. Today the merch is sold in a separate store,
+// styled on its own; here it is part of the main site, and a region switch
+// changes titles, prices and currency in place.
 // There is no basket: the button says so rather than pretending.
 
 type Category = 'all' | 'tshirt' | 'mug'

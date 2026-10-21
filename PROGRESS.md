@@ -26,7 +26,7 @@ The pitch prototype is built and working locally, in two versions. The site runs
 - **The Shows page suits members.** Members get Continue watching, Trending this week and Latest first; free viewers see the shows to try.
 - **Articles have an index and full pages.** Newest, Popular and Controversial sorts, category filters, a lead piece, and at the end of each article its sources, an episode to watch next and more from the writer.
 - **Courses live inside the site**, in their course shop's format and at their price points, with a page per course. The Philosophy Circle is a free membership on your account, with an open forum and more forums on the roadmap.
-- **One shop inside the site**, using the real stores' product format and prices, with a store switch in place of three separate regional stores.
+- **One shop inside the site**, using the real store's product format and prices, with a region switch. Today their merch is sold in a separate store, styled on its own.
 - **An account page** built from the demo's state: membership, watch history, reminders and the newsletter. Billing and passwords say they are not part of the demo.
 - **Buy a single episode.** Free accounts can buy one members' episode for £1.89 to keep, from the locked episode page, as on their site today. No payment is taken in the demo.
 - **Comments under articles,** and a clear rule for who can post: free accounts in casual spaces (the free daily shows, articles, the Circle's General discussion), members everywhere. Every comment section and forum says which it is.
