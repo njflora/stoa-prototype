@@ -57,7 +57,8 @@ watch(
     if (isOpen) {
       phase.value = 'idle'
       await nextTick()
-      seal.value?.focus()
+      // Focused for the keyboard, without a ring on arrival. Tab still shows it.
+      seal.value?.focus({ focusVisible: false })
       document.addEventListener('keydown', onKeydown)
     } else {
       document.removeEventListener('keydown', onKeydown)

@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: No focus ring around the seal on arrival
+
+### Fixed
+- On a fresh page load, the browser drew its keyboard focus ring around the intro's seal. The seal still takes focus, so Enter, Space and Escape still work, but the ring is no longer drawn on arrival. It shows as normal once a visitor presses Tab. Safari ignores this setting and may still show the ring.
+
 ## 2026-10-21: Reset first visit, in the demo panel
 
 ### Added
