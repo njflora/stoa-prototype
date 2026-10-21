@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Pushed to a private GitHub repository
+
+### Added
+- The project is on GitHub, in a private repository: njflora/stoa-prototype. The main branch is pushed. Nothing is public and nothing is deployed. Local settings, databases and installed packages are not in the repository.
+
 ## 2026-10-21: Accessibility notes 5 to 8, checked
 
 ### Checked
