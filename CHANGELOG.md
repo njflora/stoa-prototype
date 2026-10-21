@@ -2,6 +2,20 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Answers to the open questions
+
+### Added
+- A sign-in page that says plainly the demo has no passwords and that the demo panel is the easier way, with the same choices (free account, member, staff, sign out) for convenience. Nothing is typed or collected.
+- Pitch notes: "Contributor profiles, upgraded" and "Comments under articles" (kept: their site has them), and "The Shows page, for members", "The members' gate" and "Reading lists on articles" (proposals).
+- The Forum has the live chat replay beside its recordings, like the other shows that air live.
+
+### Changed
+- A single members' episode costs £1.89, as on their site, and its pitch note is marked kept.
+- Card previews and their mute button are marked as a proposal. The reading-list note now says lists exist on their site, open to all; gating them is the proposal.
+
+### Fixed
+- The demo panel could not switch accounts in the Laravel version when the site's dev server landed on a port Laravel did not trust. Any localhost port is trusted in development.
+
 ## 2026-10-21: Archive dates across clock changes
 
 ### Fixed

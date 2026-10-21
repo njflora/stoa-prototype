@@ -10,6 +10,7 @@ import { tiers } from '@/data/membership'
 import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
+import PitchNote from '@/components/PitchNote.vue'
 
 // Every show, free ones first. Each card opens the show's page, with its
 // full archive, series and filters.
@@ -42,7 +43,7 @@ const latest = useQuery(
 <template>
   <main class="pt-8">
     <div class="px-4 sm:px-8">
-      <h1 class="text-3xl font-bold sm:text-4xl">Shows</h1>
+      <h1 class="text-3xl font-bold sm:text-4xl">Shows <PitchNote v-if="isMember" id="members-shows" class="align-middle" /></h1>
       <p v-if="isMember" class="mt-2 max-w-2xl text-white/75">
         Everything is unlocked with your {{ tierName }} membership. Pick up where you left off, see what everyone is watching, or
         browse {{ total.toLocaleString('en-GB') }} episodes across {{ listShows().length }} shows.

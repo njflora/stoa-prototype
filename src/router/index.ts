@@ -28,11 +28,8 @@ const router = createRouter({
     {
       path: '/sign-in',
       name: 'sign-in',
-      component: PlaceholderView,
-      meta: {
-        title: 'Sign in or sign up',
-        note: 'This prototype has no accounts. Use the demo panel to switch views.',
-      },
+      component: () => import('../views/SignInView.vue'),
+      meta: { title: 'Sign in' },
     },
     {
       path: '/account',

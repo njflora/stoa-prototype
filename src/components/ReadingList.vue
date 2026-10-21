@@ -60,7 +60,7 @@ const typeStyles: Record<SourceType, string> = {
       <h2 :id="headingId" class="text-lg font-semibold">
         Reading list <span v-if="data || items.length" class="text-muted">({{ count }})</span>
       </h2>
-      <PitchNote id="reading-lists" />
+      <PitchNote :id="context === 'article' ? 'article-reading-lists' : 'reading-lists'" />
     </div>
     <p class="text-sm text-muted">{{ context === 'article' ? 'The sources behind this article' : 'Sources mentioned in this episode' }}</p>
 

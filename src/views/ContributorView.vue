@@ -12,6 +12,7 @@ import { listAllSeries } from '@/data/catalogue'
 import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { pageTitle } from '@/config/brand'
+import PitchNote from '@/components/PitchNote.vue'
 
 // A contributor's profile: who they are, the shows they appear on (each
 // opening that show filtered to them), their series and articles, and
@@ -60,7 +61,7 @@ watchEffect(() => {
         <span class="grid size-24 shrink-0 place-items-center rounded-full bg-accent text-3xl font-bold">{{ initials }}</span>
         <div>
           <RouterLink to="/contributors" class="inline-flex min-h-6 items-center text-sm text-white/70 hover:text-white">All contributors</RouterLink>
-          <h1 class="text-3xl font-bold sm:text-4xl">{{ person.name }}</h1>
+          <h1 class="text-3xl font-bold sm:text-4xl">{{ person.name }} <PitchNote id="contributor-profiles" class="align-middle" /></h1>
           <p class="mt-1 text-white/80">{{ person.role }}</p>
           <p class="mt-1 text-sm text-muted">
             {{ (person.episodeCount ?? 0).toLocaleString('en-GB') }} episodes<template v-if="person.articleCount">

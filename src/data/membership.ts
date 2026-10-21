@@ -87,7 +87,7 @@ export const TRIAL_TIERS: TierId[] = ['bronze', 'silver']
 // discussion) are open to every account; the rest are members only.
 
 /** One members' episode, bought to keep (Nick's call): a way to try without a plan. */
-export const EPISODE_PRICE = 1.99
+export const EPISODE_PRICE = 1.89
 
 export function hasTrial(tier: TierId): boolean {
   return TRIAL_TIERS.includes(tier)

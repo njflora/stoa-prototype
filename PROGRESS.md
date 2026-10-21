@@ -28,7 +28,7 @@ The pitch prototype is built and working locally, in two versions. The site runs
 - **Courses live inside the site**, in their course shop's format and at their price points, with a page per course. The Philosophy Circle is a free membership on your account, with an open forum and more forums on the roadmap.
 - **One shop inside the site**, using the real stores' product format and prices, with a store switch in place of three separate regional stores.
 - **An account page** built from the demo's state: membership, watch history, reminders and the newsletter. Billing and passwords say they are not part of the demo.
-- **Buy a single episode.** Free accounts can buy one members' episode for £1.99 to keep, from the locked episode page, instead of joining. No payment is taken in the demo.
+- **Buy a single episode.** Free accounts can buy one members' episode for £1.89 to keep, from the locked episode page, as on their site today. No payment is taken in the demo.
 - **Comments under articles,** and a clear rule for who can post: free accounts in casual spaces (the free daily shows, articles, the Circle's General discussion), members everywhere. Every comment section and forum says which it is.
 - **Instant search over any page** (Finding 9). Press "/", the header button or the Search tab on phones. Results appear as you type, grouped as Episodes, Series, Shows, Hosts and Articles, in a see-through panel over the current page. Small typos are forgiven, the keyboard works throughout, and the search is kept in the address so it can be shared.
 - **Four viewer types**, switched from a demo panel since there is no real login (in the Laravel version, each signs in to a seeded demo account):
@@ -106,12 +106,12 @@ Nick's direction: show that the site slots into their current setup, with a clea
 | Real tier names, prices and perks | So the pitch maps directly onto their offer |
 | No yearly prices | Their yearly prices are still to collect |
 | 7-day trial for Bronze and Silver only | The benchmark lists "no free trial" as a gap; Gold's extras are not given away free (Nick's call) |
-| Single members' episodes for £1.99, bought to keep | Nick's call: a way to try members' content without a plan |
+| Single members' episodes for £1.89, bought to keep | Their site already sells them at £1.89, so it is marked as kept, not a proposal |
 | No checkout, no real login | The plan rules out anything resembling a payment or credential flow |
 | Reading lists are free on the free shows and articles; on members' shows they sit behind the members' gate with the discussion | Nick's call: members' shows should feel exclusive. Reverses the earlier "free for everyone" |
 | Free accounts post in casual spaces (the free daily shows, articles, the Circle's General discussion); members' shows and topic forums are members-only; chat is open to any account | Nick's call: open where it is casual, members-only where it could get unruly |
 | Browser notifications replace "Add to calendar" | Reminders become a members' perk |
-| Live chat replay only on Stoa Podcast and Morning Brief | The shows named as streamed live; The Forum and Statecraft could be added |
+| Live chat replay on The Stoa Podcast, Morning Brief and The Forum | The shows that air live (Nick's call); Statecraft does not |
 | Episode numbers and titles follow the real site's format (#1530, "Show #N \| Topic") | Nick's call: this is a tech demo of what their site could be. It reverses an earlier move to neutral numbers |
 | Built for real scale: 5,521 generated episodes, paged through an API layer | The real site has 1,500+ mainline episodes and daily shows with 3+ segments a day |
 | Search opens over the current page, in a see-through panel | Nick's call: you keep your place, and the page stays visible behind |
@@ -135,7 +135,6 @@ Nick's direction: show that the site slots into their current setup, with a clea
 - **The real platform feeds are not connected.** The sync reads sample feeds; what each platform offers is listed as "to verify" in CONSOLIDATION.md.
 - **Real Rumble, Odysee and BitChute embeds are untested.** No embed URLs are set, so the placeholder shows for those platforms. The site's own video (VOD) plays a CC0 clip. Rumble on phones (a key finding) needs a real embed to test.
 - **Real notifications are untested.** The test browser blocks them. The logic is in place.
-- **Pages still placeholders:** Sign in only (the demo panel switches viewers, and in the Laravel version signs in to demo accounts).
 - **Not started:** installable PWA, the technical audit, the bug report and screen recording, the Topic 4 and 5 write-ups, the measurement page.
 
 ## Known limits of the prototype
@@ -177,13 +176,13 @@ Each idea maps to a finding in the planning doc. Effort is S (hours), M (a day o
 ## Questions for you
 
 1. **Which review notes should be fixed first?** REVIEW-NOTES.md lists 24. Notes 1, 3, 9, 10 and 24 are now fixed. The suggestion for next is notes 2, 4 and 5 (missing and out-of-date pitch notes, the article error state, and a pause button on the hero carousel). Each is small.
-2. **Pitch notes for your feedback features.** Contributor profiles, the members' gate, article comments, the preview mute button and the members' Shows page have no pitch note. Should they be labelled as proposals with the source "Nick's feedback", or tied to a finding in the planning doc?
+2. **Pitch notes for your feedback features.** Answered: contributor profiles and article comments are kept (their site has them); the members' Shows page, card previews and their mute button, the members' gate and article reading lists are proposals. Buying a single episode is kept, at their £1.89. Was: Contributor profiles, the members' gate, article comments, the preview mute button and the members' Shows page have no pitch note. Should they be labelled as proposals with the source "Nick's feedback", or tied to a finding in the planning doc?
 3. **The exact wording of Findings 3 and 9.** The pitch notes for the show archive and search only say "Listed as a gap in the planning doc". Can you paste the findings' wording, so the "today" line is specific?
 4. **Real Rumble, Odysee and BitChute embed URLs.** Finding 1 (the black screen) and Rumble on phones cannot be tested without them. Do you have test videos that are fine to use in a public repo?
-5. **Deployment in week 6.** What should the GitHub repository be called (it sets the site's address and the `base` setting), and is adding `vite-plugin-pwa` for the installable app approved?
-6. **Live chat replay for The Forum and Statecraft.** Both are described as live shows. Should they get chat replay too, like The Stoa Podcast and Morning Brief?
+5. **Deployment in week 6.** What should the GitHub repository be called (it sets the site's address and the `base` setting)? (`vite-plugin-pwa` for the installable app is approved.)
+6. **Live chat replay.** Answered: The Forum has it too. Was: **Live chat replay for The Forum and Statecraft.** Both are described as live shows. Should they get chat replay too, like The Stoa Podcast and Morning Brief?
 7. **Votes.** Answered: comment votes are now saved (on the account, or in the browser in the static preview).
-8. **Sign in.** It is the last placeholder page. Keep it as a placeholder (the demo panel switches viewers), or build a small honest page?
+8. **Sign in.** Answered: a small honest page that says the demo panel is the easier way, with the same choices.
 
-10. **Hosting the Laravel version.** GitHub Pages can carry only the static preview. Should the Laravel version be shown on a small PHP host (with Meilisearch), or only demonstrated from this machine?
+10. **Hosting the Laravel version.** To decide after testing it locally. GitHub Pages can carry only the static preview. Should the Laravel version be shown on a small PHP host (with Meilisearch), or only demonstrated from this machine?
 11. **The real platform feeds.** Can their team say how they list a channel's uploads on Rumble, Odysee and BitChute today (an API, a feed, or by hand)? CONSOLIDATION.md lists what needs verifying.

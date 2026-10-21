@@ -147,7 +147,8 @@ async function vote(id: string, direction: Vote) {
       <h2 :id="headingId" class="text-lg font-semibold sm:text-xl">
         Comments <span v-if="data" class="text-muted">({{ total }})</span>
       </h2>
-      <PitchNote id="votes" class="ml-auto" />
+      <PitchNote v-if="thread.type === 'article'" id="article-comments" class="ml-auto" />
+      <PitchNote id="votes" :class="thread.type === 'article' ? '' : 'ml-auto'" />
       <p v-if="data" class="w-full text-xs text-muted sm:order-last">
         {{ open ? 'Open to all accounts' : 'Members only' }}
         <PitchNote id="open-spaces" class="ml-1 align-middle" />

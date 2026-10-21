@@ -128,7 +128,7 @@ const shows = [
   { id: 'chronos', name: 'Chronos', tagline: 'History told in full, series by series', access: 'premium', hostIds: ['helen'], palette: ['#2a9d8f', '#08221f', '#e9c46a'], slot: { days: [0], hour: 13, minute: 0, live: false }, unit: 'parts' },
   { id: 'statecraft', name: 'Statecraft', tagline: 'Geopolitics without the noise', access: 'premium', hostIds: ['rachel'], palette: ['#4f8fc0', '#0b1726', '#a8dadc'], slot: { days: [2], hour: 15, minute: 0, live: false }, unit: 'episodes' },
   { id: 'ledger', name: 'Ledger', tagline: 'Economics you can actually use', access: 'premium', hostIds: ['neil'], palette: ['#6a994e', '#101b0c', '#e3f0c8'], slot: { days: [4], hour: 11, minute: 0, live: false }, unit: 'episodes' },
-  { id: 'the-forum', name: 'The Forum', tagline: 'The panel show, live for members', access: 'premium', hostIds: ['andrew', 'tom', 'danny', 'neil'], palette: ['#e76f51', '#260d06', '#f4a261'], slot: { days: [5], hour: 19, minute: 0, live: true }, unit: 'episodes' },
+  { id: 'the-forum', name: 'The Forum', tagline: 'The panel show, live for members', access: 'premium', hostIds: ['andrew', 'tom', 'danny', 'neil'], palette: ['#e76f51', '#260d06', '#f4a261'], streamedLive: true, slot: { days: [5], hour: 19, minute: 0, live: true }, unit: 'episodes' },
 ]
 const slotOf = (showId) => shows.find((s) => s.id === showId).slot
 

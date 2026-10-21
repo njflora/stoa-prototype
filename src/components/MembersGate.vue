@@ -2,6 +2,7 @@
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import { useViewer } from '@/composables/useViewer'
+import PitchNote from './PitchNote.vue'
 
 // Members-only content, seen by someone who is not a member: a blurred
 // glimpse behind an invitation, so it feels exclusive (Nick's call). Used by
@@ -50,6 +51,7 @@ const rows = [
         </span>
         <p class="mt-3 text-lg font-semibold">{{ title }}</p>
         <p class="mt-1 text-sm text-white/80">{{ detail }}</p>
+        <PitchNote id="members-gate" class="mt-2" />
         <div class="mt-4 flex flex-wrap justify-center gap-2">
           <RouterLink
             to="/join"
