@@ -2,6 +2,13 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The bug report, tightened
+
+### Changed
+- The bug report says where it was reproduced (Chrome on Android and Edge on desktop) and adds the expected result.
+- Step 5 no longer claims that no error is shown, which had not been checked.
+- The first fix states that their site is built with Vue, which its scripts show, and says hiding the player works only if Rumble's player can be paused while hidden. The opening says we cannot see their source code, since that fix cites their public scripts.
+
 ## 2026-10-21: The docs agree with each other
 
 ### Changed

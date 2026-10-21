@@ -1,6 +1,6 @@
 # Bug report: the Rumble player goes black after switching sources
 
-A short report on a bug in the real site's episode player. It was observed from outside, in a browser. We cannot see their code, so the cause below describes what the page appears to do.
+A short report on a bug in the real site's episode player. It was observed from outside, in a browser. We cannot see their source code, so the cause below describes what the page appears to do.
 
 ## Symptom
 
@@ -10,6 +10,7 @@ On an episode page, switch the player from Rumble to Odysee, then back to Rumble
 
 - Every time, on podcast episode #1529 (18 October 2026).
 - Live, on podcast episode #1530 (19 October 2026).
+- In Chrome on Android and in Edge on desktop.
 
 ## Steps to reproduce
 
@@ -17,8 +18,12 @@ On an episode page, switch the player from Rumble to Odysee, then back to Rumble
 2. Let the Rumble player load.
 3. Switch the player source to Odysee. Odysee plays.
 4. Switch the player source back to Rumble.
-5. The player is black. Nothing plays, and no error is shown.
+5. The player is black, and nothing plays.
 6. Refresh the page. Rumble loads again.
+
+## Expected result
+
+Switching back to Rumble shows the Rumble player again, ready to play.
 
 ## What the page appears to do
 
@@ -29,7 +34,7 @@ On an episode page, switch the player from Rumble to Odysee, then back to Rumble
 
 ## Possible fixes, simplest first
 
-1. **Keep both players and hide the inactive one.** If the player uses Vue, `v-show` hides an element without removing it, so the Rumble player is never emptied. A hidden player keeps playing, so it needs pausing through Rumble's player controls when it is hidden.
+1. **Keep both players and hide the inactive one.** Their site is built with Vue (its scripts include Vue's component helper), so `v-show` could hide the Rumble player without removing it, and it would never be emptied. A hidden player keeps playing, so this works only if Rumble's player can be paused while it is hidden.
 2. **Call the Rumble loader again on switch-back.** When Rumble is chosen again, ask Rumble's loader to build the player in the box once more, as it does on page load.
 3. **Use Rumble's documented iframe embed.** The embed code from Rumble's Share, then Embed option is a plain iframe, like Odysee's. It loads again each time it is shown. It gives up any control the JavaScript player offers.
 
