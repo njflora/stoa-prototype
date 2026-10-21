@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: A roadmap
+
+### Added
+- ROADMAP.md: what I would do if hired, and when each change would reach the live site. The content overhaul (homepage, the live show on desktop and mobile, episodes, search and the player) goes live by 18 April 2027, with a buffer and a freeze from 12 April. The shop and courses follow in weeks 16 to 21, then the platform consolidation from CONSOLIDATION.md. The README links to it.
+
 ## 2026-10-21: A bug report on the real site's player
 
 ### Added

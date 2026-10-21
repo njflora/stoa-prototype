@@ -86,6 +86,7 @@ Open the address it prints, usually http://localhost:5173. The demo panel should
 |---|---|
 | [SCOPE.md](SCOPE.md) | Every feature, page and capability, with what it answers and its status |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | How it fits together, and who may see what |
+| [ROADMAP.md](ROADMAP.md) | What I would do if hired, week by week, with the content overhaul live by 18 April 2027 |
 | [CONSOLIDATION.md](CONSOLIDATION.md) | The plan for one source of truth across their platforms |
 | [BRANDING.md](BRANDING.md) | How it would take on their identity |
 | [docs/player-bug.md](docs/player-bug.md) | A bug report: the real site's Rumble player goes black after switching sources |
