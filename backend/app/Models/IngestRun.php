@@ -10,7 +10,8 @@ class IngestRun extends Model
 {
     public $timestamps = false;
 
-    protected $guarded = [];
+    // Set by the platform sync (app/Jobs/SyncPlatform.php).
+    protected $fillable = ['platform', 'fixtures', 'status', 'fetched', 'matched', 'linked', 'unmatched', 'notes', 'started_at', 'finished_at'];
 
     protected function casts(): array
     {

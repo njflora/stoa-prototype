@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -25,6 +26,13 @@ class SecurityTest extends TestCase
 
         // Another account has its own count.
         $this->actingAs(User::factory()->create())->postJson("/api/communities/{$community}")->assertOk();
+    }
+
+    public function test_tier_and_staff_cannot_be_mass_assigned(): void
+    {
+        // Outside production, trying is an error, so the mistake shows up in tests.
+        $this->expectException(MassAssignmentException::class);
+        (new User)->fill(['name' => 'someone', 'tier' => 'gold', 'is_staff' => true]);
     }
 
     public function test_api_answers_carry_the_security_headers(): void

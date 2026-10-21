@@ -9,7 +9,8 @@ class ReadingListItem extends Model
 {
     public $timestamps = false;
 
-    protected $guarded = [];
+    // Filled by the seeder, never from a request: nothing is mass-assignable.
+    protected $guarded = ['*'];
 
     public function toData(): array
     {

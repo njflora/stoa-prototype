@@ -25,7 +25,8 @@ class Episode extends Model
 
     public $timestamps = false;
 
-    protected $guarded = [];
+    // Filled by the seeder, never from a request: nothing is mass-assignable.
+    protected $guarded = ['*'];
 
     /** What every list of cards needs loaded alongside the episode. */
     public const CARD_RELATIONS = ['contributors', 'series'];

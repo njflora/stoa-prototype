@@ -6,6 +6,7 @@ use App\Discussion\Thread;
 use App\Models\User;
 use App\Policies\ThreadPolicy;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
@@ -32,6 +33,10 @@ class AppServiceProvider extends ServiceProvider
 
         // The content desk is for staff.
         Gate::define('use-desk', fn (User $user) => $user->is_staff);
+
+        // Outside production, setting a field that is not fillable is an
+        // error rather than silently ignored, so tests catch the mistake.
+        Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
 
         // Rate limits, counted per account, or per address for guests.
         // Over the limit, the API answers 429 Too Many Requests.

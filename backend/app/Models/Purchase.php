@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /** A members' episode bought to keep. No payment is taken in the demo. */
 class Purchase extends Model
 {
-    protected $guarded = [];
+    protected $fillable = ['user_id', 'episode_id'];
 
     public function user(): BelongsTo
     {

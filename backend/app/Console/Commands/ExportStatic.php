@@ -113,7 +113,8 @@ class ExportStatic extends Command
     {
         // Seen as a member: an unsaved account with a tier, so nothing is
         // marked as theirs. A page of threads at a time, answered together.
-        $member = new User(['name' => 'preview', 'tier' => 'gold']);
+        // forceFill: the tier is set on purpose here, so the fillable rule does not apply.
+        $member = (new User)->forceFill(['name' => 'preview', 'tier' => 'gold']);
         $extras = function (array $threads) use ($discussions, $member) {
             $comments = $discussions->threads($threads, $member);
             $lists = $discussions->readingLists($threads, $member);

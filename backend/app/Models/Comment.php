@@ -12,7 +12,8 @@ class Comment extends Model
 {
     public $timestamps = false;
 
-    protected $guarded = [];
+    // Set by the comment form: never likes or dislikes, which only votes change.
+    protected $fillable = ['thread', 'parent_id', 'user_id', 'body', 'posted_at'];
 
     protected function casts(): array
     {

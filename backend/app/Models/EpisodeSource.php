@@ -13,7 +13,8 @@ class EpisodeSource extends Model
     /** The order the player lists them in. */
     public const ORDER = ['rumble' => 0, 'odysee' => 1, 'bitchute' => 2, 'vod' => 3];
 
-    protected $guarded = [];
+    // Set by the platform sync (app/Jobs/SyncPlatform.php).
+    protected $fillable = ['episode_id', 'platform', 'status', 'external_id', 'embed_url', 'synced_at'];
 
     protected function casts(): array
     {
