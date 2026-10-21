@@ -1,6 +1,6 @@
 # Stoa
 
-Stoa is an unofficial concept: a prototype of how the Lotus Eaters site could work, built for a pitch. It shows how their content on every platform (Rumble, Odysee, BitChute and their own video) could be brought together in one site, run from one Laravel source of truth.
+Stoa is an unofficial concept: a prototype of how the site could work, built for a pitch. It shows how their content on every platform (Rumble, Odysee, BitChute and their own video) could be brought together in one site, run from one Laravel source of truth.
 
 ## View the static preview
 
