@@ -4,6 +4,7 @@ import AppIcon from './AppIcon.vue'
 import HeroVideo from './HeroVideo.vue'
 import PitchNote from './PitchNote.vue'
 import VodPlayer from './VodPlayer.vue'
+import { useOnline } from '@/composables/useOnline'
 import { heroVideo, mediaUrl } from '@/data/media'
 import { platformLabels, playableFor, type EpisodeSource, type Platform } from '@/data/streams'
 import type { Show } from '@/types/content'
@@ -47,6 +48,7 @@ watch(linked, (now) => {
 const active = computed(() => linked.value.find((s) => s.platform === platform.value))
 const playable = computed(() => (active.value ? playableFor(active.value) : { kind: 'placeholder' as const }))
 const label = computed(() => (active.value ? platformLabels[active.value.platform] : ''))
+const { online } = useOnline()
 
 // The live stream starts by itself, muted, unless reduced motion is on.
 const autoplay = props.mode === 'live' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -116,8 +118,15 @@ async function share() {
 <template>
   <div>
     <div class="relative aspect-video w-full overflow-hidden bg-black lg:rounded-xl lg:ring-1 lg:ring-white/10">
+      <!-- No connection: say so, rather than a player that cannot load. Video is never saved for offline use. -->
+      <div v-if="!online" role="status" class="absolute inset-0 grid place-items-center bg-surface px-6 text-center">
+        <div>
+          <p class="font-serif text-2xl font-bold sm:text-3xl">You're offline</p>
+          <p class="mt-2 text-sm text-white/75">The video will play when you're back online.</p>
+        </div>
+      </div>
       <iframe
-        v-if="playable.kind === 'iframe'"
+        v-else-if="playable.kind === 'iframe'"
         :key="`iframe-${platform}`"
         :src="playable.url"
         :title="`${title} on ${label}`"

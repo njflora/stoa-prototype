@@ -6,6 +6,8 @@
 //   by `php artisan stoa:export`. It needs no server, so it works on GitHub
 //   Pages. It is a snapshot, and anyone can read every file in it.
 
+import { noteFailedRequest } from '@/composables/useOnline'
+
 export const API_MODE: 'laravel' | 'static' = import.meta.env.VITE_API_MODE === 'laravel' ? 'laravel' : 'static'
 
 const API_BASE = API_MODE === 'laravel' ? '/api/' : `${import.meta.env.BASE_URL}data/`
@@ -19,8 +21,16 @@ export function query(params: Record<string, string | number | undefined>): stri
   return new URLSearchParams(set.map(([key, value]) => [key, String(value)])).toString()
 }
 
+/** fetch, noting a failure with no connection so the offline notice can show. */
+function fetchNoting(url: string, init: RequestInit): Promise<Response> {
+  return fetch(url, init).catch((cause: unknown) => {
+    noteFailedRequest()
+    throw cause
+  })
+}
+
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const response = await fetch(API_BASE + path, {
+  const response = await fetchNoting(API_BASE + path, {
     ...init,
     headers: { Accept: 'application/json', ...(init.body ? { 'Content-Type': 'application/json' } : {}), ...init.headers },
   })
@@ -78,7 +88,7 @@ export function getJson<T>(path: string): Promise<T> {
     cache.set(path, request)
   }
   if (!request) {
-    request = fetch(API_BASE + path, { headers: { Accept: 'application/json' } }).then((response) => {
+    request = fetchNoting(API_BASE + path, { headers: { Accept: 'application/json' } }).then((response) => {
       if (!response.ok) throw new ApiError(response.status, `Could not load ${path} (${response.status})`)
       return response.json() as Promise<T>
     })
