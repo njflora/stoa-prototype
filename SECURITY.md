@@ -45,11 +45,11 @@ How this prototype is protected, what is demo-only, and what a production launch
 
 ## Demo-only, on purpose
 
-These are not security gaps in the prototype. They are things a real launch must build first.
+These are not security gaps in the prototype. In a real launch, they come from the site's existing systems, or are built first.
 
 - **No real accounts.** There are no passwords, sign-up, password reset or two-factor sign-in. The demo panel switches between seeded accounts.
 - **No payments.** "Buy" and "Join" take no payment.
-- **The static preview has no access control.** Its members' content is invented, and every file can be read. Pitch mode and the demo panel only change what one browser shows.
+- **The static preview has no real access control.** It applies the members' gate in the page, but every file can be read, so its members' content is invented. Pitch mode and the demo panel only change what one browser shows.
 - **No moderation.** Comments and forum topics are limited in length and rate. Nothing reviews them.
 
 ## Production checklist
@@ -73,8 +73,8 @@ Before the Laravel version is hosted for real users:
 
 ## Before real accounts and payments
 
-- **Accounts:** use Laravel Fortify for passwords, email verification, password reset and two-factor sign-in. Limit sign-in attempts and lock out repeated failures.
-- **Payments:** use Stripe through Laravel Cashier. Card details go to Stripe, never to this server. Grant access only from Stripe's signed webhooks.
+- **Accounts:** the new features would use the accounts the site already has (ROADMAP.md). If new sign-in features are needed, Laravel Fortify covers passwords, email verification, password reset and two-factor sign-in. Sign-in attempts are limited, and repeated failures are locked out.
+- **Payments:** they stay with the payment providers already in use (ROADMAP.md). Card details go to the provider, never to this server, and access is granted only after the provider's signed confirmation (a webhook). Laravel Cashier with Stripe is an option only for anything new.
 - **Personal data:** record what is stored and why, for UK GDPR. Let people export and delete their data.
 - **Moderation:** reporting, review and removal for comments and forums.
 - **A security review or penetration test** of accounts and payments before launch.

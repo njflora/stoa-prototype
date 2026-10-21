@@ -2,6 +2,15 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The docs agree with each other
+
+### Changed
+- SECURITY.md matches the roadmap. The new features would use the site's existing accounts and payment providers, with Laravel Fortify or Cashier only for anything new.
+- SECURITY.md says plainly what the static preview does: it applies the members' gate in the page, but every file can be read.
+- ARCHITECTURE.md names what the site loads in the browser beyond Vue: MiniSearch, Workbox for the installable app, and two font packages. Its going-live table names the existing payment providers.
+- The README no longer says "nothing to install" just before the option to install the app.
+- A roadmap bullet's punctuation is fixed.
+
 ## 2026-10-21: PHP security update and the articles note
 
 ### Security

@@ -3,7 +3,7 @@
 A map of the Stoa prototype: what lives where, how data moves, and who is allowed to see what. Rewritten on 21 October 2026, after the Laravel work. It names files and functions rather than line numbers, so it stays true as code moves: search for the name.
 
 **Stack.**
-- **Site:** Vue 3 (`<script setup>`), TypeScript, Vite, Tailwind CSS v4 and Vue Router. One runtime package beyond Vue: MiniSearch, for search in the static preview.
+- **Site:** Vue 3 (`<script setup>`), TypeScript, Vite, Tailwind CSS v4 and Vue Router. In the browser it also uses MiniSearch (search in the static preview), Workbox through `vite-plugin-pwa` (the installable app) and two font packages.
 - **Server:** Laravel 13 on PHP 8.4, with Sanctum (sign-in), Scout (search) and Meilisearch. It runs in Docker, with SQLite as the database. Production would use MySQL.
 
 ## The big picture
@@ -236,7 +236,7 @@ The Laravel API limits requests: 300 a minute, 60 searches and 20 changes, per a
 | Sample platform feeds | The live feeds or APIs of Rumble, Odysee and BitChute, one adapter at a time (CONSOLIDATION.md) |
 | The sync run by hand or by `schedule:run` | A queue worker and the scheduler running on the server |
 | Demo sign-in, no passwords | Their real accounts and login |
-| "Buy this episode" with no payment | A real checkout and entitlement |
+| "Buy this episode" with no payment | A real checkout through the payment providers already in use, and the entitlement it grants |
 | The demo clip in three sizes | Their own video hosting, with HLS for adaptive quality |
 | Notifications only while a tab is open | Web Push from the Laravel version, to the installable app |
 | Invented catalogue, comments and sources | Their real data, through the sync and an import |

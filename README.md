@@ -4,7 +4,7 @@ Stoa is an unofficial concept: a prototype of how the site could work, built for
 
 ## View the static preview
 
-The static preview runs in any browser with nothing to install. It has every feature, saved in your browser.
+The static preview runs in any browser, with nothing to set up. It has every feature, saved in your browser.
 
 **[njflora.github.io/stoa-prototype](https://njflora.github.io/stoa-prototype/)**
 
