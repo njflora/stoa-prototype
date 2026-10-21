@@ -22,6 +22,9 @@ export type IconName =
   | 'grid'
   | 'menu'
   | 'eye'
+  | 'fullscreen'
+  | 'fullscreen-exit'
+  | 'film'
 
 defineProps<{ name: IconName }>()
 
@@ -45,6 +48,9 @@ const paths: Record<IconName, string> = {
   grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
   menu: 'M4 6h16M4 12h16M4 18h16',
   eye: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  fullscreen: 'M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5',
+  'fullscreen-exit': 'M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5',
+  film: 'M4 5h16v14H4zM8 5v14M16 5v14M4 9.5h4M4 14.5h4M16 9.5h4M16 14.5h4',
 }
 </script>
 

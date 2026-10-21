@@ -139,8 +139,8 @@ watchEffect(() => {
 <template>
   <main v-if="episode && show">
     <div
-      class="lg:grid lg:items-start lg:gap-x-6 lg:px-8 lg:pt-6"
-      :class="sideColumn ? 'lg:grid-cols-[minmax(0,1fr)_360px]' : 'lg:grid-cols-1'"
+      class="lg:grid lg:items-start lg:justify-center lg:gap-x-6 lg:px-8 lg:pt-6"
+      :class="sideColumn ? 'lg:grid-cols-[minmax(0,var(--player-max-w))_360px]' : 'lg:grid-cols-[minmax(0,var(--player-max-w))]'"
     >
       <div>
         <!-- The player: every platform this episode is on, in one frame. -->

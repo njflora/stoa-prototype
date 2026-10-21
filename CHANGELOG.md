@@ -2,6 +2,16 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The player fits the screen, in the reference site's style
+
+### Changed
+- The player always fits on screen with its buttons below it, on the live page (with the chat beside it) and on episode pages. Its width is the largest 16:9 that fits the window's height, and the page is centred. On a 1903 by 909 screen it is 1189 by 669, down from 1824 by 1026 on episode pages.
+- The source switch is an outlined pink button, "Change player source", as on the reference site. It opens a small menu of the episode's platforms, with any still processing greyed out. Arrow keys move through it and Escape closes it. Share has the same outlined style.
+- The site's own video has controls in the site's skin, after the reference site's player: a pink progress bar with a round handle, then pause, volume, a red LIVE dot (or the time) and full screen. They fade while playing and come back on any movement, tap or keyboard focus.
+
+### Fixed
+- In the static preview, the live page's chat ran a few pixels off the bottom of the screen, because its height did not allow for the preview banner.
+
 ## 2026-10-21: One player for every stream
 
 ### Added

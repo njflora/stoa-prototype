@@ -36,6 +36,16 @@
   }
 }
 
+/*
+  The widest a 16:9 player can be and still fit on screen with the header
+  above it and its source row below (15rem between them). Wide pages size
+  the player's column by it, so the player, and the live chat beside it,
+  are always fully in view.
+*/
+:root {
+  --player-max-w: calc((100dvh - 15rem) * 16 / 9);
+}
+
 @layer base {
   html {
     color-scheme: dark;

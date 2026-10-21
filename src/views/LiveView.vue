@@ -108,7 +108,7 @@ const flagship = computed(() => schedule.value.find((item) => item.id === show.i
     <!-- Phones: one screen tall, video on top and chat filling the rest.
          Large screens: video and details on the left, chat on the right. -->
     <div
-      class="flex h-[calc(100svh-var(--header-h,6rem)-var(--tabbar-h,0px))] flex-col lg:grid lg:h-auto lg:grid-cols-[minmax(0,1fr)_360px] lg:grid-rows-[auto_1fr] lg:gap-x-6 lg:px-8 lg:pt-6"
+      class="flex h-[calc(100svh-var(--header-h,6rem)-var(--banner-h,0px)-var(--tabbar-h,0px))] flex-col lg:grid lg:h-auto lg:grid-cols-[minmax(0,var(--player-max-w))_360px] lg:grid-rows-[auto_1fr] lg:justify-center lg:gap-x-6 lg:px-8 lg:pt-6"
     >
       <div class="relative flex-none lg:col-start-1 lg:row-start-1">
         <div class="absolute top-3 right-3 z-20">
@@ -192,7 +192,7 @@ const flagship = computed(() => schedule.value.find((item) => item.id === show.i
         :mode="chatMode"
         :opens-at="formatTime(nextStart)"
         :signed-in="isSignedIn"
-        class="min-h-0 flex-1 border-t border-white/5 lg:sticky lg:top-[calc(var(--header-h,4rem)+1.5rem)] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[calc(100svh-var(--header-h,4rem)-3rem)] lg:self-start lg:border-0"
+        class="min-h-0 flex-1 border-t border-white/5 lg:sticky lg:top-[calc(var(--header-h,4rem)+1.5rem)] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[calc(100svh-var(--header-h,4rem)-var(--banner-h,0px)-3rem)] lg:self-start lg:border-0"
       >
         <template v-if="phase === 'break'" #pinned>
           <MemberHandoff :is-member="isMember" :countdown="breakCountdown" />
