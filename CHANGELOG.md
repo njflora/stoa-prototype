@@ -2,6 +2,14 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: A README for reviewers
+
+### Changed
+- README.md rewritten for a reviewer arriving from the pitch: what Stoa is (an unofficial concept, stated plainly), how to view the static preview (link to come at deployment), how to run the full Laravel version step by step on Windows or Mac, the demo accounts, and where to read more. The steps were tested from an empty database; they include creating the database file, which a fresh copy does not have.
+
+### Checked
+- The intro already shows once per visitor, remembered in the browser, with "Skip intro" and "Replay intro" in the demo panel. Confirmed in the browser; no change needed.
+
 ## 2026-10-21: A pitch note for every feature
 
 ### Added
