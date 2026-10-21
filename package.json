@@ -11,6 +11,8 @@
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
+    "build:pages": "run-p type-check \"build-only -- --mode pages\"",
+    "preview:pages": "vite preview --mode pages",
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
