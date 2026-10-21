@@ -8,7 +8,8 @@
 //   placeholder for them, unless a real test embed is set in .env.local
 //   (see .env.example); that one plays for every episode.
 // - VOD is the site's own hosting: a plain video file (or HLS stream) in the
-//   site's own player. The demo points it at a CC0 clip, so it really plays.
+//   site's own player. The demo points it at a CC0 clip in several sizes,
+//   so it really plays, and the quality menu really switches.
 
 import { heroVideo, mediaUrl } from './media'
 
@@ -53,11 +54,29 @@ const testEmbeds: Record<Exclude<Platform, 'vod'>, string | null> = {
   bitchute: checkedEmbedUrl(import.meta.env.VITE_BITCHUTE_EMBED_URL, 'https://www.bitchute.com/embed/'),
 }
 
+/** One file of a video, in one format. */
+export interface VideoFile {
+  src: string
+  type: string
+}
+
+/**
+ * One size of a video, such as "480p". Its files are the same picture in
+ * different formats; the browser plays the first it can. "Auto" lets the
+ * browser choose; with HLS it follows the connection.
+ */
+export interface Rendition {
+  label: string
+  files: VideoFile[]
+}
+
 /** What the player shows for a source. */
 export type Playable =
   | { kind: 'iframe'; url: string }
-  | { kind: 'video'; sources: { src: string; type: string }[] }
+  | { kind: 'video'; renditions: Rendition[] }
   | { kind: 'placeholder' }
+
+const single = (files: VideoFile[]): Playable => ({ kind: 'video', renditions: [{ label: 'Auto', files }] })
 
 export function playableFor(source: EpisodeSource): Playable {
   if (source.platform !== 'vod') {
@@ -66,13 +85,21 @@ export function playableFor(source: EpisodeSource): Playable {
   }
   const file = source.embedUrl
   if (!file) return { kind: 'placeholder' }
-  // The demo clip, with the Safari fallback HeroVideo uses too.
+  // The demo clip, in the sizes Wikimedia Commons publishes it. Auto is the
+  // 480p file, with the Safari fallback HeroVideo uses too. (Commons has no
+  // larger copy a browser can play: the original is Ogg Theora.)
   if (file === heroVideo.webm) {
+    const webm480 = { src: mediaUrl(heroVideo.webm), type: 'video/webm' }
+    // The 360p file is MPEG-4 in a QuickTime box, which only Safari plays. Its
+    // exact type means other browsers leave it out of the menu.
+    const mov360 = { src: mediaUrl(heroVideo.mov), type: 'video/quicktime; codecs="mp4v"' }
     return {
       kind: 'video',
-      sources: [
-        { src: mediaUrl(heroVideo.webm), type: 'video/webm' },
-        { src: mediaUrl(heroVideo.mov), type: 'video/mp4' },
+      renditions: [
+        { label: 'Auto', files: [webm480, mov360] },
+        { label: '480p', files: [webm480] },
+        { label: '360p', files: [mov360] },
+        { label: '240p', files: [{ src: mediaUrl(heroVideo.webm240), type: 'video/webm' }] },
       ],
     }
   }
@@ -80,7 +107,7 @@ export function playableFor(source: EpisodeSource): Playable {
   if (file.endsWith('.m3u8')) {
     // HLS plays natively in Safari; elsewhere it needs a library such as hls.js.
     const native = document.createElement('video').canPlayType('application/vnd.apple.mpegurl')
-    return native ? { kind: 'video', sources: [{ src, type: 'application/vnd.apple.mpegurl' }] } : { kind: 'placeholder' }
+    return native ? single([{ src, type: 'application/vnd.apple.mpegurl' }]) : { kind: 'placeholder' }
   }
-  return { kind: 'video', sources: [{ src, type: file.endsWith('.webm') ? 'video/webm' : 'video/mp4' }] }
+  return single([{ src, type: file.endsWith('.webm') ? 'video/webm' : 'video/mp4' }])
 }

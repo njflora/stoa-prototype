@@ -328,6 +328,8 @@
     "webm": "media/hero-loop.webm",
     "webmSize": 688349,
     "mov": "media/hero-loop.mov",
-    "movSize": 862831
+    "movSize": 862831,
+    "webm240": "media/hero-loop-240.webm",
+    "webm240Size": 185600
   }
 }

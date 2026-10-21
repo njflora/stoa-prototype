@@ -5,8 +5,9 @@ All notable changes to this prototype are listed here. Newest first.
 ## 2026-10-21: Quality and speed in the Stoa player
 
 ### Added
-- A settings button (a cog) in the Stoa player, beside full screen. Quality: Auto, 1080p, 720p, 480p and 360p. Speed: 0.25× to 2×, plus Custom, a slider from 0.25× to 3×. The live stream has Quality only, as it plays in real time. Escape closes the menu and returns focus to the button.
-- The demo clip exists in one size, so choosing a quality shows the feature without changing the picture. With real hosting, the sizes come from the HLS stream.
+- A settings button (a cog) in the Stoa player, beside full screen. Speed: 0.25× to 2×, plus Custom, a slider from 0.25× to 3×. The live stream has no speed setting, as it plays in real time. Escape closes the menu and returns focus to the button.
+- Quality really switches. The demo clip comes in the sizes Wikimedia Commons publishes (480p, 360p and a new 240p file, 181 KB), and choosing one swaps the file and carries on from the same moment, at the same speed. The menu lists only the sizes the browser can play: 360p is Safari's format, so Chrome and Firefox show Auto, 480p and 240p. With real hosting the sizes would come from an HLS stream, with Auto following the connection.
+- scripts/media/fetch_media.py also fetches the 240p file, so a re-run keeps it.
 
 ## 2026-10-21: Platforms by whether a show airs live
 

@@ -118,6 +118,8 @@ def check_video(video):
     webm = next((d for d in derivatives if d.get('height') == 480 and 'webm' in d['type']), None)
     # Commons' H.264 version comes as a QuickTime .mov file, which Safari and iPhones play.
     mov = next((d for d in derivatives if d.get('height') == 360 and ('mp4' in d['type'] or 'quicktime' in d['type'])), None)
+    # A smaller size for the player's quality menu.
+    webm240 = next((d for d in derivatives if d.get('height') == 240 and 'webm' in d['type']), None)
     poster = api({'titles': video['title'], 'prop': 'imageinfo', 'iiprop': 'url', 'iiurlwidth': str(HERO_WIDTH)})
     poster_url = next(iter(poster['query']['pages'].values()))['imageinfo'][0].get('thumburl')
     video.update({
@@ -128,6 +130,7 @@ def check_video(video):
         'sourceUrl': info['descriptionurl'],
         'webmUrl': webm and webm['src'],
         'movUrl': mov and mov['src'],
+        'webm240Url': webm240 and webm240['src'],
         'posterUrl': poster_url,
     })
     return video
@@ -230,10 +233,10 @@ def main():
     entry = {'alt': video['alt'], 'name': video['name'], 'artist': video['artist'], 'date': video['date'],
              'licence': video['licence'], 'sourceUrl': video['sourceUrl'],
              'poster': poster['hero'], 'posterCard': poster['card']}
-    for key, ext in (('webmUrl', 'webm'), ('movUrl', 'mov')):
+    for key, ext, name in (('webmUrl', 'webm', 'webm'), ('movUrl', 'mov', 'mov'), ('webm240Url', 'webm240', '240.webm')):
         if video.get(key):
             time.sleep(PAUSE)
-            path = OUT_DIR / f"{video['id']}.{ext}"
+            path = OUT_DIR / (f"{video['id']}.{name}" if ext != 'webm240' else f"{video['id']}-{name}")
             path.write_bytes(fetch(video[key]).read())
             entry[ext] = f'media/{path.name}'
             entry[f'{ext}Size'] = path.stat().st_size
@@ -244,14 +247,14 @@ def main():
 
     # Cross-check: every file on disk is listed in the manifest, and the reverse.
     listed = {Path(v).name for item in manifest['images'].values() for k, v in item.items() if k in ('hero', 'card')}
-    listed |= {Path(entry[k]).name for k in ('poster', 'posterCard', 'webm', 'mov') if k in entry}
+    listed |= {Path(entry[k]).name for k in ('poster', 'posterCard', 'webm', 'mov', 'webm240') if k in entry}
     on_disk = {p.name for p in OUT_DIR.iterdir()}
     if listed != on_disk:
         raise SystemExit(f'Mismatch. Unlisted files: {on_disk - listed}. Missing files: {listed - on_disk}.')
 
     total_images = sum(item['heroSize'] + item['cardSize'] for item in manifest['images'].values())
     print(f'\nImages: {total_images // 1024} KB in total (budget 3072 KB).')
-    for ext in ('webm', 'mov'):
+    for ext in ('webm', 'mov', 'webm240'):
         if f'{ext}Size' in entry:
             print(f"Video {ext}: {entry[ext + 'Size'] // 1024} KB")
     print(f'Wrote {MANIFEST.relative_to(ROOT)} and {CREDITS.relative_to(ROOT)}.')

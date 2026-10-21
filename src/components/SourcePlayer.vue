@@ -130,7 +130,7 @@ async function share() {
       <VodPlayer
         v-else-if="playable.kind === 'video'"
         :key="`video-${platform}`"
-        :sources="playable.sources"
+        :renditions="playable.renditions"
         :poster="mediaUrl(heroVideo.poster)"
         :label="`${title}, on ${label}`"
         :live="mode === 'live'"

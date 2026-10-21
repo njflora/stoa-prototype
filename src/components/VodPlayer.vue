@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import AppIcon from './AppIcon.vue'
+import type { Rendition } from '@/data/streams'
 
 // The site's own video player, for its own hosting (VOD). Custom controls in
 // the site's skin, after the reference site's player: a pink progress bar
@@ -9,8 +10,8 @@ import AppIcon from './AppIcon.vue'
 // playing, and come back on any movement, tap or keyboard focus.
 
 const props = defineProps<{
-  /** The same video in more than one format; the browser plays the first it can. */
-  sources: { src: string; type: string }[]
+  /** The video's sizes, "Auto" first. */
+  renditions: Rendition[]
   poster?: string
   /** What is playing, for screen readers. */
   label: string
@@ -30,11 +31,16 @@ const fullscreen = ref(false)
 const shown = ref(true)
 
 // ---------- settings: quality and speed ----------
-// Quality: with real hosting the sizes come from the HLS stream, and "Auto"
-// follows the connection. The demo clip exists in one size, so choosing one
-// shows the feature without changing the picture.
-const qualities = ['Auto', '1080p', '720p', '480p', '360p'] as const
-const quality = ref<(typeof qualities)[number]>('Auto')
+// Quality: the sizes this browser can play. Choosing one swaps the file and carries
+// on from the same moment, at the same speed. With real hosting the sizes
+// would come from the HLS stream, and "Auto" would follow the connection.
+const probe = document.createElement('video')
+const canPlay = (rendition: Rendition) => rendition.files.some((file) => probe.canPlayType(file.type) !== '')
+const qualities = computed(() => props.renditions.filter(canPlay).map((r) => r.label))
+const quality = ref('Auto')
+const files = computed(() => (props.renditions.find((r) => r.label === quality.value) ?? props.renditions[0])?.files ?? [])
+/** Where to pick up after a switch. */
+let resumeAt: { time: number; play: boolean } | null = null
 // Speed: a live stream plays in real time, so it has no speed setting.
 const speeds = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2]
 const speed = ref(1)
@@ -62,9 +68,25 @@ function setSpeed(rate: number) {
   speed.value = Math.round(rate * 100) / 100
   if (video.value) video.value.playbackRate = speed.value
 }
-function chooseQuality(choice: (typeof qualities)[number]) {
-  quality.value = choice
+async function chooseQuality(choice: string) {
+  if (choice !== quality.value && video.value) {
+    resumeAt = { time: video.value.currentTime, play: !video.value.paused }
+    quality.value = choice
+    await nextTick()
+    video.value.load()
+  }
   openView('main')
+}
+/** After a new file loads: the same moment, the same speed, and playing if it was. */
+function onLoaded() {
+  const v = video.value!
+  duration.value = v.duration
+  v.playbackRate = speed.value
+  if (resumeAt) {
+    v.currentTime = Math.min(resumeAt.time, v.duration || resumeAt.time)
+    if (resumeAt.play) v.play().catch(() => {})
+    resumeAt = null
+  }
 }
 function chooseSpeed(rate: number) {
   setSpeed(rate)
@@ -143,9 +165,9 @@ onUnmounted(() => {
       @pause="(playing = false), (shown = true)"
       @volumechange="muted = video!.muted"
       @timeupdate="current = video!.currentTime"
-      @loadedmetadata="(duration = video!.duration), (video!.playbackRate = speed)"
+      @loadedmetadata="onLoaded"
     >
-      <source v-for="file in sources" :key="file.src" :src="file.src" :type="file.type" />
+      <source v-for="file in files" :key="file.src" :src="file.src" :type="file.type" />
     </video>
 
     <!-- Paused: one big button in the middle. -->
