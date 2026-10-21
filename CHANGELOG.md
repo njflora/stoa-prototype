@@ -2,6 +2,16 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The footer matches their site
+
+### Changed
+- The footer pitch note is marked kept: their site already has a footer with FAQ, Contact and a newsletter sign-up. The note no longer claims those links are hard to find. The 44 notes are now 19 that answer findings, 18 proposals and 7 kept.
+- The footer carries their links, in their order: Terms of Use, Privacy Policy, Cookie Policy, About us, Find Us, Contact and FAQ. Contributors and Pitch notes follow. Three columns on wider screens, two on phones.
+- On phones the footer has more space at the bottom, so the Demo button no longer covers the last link.
+
+### Added
+- Placeholder pages for the terms, privacy and cookie policies, About us and Find Us. A real build would carry their text over from the current site.
+
 ## 2026-10-21: Pushed to a private GitHub repository
 
 ### Added

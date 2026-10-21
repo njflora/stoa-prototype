@@ -387,11 +387,11 @@ export const pitchNotes: PitchNote[] = [
   },
   {
     id: 'footer',
-    kind: 'proposal',
-    source: "Nick's feedback",
+    kind: 'kept',
+    source: 'Their site',
     title: 'A footer with the essentials',
-    today: 'Contributors, FAQ and contact are hard to find.',
-    here: 'Contributors, FAQ and contact in the footer of every page, with credits and a newsletter sign-up. Courses and the shop are in the top bar.',
+    today: 'The footer links to the terms, privacy and cookie policies, About us, Find Us, Contact and FAQ, with a newsletter sign-up.',
+    here: 'The same footer, with Contributors added. Courses and the shop stay in the top bar.',
     page: home,
   },
   {

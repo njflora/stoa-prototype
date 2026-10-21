@@ -5,11 +5,16 @@ import { brand } from '@/config/brand'
 import BrandLogo from './BrandLogo.vue'
 import PitchNote from './PitchNote.vue'
 
-// The way to everything not in the top bar: contributors, help and the small print.
+// The real site's footer links, in their order, plus Contributors and Pitch notes.
 const links = [
-  { label: 'Contributors', to: '/contributors' },
-  { label: 'FAQ', to: { path: '/join', hash: '#faq-heading' } },
+  { label: 'Terms of Use', to: '/terms' },
+  { label: 'Privacy Policy', to: '/privacy' },
+  { label: 'Cookie Policy', to: '/cookies' },
+  { label: 'About us', to: '/about' },
+  { label: 'Find Us', to: '/find-us' },
   { label: 'Contact', to: '/contact' },
+  { label: 'FAQ', to: { path: '/join', hash: '#faq-heading' } },
+  { label: 'Contributors', to: '/contributors' },
   { label: 'Pitch notes', to: '/pitch' },
 ]
 </script>
@@ -17,10 +22,10 @@ const links = [
 <template>
   <!-- Phones: newsletter first. Larger screens: disclaimer left, newsletter right. -->
   <footer
-    class="mt-16 flex flex-col-reverse gap-8 border-t border-white/5 px-4 py-8 text-xs text-muted sm:px-8 md:flex-row md:items-start md:justify-between"
+    class="mt-16 flex flex-col-reverse gap-8 border-t border-white/5 px-4 py-8 text-xs text-muted pb-16 sm:px-8 md:flex-row md:pb-8 md:items-start md:justify-between"
   >
     <nav aria-label="Footer" class="md:pt-1">
-      <ul class="grid grid-cols-2 gap-x-8 gap-y-1 text-sm">
+      <ul class="grid grid-cols-2 gap-x-8 sm:grid-cols-3 gap-y-1 text-sm">
         <li v-for="link in links" :key="link.label">
           <RouterLink :to="link.to" class="inline-flex min-h-6 items-center text-white/75 hover:text-white">{{ link.label }}</RouterLink>
         </li>

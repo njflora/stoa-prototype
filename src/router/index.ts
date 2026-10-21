@@ -133,6 +133,18 @@ const router = createRouter({
       component: () => import('../views/CreditsView.vue'),
       meta: { title: 'Credits' },
     },
+    // The real site's footer pages. Placeholders here: a real build carries their text over.
+    ...[
+      { path: '/terms', title: 'Terms of Use' },
+      { path: '/privacy', title: 'Privacy Policy' },
+      { path: '/cookies', title: 'Cookie Policy' },
+      { path: '/about', title: 'About us' },
+      { path: '/find-us', title: 'Find Us' },
+    ].map(({ path, title }) => ({
+      path,
+      component: PlaceholderView,
+      meta: { title, note: 'A placeholder. A real build would carry this page over from the current site.' },
+    })),
     {
       path: '/desk',
       name: 'desk',
