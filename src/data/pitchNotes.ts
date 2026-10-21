@@ -145,7 +145,7 @@ export const pitchNotes: PitchNote[] = [
     today: 'Each episode goes out on several platforms (Rumble, Odysee, BitChute and their own video on demand), each one managed separately.',
     here: 'One record per episode lists every platform it is on, kept current by a sync. The player offers only those platforms, in one frame, and shows any still processing. The site\'s own video plays in its own player, with no third party.',
     page: episode,
-    hint: 'Members\' episodes play on the site\'s own video only; try a free preview or The Stoa Podcast for every platform.',
+    hint: 'Shows that air live are on Rumble, Odysee and the site\'s own player; the rest on Rumble, BitChute and the site\'s own player.',
   },
   {
     id: 'live-handoff',

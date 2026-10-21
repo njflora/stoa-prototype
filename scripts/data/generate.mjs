@@ -65,10 +65,10 @@ function deck(name, items) {
 const combine = (subjects, angles, join = (s, a) => (/[?!]$/.test(s) ? `${s} ${a}` : `${s}: ${a}`)) => subjects.flatMap((s) => angles.map((a) => join(s, a)))
 
 // ---------- dates ----------
-// Today at midnight, local time. The site moves every date forward by whole
-// weeks to "now", so weekdays (and daily titles) stay correct.
-const generatedAt = new Date()
-generatedAt.setHours(0, 0, 0, 0)
+// A fixed day: midnight on 20 October 2026, UK time. Fixed, so every run
+// gives the same catalogue whatever day it runs. The site moves every date
+// forward by whole weeks to "now", so weekdays (and daily titles) stay correct.
+const generatedAt = new Date('2026-10-19T23:00:00.000Z')
 
 function at(date, hour, minute = 0) {
   const d = new Date(date)
@@ -456,7 +456,7 @@ const articles = articleSources
 const allEpisodes = [...byShow.values()].flat()
 const extras = buildExtras({ episodes: allEpisodes, articles, now: generatedAt, seededRandom: seeded })
 // Where each episode is published (Rumble, Odysee, BitChute, VOD).
-const sources = buildSources({ episodes: allEpisodes, now: generatedAt, seededRandom: seeded })
+const sources = buildSources({ episodes: allEpisodes, liveShowIds: shows.filter((s) => s.slot.live).map((s) => s.id), now: generatedAt, seededRandom: seeded })
 
 // ---------- write the seed data ----------
 // This script only invents the catalogue. Laravel is the source of truth:

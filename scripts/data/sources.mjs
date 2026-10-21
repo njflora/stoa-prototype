@@ -3,10 +3,13 @@
 // Laravel stores one row per episode and platform (episode_sources), and
 // the platform sync (stage F) keeps them current.
 //
-// Which platforms carry which shows:
-// - The Stoa Podcast and Morning Brief: all four.
-// - Conversations: Rumble, Odysee and VOD.
-// - Members' shows: VOD only, with free previews also on Rumble.
+// Which platforms carry which shows (Nick's call):
+// - Shows that air live (The Stoa Podcast, Morning Brief, The Forum), and
+//   the live stream itself: Rumble, Odysee and VOD.
+// - Shows that do not (Chronos, Ledger, Statecraft, Conversations):
+//   Rumble, BitChute and VOD.
+// Members' episodes are on the platforms too; the API only hands their
+// links to people who may watch.
 //
 // VOD is the source of truth and always linked. The mirrors lag behind: the
 // newest episodes are still "pending" there, and now and then a link is
@@ -20,11 +23,8 @@
 const VOD_DEMO_FILE = 'media/hero-loop.webm'
 const HOUR = 3_600_000
 
-const platformsFor = (episode) => {
-  if (episode.showId === 'stoa-podcast' || episode.showId === 'morning-brief') return ['rumble', 'odysee', 'bitchute', 'vod']
-  if (episode.showId === 'conversations') return ['rumble', 'odysee', 'vod']
-  return episode.access === 'freemium' ? ['rumble', 'vod'] : ['vod']
-}
+const platformsFor = (episode, liveShowIds) =>
+  liveShowIds.includes(episode.showId) ? ['rumble', 'odysee', 'vod'] : ['rumble', 'bitchute', 'vod']
 
 /** A string of `length` characters from the alphabet, from the random sequence. */
 const token = (random, length, alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789') =>
@@ -64,14 +64,14 @@ function link(platform, episode, random) {
  * embedUrl, syncedAt }]. `now` is when the catalogue was generated;
  * `seededRandom` is the generator's seeded() function.
  */
-export function buildSources({ episodes, now, seededRandom }) {
+export function buildSources({ episodes, liveShowIds, now, seededRandom }) {
   const lastSync = new Date(now.getTime() - 20 * 60_000).toISOString()
   const rows = []
   for (const episode of episodes) {
     const random = seededRandom(`${episode.id}:sources`)
     const published = new Date(episode.publishedAt).getTime()
     const recent = now.getTime() - published < 6 * HOUR
-    for (const platform of platformsFor(episode)) {
+    for (const platform of platformsFor(episode, liveShowIds)) {
       const roll = random()
       let status = 'linked'
       if (platform !== 'vod') {
@@ -94,10 +94,9 @@ export function buildSources({ episodes, now, seededRandom }) {
   return rows
 }
 
-/** The live show streams on every platform at once. */
+/** The live stream: Rumble, Odysee and the site's own player, at once. */
 export const liveSources = [
   { platform: 'rumble', status: 'linked' },
   { platform: 'odysee', status: 'linked' },
-  { platform: 'bitchute', status: 'linked' },
   { platform: 'vod', status: 'linked', embedUrl: VOD_DEMO_FILE },
 ]

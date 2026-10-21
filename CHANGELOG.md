@@ -2,6 +2,14 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Platforms by whether a show airs live
+
+### Changed
+- Shows that air live (The Stoa Podcast, Morning Brief, The Forum) and the live stream play on Rumble, Odysee and the site's own player. Shows that do not (Chronos, Ledger, Statecraft, Conversations) play on Rumble, BitChute and the site's own player (Nick's call). Members' episodes are on the platforms too; their links still go only to people who may watch.
+
+### Fixed
+- The generator dated the catalogue "today", so running it on a different day shifted every episode by a day. It now uses a fixed day (20 October 2026), so every run gives the same data. The site still moves dates forward by whole weeks.
+
 ## 2026-10-21: The player fits the screen, in the reference site's style
 
 ### Changed
