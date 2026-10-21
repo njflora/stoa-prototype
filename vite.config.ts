@@ -12,6 +12,28 @@ import { brand } from './src/config/brand'
 // uses that base; dev, dev:laravel and a plain build stay at /.
 const PAGES_BASE = '/stoa-prototype/'
 
+// The site's Content Security Policy: what the browser may load and run.
+// Scripts, data, images, video and fonts come from the site itself; frames
+// only from the three video platforms' embed pages. Inline styles are
+// allowed because Vue sets some style attributes; inline scripts are not.
+// GitHub Pages cannot send headers, so it goes in a <meta> tag, which
+// cannot carry frame-ancestors: the Laravel server sends that as a header.
+const CONTENT_SECURITY_POLICY = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "media-src 'self' blob:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  'frame-src https://rumble.com https://odysee.com https://www.bitchute.com',
+  "worker-src 'self'",
+  "manifest-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ')
+
 /** A colour from the theme tokens in main.css, so the app's colours follow the site's. */
 function themeToken(name: string): string {
   const css = readFileSync(new URL('./src/assets/main.css', import.meta.url), 'utf8')
@@ -31,6 +53,14 @@ export default defineConfig(({ mode }) => {
         name: 'brand-in-index-html',
         transformIndexHtml: (html) =>
           html.replaceAll('%BRAND_NAME%', brand.name).replaceAll('%BRAND_DESCRIPTION%', brand.description.replace(/^./, (c) => c.toLowerCase())),
+      },
+      // Built pages only: the dev server injects inline styles and a live-reload connection.
+      {
+        name: 'content-security-policy',
+        apply: 'build',
+        transformIndexHtml: () => [
+          { tag: 'meta', attrs: { 'http-equiv': 'Content-Security-Policy', content: CONTENT_SECURITY_POLICY }, injectTo: 'head-prepend' },
+        ],
       },
       vue(),
       vueDevTools(),

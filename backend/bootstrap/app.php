@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->statefulApi();
         // Every API route counts towards the "api" rate limit (AppServiceProvider).
         $middleware->throttleApi();
+        // Security headers on every response, including errors.
+        $middleware->append(SecurityHeaders::class);
         // The API has no login page to send guests to: they get a 401.
         $middleware->redirectGuestsTo(fn (Request $request) => $request->is('api/*') ? null : '/sign-in');
     })

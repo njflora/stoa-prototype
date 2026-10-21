@@ -27,6 +27,18 @@ class SecurityTest extends TestCase
         $this->actingAs(User::factory()->create())->postJson("/api/communities/{$community}")->assertOk();
     }
 
+    public function test_api_answers_carry_the_security_headers(): void
+    {
+        $this->getJson('/api/me')
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+            ->assertHeader('X-Frame-Options', 'DENY')
+            ->assertHeader('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'");
+
+        // Errors carry them too.
+        $this->getJson('/api/episodes/no-such-episode')->assertNotFound()->assertHeader('X-Content-Type-Options', 'nosniff');
+    }
+
     public function test_search_is_limited_to_60_a_minute_per_visitor(): void
     {
         // An empty query is refused (422), but it still counts towards the limit.
