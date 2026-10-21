@@ -5,7 +5,7 @@ All notable changes to this prototype are listed here. Newest first.
 ## 2026-10-21: The account note, corrected
 
 ### Changed
-- The "One account for everything" note now says their sites are seemingly separate today, each with its own account, and proposes one account, one site and one source of truth.
+- The "One account for everything" note now says their sites appear to be separate today (a site login does not work in the store), and proposes one account, one site and one source of truth.
 
 ## 2026-10-21: The shop note, corrected
 

@@ -437,7 +437,7 @@ export const pitchNotes: PitchNote[] = [
     kind: 'proposal',
     source: "Nick's feedback",
     title: 'One account for everything',
-    today: 'The content site, the courses site and the merch store are seemingly separate, each with its own account.',
+    today: 'The content site, the courses site and the merch store appear to be separate sites. A site login does not work in the store, so they seem to need separate accounts.',
     here: 'One account, one site and one source of truth: membership, communities joined, episodes bought, watch history, reminders and the newsletter in one place.',
     page: { name: 'Account', to: '/account' },
     hint: 'Viewing as "Member" or "Free account".',
