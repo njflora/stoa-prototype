@@ -10,6 +10,16 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    # Major versions only. Minor and patch updates still come.
+    ignore:
+      # vue-tsc cannot run on TypeScript 7 yet (checked October 2026).
+      # Remove this once vue-tsc supports it.
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+      # The types should match the Node version the site builds with (24, in
+      # the workflows). Remove this when moving to a newer Node.
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
 
   - package-ecosystem: composer
     directory: /backend
