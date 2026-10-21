@@ -2,6 +2,11 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Accessibility notes 5 to 8, checked
+
+### Checked
+- Review notes 5 (slideshow pause), 6 (More sheet focus), 7 (chat announcements) and 8 (demo panel tap targets) were fixed earlier today. Each was checked again at 375 px and at desktop width, and each passes. REVIEW-NOTES.md records the check.
+
 ## 2026-10-21: The README's opening, reworded
 
 ### Changed

@@ -65,28 +65,28 @@ Effort: **S** is under an hour, **M** is a few hours to a day, **L** is several 
 - **What I saw:** slides change every 8 seconds. They pause on hover or focus and respect reduce motion, but there is no button to stop them.
 - **Why it matters:** WCAG 2.2.2 asks for a way to pause anything that moves or updates automatically for more than five seconds. Hover is not available on phones or to many assistive technologies.
 - **Suggested fix:** a small pause and play button beside the slide dots, as `HeroVideo.vue` already has. **S**
-- **Addressed (21 October):** a pause and play button beside the slide dots.
+- **Addressed (21 October):** a pause and play button beside the slide dots, 24 px tall. Checked at 375 px and 1280 px.
 
 ### 6. The More sheet claims to be modal but lets focus escape
 - **Where:** `src/components/MobileTabBar.vue` lines 121 to 128.
 - **What I saw:** the sheet has `role="dialog"` and `aria-modal="true"`, and focus moves into it. Tab can still leave it and reach the page behind.
 - **Why it matters:** screen readers are told the rest of the page is inert, while keyboard users can wander into it.
 - **Suggested fix:** trap Tab inside the sheet, as `SearchPanel.vue` (lines 91 to 108) and `BuyEpisodeDialog.vue` do. See note 14 for a shared helper. **S**
-- **Addressed (21 October):** Tab and Shift+Tab stay inside the sheet while it is open.
+- **Addressed (21 October):** Tab and Shift+Tab stay inside the sheet while it is open. Checked at 375 px (the sheet exists only on phones).
 
 ### 7. The live chat announces every new message
 - **Where:** `src/components/LiveChat.vue` lines 158 to 164.
 - **What I saw:** the list is `role="log"` with `aria-live="polite"`, and a message arrives every 2.8 seconds (line 33).
 - **Why it matters:** a screen-reader user hears a constant stream and cannot follow the rest of the page.
 - **Suggested fix:** keep `role="log"` without announcing every message, or add a "Read messages aloud" toggle that is off by default. **S**
-- **Addressed (21 October):** the chat list no longer announces each new message.
+- **Addressed (21 October):** the chat list is `aria-live="off"`, so new messages are not read out. Checked at 375 px and 1280 px.
 
 ### 8. Demo panel links are under 24 px tall
 - **Where:** `src/components/DemoControls.vue` lines 107 and 114 to 119.
 - **What I saw:** "All notes", "Clear watch progress" and "Restore sample progress" are small text buttons. The phone audits only covered the page and footer, not the demo panel.
 - **Why it matters:** low, since the panel is not part of the design. It is used live in pitches, though, often on a phone.
 - **Suggested fix:** add `min-h-6` like the rest of the site. **S**
-- **Addressed (21 October):** every demo panel link and button is at least 24 px tall.
+- **Addressed (21 October):** every demo panel link and button is at least 24 px tall. Checked all 15 at 375 px and 1280 px.
 
 ---
 
