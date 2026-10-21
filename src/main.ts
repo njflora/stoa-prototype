@@ -12,6 +12,7 @@ import { loadAccount } from './api/account'
 import { loadReference } from './api/catalogue'
 import { API_MODE } from './api/client'
 import router from './router'
+import { brand } from './config/brand'
 
 // Load the small reference data (shows, hosts, series, the live event)
 // before mounting, so every page can read it instantly. In Laravel mode,
@@ -22,5 +23,5 @@ try {
 } catch (error) {
   console.error(error)
   document.getElementById('app')!.innerHTML =
-    '<p style="padding:2rem;font-family:sans-serif">Stoa could not load. Check your connection and refresh the page.</p>'
+    `<p style="padding:2rem;font-family:sans-serif">${brand.name} could not load. Check your connection and refresh the page.</p>`
 }

@@ -4,6 +4,8 @@
 // site's price points. Their community is free, with a member and post
 // count, so ours is too: a membership on your account, not lessons.
 
+import { brand } from '@/config/brand'
+
 export type CourseType = 'Community' | 'Course' | 'Bundle'
 
 export interface Course {
@@ -50,7 +52,7 @@ export const courses: Course[] = [
     summary: 'Discuss the big questions with like-minded people, in monthly reading groups and an open forum.',
     about: [
       'The Philosophy Circle is a place to think out loud. Members read a short classic together each month and argue about it in the forum.',
-      'Membership is free and sits on your Stoa account, so there is nothing new to sign up for.',
+      `Membership is free and sits on your ${brand.name} account, so there is nothing new to sign up for.`,
     ],
     price: 0,
     teacherId: 'richard',

@@ -13,6 +13,7 @@ import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { formatCount, formatPublished } from '@/utils/format'
 import AppIcon from '@/components/AppIcon.vue'
+import { pageTitle } from '@/config/brand'
 
 // One article. After the last paragraph come its sources (Finding 4),
 // an episode on the same subject, and more from the same writer.
@@ -41,7 +42,7 @@ const moreFromAuthor = computed(() => (byAuthor.data.value ?? []).filter((a) => 
 const colours = computed(() => (piece.value ? articleCategoryColours[piece.value.category] : undefined))
 
 watchEffect(() => {
-  if (piece.value) document.title = `${piece.value.title} · Stoa`
+  if (piece.value) document.title = pageTitle(piece.value.title)
 })
 </script>
 

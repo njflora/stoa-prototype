@@ -5,6 +5,8 @@
 //   proposal: not offered today (from the benchmark or our own ideas)
 //   kept:     already on the real site, credited rather than claimed
 
+import { brand } from '@/config/brand'
+
 export type PitchKind = 'fix' | 'proposal' | 'kept'
 
 export interface PitchNote {
@@ -303,7 +305,7 @@ export const pitchNotes: PitchNote[] = [
     source: 'Courses site',
     title: 'Forums for each community',
     today: 'A single philosophy community on the separate courses site, joined by email.',
-    here: 'Join with one click on your Stoa account. One forum is open; more are planned, and the same model could give every show or series its own forum.',
+    here: `Join with one click on your ${brand.name} account. One forum is open; more are planned, and the same model could give every show or series its own forum.`,
     page: coursesPage,
   },
   {

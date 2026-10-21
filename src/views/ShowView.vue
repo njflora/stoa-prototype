@@ -15,6 +15,7 @@ import { listAllSeries } from '@/data/catalogue'
 import { useQuery } from '@/composables/useQuery'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
 import { useViewer } from '@/composables/useViewer'
+import { pageTitle } from '@/config/brand'
 
 // One show: its header, its series, and every episode it has made,
 // 50 to a page, sorted and filtered (Finding 3). Sort by newest, oldest or
@@ -147,7 +148,7 @@ watch(page, async () => {
 })
 
 watchEffect(() => {
-  if (show.value) document.title = `${show.value.name} · Stoa`
+  if (show.value) document.title = pageTitle(show.value.name)
 })
 </script>
 

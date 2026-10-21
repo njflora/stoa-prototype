@@ -12,6 +12,7 @@
 //   so it really plays, and the quality menu really switches.
 
 import { heroVideo, mediaUrl } from './media'
+import { brand } from '@/config/brand'
 
 export type Platform = 'rumble' | 'odysee' | 'bitchute' | 'vod'
 export type SourceStatus = 'linked' | 'pending' | 'missing' | 'failed'
@@ -30,7 +31,7 @@ export const platformLabels: Record<Platform, string> = {
   rumble: 'Rumble',
   odysee: 'Odysee',
   bitchute: 'BitChute',
-  vod: 'Stoa',
+  vod: brand.playerName,
 }
 
 /**

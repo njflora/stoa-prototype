@@ -1,6 +1,7 @@
 import { ref, watch } from 'vue'
 import { readJson, writeJson } from './storage'
 import { useViewer } from './useViewer'
+import { brand } from '@/config/brand'
 
 // Live reminders through browser notifications, a members' perk.
 //
@@ -42,7 +43,7 @@ function notify(title: string, body: string) {
 }
 
 function liveNow(title: string) {
-  notify(`${title} is live now`, 'Open Stoa to watch.')
+  notify(`${title} is live now`, `Open ${brand.name} to watch.`)
 }
 
 /** Notifies at the start time, as long as the site is still open. */

@@ -11,6 +11,7 @@ import { listArticles, listEpisodesByHost, reference } from '@/api/catalogue'
 import { listAllSeries } from '@/data/catalogue'
 import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
+import { pageTitle } from '@/config/brand'
 
 // A contributor's profile: who they are, the shows they appear on (each
 // opening that show filtered to them), their series and articles, and
@@ -48,7 +49,7 @@ watch(page, async () => {
 })
 
 watchEffect(() => {
-  if (person.value) document.title = `${person.value.name} · Stoa`
+  if (person.value) document.title = pageTitle(person.value.name)
 })
 </script>
 

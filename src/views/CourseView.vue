@@ -12,6 +12,7 @@ import { useCommunity } from '@/composables/useCommunity'
 import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { formatPrice, formatTimeAgo } from '@/utils/format'
+import { brand, pageTitle } from '@/config/brand'
 
 // One course: what it covers, who teaches it, and the price. There is no
 // checkout in the demo; the button says so rather than pretending.
@@ -80,7 +81,7 @@ const tried = ref(false)
 watch(course, () => (tried.value = false))
 
 watchEffect(() => {
-  if (course.value) document.title = `${course.value.title} · Stoa`
+  if (course.value) document.title = pageTitle(course.value.title)
 })
 </script>
 
@@ -223,7 +224,7 @@ watchEffect(() => {
       </section>
 
       <section v-if="course.related?.length" aria-labelledby="related-on-site">
-        <h2 id="related-on-site" class="text-lg font-semibold">Related on Stoa</h2>
+        <h2 id="related-on-site" class="text-lg font-semibold">Related on {{ brand.name }}</h2>
         <ul class="mt-3 flex flex-wrap gap-2">
           <li v-for="link in course.related" :key="link.to">
             <RouterLink :to="link.to" class="inline-flex min-h-9 items-center rounded-full bg-surface px-4 text-sm ring-1 ring-white/10 hover:bg-raised">

@@ -12,6 +12,7 @@ import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import { artForEpisode, artForSeries } from '@/data/media'
 import { formatDuration, formatPublished, toRoman } from '@/utils/format'
+import { pageTitle } from '@/config/brand'
 
 // One series, meant to be watched in order. The main button always picks
 // the right place to start: Part I, the next unwatched part, or the start
@@ -50,7 +51,7 @@ const otherSeries = computed(() =>
 
 // Name the browser tab after the series.
 watchEffect(() => {
-  if (series.value) document.title = `${series.value.name} · Stoa`
+  if (series.value) document.title = pageTitle(series.value.name)
 })
 
 function watchLink(episodeId: string) {

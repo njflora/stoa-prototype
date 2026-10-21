@@ -13,6 +13,7 @@ import type { Series } from '@/types/content'
 import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
+import { brand } from '@/config/brand'
 
 const { isMember, canWatch } = useViewer()
 const { inProgressIds, progressFor } = useWatchProgress()
@@ -41,7 +42,7 @@ const rowFor = (showId: string) => home.data.value?.rows[showId] ?? []
 
 <template>
   <main>
-    <h1 class="sr-only">Stoa</h1>
+    <h1 class="sr-only">{{ brand.name }}</h1>
     <HeroBanner :featured="home.data.value?.featured ?? []" />
 
     <div v-if="home.error.value" class="mx-4 mt-6 rounded-lg bg-surface p-4 text-sm ring-1 ring-white/10 sm:mx-8" role="alert">
@@ -64,7 +65,7 @@ const rowFor = (showId: string) => home.data.value?.rows[showId] ?? []
         />
       </ContentRow>
 
-      <ContentRow title="Start here" subtitle="New to Stoa? One way into every show" pitch="start-here">
+      <ContentRow title="Start here" :subtitle="`New to ${brand.name}? One way into every show`" pitch="start-here">
         <CardSkeleton v-if="home.loading.value" :count="4" />
         <EpisodeCard
           v-for="item in startHere"

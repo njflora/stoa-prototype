@@ -11,6 +11,7 @@ import { platformLabels, type EpisodeSource, type Platform, type SourceStatus } 
 import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { formatEditionDate, formatPublished, formatTimeAgo } from '@/utils/format'
+import { brand } from '@/config/brand'
 
 // The content desk, for staff: every episode, newest first, with the state
 // of its link on Rumble, Odysee, BitChute and the site's own player. One
@@ -31,7 +32,7 @@ const statusStyles: Record<SourceStatus, string> = {
   missing: 'bg-[#ff8a80]/15 text-[#ff8a80]',
   failed: 'bg-live/25 text-[#ff8a80] ring-1 ring-live/50',
 }
-const columnName = (p: Platform) => (p === 'vod' ? 'Stoa (VOD)' : platformLabels[p])
+const columnName = (p: Platform) => (p === 'vod' ? `${brand.playerName} (VOD)` : platformLabels[p])
 
 const filter = computed<DeskFilter>({
   get: () => (typeof route.query.filter === 'string' ? (route.query.filter as DeskFilter) : 'problems'),

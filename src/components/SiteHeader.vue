@@ -7,12 +7,14 @@ import NotificationBell from './NotificationBell.vue'
 import UserBadge from './UserBadge.vue'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
 import { useViewer } from '@/composables/useViewer'
+import { brand } from '@/config/brand'
+import BrandLogo from './BrandLogo.vue'
 
 // One top bar replaces the long side navigation.
-// Left:  Stoa · Live · Home · Shows · Articles · Courses · Search
+// Left:  the logo · Live · Home · Shows · Articles · Courses · Search
 // Right: Shop · Upgrade (not members) · bell (members) · account or sign in
 // On phones (below 768px) the links move to the bottom tab bar
-// (MobileTabBar.vue). Stoa, Upgrade, the bell and the account stay here.
+// (MobileTabBar.vue). The logo, Upgrade, the bell and the account stay here.
 
 const { isMember, isStaff, isLive, user } = useViewer()
 
@@ -58,8 +60,8 @@ const activeClass = '!text-white font-semibold'
   <header ref="header" class="sticky top-0 z-40 border-b border-white/5 bg-ink/85 backdrop-blur-md">
     <div class="flex h-14 items-center gap-6 px-4 sm:h-16 sm:px-8">
       <div class="flex items-center gap-2">
-        <RouterLink to="/" class="font-serif text-2xl font-bold tracking-tight" aria-label="Stoa home">
-          Stoa
+        <RouterLink to="/" class="text-2xl" :aria-label="`${brand.name} home`">
+          <BrandLogo />
         </RouterLink>
         <PitchNote id="nav" />
       </div>

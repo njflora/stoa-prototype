@@ -2,6 +2,13 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Ready for their brand
+
+### Added
+- `src/config/brand.ts` holds the site's identity: its name, description, footer line, the name of its own video player, and the welcome animation's words. The header, footer, page titles, notifications, the player menu, the intro and index.html all read from it.
+- `src/components/BrandLogo.vue`, the wordmark in the header and footer, so a logo replaces it in one place.
+- BRANDING.md: where the identity lives, and the six steps to take on a client's identity (name, logo, colours, fonts, icons, the server's name). Tested by renaming the brand in `brand.ts` alone: every place followed. No client assets are added.
+
 ## 2026-10-21: Search on the server
 
 ### Added

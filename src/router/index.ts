@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import PlaceholderView from '../views/PlaceholderView.vue'
+import { pageTitle } from '../config/brand'
 
 // Tells TypeScript which extra fields a route's meta can hold.
 declare module 'vue-router' {
@@ -165,7 +166,7 @@ const router = createRouter({
 router.afterEach((to, from) => {
   // Only on a new page, so titles a page sets itself (such as a show's name) stay.
   if (to.path === from.path) return
-  document.title = to.meta.title ? `${to.meta.title} · Stoa` : 'Stoa'
+  document.title = pageTitle(to.meta.title)
 })
 
 export default router

@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, useId, watch } from 'vue'
 import PitchNote from './PitchNote.vue'
 import { useIntro } from '@/composables/useIntro'
+import { brand } from '@/config/brand'
 
 // The welcome: the view down a Greek stoa, like standing in the Stoa of
 // Attalos, in a modern, vaporwave style, seen from low down and looking up.
@@ -360,7 +361,7 @@ const DELPHIC_E = [
             letter-spacing="6"
             fill="#ffd6f2"
             :filter="`url(#${id('band-glow')})`"
-          >στοά</text>
+          >{{ brand.intro.word }}</text>
         </svg>
 
         <!-- The seal: a real button in the middle of the colonnade. Its halves fall away when it breaks. -->
@@ -369,7 +370,7 @@ const DELPHIC_E = [
           type="button"
           class="seal absolute -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           :style="{ left: `${placement.x}px`, top: `${placement.y}px`, width: `${placement.size}px`, height: `${placement.size}px` }"
-          aria-label="Break the seal to enter"
+          :aria-label="brand.intro.prompt"
           @click="enter"
         >
           <svg viewBox="-60 -60 120 120" class="size-full overflow-visible" aria-hidden="true">
@@ -418,8 +419,8 @@ const DELPHIC_E = [
       <PitchNote id="intro" class="absolute left-4" :style="{ top: `${placement.belowLintel}px` }" />
 
       <div class="caption pointer-events-none absolute inset-x-0 bottom-[max(2rem,env(safe-area-inset-bottom))] px-4 text-center">
-        <h2 id="intro-title" class="font-serif text-4xl font-bold tracking-tight text-white drop-shadow sm:text-5xl">Stoa</h2>
-        <p class="mt-1 text-sm text-white/80 drop-shadow">Break the seal to enter</p>
+        <h2 id="intro-title" class="font-serif text-4xl font-bold tracking-tight text-white drop-shadow sm:text-5xl">{{ brand.name }}</h2>
+        <p class="mt-1 text-sm text-white/80 drop-shadow">{{ brand.intro.prompt }}</p>
       </div>
     </div>
   </Teleport>

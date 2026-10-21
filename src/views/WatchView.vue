@@ -23,6 +23,7 @@ import { useWatchProgress } from '@/composables/useWatchProgress'
 import { artForEpisode } from '@/data/media'
 import { EPISODE_PRICE } from '@/data/membership'
 import { formatDuration, formatPrice, formatPublished, toRoman } from '@/utils/format'
+import { pageTitle } from '@/config/brand'
 
 // An episode page. The player offers every platform the episode is on
 // (Rumble, Odysee, BitChute and the site's own VOD). Series episodes get
@@ -132,7 +133,7 @@ watch(
 onUnmounted(stopCountdown)
 
 watchEffect(() => {
-  if (episode.value) document.title = `${episode.value.title} · Stoa`
+  if (episode.value) document.title = pageTitle(episode.value.title)
 })
 </script>
 

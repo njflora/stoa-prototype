@@ -9,6 +9,7 @@ import { listShows } from '@/data/catalogue'
 import { tierStyles } from '@/data/chat'
 import { features, hasTrial, tiers, TRIAL_DAYS, type PlanId, type TierId } from '@/data/membership'
 import { useViewer } from '@/composables/useViewer'
+import { brand } from '@/config/brand'
 
 // The members' preview: why join, shown rather than told. A free preview
 // of every members' show, what free gets against each tier, and the
@@ -67,7 +68,7 @@ const faqs = [
           <h1 class="mt-3 text-4xl leading-tight font-bold sm:text-5xl">
             You're a {{ tierStyles[currentTier].label }} member
           </h1>
-          <p class="mt-3 text-lg text-white/85">Thanks for supporting Stoa. Everything on the site is unlocked for you.</p>
+          <p class="mt-3 text-lg text-white/85">Thanks for supporting {{ brand.name }}. Everything on the site is unlocked for you.</p>
           <RouterLink
             to="/account"
             class="mt-6 inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:brightness-95"
@@ -78,7 +79,7 @@ const faqs = [
 
         <template v-else>
           <p class="text-sm font-semibold tracking-widest text-gold uppercase">Membership</p>
-          <h1 class="mt-3 text-4xl leading-tight font-bold sm:text-5xl">Everything on Stoa</h1>
+          <h1 class="mt-3 text-4xl leading-tight font-bold sm:text-5xl">Everything on {{ brand.name }}</h1>
           <p class="mt-3 text-lg text-white/85">
             Every members' show, the full archive and the live after-show. From £{{ lowestPrice }} a month.
           </p>

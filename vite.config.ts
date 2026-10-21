@@ -4,10 +4,17 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
+import { brand } from './src/config/brand'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    // index.html's title and description come from the brand file.
+    {
+      name: 'brand-in-index-html',
+      transformIndexHtml: (html) =>
+        html.replaceAll('%BRAND_NAME%', brand.name).replaceAll('%BRAND_DESCRIPTION%', brand.description.replace(/^./, (c) => c.toLowerCase())),
+    },
     vue(),
     vueDevTools(),
     tailwindcss(),
