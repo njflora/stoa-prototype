@@ -2,6 +2,19 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Documentation for the Laravel version
+
+### Added
+- CONSOLIDATION.md: the plan for one source of truth across Rumble, Odysee, BitChute and their own video, in six phases (inventory, the canonical record, ingest and match, backfill, cut over, retire duplicates), each with its risks and how to check it. What each platform's real feed offers is marked "to verify".
+- WALKTHROUGH.md lessons 11 to 13: the stoa intro; Laravel, the API and access control; one player, the platform sync and the content desk.
+- A README that says what the project is, how to run both versions, and where to read more.
+
+### Changed
+- ARCHITECTURE.md rewritten for the Laravel version: the source-of-truth flow, both versions, every API route, who may see what, the players, the sync, search, and what is still to do for real. It names files and functions rather than line numbers.
+- WALKTHROUGH.md: lesson 2 describes the shared player, lessons 5 and 6 the two versions, and the crib sheet's answers on protection, the backend and what is unfinished are brought up to date.
+- REVIEW-NOTES.md: notes 1, 3, 9, 10 and 24 marked as addressed.
+- PROGRESS.md: the Laravel stages, four viewer types, and two new questions (hosting the Laravel version, the real platform feeds).
+
 ## 2026-10-21: Ready for their brand
 
 ### Added

@@ -1,10 +1,10 @@
 # Prototype progress report
 
-Status as of 19 October 2026, updated during step 4 of the second brief (real-feeling media with hover previews, pitch mode, mobile navigation, and a data layer at real scale). Written as a self-contained progress report.
+Status as of 21 October 2026, after the Laravel plan (stages A to I). Written as a self-contained progress report.
 
 ## In one paragraph
 
-The pitch prototype is built and working locally. All three priority sections from the plan are done: the homepage, the live page, and the series view with a members' preview. It runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. It is unbranded: the outlet is called "Stoa", and every show, host and episode is invented. Every nav link now leads to a finished page (step 5). The code walkthrough (step 6) is next. There are 55 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
+The pitch prototype is built and working locally, in two versions. The site runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. Behind it, a Laravel 13 API, their framework, is the source of truth: it enforces members-only access, saves what accounts do, links every episode to its platforms (Rumble, Odysee, BitChute and the site's own video) through a sync, and searches with Meilisearch. A static preview, exported from Laravel, offers the same features without a server, for GitHub Pages. It is unbranded: the outlet is called "Stoa", every show, host and episode is invented, and one brand file would give it their identity (BRANDING.md). There are 80 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
 
 ## Context
 
@@ -31,10 +31,11 @@ The pitch prototype is built and working locally. All three priority sections fr
 - **Buy a single episode.** Free accounts can buy one members' episode for £1.99 to keep, from the locked episode page, instead of joining. No payment is taken in the demo.
 - **Comments under articles,** and a clear rule for who can post: free accounts in casual spaces (the free daily shows, articles, the Circle's General discussion), members everywhere. Every comment section and forum says which it is.
 - **Instant search over any page** (Finding 9). Press "/", the header button or the Search tab on phones. Results appear as you type, grouped as Episodes, Series, Shows, Hosts and Articles, in a see-through panel over the current page. Small typos are forgiven, the keyboard works throughout, and the search is kept in the address so it can be shared.
-- **Three viewer types**, switched from a demo panel since there is no real login:
+- **Four viewer types**, switched from a demo panel since there is no real login (in the Laravel version, each signs in to a seeded demo account):
   - Signed out: Upgrade and a "Sign in / Sign up" button.
   - Free account: Upgrade and the username.
   - Member (Gold in the demo): a reminders bell and the username with a tier badge.
+  - Staff: everything members see, plus the content desk.
 - **Locked content looks the same everywhere.** Free viewers see members' episodes blurred and still, behind a lock, with an upgrade prompt.
 - **Real-feeling media.** Thumbnails, heroes and players show public-domain paintings and engravings (Hogarth, Turner, Monet, Raphael, Vermeer and others). The homepage hero and the live player play a short CC0 ocean-waves loop on arrival. Cards stay still until hovered (or, on phones, scrolled into view), then play a YouTube-style preview with a themed animation per show. Free viewers preview free content; members preview everything. Everything pauses off screen, has a pause button where it is video, and stays still with "reduce motion" on.
 - **Credits.** Every file was checked against its licence on Wikimedia Commons by a script that refuses anything not public domain or CC0. CREDITS.md and a /credits page list each one with its source. Images total about 2 MB; the video is 0.7 MB.
@@ -80,6 +81,20 @@ The pitch prototype is built and working locally. All three priority sections fr
 - A 7-day free trial, shown as a proposal from the benchmark.
 - A "what free gets, and what members add" comparison table, and a short FAQ.
 
+## Since the second brief: Laravel and one source of truth
+
+Nick's direction: show that the site slots into their current setup, with a clear plan to bring their separate streams into one source of truth, in Laravel, ready to take on their brand. Done in nine stages, each committed and checked in both versions and on phones:
+
+- **A. The live schedule matches the show pages.** One slot per show drives its dates, its schedule line and the live page.
+- **B. A welcome.** A first-visit intro: the view down a Greek stoa to a purple wax seal bearing the Delphic E, broken to enter.
+- **C. Laravel is the source of truth.** A Laravel 13 API in Docker, seeded from the generator. `stoa:export` writes the static preview from the same code.
+- **D. Real access control.** Policies on the server; members' discussion, reading lists and streams never leave it for anyone else. Comments, votes, purchases and communities are saved. 12 tests.
+- **E. One player for every stream.** Rumble, Odysee, BitChute and the site's own video, offering only the platforms an episode is on. Styled like their player, sized to the screen, with quality and speed, and a chat replay that follows it both ways.
+- **F. The content desk and the sync.** An adapter per platform, a matcher, an hourly sync and a desk for staff. Sample feeds stand in for the real ones.
+- **G. Search on the server.** Laravel Scout with Meilisearch.
+- **H. Ready for their brand.** One brand file, one logo component, and BRANDING.md.
+- **I. Documentation.** ARCHITECTURE.md rewritten, CONSOLIDATION.md (the plan for their streams), WALKTHROUGH.md lessons 11 to 13.
+
 ## Decisions made along the way
 
 | Decision | Reason |
@@ -116,10 +131,11 @@ The pitch prototype is built and working locally. All three priority sections fr
 
 ## Not done or not tested
 
-- **Not deployed, on purpose.** Deployment is scheduled for week 6 with the PWA. GitHub Pages will need a small router change.
+- **Not deployed, on purpose.** Deployment is scheduled for week 6 with the PWA. GitHub Pages will need a small router change, and it can carry only the static preview: showing the Laravel version to others needs a PHP host.
+- **The real platform feeds are not connected.** The sync reads sample feeds; what each platform offers is listed as "to verify" in CONSOLIDATION.md.
 - **Real Rumble, Odysee and BitChute embeds are untested.** No embed URLs are set, so the placeholder shows for those platforms. The site's own video (VOD) plays a CC0 clip. Rumble on phones (a key finding) needs a real embed to test.
 - **Real notifications are untested.** The test browser blocks them. The logic is in place.
-- **Pages still placeholders:** Sign in only (the demo panel switches viewers instead).
+- **Pages still placeholders:** Sign in only (the demo panel switches viewers, and in the Laravel version signs in to demo accounts).
 - **Not started:** installable PWA, the technical audit, the bug report and screen recording, the Topic 4 and 5 write-ups, the measurement page.
 
 ## Known limits of the prototype
@@ -161,12 +177,14 @@ Each idea maps to a finding in the planning doc. Effort is S (hours), M (a day o
 
 ## Questions for you
 
-1. **Which review notes should be fixed first?** REVIEW-NOTES.md lists 24. The suggestion is notes 1, 2, 4 and 5 (the live schedule mismatch, missing and out-of-date pitch notes, the article error state, and a pause button on the hero carousel). Each is small.
+1. **Which review notes should be fixed first?** REVIEW-NOTES.md lists 24. Notes 1, 3, 9, 10 and 24 are now fixed. The suggestion for next is notes 2, 4 and 5 (missing and out-of-date pitch notes, the article error state, and a pause button on the hero carousel). Each is small.
 2. **Pitch notes for your feedback features.** Contributor profiles, the members' gate, article comments, the preview mute button and the members' Shows page have no pitch note. Should they be labelled as proposals with the source "Nick's feedback", or tied to a finding in the planning doc?
 3. **The exact wording of Findings 3 and 9.** The pitch notes for the show archive and search only say "Listed as a gap in the planning doc". Can you paste the findings' wording, so the "today" line is specific?
 4. **Real Rumble, Odysee and BitChute embed URLs.** Finding 1 (the black screen) and Rumble on phones cannot be tested without them. Do you have test videos that are fine to use in a public repo?
 5. **Deployment in week 6.** What should the GitHub repository be called (it sets the site's address and the `base` setting), and is adding `vite-plugin-pwa` for the installable app approved?
 6. **Live chat replay for The Forum and Statecraft.** Both are described as live shows. Should they get chat replay too, like The Stoa Podcast and Morning Brief?
-7. **Votes.** Likes and dislikes are forgotten when you leave a page, unlike watch progress and purchases. Save them, or say in the pitch that they are not saved in the demo?
+7. **Votes.** Answered: comment votes are now saved (on the account, or in the browser in the static preview).
 8. **Sign in.** It is the last placeholder page. Keep it as a placeholder (the demo panel switches viewers), or build a small honest page?
 
+10. **Hosting the Laravel version.** GitHub Pages can carry only the static preview. Should the Laravel version be shown on a small PHP host (with Meilisearch), or only demonstrated from this machine?
+11. **The real platform feeds.** Can their team say how they list a channel's uploads on Rumble, Odysee and BitChute today (an API, a feed, or by hand)? CONSOLIDATION.md lists what needs verifying.

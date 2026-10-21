@@ -1,10 +1,10 @@
 # Walkthrough
 
-A self-paced course through the Stoa codebase, in ten lessons. Each lesson says what the part does, where it lives, shows a short excerpt, gives you a way to explain it out loud, and ends with three questions to check yourself.
+A self-paced course through the Stoa codebase, in thirteen lessons. Each lesson says what the part does, where it lives, shows a short excerpt, gives you a way to explain it out loud, and ends with three questions to check yourself.
 
-Read `ARCHITECTURE.md` first for the map. Line numbers were correct on 20 October 2026; if code moves, search for the quoted line instead.
+Read `ARCHITECTURE.md` first for the map. Line numbers in lessons 1 to 10 were correct on 20 October 2026; if code moves, search for the quoted line instead. Lessons 11 to 13 name files and functions instead.
 
-Reading time is about 1 hour 40 minutes in total. Each lesson gives its own estimate.
+Reading time is about 2 hours 25 minutes in total. Each lesson gives its own estimate.
 
 ---
 
@@ -112,13 +112,13 @@ Each route maps an address to a view. `:id` is a parameter: the page reads it wi
 
 About 12 minutes.
 
-**What it does.** The live page shows one stream with a Rumble or Odysee switch below it. Switching builds a brand-new player every time, so the screen is never left black. This answers Finding 1.
+**What it does.** The live page and every episode page use one player, with "Change player source" below it: Rumble, Odysee or BitChute, and the site's own player. Switching builds a brand-new player every time, so the screen is never left black. This answers Finding 1.
 
 **Files**
-- `src/components/LivePlayer.vue`: the frame, the switch and the player.
-- `src/data/streams.ts`: the two sources and their embed addresses.
+- `src/components/SourcePlayer.vue`: the frame, the source menu and the player.
+- `src/data/streams.ts`: the platforms, and what each can play.
 - `.env.example`: where real embed URLs go (copy it to `.env.local`).
-- `src/views/LiveView.vue`: lines 180 to 186 place the player.
+- `src/views/LiveView.vue` and `WatchView.vue` place the player.
 
 ### The bug on the real site (Finding 1)
 
@@ -127,12 +127,12 @@ On the reference site, switching from Rumble to another source and back leaves R
 ### What the prototype does instead
 
 ```vue
-<!-- src/components/LivePlayer.vue, lines 52 to 61 -->
+<!-- src/components/SourcePlayer.vue -->
 <iframe
-  v-if="active.embedUrl"
-  :key="active.id"
-  :src="active.embedUrl"
-  :title="`${title} on ${active.label}`"
+  v-if="playable.kind === 'iframe'"
+  :key="`iframe-${platform}`"
+  :src="playable.url"
+  :title="`${title} on ${label}`"
   class="absolute inset-0 size-full"
   allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
   allowfullscreen
@@ -140,18 +140,18 @@ On the reference site, switching from Rumble to another source and back leaves R
 />
 ```
 
-The important part is `:key="active.id"`. Vue uses `key` to decide whether an element is "the same one" as before. When the key changes from `rumble` to `odysee`, Vue does not try to update the old player. It removes it completely and creates a new `<iframe>` with the new address from the very start.
+The important part is the `:key`. Vue uses `key` to decide whether an element is "the same one" as before. When the key changes from Rumble's to Odysee's, Vue does not try to update the old player. It removes it completely and creates a new `<iframe>` with the new address from the very start.
 
 That is why the screen can never be left empty:
 
 1. **No half-reset player.** The embed always starts fresh, exactly as it does on first load, which is the case every platform tests.
-2. **No hidden player playing behind.** The obvious alternative is to keep both players and hide one. A third-party iframe cannot be paused from outside (it is a different website), so a hidden Rumble player would keep playing sound. The comment at lines 13 to 17 records this.
+2. **No hidden player playing behind.** The obvious alternative is to keep both players and hide one. A third-party iframe cannot be paused from outside (it is a different website), so a hidden Rumble player would keep playing sound. The comment at the top of the file records this.
 3. **No empty box.** Clearing the old box is not a separate step that can fail. Rebuilding is the only path.
 
-With no embed URLs set, the same idea applies to the placeholder video, which is also keyed by source (line 64).
+With no embed URLs set, the same idea applies to the placeholder, which is also keyed by platform. The site's own player (`VodPlayer.vue`) is keyed the same way.
 
 ```ts
-// src/data/streams.ts, lines 18 to 26
+// src/data/streams.ts
 function checkedEmbedUrl(value: string | undefined, allowedPrefix: string): string | null {
   const url = value?.trim()
   if (!url) return null
@@ -165,7 +165,7 @@ function checkedEmbedUrl(value: string | undefined, allowedPrefix: string): stri
 
 Embed addresses come from environment variables, and only addresses on the platform's own embed path are accepted. The frame can never be pointed at another site by mistake.
 
-**Honest limits.** Real Rumble and Odysee embeds have not been tested yet, since no embed URLs are set (PROGRESS.md, "Not done or not tested"). Rebuilding also costs a moment of loading, and for a recording it starts from the beginning. A real version could pass the current time to the new embed.
+**Honest limits.** Real Rumble, Odysee and BitChute embeds have not been tested yet, since no embed URLs are set (PROGRESS.md, "Not done or not tested"). Rebuilding also costs a moment of loading, and for a recording it starts from the beginning. A real version could pass the current time to the new embed.
 
 **How I'd explain it.** "When you switch source, we don't try to reuse or hide the old player. We throw it away and build a new one, the same way it was built when the page first loaded. Your site appears to clear the Rumble player without ever rebuilding it, which is why it goes black."
 
@@ -178,7 +178,7 @@ Embed addresses come from environment variables, and only addresses on the platf
 
 1. Vue treats it as a different element: it removes the old one and creates a new one from scratch.
 2. A third-party iframe cannot be paused from your page, so the hidden player would keep playing sound and using data.
-3. From `VITE_RUMBLE_EMBED_URL` and `VITE_ODYSEE_EMBED_URL` in `.env.local`. `checkedEmbedUrl()` only accepts addresses that start with the platform's own embed path.
+3. From `VITE_RUMBLE_EMBED_URL`, `VITE_ODYSEE_EMBED_URL` and `VITE_BITCHUTE_EMBED_URL` in `.env.local`. `checkedEmbedUrl()` only accepts addresses that start with the platform's own embed path.
 
 </details>
 
@@ -355,7 +355,9 @@ Three other ideas in this layer:
 - **Dates stay current:** the data was generated on one day, and `shiftDate()` (`catalogue.ts` lines 63 to 71) moves every date forward by whole weeks. "Published today" stays true, and weekdays stay right.
 - **Oldest first without extra files:** "Oldest first" reads the newest-first pages from the other end, joining at most two of them (lines 193 to 203).
 
-**How I'd explain it.** "Pages never download the catalogue. They ask for one page of 50 at a time, through a small set of functions named after the API endpoints you'd build in Laravel. Swap the base address and the same pages work against your real API."
+**Two modes.** Since the Laravel work, each of these functions asks one of two places (`API_MODE` in `client.ts`, see Lesson 12). In Laravel mode, `listEpisodes()` is one request with query parameters, and the database runs the query; the stored files and the "oldest first" page joining are only for the static preview. `getEpisode(id)` above is the static preview's path; Laravel answers `/api/episodes/{id}` directly.
+
+**How I'd explain it.** "Pages never download the catalogue. They ask for one page of 50 at a time, through a small set of functions named after the Laravel endpoints. In the Laravel version each is a real query; the static preview stores the same answers as files, so it runs on GitHub Pages."
 
 **Check yourself**
 1. How does `getEpisode('chronos-116')` know which page to fetch?
@@ -366,7 +368,7 @@ Three other ideas in this layer:
 
 1. From the id: Chronos has 121 episodes, so sequence 116 is the 6th newest, which is on page 0 (`(121 - 116) / 50` rounded down).
 2. Answers arriving out of order. Only the latest request may update the screen.
-3. Static hosting cannot run queries, so each answer is written ahead of time. A real API would run one database query per request.
+3. Static hosting cannot run queries, so `stoa:export` writes each answer ahead of time. The Laravel version runs one database query per request.
 
 </details>
 
@@ -424,7 +426,9 @@ How it loads and behaves:
 - **Loaded on first use:** the index is built in the browser the first time someone searches, about 0.4 seconds once. Pages that never open search download none of it.
 - **Keyboard:** the search box follows the ARIA combobox pattern (`SearchPanel.vue` lines 187 to 194). Focus stays in the box, and the arrow keys move a highlight through results.
 
-**How I'd explain it.** "Search works as you type, across about 5,500 episodes plus articles and contributors, over whatever page you are on. It's built so the inside can be swapped for a server search engine without changing the page."
+**Two engines.** Since stage G, the Laravel version searches on the server: Laravel Scout with Meilisearch (`backend/app/Search/SiteSearch.php`), which answers in about a millisecond. This lesson's MiniSearch index runs only in the static preview. Both answer in the same `SearchResults` shape, so the panel never knows which ran.
+
+**How I'd explain it.** "Search works as you type, across about 5,500 episodes plus articles and contributors, over whatever page you are on. In the Laravel version it's Scout and Meilisearch on the server; the static preview builds the same search in the browser, and the page can't tell the difference."
 
 **Check yourself**
 1. What is debouncing, and why use it here?
@@ -672,6 +676,160 @@ About 10 minutes.
 
 ---
 
+## Lesson 11. The stoa intro
+
+About 10 minutes.
+
+**What it does.** On a first visit, a full-screen view down a Greek stoa, in a vaporwave style, leads the eye to a purple wax seal in the middle of the screen. Breaking the seal (a real button) cracks it and carries the view down the colonnade into the site, which has been loading behind it all along. It plays once per device.
+
+**Files**
+- `src/components/StoaIntro.vue`: the drawing and the animation.
+- `src/composables/useIntro.ts`: when it plays.
+- `src/config/brand.ts`: its words.
+
+```ts
+// src/components/StoaIntro.vue
+const at = (offsetX: number, offsetY: number, d: number) => `${VP.x + offsetX * d},${VP.y + offsetY * d}`
+```
+
+The whole drawing is one-point perspective from this one line. Every point has an offset from the middle and a depth `d`: 1 at the entrance, smaller further down the corridor. Multiplying the offset by the depth pulls far things towards the vanishing point, `VP`, where the seal sits. So every column, beam and floor line leads to the seal.
+
+```ts
+// src/composables/useIntro.ts
+const forced = new URLSearchParams(window.location.search).get('intro') === '1'
+
+const open = ref<boolean>(forced || !readJson(SEEN_KEY, false))
+```
+
+It plays if the browser has not seen it, or if the link says `?intro=1`. The demo panel's "Replay intro" sets `open` again.
+
+Accessibility, in short:
+- the page behind is `inert` while the intro is open
+- Enter or Space breaks the seal; "Skip intro" and Escape skip it
+- with "reduce motion" on, it is a short fade
+- focus moves to the page when it ends
+
+**How I'd explain it.** "It's a welcome, not a gate. The page loads behind it, it plays once, and it can always be skipped. The drawing is plain SVG, worked out from one perspective formula, so it needs nothing to download."
+
+**Check yourself**
+1. Why does everything in the drawing lead to the seal?
+2. How do you show the intro again in a pitch?
+3. What happens for someone with "reduce motion" on?
+
+<details><summary>Answers</summary>
+
+1. Every point is placed by `at()`, which scales its offset by depth towards the vanishing point, and the seal sits on the vanishing point.
+2. "Replay intro" in the demo panel, or `?intro=1` in any link.
+3. The animation is replaced by a short fade.
+
+</details>
+
+---
+
+## Lesson 12. Laravel, the API and access control
+
+About 20 minutes.
+
+**What it does.** Laravel is the source of truth. It loads the catalogue, answers the site's questions, and decides who may see what. Members-only discussion, reading lists and streams never leave the server for anyone else: a non-member gets a count, or `{ locked: true }`, and nothing more.
+
+**Files**
+- `backend/app/Catalogue/Catalogue.php`: every catalogue answer.
+- `backend/config/stoa.php`: who may post where.
+- `backend/app/Policies/ThreadPolicy.php` and `EpisodePolicy.php`: the rules.
+- `backend/app/Discussion/Discussions.php`: comments and reading lists, as one person may see them.
+- `backend/app/Console/Commands/ExportStatic.php`: the static preview.
+- `src/api/client.ts`: the site's two modes.
+- `backend/tests/Feature/AccessTest.php`: the proof.
+
+```php
+// backend/app/Policies/ThreadPolicy.php
+public function read(?User $user, Thread $thread): bool
+{
+    return $thread->open || (bool) $user?->isMember();
+}
+
+public function post(?User $user, Thread $thread): bool
+{
+    return $user !== null && ($thread->open || $user->isMember());
+}
+```
+
+A policy is a class of yes-or-no questions. `?User` means the user may be missing (signed out). An open thread can be read by anyone and posted to by any account; a members' thread is for members, for reading as well as posting. `Discussions` asks `read` first, and if the answer is no, it returns only `{ locked: true, open, count }`.
+
+```ts
+// src/api/client.ts
+export const API_MODE: 'laravel' | 'static' = import.meta.env.VITE_API_MODE === 'laravel' ? 'laravel' : 'static'
+```
+
+One switch decides where the site's data comes from. Each API function asks either Laravel (through Vite's `/api` proxy, so the sign-in cookie just works) or the static file that stands in for it. The static files are written by `stoa:export`, which calls the same PHP classes as the API, so the two can never disagree.
+
+Three ideas worth knowing:
+- **Sign-in with a cookie.** Sanctum's SPA mode: the site signs in, Laravel sets a session cookie, and every change sends a CSRF token back (`send()` in `client.ts`). The demo panel signs in to a seeded account with no password; that route exists only in development.
+- **One rule, two places.** The posting rules live in `config/stoa.php`. The static preview applies the same rules in the page, using the `open` flag each thread carries.
+- **Saved for real.** In Laravel mode, comments, votes, purchases, communities and forum topics are saved on the account. In the static preview, the browser saves them instead.
+
+**How I'd explain it.** "Access is decided on the server. If you're not a member, the API doesn't send members' comments, sources or stream addresses at all. It sends a count, and the page draws a gate. There are tests that prove a free account gets a count, a purchase unlocks one episode and no other, and a free account can't post in a members' forum."
+
+**Check yourself**
+1. What does a free account get when it asks for a members' show's comments?
+2. Why do the API and the static export never disagree?
+3. What does the `?` in `?User $user` allow?
+
+<details><summary>Answers</summary>
+
+1. `{ locked: true, open: false, count }`: how many comments there are, and nothing else. The gate shows placeholder shapes.
+2. Both call the same PHP classes (`Catalogue`, `Discussions`, `Desk`); the export writes their answers to files.
+3. A signed-out visitor: the policy still runs, with no user.
+
+</details>
+
+---
+
+## Lesson 13. One player, the platform sync and the content desk
+
+About 15 minutes.
+
+**What it does.** Every episode has one record that knows every platform it is on. A sync reads each platform's feed, matches each upload to its episode, and links it. The player offers only the platforms an episode is on, and the content desk shows staff what is missing, still processing or failed.
+
+**Files**
+- `backend/app/Sources/`: one adapter per platform, and `EpisodeMatcher`.
+- `backend/app/Jobs/SyncPlatform.php`: the sync.
+- `src/components/SourcePlayer.vue` and `VodPlayer.vue`: the players.
+- `src/views/DeskView.vue`: the desk.
+- `CONSOLIDATION.md`: the plan for their real platforms.
+
+```php
+// backend/app/Sources/EpisodeMatcher.php
+$title = self::normalise($item->title);
+$candidates = Episode::whereBetween('published_at', [
+    $item->publishedAt->subHours(self::WINDOW_HOURS),
+    $item->publishedAt->addHours(self::WINDOW_HOURS),
+])->get();
+```
+
+The platforms share no id with the site, so the matcher looks for episodes published within 12 hours of the upload, then compares titles normalised: lower case, punctuation gone, the channel's name stripped from the end. "CHRONOS #280 - AGINCOURT - Stoa" and "Chronos #280 | Agincourt" both become "chronos 280 agincourt". Daily editions have no title, so they match by show and date. The closest in time wins; anything unmatched is listed on the desk.
+
+Each platform's adapter knows only its own format (Odysee's JSON, BitChute's RSS and so on) and turns it into the same `FeedItem`. Connecting a real platform means changing one adapter. Today they read recorded sample feeds; which real feed each platform offers is still to verify.
+
+On the site, `SourcePlayer` builds a fresh player on every switch (Lesson 2). The site's own player, `VodPlayer`, has its own controls in the reference site's style, and shares its time with the chat replay through `usePlayerClock`.
+
+**How I'd explain it.** "Today each platform holds its own copy of your catalogue. Here there's one record per episode, and a sync that links every upload to it, every hour. Staff see the gaps on one page, and the player can offer every platform without anyone pasting links."
+
+**Check yourself**
+1. How does the matcher find an upload's episode without a shared id?
+2. What changes when a real Rumble feed is connected?
+3. Why is running the sync twice safe?
+
+<details><summary>Answers</summary>
+
+1. Episodes within 12 hours of the upload, then the normalised title (or, for daily editions, the show and date). The closest in time wins.
+2. One adapter, `RumbleAdapter`: how it fetches and reads the feed. The matcher, the sync and the desk stay the same.
+3. A link that already exists with the same id is not counted as new, so a second run links nothing (a test checks this).
+
+</details>
+
+---
+
 ## Interview crib sheet
 
 The ten questions their team is most likely to ask, with short, honest answers. Put them in your own words.
@@ -683,20 +841,20 @@ It matches their stack, so the pieces could slot into their site. TypeScript cat
 Yes. It holds 5,521 generated episodes, including 1,530 of the mainline show and daily shows with three items a day. Pages fetch 50 at a time and never the whole catalogue. The homepage needs one data request plus reference data.
 
 **3. How does the source switch avoid the black screen?**
-Each switch builds a new player from scratch instead of reusing or hiding the old one (`LivePlayer.vue`, `:key`). The honest caveat: it has not been tested with real Rumble and Odysee embeds yet.
+Each switch builds a new player from scratch instead of reusing or hiding the old one (`SourcePlayer.vue`, `:key`). The honest caveat: it has not been tested with real Rumble, Odysee and BitChute embeds yet.
 
 **4. Is members-only content actually protected?**
-Not in the prototype. Locks, blurs and gates are in the browser only, to show the experience. On a real site the server must refuse to send members' video and comments to non-members. That is noted in the code (`MembersGate.vue`).
+Yes, in the Laravel version. Policies on the server decide who may read, post and watch. A non-member asking for a members' thread or reading list gets only its count, and asking for a members' episode's streams gets `{ locked: true }`. 12 feature tests prove it. The honest caveat: the static preview on GitHub Pages cannot check anything, so it applies the same rules in the page, and its banner says so.
 
 **5. How would it connect to our backend?**
-The pages only talk to a handful of functions in `src/api/catalogue.ts`, each named after the Laravel endpoint it stands in for. Point `API_BASE` at your API, return the same shapes, and the pages work. ARCHITECTURE.md has the full list.
+It already has one, in your framework: a Laravel 13 API in `backend/`, with the routes listed in ARCHITECTURE.md. The pages talk only to the functions in `src/api`, so pointing them at your own Laravel app means serving the same shapes. Your real catalogue would come in through the platform sync (CONSOLIDATION.md) and an import.
 
-**6. What would you do differently with a real backend?**
-- **Filtering:** run queries instead of pre-building every filter combination.
-- **Saving activity:** keep watch progress, votes, comments, purchases and reminders on the account instead of in the browser.
-- **Members-only content:** enforce it on the server.
-- **Search:** use a server search engine.
-- **Dates:** use real dates instead of the date shift.
+**6. What is still not production-ready on the server?**
+- **Database and hosting:** SQLite in Docker; production wants MySQL and a PHP host.
+- **Platform feeds:** the sync reads recorded sample feeds; each real feed is still to verify.
+- **Accounts and payments:** demo sign-in with no passwords, and "Buy this episode" takes no payment.
+- **Saving:** watch progress and reminders are still in the browser.
+- **Dates:** the snapshot's dates are moved forward to today; real data would not need it.
 
 **7. How was each change checked?**
 
@@ -721,12 +879,12 @@ Implemented:
 There are known gaps in REVIEW-NOTES.md: the hero carousel has no visible pause, the More sheet does not trap focus, and the live chat announces every message.
 
 **9. How fast is it?**
-The main JavaScript is about 12 KB compressed, plus Vue's runtime at about 25 KB compressed. Pages load their code on demand. Search loads only when opened. Its data is about 92 KB compressed, and the index takes about 0.4 seconds to build once.
+The main JavaScript is about 12 KB compressed, plus Vue's runtime at about 25 KB compressed. Pages load their code on demand. Search loads only when opened. Its data is about 92 KB compressed, and the index takes about 0.4 seconds to build once. In the Laravel version, Meilisearch answers each search in about a millisecond.
 
 **10. What is not finished?**
-- deployment and the installable PWA (week 6)
-- real Rumble and Odysee embeds
+- deployment and the installable PWA (week 6); the Laravel version needs a PHP host
+- real Rumble, Odysee and BitChute embeds, and their real feeds for the sync
 - real notifications on phones
-- sign-in, which is a placeholder: the demo panel switches viewers instead
+- sign-in, which is a placeholder: the demo panel signs in to demo accounts instead
 
-Comments, chat and reading lists are placeholders drawn from pools.
+Comments, chat and reading lists are invented, generated with the catalogue.

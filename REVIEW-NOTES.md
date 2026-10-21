@@ -1,6 +1,6 @@
 # Review notes
 
-Things noticed while reading the code for the walkthrough on 20 October 2026. Nothing here has been fixed. The most important come first.
+Things noticed while reading the code for the walkthrough on 20 October 2026. The most important come first. Notes marked **Addressed** have been fixed since: 1, 3, 9, 10 and 24.
 
 Effort: **S** is under an hour, **M** is a few hours to a day, **L** is several days.
 
@@ -15,6 +15,7 @@ Effort: **S** is under an hour, **M** is a few hours to a day, **L** is several 
   - The generated data and the show pages say The Forum is "Live on Fridays at 7:00 pm" and Statecraft is "Tuesdays at 3:00 pm" (`scripts/data/generate.mjs` lines 340 to 342 and the `schedule` field in `shows.json`).
 - **Why it matters:** two pages a reviewer is likely to open disagree. It undermines the "schedule on the site" point (Finding 11).
 - **Suggested fix:** build the schedule from the shows' own data, the publishing weekday and hour the generator already uses, instead of hard-coded days. **S**
+- **Addressed (20 October):** each show has one slot (days, hour, and whether it airs live) that drives its episode dates, its schedule line and the live page, so they cannot disagree.
 
 ### 2. Several recent features have no pitch note, and one note is out of date
 - **Where:** `src/data/pitchNotes.ts`.
@@ -45,6 +46,7 @@ Effort: **S** is under an hour, **M** is a few hours to a day, **L** is several 
   - "Bought" episodes are an id in `localStorage`, which anyone can add by hand.
 - **Why it matters:** fine for a demo. It is the first thing a technical reviewer will probe, and the honest answer must be ready (the walkthrough's crib sheet, question 4).
 - **Suggested fix:** keep it as it is for the prototype, and make sure ARCHITECTURE.md and the pitch say plainly that a real server must enforce access. On a real backend, the API returns only a count to non-members. **S** (wording), **L** (real enforcement)
+- **Addressed (20 October):** the Laravel version enforces access on the server. Non-members get a count for members' threads and reading lists, and `{ locked: true }` for members' streams; purchases are saved on the account; the gate blurs placeholder shapes, not real text. 12 feature tests prove it. The static preview applies the same rules in the page, and its banner says so.
 
 ### 4. An article that fails to load is shown as "not found"
 - **Where:** `src/api/catalogue.ts` lines 141 to 149, and `src/views/ArticleView.vue`.
@@ -190,6 +192,7 @@ Effort: **S** is under an hour, **M** is a few hours to a day, **L** is several 
 - **What I saw:** each comment section and chat creates its own votes, which vanish when you leave the page. Watch progress, purchases and reminders all survive a reload.
 - **Why it matters:** in a demo, a liked comment "un-likes" itself after navigating, which can look like a bug.
 - **Suggested fix:** save votes like the rest (`readJson` and `writeJson`), or say "votes are not saved in this demo" in the pitch notes. **S**
+- **Addressed (20 October):** comment votes are saved: on the account in the Laravel version, in the browser in the static preview. Live chat votes stay in the page, like the live chat itself.
 
 ---
 
