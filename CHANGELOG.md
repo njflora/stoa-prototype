@@ -2,6 +2,16 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: PHP security update and the articles note
+
+### Security
+- The local Docker setup runs PHP 8.4.27, which fixes the two critical PHP flaws released today (CVE-2026-109618 and CVE-2026-109619). The Composer tool runs PHP 8.5.12. The live site runs no PHP, so it was never affected. The 30 Laravel tests pass on the new version.
+- Docker serves the API (port 8000) and Meilisearch (port 7700) to this computer only, not to the rest of the network. A phone on the same network still reaches the site through the Vite dev server.
+- The README lists the commands that update PHP and Meilisearch to their latest patched images.
+
+### Changed
+- The articles pitch note matches the page: newest, popular (this week, this month or all time) and controversial. It says to choose Popular to pick the period. "Trending" is gone from the note and from SCOPE.md.
+
 ## 2026-10-21: Docs brought up to date for reviewers
 
 ### Changed

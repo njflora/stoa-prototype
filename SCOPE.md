@@ -95,7 +95,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 
 | Feature | What it does | Where | Version | Answers | Status | Note |
 |---|---|---|---|---|---|---|
-| Articles index | Newest, trending, popular by period and controversial; categories; a lead piece | `ArticlesView.vue` | Both | Proposal: new idea | Built | Yes |
+| Articles index | Newest, popular by period and controversial; categories; a lead piece | `ArticlesView.vue` | Both | Proposal: new idea | Built | Yes |
 | Article page | The piece, its sources, an episode to watch next, more from the writer | `ArticleView.vue` | Both | Finding 4 | Built | Yes |
 | Comments under articles | Open to every account, with votes and sorting | `CommentSection.vue` | Both | Kept (their site) | Built | Yes |
 | Reading lists on articles | Every article ends with its sources | `ReadingList.vue` | Both | Proposal: new idea | Built | Yes |

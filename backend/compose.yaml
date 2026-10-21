@@ -25,8 +25,12 @@ services:
       MEILISEARCH_HOST: http://meilisearch:7700
     depends_on:
       - meilisearch
+    # This computer only (127.0.0.1), not the rest of the network. A phone on
+    # the same network still works through the Vite dev server, which passes
+    # /api on to this port.
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
+    # Inside the container, serve on every interface so Docker can reach it.
     command: php artisan serve --host=0.0.0.0 --port=8000
 
   # The search engine, for Laravel Scout. Its index lives in a Docker volume
@@ -37,8 +41,9 @@ services:
       MEILI_MASTER_KEY: ${MEILISEARCH_KEY:-stoa-local-development-key}
       MEILI_ENV: development
       MEILI_NO_ANALYTICS: "true"
+    # This computer only. The app reaches it inside Docker as meilisearch:7700.
     ports:
-      - "7700:7700"
+      - "127.0.0.1:7700:7700"
     volumes:
       - meili:/meili_data
 

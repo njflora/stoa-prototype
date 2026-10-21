@@ -21,6 +21,7 @@ How this prototype is protected, what is demo-only, and what a production launch
 | Security headers on every response: nosniff, a strict referrer policy, no framing, no camera or location, HSTS over HTTPS. The API's Content Security Policy allows nothing to load from it. | `app/Http/Middleware/SecurityHeaders.php` |
 | Each model lists the fields a request may set. Tier and staff are never among them. Outside production, setting any other field is an error, so a mistake fails the tests. | `app/Models`, `SecurityTest.php` |
 | The password-less demo sign-in exists only in local and testing. | `routes/api.php`, proved by `tests/Feature/ProductionTest.php` |
+| Locally, Docker serves the API and Meilisearch to this computer only (127.0.0.1), not to the rest of the network. | `backend/compose.yaml` |
 | Session cookies are hidden from JavaScript, and other sites' form posts and background requests do not carry them. | `config/session.php` |
 
 ### The site

@@ -78,6 +78,7 @@ Open the address it prints, usually http://localhost:5173. The demo panel should
 | `docker compose run --rm app php artisan test` | Runs the 30 server tests |
 | `docker compose run --rm app php artisan migrate:fresh --seed` | Resets everything to the starting data |
 | `docker compose run --rm app php artisan stoa:sync --fixtures` | Runs the platform sync against the sample feeds |
+| `docker compose pull` then `docker compose up -d app` | Updates PHP and Meilisearch to their latest patched images |
 | `docker compose down` | Stops the server |
 
 ## Read more

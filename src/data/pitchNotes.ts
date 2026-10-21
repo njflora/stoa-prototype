@@ -437,9 +437,9 @@ export const pitchNotes: PitchNote[] = [
     id: 'articles-index',
     kind: 'proposal',
     source: 'New idea',
-    title: 'Articles: trending, popular and controversial',
+    title: 'Articles: newest, popular and controversial',
     today: 'Articles are listed newest first.',
-    here: 'Newest, trending, popular this week, month or all time, and controversial (many votes, split close to evenly), by category, with a lead piece.',
+    here: 'Newest, popular (this week, this month or all time) and controversial (many votes, split close to evenly), by category, with a lead piece. Choose Popular to pick the period.',
     page: { name: 'Articles', to: '/articles' },
   },
   {
