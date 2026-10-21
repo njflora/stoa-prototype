@@ -2,6 +2,12 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: The chat replay follows the Stoa player
+
+### Added
+- While the site's own player shows a recording, the chat replay beside it follows the player: seek to 5 seconds and the chat shows what was sent by 5 seconds; at 2× it runs at 2×; pause holds it. Its footer says "Following the player", with the time and any speed. With Rumble, Odysee or BitChute showing (iframes, which cannot share their time), the replay keeps its own clock and controls as before.
+- A few opening messages in the first seconds of every show's chat, as real chats start, so the sync shows within the few seconds of the demo clip.
+
 ## 2026-10-21: Quality and speed in the Stoa player
 
 ### Added

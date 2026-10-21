@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import PitchNote from './PitchNote.vue'
 import VoteButtons from './VoteButtons.vue'
+import { usePlayerClock } from '@/composables/usePlayerClock'
 import { chatMessages, showLengthSeconds, tierStyles, type ChatMessage } from '@/data/chat'
 import { useVotes } from '@/composables/useVotes'
 import { formatClock } from '@/utils/format'
@@ -11,7 +12,10 @@ import { formatClock } from '@/utils/format'
 // The live chat, and its replay alongside the recording.
 //   live:   messages arrive every few seconds (mocked here).
 //   replay: a timeline shows the messages sent up to that point in the
-//           show. On a real site the timeline follows the video player.
+//           show. While the site's own player shows the recording, the
+//           timeline follows it: its time, pause and speed. With a
+//           platform's player (an iframe, which cannot share its time),
+//           the replay keeps its own clock.
 //   closed: before the show.
 //   locked: the members' after-show, seen by a free viewer.
 
@@ -74,6 +78,16 @@ const replaySource = computed(() => {
   return chatMessages.map((m) => ({ ...m, at: Math.round(m.at * scale) }))
 })
 const fast = ref(false)
+
+// Following the site's own player, when it is showing the recording.
+const clock = usePlayerClock()
+const following = computed(() => props.mode === 'replay' && clock.active)
+watch(
+  () => [following.value, clock.time] as const,
+  ([on, time]) => {
+    if (on) position.value = time
+  },
+)
 let replayTimer: ReturnType<typeof setInterval> | undefined
 
 const replayMessages = computed(() => replaySource.value.filter((m) => m.at <= position.value))
@@ -105,7 +119,7 @@ onMounted(() => {
     if (props.mode === 'live') addLiveMessage()
   }, LIVE_INTERVAL_MS)
   replayTimer = setInterval(() => {
-    if (props.mode !== 'replay' || !playing.value) return
+    if (props.mode !== 'replay' || !playing.value || following.value) return
     position.value = Math.min(length.value, position.value + (fast.value ? 10 : 1))
     if (position.value >= length.value) playing.value = false
   }, 1000)
@@ -201,7 +215,14 @@ onUnmounted(() => {
       </ol>
 
       <footer class="border-t border-white/5 p-3">
-        <div v-if="mode === 'replay'" class="flex items-center gap-3">
+        <!-- Following the player: its controls drive the replay. -->
+        <p v-if="following" class="flex items-center gap-2 text-xs text-muted" role="status">
+          <span class="size-1.5 rounded-full" :class="clock.playing ? 'bg-accent-bright' : 'bg-white/30'" aria-hidden="true" />
+          Following the player
+          <span class="ml-auto tabular-nums text-white">{{ formatClock(Math.floor(position)) }}</span>
+          <span v-if="clock.rate !== 1" class="rounded bg-accent/30 px-1.5 py-px font-semibold text-accent-bright">{{ clock.rate }}×</span>
+        </p>
+        <div v-else-if="mode === 'replay'" class="flex items-center gap-3">
           <button
             type="button"
             class="grid size-8 shrink-0 place-items-center rounded-full bg-white text-ink"

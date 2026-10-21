@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import AppIcon from './AppIcon.vue'
 import type { Rendition } from '@/data/streams'
+import { releaseClock, reportClock } from '@/composables/usePlayerClock'
 
 // The site's own video player, for its own hosting (VOD). Custom controls in
 // the site's skin, after the reference site's player: a pink progress bar
@@ -136,7 +137,13 @@ function wake() {
 
 const onFullscreenChange = () => (fullscreen.value = document.fullscreenElement === root.value)
 onMounted(() => document.addEventListener('fullscreenchange', onFullscreenChange))
+// A recording shares its time, pause and speed, so the chat replay can follow it.
+function report() {
+  if (!props.live && video.value) reportClock(video.value)
+}
+onMounted(report)
 onUnmounted(() => {
+  if (!props.live) releaseClock()
   document.removeEventListener('fullscreenchange', onFullscreenChange)
   clearTimeout(hideTimer)
 })
@@ -161,10 +168,12 @@ onUnmounted(() => {
       :loop="live"
       :aria-label="label"
       @click="settingsOpen ? (settingsOpen = false) : toggle()"
-      @play="(playing = true), wake()"
-      @pause="(playing = false), (shown = true)"
+      @play="(playing = true), wake(), report()"
+      @pause="(playing = false), (shown = true), report()"
       @volumechange="muted = video!.muted"
-      @timeupdate="current = video!.currentTime"
+      @timeupdate="(current = video!.currentTime), report()"
+      @seeking="report"
+      @ratechange="report"
       @loadedmetadata="onLoaded"
     >
       <source v-for="file in files" :key="file.src" :src="file.src" :type="file.type" />

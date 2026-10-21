@@ -26,7 +26,14 @@ export const tierStyles: Record<ChatTier, { label: string; class: string }> = {
 }
 
 const raw: [number, string, ChatTier, string, boolean?][] = [
+  // The rush as the stream opens. (Also why the demo clip, a few seconds
+  // long, has messages to show when the replay follows the player.)
+  [1, 'Wessex_Walker', 'gold', 'Here we go!'],
+  [2, 'HollyFromHull', 'bronze', 'First!'],
+  [3, 'pete_from_leeds', 'free', 'Hello from Leeds'],
+  [4, 'GrumpyHistorian', 'silver', 'Evening all. Or afternoon, whatever it is'],
   [5, 'Stoa_Producer', 'staff', 'Welcome in, everyone. The show starts in a moment.'],
+  [6, 'CanalBoatKev', 'free', 'Picture is a bit wavy on my end'],
   [40, 'pete_from_leeds', 'free', 'Afternoon all'],
   [62, 'MargaretH', 'silver', 'Good afternoon from Shropshire'],
   [95, 'teabreak_tim', 'bronze', 'Made it just in time, kettle on'],
