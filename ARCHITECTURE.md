@@ -222,5 +222,5 @@ Shared state is a `ref` declared at the top of a composable file, so every compo
 | Demo sign-in, no passwords | Their real accounts and login |
 | "Buy this episode" with no payment | A real checkout and entitlement |
 | The demo clip in three sizes | Their own video hosting, with HLS for adaptive quality |
-| Notifications only while a tab is open | Web Push, with the installable app (week 6) |
+| Notifications only while a tab is open | Web Push from the Laravel version, to the installable app |
 | Invented catalogue, comments and sources | Their real data, through the sync and an import |

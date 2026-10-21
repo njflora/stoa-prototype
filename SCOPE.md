@@ -15,6 +15,7 @@ Everything in the Stoa prototype, area by area, as of 21 October 2026. Use it as
 | Top bar | Five links, search, Shop and Upgrade in one short bar | `SiteHeader.vue` | Both | Finding 2 | Built | Yes |
 | Phone tab bar | Home, Live, Shows, Search and More, within reach of a thumb | `MobileTabBar.vue` | Both | Proposal: Nick's idea | Built | Yes |
 | Footer | Their footer links (terms, privacy, cookies, About us, Find Us, contact, FAQ), plus Contributors and pitch notes, credits, newsletter sign-up. The policy and About pages are placeholders | `SiteFooter.vue`, `NewsletterSignup.vue` | Both | Kept: their site has a footer | Built (the newsletter sends nothing) | Yes |
+| Installable app | Install from the site, with a Home Screen hint on iPhone; pages already opened work offline; the player and unsaved pages say when there is no connection; a new version asks before it reloads | `vite.config.ts`, `InstallApp.vue`, `OfflineNotice.vue`, `UpdatePrompt.vue` | Static preview | Proposal: Nick's idea | Built (not in `npm run dev`) | Yes |
 | Account menu and tier badge | The signed-in name, tier badge and reminders bell | `SiteHeader.vue`, `UserBadge.vue`, `NotificationBell.vue` | Both | Finding 11 (reminders) | Built | Partly (reminders) |
 | Sign in | An honest page: no passwords; the demo panel is the easier way | `SignInView.vue` | Both | Demo only | Placeholder | No (demo only) |
 | Contact | Placeholder addresses | `ContactView.vue` | Both | Proposal: Nick's idea | Placeholder | No |
@@ -200,8 +201,8 @@ Decided against, or outside the prototype:
 - **Forum replies and moderation.** Topics can be started; threads and moderation are not built.
 - **Hosting the Laravel version.** To decide after testing it locally.
 
-## Planned for week 6
+## Week 6
 
-- **Deployment** of the static preview to GitHub Pages (needs the repository name and a small router change).
-- **The installable app (PWA)**, with `vite-plugin-pwa` (approved): installable, works offline for visited pages.
-- **Web Push reminders**, which need the PWA's service worker.
+- **Deployment: built.** A GitHub Actions workflow builds the static preview under /stoa-prototype/ and publishes it to GitHub Pages on every push to main. A refreshed deep link works, through a copy of index.html saved as 404.html. It goes live once the repository is public and Pages is set to GitHub Actions.
+- **The installable app (PWA): built.** The manifest takes its name from the brand file and its colours from the theme tokens. The app shell is saved for offline use, data is refreshed in the background, and images are kept for 30 days. Video and third-party players are never saved.
+- **Web Push reminders: moved to the Laravel version.** A reminder that reaches a closed app needs a server to keep subscriptions and send messages, so the static preview cannot do it. Reminders still work while a tab is open.

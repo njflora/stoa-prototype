@@ -4,12 +4,12 @@ Status as of 21 October 2026, after the Laravel plan (stages A to I). Written as
 
 ## In one paragraph
 
-The pitch prototype is built and working locally, in two versions. The site runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. Behind it, a Laravel 13 API, their framework, is the source of truth: it enforces members-only access, saves what accounts do, links every episode to its platforms (Rumble, Odysee, BitChute and the site's own video) through a sync, and searches with Meilisearch. A static preview, exported from Laravel, offers the same features without a server, for GitHub Pages. It is unbranded: the outlet is called "Stoa", every show, host and episode is invented, and one brand file would give it their identity (BRANDING.md). There are 80 commits so far. It is not deployed, and will not be until Nick says so. Deployment is planned for week 6 (23 to 29 November), with the installable PWA.
+The pitch prototype is built and working locally, in two versions. The site runs on Vue 3, TypeScript, Vite and Tailwind, matching their stack. Behind it, a Laravel 13 API, their framework, is the source of truth: it enforces members-only access, saves what accounts do, links every episode to its platforms (Rumble, Odysee, BitChute and the site's own video) through a sync, and searches with Meilisearch. A static preview, exported from Laravel, offers the same features without a server, for GitHub Pages. It is unbranded: the outlet is called "Stoa", every show, host and episode is invented, and one brand file would give it their identity (BRANDING.md). There are over 100 commits. Week 6 added the GitHub Pages build and the installable app. It goes live once Nick makes the repository public.
 
 ## Context
 
 - **Project:** an unofficial, unbranded prototype of a modern media site, to pitch improvements to a media publisher.
-- **Planning doc:** kept privately(findings, topics, mini-projects, schedule).
+- **Planning doc:** kept privately (findings, topics, mini-projects, schedule).
 - **Stack:** Vue 3, TypeScript, Vite 8, Tailwind CSS v4, Vue Router. A Laravel 13 API in backend/, run with Docker, is the source of truth for the catalogue.
 - **Look:** their dark theme (near-black, magenta #9f3878, gold #d5b720), Poppins for text and a serif for the wordmark. No logos, names or footage.
 - **Run it:** `npm install` then `npm run dev` in the project folder for the static preview. For the Laravel API, run `docker compose up -d app` in backend/, then `npm run dev:laravel`.
@@ -133,13 +133,22 @@ Nick's direction: show that the site slots into their current setup, with a clea
 | Ocean-waves loop for the hero video | The smallest option (0.7 MB), chosen over clouds and an Earth timelapse |
 | No deployment until Nick says so | A free GitHub Pages site is public |
 
+## Week 6: GitHub Pages and the installable app
+
+- **GitHub Pages.** `npm run build:pages` builds under /stoa-prototype/. Dev and dev:laravel stay at /. A workflow publishes on every push to main. Refreshing a deep link works, through a copy of index.html saved as 404.html.
+- **The installable app.** A manifest and icons drawn from the wordmark (`scripts/icons/make_icons.py`). Pages already opened work offline. Pages not yet opened, and the player, say "You're offline". "Install app" sits in the footer and the More sheet, with a hint on iPhone. A new version asks before it reloads. Nothing registers in dev.
+- **A pitch note** on the installable app. Their site has a basic web manifest and no service worker, and their Android app was last updated on 9 February 2024. Both were checked on 21 October.
+- **Web Push** moves to the Laravel version: it needs a server to send messages.
+- **Checked** in a build under /stoa-prototype/: a refreshed deep link, pitch mode, /pitch, the demo panel and the intro. Offline, with the server stopped: a visited show page loaded in full from the cache, an unvisited page showed the offline notice, and the live player showed its offline message. The install option was checked with a simulated install event, because the test browser does not offer installs. It needs a real check in Chrome once deployed.
+- **History.** The remaining client names outside the disclaimers were reworded through all history, checked against a backup.
+
 ## Not done or not tested
 
-- **Not deployed, on purpose.** Deployment is scheduled for week 6 with the PWA. GitHub Pages will need a small router change, and it can carry only the static preview: showing the Laravel version to others needs a PHP host.
+- **Not live yet.** The Pages build and workflow are ready. The site goes live once the repository is public and Pages is set to GitHub Actions. Pages carries only the static preview: showing the Laravel version to others needs a PHP host.
 - **The real platform feeds are not connected.** The sync reads sample feeds; what each platform offers is listed as "to verify" in CONSOLIDATION.md.
 - **Real Rumble, Odysee and BitChute embeds are untested.** No embed URLs are set, so the placeholder shows for those platforms. The site's own video (VOD) plays a CC0 clip. Rumble on phones (a key finding) needs a real embed to test.
 - **Real notifications are untested.** The test browser blocks them. The logic is in place.
-- **Not started:** installable PWA, the technical audit, the bug report and screen recording, the Topic 4 and 5 write-ups, the measurement page.
+- **Not started:** the technical audit, the bug report and screen recording, the Topic 4 and 5 write-ups, the measurement page.
 
 ## Known limits of the prototype
 
@@ -172,7 +181,7 @@ Each idea maps to a finding in the planning doc. Effort is S (hours), M (a day o
 | Follow shows and hosts, and a personalised "For you" row | Mini-project B; benchmark (The Free Press, Nebula) | M | Proposed |
 | Private members' podcast feed demo: a sample feed page showing how to add an ad-free feed to Apple Podcasts or Spotify | Finding 10; Mini-project H | M | Proposed |
 | Searchable transcripts and chapters for a few episodes, using public-domain audio only | Topic 2 stretch; Mini-project B | L | Proposed |
-| Installable PWA with offline downloads and lock-screen media controls (Media Session API) | Finding 8 | L | Proposed, with deployment in week 6 |
+| Offline downloads of episodes and lock-screen media controls (Media Session API), on top of the installable app | Finding 8 | L | Proposed |
 | Community rooms built on the live chat, with tier badges | Finding 6; Mini-project D | M | Proposed |
 | Course cross-links from relevant episodes | Mini-project G | S | Proposed |
 | Styled feed page with a Subscribe panel (Apple Podcasts, Spotify, copy link) instead of raw XML | Finding 10; Mini-project F | S | Suggested during review |
@@ -183,10 +192,10 @@ Each idea maps to a finding in the planning doc. Effort is S (hours), M (a day o
 2. **Pitch notes for your feedback features.** Answered: contributor profiles and article comments are kept (their site has them); the members' Shows page, card previews and their mute button, the members' gate and article reading lists are proposals. Buying a single episode is kept, at their £1.89. Was: Contributor profiles, the members' gate, article comments, the preview mute button and the members' Shows page have no pitch note. Should they be labelled as proposals with the source "Nick's feedback", or tied to a finding in the planning doc?
 3. **The exact wording of Findings 3 and 9.** Answered: now quoted in the pitch notes. Was: The pitch notes for the show archive and search only say "Listed as a gap in the planning doc". Can you paste the findings' wording, so the "today" line is specific?
 4. **Real Rumble, Odysee and BitChute embed URLs.** Finding 1 (the black screen) and Rumble on phones cannot be tested without them. Do you have test videos that are fine to use in a public repo?
-5. **Deployment in week 6.** What should the GitHub repository be called (it sets the site's address and the `base` setting (`vite-plugin-pwa` for the installable app is approved.)
+5. **Deployment in week 6.** Answered: the repository is njflora/stoa-prototype, so the site lives at njflora.github.io/stoa-prototype. Was: what should the GitHub repository be called (it sets the site's address and the `base` setting)?
 6. **Live chat replay.** Answered: The Forum has it too. Was: **Live chat replay for The Forum and Statecraft.** Both are described as live shows. Should they get chat replay too, like The Stoa Podcast and Morning Brief?
 7. **Votes.** Answered: comment votes are now saved (on the account, or in the browser in the static preview).
 8. **Sign in.** Answered: a small honest page that says the demo panel is the easier way, with the same choices.
 
 9. **Hosting the Laravel version.** To decide after testing it locally. GitHub Pages can carry only the static preview. Should the Laravel version be shown on a small PHP host (with Meilisearch), or only demonstrated from this machine?
-10. **The real platform feeds.** Can their team say how they list a channel's uploads on Rumble, Odysee and BitChute today (an API, a feed, or by hand CONSOLIDATION.md lists what needs verifying.
+10. **The real platform feeds.** Can their team say how they list a channel's uploads on Rumble, Odysee and BitChute today (an API, a feed, or by hand)? CONSOLIDATION.md lists what needs verifying.

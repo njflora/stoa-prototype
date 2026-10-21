@@ -2,6 +2,30 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Week 6: GitHub Pages and the installable app
+
+### Added
+- `npm run build:pages` builds the static preview under /stoa-prototype/ for GitHub Pages. `npm run preview:pages` serves that build locally. Dev and dev:laravel stay at /.
+- A copy of index.html is saved as 404.html in the Pages build, so a refreshed deep link opens the right page.
+- `.github/workflows/deploy.yml` builds and publishes to GitHub Pages on every push to main.
+- The installable app, with vite-plugin-pwa:
+  - a manifest with the name from brand.ts and the colours from the theme tokens, scoped to the base path
+  - icons drawn from the wordmark: 192, 512 and a maskable 512, plus an Apple touch icon (`scripts/icons/make_icons.py`)
+  - the app shell saved for offline use, the data refreshed in the background, and images kept for 30 days; video and third-party players are never saved
+  - "You're offline" above a page that was not saved, and in the player
+  - "Install app" in the footer and the More sheet, with a Home Screen hint on iPhone, hidden once installed
+  - "Update available" with a Reload button, instead of a silent reload
+- A pitch note on the installable app. Their site has a basic web manifest and no service worker, and their Android app was last updated on 9 February 2024. The 45 notes are now 19 that answer findings, 19 proposals and 7 kept.
+- `.gitattributes`, so line endings stay consistent on Windows.
+
+### Changed
+- Web Push reminders move to the Laravel version, since they need a server to send messages (SCOPE.md).
+- The README links to the live site and says how to install the app. WALKTHROUGH.md lesson 10 now explains how deployment and the app work.
+- The remaining client names outside the disclaimers are reworded through the repository's history.
+
+### Fixed
+- Two questions in PROGRESS.md had lost their closing bracket and question mark in an earlier clean-up.
+
 ## 2026-10-21: No focus ring around the seal on arrival
 
 ### Fixed

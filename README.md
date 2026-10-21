@@ -6,7 +6,9 @@ Stoa is an unofficial concept: a prototype of how the Lotus Eaters site could wo
 
 The static preview runs in any browser with nothing to install. It has every feature, saved in your browser.
 
-*Link to be added at deployment.*
+**[njflora.github.io/stoa-prototype](https://njflora.github.io/stoa-prototype/)**
+
+**Install it as an app.** In Chrome or Edge, choose **Install app** in the footer (on a phone, in the **More** menu). On an iPhone or iPad, tap **Share**, then **Add to Home Screen**. Pages you have opened then work offline.
 
 Open the demo panel (bottom left) to view the site as a visitor, a free account, a member or staff. Turn on **pitch mode** there to see a label on every improvement, with what their site does today.
 

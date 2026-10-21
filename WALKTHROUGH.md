@@ -632,34 +632,31 @@ The hero video starts itself in code, not with the `autoplay` attribute, so it c
 
 ---
 
-## Lesson 10. What is needed for deployment and the PWA in week 6
+## Lesson 10. How deployment and the installable app work
 
-About 10 minutes.
+About 15 minutes.
 
-**What it does.** Nothing is deployed yet, on purpose (a working rule: "Do not deploy until Nick says so"). This lesson lists what deployment to GitHub Pages and an installable PWA would need. None of it is built.
+**What it does.** The static preview is built for GitHub Pages and installs as an app. Week 6 built both. The site goes live once the repository is public.
 
-**Already in place**
-- **Every address respects the site's base path:**
-  - the router: `createWebHistory(import.meta.env.BASE_URL)`, `src/router/index.ts` line 14
-  - the data API: `src/api/client.ts` line 6
-  - media: `src/data/media.ts` line 27
-  - the notification icon: `src/composables/useReminders.ts` line 25
-- **The data is static files,** which GitHub Pages can serve as they are.
-- **Embed URLs live outside the code,** in `.env.local`.
+**GitHub Pages**
+- **The base path.** A project site lives under a sub-path: njflora.github.io/stoa-prototype/. In `vite.config.ts`, `defineConfig` takes a function that receives the `mode`. `npm run build:pages` runs `vite build --mode pages`, and only that mode sets `base` to `/stoa-prototype/`. Dev and dev:laravel keep `/`.
+- **Every address follows the base.** The router, the data API, media and the notification icon all build their addresses from `import.meta.env.BASE_URL`, which Vite sets from `base`.
+- **Deep links.** Opening `/stoa-prototype/shows/chronos` asks GitHub Pages for a file that does not exist. Pages then serves `404.html`. A small plugin in `vite.config.ts` copies `index.html` to `404.html` after the build, so the app loads and the router shows the page.
+- **The workflow.** `.github/workflows/deploy.yml` runs on every push to main: install, build, then publish.
 
-**Needed for GitHub Pages**
-1. **Set `base` in `vite.config.ts`** to the repository name, for example `base: '/stoa/'`. A project site lives under a sub-path.
-2. **Handle deep links.** Opening `/shows/chronos` directly asks GitHub Pages for a file that does not exist. The usual fix is to copy `index.html` to `404.html` at build time, so every unknown address loads the app and the router takes over. Switching to hash addresses (`/#/shows/chronos`) is the other option, and it is uglier.
-3. **A GitHub Actions workflow** to build and publish. `VITE_` variables are baked in at build time, so embed URLs would need to be repository secrets or variables.
-4. **Remember a free Pages site is public.** That is why deployment waits for your go.
+**The installable app (PWA)**
+- **The manifest** tells the browser the app's name, icons and colours. `vite-plugin-pwa` writes it from `vite.config.ts`, using `brand.ts` for the name and `main.css` for the colours. The icons come from `scripts/icons/make_icons.py`.
+- **The service worker** is a script the browser runs apart from the page. It sits between the site and the network, so it can answer requests from its own cache. Here it keeps three caches:
+  - the app shell (the HTML, code and fonts), saved when the app installs
+  - the data JSON, answered from the cache at once and refreshed in the background ("stale-while-revalidate")
+  - images, answered from the cache for 30 days ("cache-first")
+- **Offline.** `useOnline.ts` watches the connection. When a page's data cannot load offline, `OfflineNotice.vue` says so above the page. `SourcePlayer.vue` shows "You're offline" instead of a player.
+- **Install.** Chrome and Edge fire a `beforeinstallprompt` event when the site can be installed. `useInstall.ts` keeps it, so "Install app" can open the browser's dialog later. iPhones have no such event, so the option shows the Share, Add to Home Screen hint.
+- **Updates.** With `registerType: 'prompt'`, a new version waits. `UpdatePrompt.vue` shows "Update available", and Reload switches to it.
+- **Not in dev.** The service worker is only built, never registered by `npm run dev`, so cached files never get in the way while editing.
+- **Web Push** would let reminders reach a closed app. It needs a server to send the messages, so it belongs to the Laravel version.
 
-**Needed for the PWA (Finding 8)**
-1. **A web app manifest:** name, icons in several sizes, theme colour (`index.html` already sets `theme-color`), and `display: standalone`.
-2. **A service worker** to cache the app shell, media and data pages for offline use. `vite-plugin-pwa` is the common route. It is a new package, so it needs your approval first.
-3. **Lock-screen controls** through the Media Session API, once there is real audio or video.
-4. **Real reminders with the site closed** need Web Push. That needs a server to send the messages, so it cannot run on GitHub Pages alone (`useReminders.ts` lines 7 to 11).
-
-**How I'd explain it.** "It's built to be hosted as plain files, so deployment is a build plus a small router setting. The installable app needs a manifest and a service worker for offline use. Push reminders need a small server, which is the one piece static hosting can't do."
+**How I'd explain it.** "It's hosted as plain files, so deployment is a build with the right base path, plus a copy of the app as the 404 page. The installable app is a manifest and a service worker: pages you've opened work offline, and a new version asks before it reloads. Push reminders need a small server, which is the one piece static hosting can't do."
 
 **Check yourself**
 1. Why does opening `/shows/chronos` directly fail on GitHub Pages without extra setup?
