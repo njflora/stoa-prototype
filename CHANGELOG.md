@@ -2,6 +2,12 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## 2026-10-21: Quality and speed in the Stoa player
+
+### Added
+- A settings button (a cog) in the Stoa player, beside full screen. Quality: Auto, 1080p, 720p, 480p and 360p. Speed: 0.25× to 2×, plus Custom, a slider from 0.25× to 3×. The live stream has Quality only, as it plays in real time. Escape closes the menu and returns focus to the button.
+- The demo clip exists in one size, so choosing a quality shows the feature without changing the picture. With real hosting, the sizes come from the HLS stream.
+
 ## 2026-10-21: Platforms by whether a show airs live
 
 ### Changed
