@@ -36,7 +36,3 @@ On an episode page, switch the player from Rumble to Odysee, then back to Rumble
 ## How the prototype handles it
 
 The prototype's player, [SourcePlayer.vue](../src/components/SourcePlayer.vue), rebuilds the player on every switch. Each source is keyed by its platform, so Vue removes the old player and builds a fresh one each time. A player is never left empty, and a hidden player can never keep playing in the background.
-
-## A separate note: Rumble on a phone during the live stream
-
-On a phone, during the live stream on 19 October 2026, the Rumble player did not load, and the chat covered the screen. This was observed only. The cause has not been diagnosed, and it needs a phone and a live stream to look into.
