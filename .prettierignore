@@ -1,0 +1,8 @@
+# Generated, vendored or owned by other tools
+dist
+coverage
+public
+backend
+package-lock.json
+src/data/media.generated.json
+CHANGELOG.md

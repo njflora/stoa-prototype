@@ -6,6 +6,13 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-22: Linting and formatting for the site
+
+#### Added
+- ESLint checks the site and the data scripts (`npm run lint`). It uses the recommended JavaScript, TypeScript and Vue rules, including the TypeScript rules that use type information, such as promises that are never handled.
+- Prettier sets one layout for code and docs (`npm run format`, checked by `npm run format:check`): no semicolons, single quotes, lines up to 120 characters. Generated files, the back end and CHANGELOG.md are left out.
+- The TypeScript and Vue rules are set up directly with typescript-eslint and eslint-plugin-vue. The usual wrapper package depends on a library with a high-severity advisory and no fix yet, which would fail the audit.
+
 ### 2026-10-22: Checks run on the refine branch
 
 #### Changed
