@@ -16,3 +16,11 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+// Tools that read TypeScript without Vue's compiler, such as ESLint, see
+// .vue imports through this. vue-tsc reads the real files instead.
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue'
+  const component: DefineComponent
+  export default component
+}
