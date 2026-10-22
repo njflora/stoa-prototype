@@ -13,7 +13,7 @@ const choice = ref<Choice>('all')
 const options = [
   { value: 'all' as Choice, label: 'All', count: courses.length },
   ...(['Course', 'Bundle', 'Community'] as const).map((type) => ({
-    value: type as Choice,
+    value: type,
     label: type === 'Community' ? 'Community' : `${type}s`,
     count: courses.filter((c) => c.type === type).length,
   })),

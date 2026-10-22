@@ -27,7 +27,8 @@ export function useSearchOverlay() {
 
   function closeSearch() {
     if (!isOpen.value) return
-    if (window.history.state?.searchOverPage) {
+    const state = window.history.state as { searchOverPage?: boolean } | null
+    if (state?.searchOverPage) {
       router.back()
       return
     }

@@ -59,7 +59,7 @@ const categoryModel = computed({
   get: () => category.value,
   set: (value: Choice) => void router.push({ query: query({ category: value, page: 0 }) }),
 })
-const options = [{ value: 'all' as Choice, label: 'All' }, ...categories.map((c) => ({ value: c as Choice, label: c }))]
+const options = [{ value: 'all' as Choice, label: 'All' }, ...categories.map((c) => ({ value: c, label: c }))]
 
 const articles = useQuery(
   () => `${category.value}|${page.value}|${sort.value}|${period.value}`,

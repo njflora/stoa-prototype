@@ -124,7 +124,7 @@ function toggleFullscreen() {
     return
   }
   const element = root.value
-  const iosVideo = video.value as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | undefined
+  const iosVideo: (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | undefined = video.value
   if (element?.requestFullscreen) element.requestFullscreen().catch(() => {})
   else iosVideo?.webkitEnterFullscreen?.()
 }

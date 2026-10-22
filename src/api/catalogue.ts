@@ -229,7 +229,7 @@ export async function listEpisodes(
   const start = Math.max(0, end - size)
   if (end <= 0) return { page, pageCount, total, items: [] }
   const pages = [...new Set([Math.floor(start / size), Math.floor((end - 1) / size)])]
-  const loaded = await Promise.all(pages.map((p) => (p === 0 ? first : stored(p))))
+  const loaded = await Promise.all(pages.map((p) => (p === 0 ? Promise.resolve(first) : stored(p))))
   const items = loaded.flatMap((p) => p.items).slice(start - pages[0]! * size, end - pages[0]! * size)
   return { page, pageCount, total, items: items.reverse().map(normalise) }
 }
