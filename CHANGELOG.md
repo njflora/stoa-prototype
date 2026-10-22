@@ -11,6 +11,13 @@ v2 makes the code easier to maintain, better tested and more secure. It adds no 
 #### Added
 - ESLint checks the site and the data scripts (`npm run lint`). It uses the recommended JavaScript, TypeScript and Vue rules, including the TypeScript rules that use type information, such as promises that are never handled.
 - Prettier sets one layout for code and docs (`npm run format`, checked by `npm run format:check`): no semicolons, single quotes, lines up to 120 characters. Generated files, the back end and CHANGELOG.md are left out.
+- `.git-blame-ignore-revs` lists the reformat commit, so `git blame` and GitHub show who last changed each line's meaning, not its layout.
+
+#### Changed
+- The site and docs are formatted with Prettier. Layout only.
+- Two click handlers in the demo panel and the search panel are named functions. Prettier's layout drops the semicolon between their two statements, which Vue's template compiler needs.
+
+#### Notes
 - The TypeScript and Vue rules are set up directly with typescript-eslint and eslint-plugin-vue. The usual wrapper package depends on a library with a high-severity advisory and no fix yet, which would fail the audit.
 
 ### 2026-10-22: Checks run on the refine branch
