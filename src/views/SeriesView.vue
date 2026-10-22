@@ -40,7 +40,7 @@ const start = computed(() => {
   return { episode: next, label: `Continue with Part ${part}` }
 })
 
-/** A free taste of the same show, for viewers who cannot watch the series. */
+/** A free preview of the same show, for viewers who cannot watch the series. */
 const freePreview = computed(() => show.value?.freePreview)
 
 const otherSeries = computed(() =>
