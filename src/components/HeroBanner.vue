@@ -176,9 +176,7 @@ onUnmounted(() => clearInterval(timer))
           <span v-else class="font-semibold tracking-wide text-accent-bright uppercase">
             {{ current.kicker }}
           </span>
-          <span v-if="isLive" class="text-white/80">
-            {{ formatNumber(event.viewers) }} watching
-          </span>
+          <span v-if="isLive" class="text-white/80"> {{ formatNumber(event.viewers) }} watching </span>
         </p>
 
         <p class="mt-3 font-serif text-sm font-bold tracking-widest text-white/70 uppercase">

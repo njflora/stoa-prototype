@@ -17,17 +17,17 @@ The weeks below assume I start in the first week of January 2027 (week 1). If I 
 
 ## At a glance
 
-| When | Phase | What changes for viewers |
-|---|---|---|
-| Weeks 1–2 | Settle in and quick fixes | The player stops going black; the live show works on a phone |
-| Weeks 3–6 | The live show and the homepage | A "Live now" banner, one live page, a route into the members' segment, something ready to play, an installable site |
-| Weeks 7–10 | Finding things | Search as you type, filters, a shorter menu, linked show and host pages, reading lists on articles |
-| Weeks 11–12 | One player | One player for every source, offering only the platforms an episode is on |
-| Weeks 13–15 | Hardening and buffer | Nothing new; testing under heavy traffic, fixes, then a freeze from 12 April |
-| **18 April 2027** | **Content overhaul live** | |
-| Weeks 16–21 | Shop and courses | The shop and courses moved onto the main site, under one account |
-| Weeks 22–26 | One record per episode | Behind the scenes: every platform's copy linked to one episode, with a content desk for staff |
-| Week 27 onwards | Reminders, the app and community | Live-show reminders on phones, a decision on the Android app and a community space |
+| When              | Phase                            | What changes for viewers                                                                                            |
+| ----------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Weeks 1–2         | Settle in and quick fixes        | The player stops going black; the live show works on a phone                                                        |
+| Weeks 3–6         | The live show and the homepage   | A "Live now" banner, one live page, a route into the members' segment, something ready to play, an installable site |
+| Weeks 7–10        | Finding things                   | Search as you type, filters, a shorter menu, linked show and host pages, reading lists on articles                  |
+| Weeks 11–12       | One player                       | One player for every source, offering only the platforms an episode is on                                           |
+| Weeks 13–15       | Hardening and buffer             | Nothing new; testing under heavy traffic, fixes, then a freeze from 12 April                                        |
+| **18 April 2027** | **Content overhaul live**        |                                                                                                                     |
+| Weeks 16–21       | Shop and courses                 | The shop and courses moved onto the main site, under one account                                                    |
+| Weeks 22–26       | One record per episode           | Behind the scenes: every platform's copy linked to one episode, with a content desk for staff                       |
+| Week 27 onwards   | Reminders, the app and community | Live-show reminders on phones, a decision on the Android app and a community space                                  |
 
 ## Weeks 1–2: settle in and quick fixes
 

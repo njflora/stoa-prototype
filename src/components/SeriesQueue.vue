@@ -44,9 +44,7 @@ function link(id: string) {
         <PitchNote id="series-autoplay" />
       </div>
       <div class="mt-2 flex items-center justify-between gap-3">
-        <p class="text-xs text-white/75">
-          Part {{ toRoman(index + 1) }} of {{ toRoman(series.episodes.length) }}
-        </p>
+        <p class="text-xs text-white/75">Part {{ toRoman(index + 1) }} of {{ toRoman(series.episodes.length) }}</p>
         <button
           type="button"
           role="switch"
@@ -81,9 +79,17 @@ function link(id: string) {
             {{ toRoman(i + 1) }}
           </span>
           <div class="relative aspect-video w-24 shrink-0 overflow-hidden rounded ring-1 ring-white/10">
-            <TitleCard :show="show" :art="artForEpisode(episode)" :show-text="false" :animated="episode.id === currentId" />
+            <TitleCard
+              :show="show"
+              :art="artForEpisode(episode)"
+              :show-text="false"
+              :animated="episode.id === currentId"
+            />
             <div v-if="progressFor(episode.id) > 0" class="absolute inset-x-0 bottom-0 h-0.5 bg-white/20">
-              <div class="h-full bg-accent-bright" :style="{ width: `${Math.round(progressFor(episode.id) * 100)}%` }" />
+              <div
+                class="h-full bg-accent-bright"
+                :style="{ width: `${Math.round(progressFor(episode.id) * 100)}%` }"
+              />
             </div>
           </div>
           <div class="min-w-0 flex-1">

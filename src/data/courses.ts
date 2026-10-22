@@ -69,7 +69,12 @@ export const courses: Course[] = [
           posting: 'all',
           threads: [
             { title: 'This month: the Apology. First impressions?', by: 'northernlass', replies: 34, daysAgo: 0 },
-            { title: 'Is Stoicism just good manners with a reading list?', by: 'Wessex_Walker', replies: 57, daysAgo: 1 },
+            {
+              title: 'Is Stoicism just good manners with a reading list?',
+              by: 'Wessex_Walker',
+              replies: 57,
+              daysAgo: 1,
+            },
             { title: 'Best translation of the Ethics for a beginner', by: 'quietreader', replies: 18, daysAgo: 3 },
             { title: 'Suggestions for next month’s book', by: 'chris_m', replies: 22, daysAgo: 5 },
           ],
@@ -84,9 +89,24 @@ export const courses: Course[] = [
             { title: 'Virtue or rules: which is the better guide?', by: 'CanalBoatKev', replies: 29, daysAgo: 2 },
           ],
         },
-        { name: 'Political philosophy', description: 'Justice, power and the state, from Plato to now.', status: 'planned', posting: 'members' },
-        { name: 'Classics reading room', description: 'Slow reading of the ancient texts, a chapter at a time.', status: 'planned', posting: 'members' },
-        { name: 'Book club', description: 'One modern book a month, chosen by members.', status: 'planned', posting: 'members' },
+        {
+          name: 'Political philosophy',
+          description: 'Justice, power and the state, from Plato to now.',
+          status: 'planned',
+          posting: 'members',
+        },
+        {
+          name: 'Classics reading room',
+          description: 'Slow reading of the ancient texts, a chapter at a time.',
+          status: 'planned',
+          posting: 'members',
+        },
+        {
+          name: 'Book club',
+          description: 'One modern book a month, chosen by members.',
+          status: 'planned',
+          posting: 'members',
+        },
       ],
     },
     related: [{ label: 'Conversations', to: '/shows/conversations' }],
@@ -95,7 +115,8 @@ export const courses: Course[] = [
     id: 'virtue-ethics',
     type: 'Course',
     title: 'Virtue Ethics of the Ancients',
-    summary: 'A different way of seeing the human condition, through the moral thinkers of ancient Greece, from Homer to Aristotle.',
+    summary:
+      'A different way of seeing the human condition, through the moral thinkers of ancient Greece, from Homer to Aristotle.',
     about: [
       'What makes a good life, and a good person? Long before modern ethics, the Greeks asked these questions and gave answers that still hold up.',
       'This course follows the idea of virtue from the heroes of Homer, through Socrates and Plato, to Aristotle, and asks what it can teach us now.',
@@ -135,7 +156,8 @@ export const courses: Course[] = [
     id: 'writing',
     type: 'Course',
     title: 'Writing Well',
-    summary: 'Clear writing makes for clear thinking. Grammar, sentence craft, punctuation and style, with the common mistakes to avoid.',
+    summary:
+      'Clear writing makes for clear thinking. Grammar, sentence craft, punctuation and style, with the common mistakes to avoid.',
     about: [
       'Good writing is a skill, not a gift. This course works through the parts of speech, how sentences are built, how punctuation guides the reader, and how to develop a plain, readable style.',
     ],
@@ -173,7 +195,8 @@ export const courses: Course[] = [
     id: 'rhetoric',
     type: 'Course',
     title: 'The Art of Persuasion',
-    summary: 'Logic is rarely enough to change a mind. The classical art of rhetoric, its devices, and how people really decide.',
+    summary:
+      'Logic is rarely enough to change a mind. The classical art of rhetoric, its devices, and how people really decide.',
     about: [
       'People are not purely rational. This course covers the classical art of persuasion, the full set of rhetorical devices, and the mental shortcuts that shape how an audience responds.',
     ],

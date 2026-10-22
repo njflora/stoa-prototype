@@ -84,7 +84,12 @@ export async function getDesk(filter: DeskFilter, page: number): Promise<DeskPag
   // left in it has no stored page.
   const sync = savedSync()
   const [stored, summary, runs] = await Promise.all([
-    getJson<Omit<DeskPage, 'summary' | 'runs'>>(`desk/${sync ? 'synced/' : ''}${filter}/${page}.json`).catch(() => ({ page, pageCount: 1, total: 0, items: [] })),
+    getJson<Omit<DeskPage, 'summary' | 'runs'>>(`desk/${sync ? 'synced/' : ''}${filter}/${page}.json`).catch(() => ({
+      page,
+      pageCount: 1,
+      total: 0,
+      items: [],
+    })),
     getJson<DeskSummary>('desk/summary.json'),
     getJson<IngestRun[]>('desk/runs.json'),
   ])
@@ -115,7 +120,11 @@ export async function resync(): Promise<IngestRun[]> {
   const now = new Date().toISOString()
   const recorded = await getJson<SavedSync>('desk/sync.json')
   const runs = recorded.runs.map((r, i) => ({ ...r, id: Date.now() + i, startedAt: now, finishedAt: now }))
-  writeJson(SYNC_KEY, { runs, changes: recorded.changes.map((c) => ({ ...c, syncedAt: now })), summary: recorded.summary })
+  writeJson(SYNC_KEY, {
+    runs,
+    changes: recorded.changes.map((c) => ({ ...c, syncedAt: now })),
+    summary: recorded.summary,
+  })
   return runs
 }
 

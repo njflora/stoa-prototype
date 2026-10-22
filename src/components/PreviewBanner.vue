@@ -28,6 +28,7 @@ onUnmounted(() => resizeObserver?.disconnect())
     ref="banner"
     class="border-b border-white/5 bg-surface px-4 py-1.5 text-center text-xs text-muted sm:px-8"
   >
-    <span class="font-semibold text-white">Preview:</span> saved in this browser, with access checked here rather than on a server.
+    <span class="font-semibold text-white">Preview:</span> saved in this browser, with access checked here rather than
+    on a server.
   </p>
 </template>

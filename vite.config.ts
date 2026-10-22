@@ -52,14 +52,21 @@ export default defineConfig(({ mode }) => {
       {
         name: 'brand-in-index-html',
         transformIndexHtml: (html) =>
-          html.replaceAll('%BRAND_NAME%', brand.name).replaceAll('%BRAND_DESCRIPTION%', brand.description.replace(/^./, (c) => c.toLowerCase())),
+          html.replaceAll('%BRAND_NAME%', brand.name).replaceAll(
+            '%BRAND_DESCRIPTION%',
+            brand.description.replace(/^./, (c) => c.toLowerCase()),
+          ),
       },
       // Built pages only: the dev server injects inline styles and a live-reload connection.
       {
         name: 'content-security-policy',
         apply: 'build',
         transformIndexHtml: () => [
-          { tag: 'meta', attrs: { 'http-equiv': 'Content-Security-Policy', content: CONTENT_SECURITY_POLICY }, injectTo: 'head-prepend' },
+          {
+            tag: 'meta',
+            attrs: { 'http-equiv': 'Content-Security-Policy', content: CONTENT_SECURITY_POLICY },
+            injectTo: 'head-prepend',
+          },
         ],
       },
       vue(),

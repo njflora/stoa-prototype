@@ -40,7 +40,10 @@ const faqs = [
     q: 'How does the free trial work?',
     a: `Bronze and Silver start with ${TRIAL_DAYS} days free: use everything in the tier, and cancel before the trial ends to pay nothing. Gold has no trial, and starts with the first month.`,
   },
-  { q: 'Can I cancel at any time?', a: 'Yes. Membership runs month to month, and cancelling takes effect at the end of the month you have paid for.' },
+  {
+    q: 'Can I cancel at any time?',
+    a: 'Yes. Membership runs month to month, and cancelling takes effect at the end of the month you have paid for.',
+  },
   { q: 'Can I change tier later?', a: 'Yes. Move up or down at any time from your account page.' },
   { q: 'Can I give membership as a gift?', a: 'Yes. Gift memberships are available from the account page.' },
   {
@@ -68,7 +71,9 @@ const faqs = [
           <h1 class="mt-3 text-4xl leading-tight font-bold sm:text-5xl">
             You're a {{ tierStyles[currentTier].label }} member
           </h1>
-          <p class="mt-3 text-lg text-white/85">Thanks for supporting {{ brand.name }}. Everything on the site is unlocked for you.</p>
+          <p class="mt-3 text-lg text-white/85">
+            Thanks for supporting {{ brand.name }}. Everything on the site is unlocked for you.
+          </p>
           <RouterLink
             to="/account"
             class="mt-6 inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:brightness-95"
@@ -83,7 +88,9 @@ const faqs = [
           <p class="mt-3 text-lg text-white/85">
             Every members' show, the full archive and the live after-show. From £{{ lowestPrice }} a month.
           </p>
-          <p class="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm ring-1 ring-white/15">
+          <p
+            class="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm ring-1 ring-white/15"
+          >
             <AppIcon name="check" class="!size-4 text-gold" />
             Try Bronze or Silver free for {{ TRIAL_DAYS }} days
           </p>
@@ -120,7 +127,9 @@ const faqs = [
         <h2 id="tiers-heading" class="text-2xl font-bold">Choose a tier</h2>
         <PitchNote id="join-tiers" />
       </div>
-      <p class="mt-1 text-sm text-muted">Prices per month. Bronze and Silver start with a {{ TRIAL_DAYS }}-day free trial.</p>
+      <p class="mt-1 text-sm text-muted">
+        Prices per month. Bronze and Silver start with a {{ TRIAL_DAYS }}-day free trial.
+      </p>
 
       <ul class="mt-6 grid gap-4 md:grid-cols-3">
         <li
@@ -130,7 +139,10 @@ const faqs = [
           :class="currentTier === tier.id ? 'ring-2 ring-gold' : 'ring-white/10'"
         >
           <div class="flex items-center justify-between">
-            <span class="rounded px-2 py-0.5 text-xs font-bold tracking-wide uppercase" :class="tierStyles[tier.id].class">
+            <span
+              class="rounded px-2 py-0.5 text-xs font-bold tracking-wide uppercase"
+              :class="tierStyles[tier.id].class"
+            >
               {{ tier.name }}
             </span>
             <span v-if="currentTier === tier.id" class="text-xs font-semibold text-gold">Your tier</span>
@@ -182,7 +194,9 @@ const faqs = [
       <!-- relative: keeps the hidden screen-reader labels inside the scroll box, so they cannot widen the page. -->
       <div class="relative mt-6 overflow-x-auto rounded-xl ring-1 ring-white/10">
         <table class="w-full min-w-[560px] text-sm">
-          <caption class="sr-only">Features included in each plan</caption>
+          <caption class="sr-only">
+            Features included in each plan
+          </caption>
           <thead class="bg-surface">
             <tr>
               <th scope="col" class="px-4 py-3 text-left font-semibold">Feature</th>

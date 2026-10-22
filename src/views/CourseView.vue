@@ -33,7 +33,8 @@ const { viewer, isSignedIn, isMember, user } = useViewer()
 // server enforces the same rule (backend/config/stoa.php), and in this
 // browser in the static preview.
 type ForumThread = NonNullable<Forum['threads']>[number] & { at?: string }
-const canPostIn = (forum: Forum) => forum.status === 'open' && (isMember.value || (forum.posting === 'all' && isSignedIn.value))
+const canPostIn = (forum: Forum) =>
+  forum.status === 'open' && (isMember.value || (forum.posting === 'all' && isSignedIn.value))
 /** "philosophy-circle/general-discussion": how the server names a forum. */
 const forumId = (forum: Forum) => `${course.value?.id}/${forum.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
 const drafts = ref<Record<string, string>>({})
@@ -48,7 +49,10 @@ const { data: saved } = useQuery(
     const open = (course.value?.community?.forums ?? []).filter((f) => f.status === 'open')
     const lists = await Promise.all(open.map((f) => listForumTopics(forumId(f)).catch(() => [])))
     return Object.fromEntries(
-      open.map((f, i): [string, ForumThread[]] => [f.name, lists[i]!.map((t) => ({ title: t.title, by: t.by, replies: t.replies, daysAgo: 0, at: t.createdAt }))]),
+      open.map((f, i): [string, ForumThread[]] => [
+        f.name,
+        lists[i]!.map((t) => ({ title: t.title, by: t.by, replies: t.replies, daysAgo: 0, at: t.createdAt })),
+      ]),
     )
   },
 )
@@ -59,8 +63,14 @@ async function startThread(forum: Forum) {
   if (!title) return
   postError.value[forum.name] = ''
   try {
-    const topic = await startForumTopic(forumId(forum), title, { name: user.value?.name ?? 'You', tier: user.value?.tier ?? ('free' as const) })
-    added.value[forum.name] = [{ title, by: topic.by, replies: 0, daysAgo: 0, at: topic.createdAt }, ...(added.value[forum.name] ?? [])]
+    const topic = await startForumTopic(forumId(forum), title, {
+      name: user.value?.name ?? 'You',
+      tier: user.value?.tier ?? ('free' as const),
+    })
+    added.value[forum.name] = [
+      { title, by: topic.by, replies: 0, daysAgo: 0, at: topic.createdAt },
+      ...(added.value[forum.name] ?? []),
+    ]
   } catch {
     postError.value[forum.name] = 'Your thread was not posted. Please try again.'
     return
@@ -91,7 +101,9 @@ watchEffect(() => {
       <img v-if="art" :src="mediaUrl(art.hero)" alt="" class="absolute inset-0 size-full object-cover opacity-40" />
       <div class="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40" />
       <div class="relative max-w-2xl px-4 pt-14 pb-10 sm:px-8 sm:pt-20">
-        <RouterLink to="/courses" class="inline-flex min-h-6 items-center text-sm text-white/70 hover:text-white">All courses</RouterLink>
+        <RouterLink to="/courses" class="inline-flex min-h-6 items-center text-sm text-white/70 hover:text-white"
+          >All courses</RouterLink
+        >
         <p class="mt-4 text-xs font-bold tracking-widest text-accent-bright uppercase">{{ course.type }}</p>
         <h1 class="mt-2 text-3xl leading-tight font-bold text-balance sm:text-5xl">{{ course.title }}</h1>
         <p class="mt-3 text-lg text-white/85">{{ course.summary }}</p>
@@ -103,10 +115,15 @@ watchEffect(() => {
         <!-- A community: free membership on your account. -->
         <div v-if="course.community" class="mt-6">
           <p class="text-sm text-white/80">
-            <span class="text-2xl font-bold text-white">Free</span> · {{ members }} members · {{ course.community.posts }} posts
+            <span class="text-2xl font-bold text-white">Free</span> · {{ members }} members ·
+            {{ course.community.posts }} posts
           </p>
           <div class="mt-4 flex flex-wrap items-center gap-3">
-            <RouterLink v-if="!isSignedIn" to="/sign-in" class="rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:brightness-95">
+            <RouterLink
+              v-if="!isSignedIn"
+              to="/sign-in"
+              class="rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:brightness-95"
+            >
               Sign in to join
             </RouterLink>
             <button
@@ -118,10 +135,17 @@ watchEffect(() => {
               Join the Circle
             </button>
             <template v-else>
-              <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-gold [&>svg]:size-4" role="status">
+              <span
+                class="inline-flex items-center gap-1.5 text-sm font-semibold text-gold [&>svg]:size-4"
+                role="status"
+              >
                 <AppIcon name="check" /> You are a member
               </span>
-              <button type="button" class="inline-flex min-h-9 items-center rounded-lg px-3 text-sm text-white/70 ring-1 ring-white/15 hover:bg-white/10 hover:text-white" @click="leave(course.id)">
+              <button
+                type="button"
+                class="inline-flex min-h-9 items-center rounded-lg px-3 text-sm text-white/70 ring-1 ring-white/15 hover:bg-white/10 hover:text-white"
+                @click="leave(course.id)"
+              >
                 Leave the Circle
               </button>
             </template>
@@ -155,10 +179,18 @@ watchEffect(() => {
           <PitchNote id="community-forums" />
         </div>
         <ul class="mt-3 space-y-3">
-          <li v-for="forum in course.community.forums" :key="forum.name" class="rounded-xl bg-surface p-4 ring-1 ring-white/10" :class="forum.status === 'planned' ? 'opacity-75' : ''">
+          <li
+            v-for="forum in course.community.forums"
+            :key="forum.name"
+            class="rounded-xl bg-surface p-4 ring-1 ring-white/10"
+            :class="forum.status === 'planned' ? 'opacity-75' : ''"
+          >
             <div class="flex flex-wrap items-center gap-2">
               <h3 class="font-semibold">{{ forum.name }}</h3>
-              <span v-if="forum.status === 'planned'" class="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white/70 uppercase">
+              <span
+                v-if="forum.status === 'planned'"
+                class="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white/70 uppercase"
+              >
                 Planned
               </span>
               <span
@@ -180,14 +212,25 @@ watchEffect(() => {
                 placeholder="Start a thread"
                 class="h-9 min-w-0 flex-1 rounded-lg bg-ink px-3 text-sm ring-1 ring-white/10 placeholder:text-muted focus:ring-2 focus:ring-accent-bright focus:outline-none"
               />
-              <button type="submit" class="h-9 rounded-lg bg-white px-3 text-sm font-semibold text-ink disabled:opacity-40" :disabled="!drafts[forum.name]?.trim()">
+              <button
+                type="submit"
+                class="h-9 rounded-lg bg-white px-3 text-sm font-semibold text-ink disabled:opacity-40"
+                :disabled="!drafts[forum.name]?.trim()"
+              >
                 Post
               </button>
             </form>
-            <p v-if="postError[forum.name]" class="mt-2 text-sm text-[#ff8a80]" role="alert">{{ postError[forum.name] }}</p>
-            <p v-else-if="forum.status === 'open' && isSignedIn && !canPostIn(forum)" class="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/80">
+            <p v-if="postError[forum.name]" class="mt-2 text-sm text-[#ff8a80]" role="alert">
+              {{ postError[forum.name] }}
+            </p>
+            <p
+              v-else-if="forum.status === 'open' && isSignedIn && !canPostIn(forum)"
+              class="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/80"
+            >
               <AppIcon name="lock" class="!size-4 text-gold" /> Posting here is for members.
-              <RouterLink to="/join" class="inline-flex min-h-6 items-center font-semibold text-gold underline">Upgrade</RouterLink>
+              <RouterLink to="/join" class="inline-flex min-h-6 items-center font-semibold text-gold underline"
+                >Upgrade</RouterLink
+              >
             </p>
             <p v-else-if="forum.status === 'open' && !isSignedIn" class="mt-3 text-sm text-white/80">
               <RouterLink to="/sign-in" class="font-semibold underline">Sign in</RouterLink> to post.
@@ -197,7 +240,8 @@ watchEffect(() => {
               <li v-for="thread in threadsOf(forum)" :key="thread.title" class="py-2.5">
                 <p class="text-sm font-medium">{{ thread.title }}</p>
                 <p class="text-xs text-muted">
-                  {{ thread.by }} · {{ thread.replies }} replies · last reply {{ formatTimeAgo(thread.at ?? daysAgoIso(thread.daysAgo)).toLowerCase() }}
+                  {{ thread.by }} · {{ thread.replies }} replies · last reply
+                  {{ formatTimeAgo(thread.at ?? daysAgoIso(thread.daysAgo)).toLowerCase() }}
                 </p>
               </li>
             </ul>
@@ -227,7 +271,10 @@ watchEffect(() => {
         <h2 id="related-on-site" class="text-lg font-semibold">Related on {{ brand.name }}</h2>
         <ul class="mt-3 flex flex-wrap gap-2">
           <li v-for="link in course.related" :key="link.to">
-            <RouterLink :to="link.to" class="inline-flex min-h-9 items-center rounded-full bg-surface px-4 text-sm ring-1 ring-white/10 hover:bg-raised">
+            <RouterLink
+              :to="link.to"
+              class="inline-flex min-h-9 items-center rounded-full bg-surface px-4 text-sm ring-1 ring-white/10 hover:bg-raised"
+            >
               {{ link.label }}
             </RouterLink>
           </li>
@@ -238,6 +285,8 @@ watchEffect(() => {
 
   <main v-else class="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-4 text-center">
     <h1 class="font-serif text-4xl font-bold">Course not found</h1>
-    <RouterLink to="/courses" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink">All courses</RouterLink>
+    <RouterLink to="/courses" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+      >All courses</RouterLink
+    >
   </main>
 </template>

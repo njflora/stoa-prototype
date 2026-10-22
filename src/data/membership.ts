@@ -40,11 +40,7 @@ export const tiers: Tier[] = [
     name: 'Gold',
     monthly: 30,
     summary: 'Be part of the show.',
-    adds: [
-      'Everything in Silver',
-      'Send video questions to the hosts, live',
-      'A monthly video call with the team',
-    ],
+    adds: ['Everything in Silver', 'Send video questions to the hosts, live', 'A monthly video call with the team'],
   },
 ]
 

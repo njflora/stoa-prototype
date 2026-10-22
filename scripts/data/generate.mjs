@@ -62,7 +62,8 @@ function deck(name, items) {
   }
 }
 /** Every pairing of a subject with an angle, such as "The Bond Market: Who Blinks First?". */
-const combine = (subjects, angles, join = (s, a) => (/[?!]$/.test(s) ? `${s} ${a}` : `${s}: ${a}`)) => subjects.flatMap((s) => angles.map((a) => join(s, a)))
+const combine = (subjects, angles, join = (s, a) => (/[?!]$/.test(s) ? `${s} ${a}` : `${s}: ${a}`)) =>
+  subjects.flatMap((s) => angles.map((a) => join(s, a)))
 
 // ---------- dates ----------
 // A fixed day: midnight on 20 October 2026, UK time. Fixed, so every run
@@ -95,15 +96,60 @@ function datesBack(count, days, startOffset = 1) {
 // ---------- reference data ----------
 // Contributors. Names, roles and bios are invented for the demo.
 const hosts = [
-  { id: 'andrew', name: 'Andrew Pickering', role: 'Presenter, The Stoa Podcast', bio: 'Andrew has presented The Stoa Podcast since its first episode. Before that he spent a decade in local radio, and he still thinks the best interviews happen after the microphones are meant to be off.' },
-  { id: 'richard', name: 'Richard Holloway', role: 'Presenter, Conversations', bio: 'Richard hosts Conversations, the long-form interview show. A former bookseller, he reads everything his guests have written before they sit down, and usually a few things they would rather he had not.' },
-  { id: 'tom', name: 'Tom Heywood', role: 'Presenter, The Stoa Podcast and The Forum', bio: 'Tom chairs The Forum and is a regular on The Stoa Podcast. He writes about culture and comedy, and keeps a running list of sitcoms that deserved a third series.' },
-  { id: 'rachel', name: 'Rachel Ashworth', role: 'Host, Statecraft', bio: 'Rachel hosts Statecraft, the geopolitics show. She worked in shipping insurance before turning to writing, which is why she can explain a strait closure in terms of who pays.' },
-  { id: 'neil', name: 'Neil Barraclough', role: 'Host, Ledger', bio: 'Neil hosts Ledger, the economics show for people who do not like economics shows. He spent years as a credit analyst and now tries to explain bond markets without using the word "yield" more than twice.' },
-  { id: 'helen', name: 'Helen Thwaite', role: 'Historian and host, Chronos', bio: 'Helen writes and presents Chronos, telling history in full, series by series. Her particular interests are the late Roman Republic and the Hundred Years\' War, and she has opinions about both.' },
-  { id: 'danny', name: 'Danny Shaw', role: 'Host, Morning Brief', bio: 'Danny gets up before everyone else to present Morning Brief, the day ahead in short segments. He has read more newspapers before eight o\'clock than most people read in a week.' },
-  { id: 'gary', name: 'Gary Lowther', role: 'Political correspondent', bio: 'Gary covers politics, from Westminster to the town hall. He is a regular on The Stoa Podcast and The Forum, and writes about elections, committees and the parts of Parliament that rarely make the news.' },
-  { id: 'sally', name: 'Sally Dunmore', role: 'Economics writer', bio: 'Sally writes about public money: debt, tax and spending. She sits in on The Stoa Podcast and covers Morning Brief when Danny is away.' },
+  {
+    id: 'andrew',
+    name: 'Andrew Pickering',
+    role: 'Presenter, The Stoa Podcast',
+    bio: 'Andrew has presented The Stoa Podcast since its first episode. Before that he spent a decade in local radio, and he still thinks the best interviews happen after the microphones are meant to be off.',
+  },
+  {
+    id: 'richard',
+    name: 'Richard Holloway',
+    role: 'Presenter, Conversations',
+    bio: 'Richard hosts Conversations, the long-form interview show. A former bookseller, he reads everything his guests have written before they sit down, and usually a few things they would rather he had not.',
+  },
+  {
+    id: 'tom',
+    name: 'Tom Heywood',
+    role: 'Presenter, The Stoa Podcast and The Forum',
+    bio: 'Tom chairs The Forum and is a regular on The Stoa Podcast. He writes about culture and comedy, and keeps a running list of sitcoms that deserved a third series.',
+  },
+  {
+    id: 'rachel',
+    name: 'Rachel Ashworth',
+    role: 'Host, Statecraft',
+    bio: 'Rachel hosts Statecraft, the geopolitics show. She worked in shipping insurance before turning to writing, which is why she can explain a strait closure in terms of who pays.',
+  },
+  {
+    id: 'neil',
+    name: 'Neil Barraclough',
+    role: 'Host, Ledger',
+    bio: 'Neil hosts Ledger, the economics show for people who do not like economics shows. He spent years as a credit analyst and now tries to explain bond markets without using the word "yield" more than twice.',
+  },
+  {
+    id: 'helen',
+    name: 'Helen Thwaite',
+    role: 'Historian and host, Chronos',
+    bio: "Helen writes and presents Chronos, telling history in full, series by series. Her particular interests are the late Roman Republic and the Hundred Years' War, and she has opinions about both.",
+  },
+  {
+    id: 'danny',
+    name: 'Danny Shaw',
+    role: 'Host, Morning Brief',
+    bio: "Danny gets up before everyone else to present Morning Brief, the day ahead in short segments. He has read more newspapers before eight o'clock than most people read in a week.",
+  },
+  {
+    id: 'gary',
+    name: 'Gary Lowther',
+    role: 'Political correspondent',
+    bio: 'Gary covers politics, from Westminster to the town hall. He is a regular on The Stoa Podcast and The Forum, and writes about elections, committees and the parts of Parliament that rarely make the news.',
+  },
+  {
+    id: 'sally',
+    name: 'Sally Dunmore',
+    role: 'Economics writer',
+    bio: 'Sally writes about public money: debt, tax and spending. She sits in on The Stoa Podcast and covers Morning Brief when Danny is away.',
+  },
 ]
 
 // Line-ups rotate, as they do on a real show. Their own random sequence,
@@ -122,20 +168,87 @@ function lineup(pool, count, anchor, anchorChance) {
 // unit: what a new release is called, for the schedule line.
 const WEEKDAYS = [1, 2, 3, 4, 5]
 const shows = [
-  { id: 'stoa-podcast', name: 'The Stoa Podcast', tagline: 'The daily flagship, live every weekday', access: 'free', hostIds: ['andrew', 'richard', 'tom'], palette: ['#c04d93', '#2a0f22', '#f0a6ca'], streamedLive: true, slot: { days: WEEKDAYS, hour: 13, minute: 0, live: true }, unit: 'episodes' },
-  { id: 'morning-brief', name: 'Morning Brief', tagline: 'The day ahead, in short segments every weekday morning', access: 'free', hostIds: ['danny'], palette: ['#d5b720', '#2a2205', '#f6e7a1'], streamedLive: true, slot: { days: WEEKDAYS, hour: 8, minute: 0, live: true }, unit: 'editions' },
-  { id: 'conversations', name: 'Conversations', tagline: 'Long-form interviews with interesting people', access: 'free', hostIds: ['richard'], palette: ['#8b5cf6', '#170d2e', '#d8c8ff'], slot: { days: [3], hour: 10, minute: 0, live: false }, unit: 'interviews' },
-  { id: 'chronos', name: 'Chronos', tagline: 'History told in full, series by series', access: 'premium', hostIds: ['helen'], palette: ['#2a9d8f', '#08221f', '#e9c46a'], slot: { days: [0], hour: 13, minute: 0, live: false }, unit: 'parts' },
-  { id: 'statecraft', name: 'Statecraft', tagline: 'Geopolitics without the noise', access: 'premium', hostIds: ['rachel'], palette: ['#4f8fc0', '#0b1726', '#a8dadc'], slot: { days: [2], hour: 15, minute: 0, live: false }, unit: 'episodes' },
-  { id: 'ledger', name: 'Ledger', tagline: 'Economics you can actually use', access: 'premium', hostIds: ['neil'], palette: ['#6a994e', '#101b0c', '#e3f0c8'], slot: { days: [4], hour: 11, minute: 0, live: false }, unit: 'episodes' },
-  { id: 'the-forum', name: 'The Forum', tagline: 'The panel show, live for members', access: 'premium', hostIds: ['andrew', 'tom', 'danny', 'neil'], palette: ['#e76f51', '#260d06', '#f4a261'], streamedLive: true, slot: { days: [5], hour: 19, minute: 0, live: true }, unit: 'episodes' },
+  {
+    id: 'stoa-podcast',
+    name: 'The Stoa Podcast',
+    tagline: 'The daily flagship, live every weekday',
+    access: 'free',
+    hostIds: ['andrew', 'richard', 'tom'],
+    palette: ['#c04d93', '#2a0f22', '#f0a6ca'],
+    streamedLive: true,
+    slot: { days: WEEKDAYS, hour: 13, minute: 0, live: true },
+    unit: 'episodes',
+  },
+  {
+    id: 'morning-brief',
+    name: 'Morning Brief',
+    tagline: 'The day ahead, in short segments every weekday morning',
+    access: 'free',
+    hostIds: ['danny'],
+    palette: ['#d5b720', '#2a2205', '#f6e7a1'],
+    streamedLive: true,
+    slot: { days: WEEKDAYS, hour: 8, minute: 0, live: true },
+    unit: 'editions',
+  },
+  {
+    id: 'conversations',
+    name: 'Conversations',
+    tagline: 'Long-form interviews with interesting people',
+    access: 'free',
+    hostIds: ['richard'],
+    palette: ['#8b5cf6', '#170d2e', '#d8c8ff'],
+    slot: { days: [3], hour: 10, minute: 0, live: false },
+    unit: 'interviews',
+  },
+  {
+    id: 'chronos',
+    name: 'Chronos',
+    tagline: 'History told in full, series by series',
+    access: 'premium',
+    hostIds: ['helen'],
+    palette: ['#2a9d8f', '#08221f', '#e9c46a'],
+    slot: { days: [0], hour: 13, minute: 0, live: false },
+    unit: 'parts',
+  },
+  {
+    id: 'statecraft',
+    name: 'Statecraft',
+    tagline: 'Geopolitics without the noise',
+    access: 'premium',
+    hostIds: ['rachel'],
+    palette: ['#4f8fc0', '#0b1726', '#a8dadc'],
+    slot: { days: [2], hour: 15, minute: 0, live: false },
+    unit: 'episodes',
+  },
+  {
+    id: 'ledger',
+    name: 'Ledger',
+    tagline: 'Economics you can actually use',
+    access: 'premium',
+    hostIds: ['neil'],
+    palette: ['#6a994e', '#101b0c', '#e3f0c8'],
+    slot: { days: [4], hour: 11, minute: 0, live: false },
+    unit: 'episodes',
+  },
+  {
+    id: 'the-forum',
+    name: 'The Forum',
+    tagline: 'The panel show, live for members',
+    access: 'premium',
+    hostIds: ['andrew', 'tom', 'danny', 'neil'],
+    palette: ['#e76f51', '#260d06', '#f4a261'],
+    streamedLive: true,
+    slot: { days: [5], hour: 19, minute: 0, live: true },
+    unit: 'episodes',
+  },
 ]
 const slotOf = (showId) => shows.find((s) => s.id === showId).slot
 
 /** "Live weekdays at 1:00 pm", "New parts on Sundays at 1:00 pm". */
 function scheduleText({ slot, unit }) {
   const dayNames = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays']
-  const days = slot.days.join() === WEEKDAYS.join() ? 'weekdays' : `on ${slot.days.map((d) => dayNames[d]).join(' and ')}`
+  const days =
+    slot.days.join() === WEEKDAYS.join() ? 'weekdays' : `on ${slot.days.map((d) => dayNames[d]).join(' and ')}`
   const hour12 = slot.hour % 12 || 12
   const time = `${hour12}:${String(slot.minute).padStart(2, '0')} ${slot.hour < 12 ? 'am' : 'pm'}`
   return slot.live ? `Live ${days} at ${time}` : `New ${unit} ${days} at ${time}`
@@ -144,63 +257,220 @@ for (const show of shows) show.schedule = scheduleText(show)
 
 // ---------- topic pools ----------
 const newsTopics = [
-  'Parliament Returns', 'The Budget Nobody Wanted', 'Energy Prices Bite', 'Strikes and Standstills', 'The Housing Question',
-  'A Week in Westminster', 'Polls, Promises and Problems', 'The Border Debate', 'Free Speech on Trial', "Europe's New Mood",
-  'The Cost of Net Zero', 'Councils in Crisis', 'The Reshuffle', 'Party Conference Season', 'The Leadership Contest',
-  'Rail Fares Rise Again', 'The Grooming Gangs Inquiry', 'Inflation Returns', 'The Two-Child Cap', 'The Assisted Dying Bill',
-  'Water Bills and Sewage', 'The Defence Review', 'Farmers on the March', 'Digital ID Cards', 'The Spending Review',
-  'The By-Election', 'The Courts and the Commons', 'The Licence Fee', 'Teachers Walk Out', 'The Pension Triple Lock',
-  'Grid Failures', 'A Cold Winter Ahead', 'The Trade Deal', 'Universities in Trouble', 'The Online Safety Act',
-  'The Mayor Problem', 'Small Boats', 'Hospital Waiting Lists', 'The Smoking Ban', 'Prisons at Capacity',
-  'The Sentencing Review', 'Local Elections Loom', 'Crime and the Cities', 'Cost of Living', 'Fuel Duty',
-  'The Interest Rate Call', 'The Census Results', 'Green Belt Battles', 'The Steel Works', 'The Royal Visit',
+  'Parliament Returns',
+  'The Budget Nobody Wanted',
+  'Energy Prices Bite',
+  'Strikes and Standstills',
+  'The Housing Question',
+  'A Week in Westminster',
+  'Polls, Promises and Problems',
+  'The Border Debate',
+  'Free Speech on Trial',
+  "Europe's New Mood",
+  'The Cost of Net Zero',
+  'Councils in Crisis',
+  'The Reshuffle',
+  'Party Conference Season',
+  'The Leadership Contest',
+  'Rail Fares Rise Again',
+  'The Grooming Gangs Inquiry',
+  'Inflation Returns',
+  'The Two-Child Cap',
+  'The Assisted Dying Bill',
+  'Water Bills and Sewage',
+  'The Defence Review',
+  'Farmers on the March',
+  'Digital ID Cards',
+  'The Spending Review',
+  'The By-Election',
+  'The Courts and the Commons',
+  'The Licence Fee',
+  'Teachers Walk Out',
+  'The Pension Triple Lock',
+  'Grid Failures',
+  'A Cold Winter Ahead',
+  'The Trade Deal',
+  'Universities in Trouble',
+  'The Online Safety Act',
+  'The Mayor Problem',
+  'Small Boats',
+  'Hospital Waiting Lists',
+  'The Smoking Ban',
+  'Prisons at Capacity',
+  'The Sentencing Review',
+  'Local Elections Loom',
+  'Crime and the Cities',
+  'Cost of Living',
+  'Fuel Duty',
+  'The Interest Rate Call',
+  'The Census Results',
+  'Green Belt Battles',
+  'The Steel Works',
+  'The Royal Visit',
 ]
 // Morning Brief segments: a news subject with the day's angle on it.
 const morningAngles = [
-  'What Happens Next', 'The Numbers', 'Who Pays?', 'The Fallout', 'What the Papers Say', 'Five Things to Know',
-  'The Reaction', 'Behind the Headlines', 'The Vote', 'Winners and Losers', 'The U-Turn', 'A Week On',
-  'The Row Deepens', 'The Leaked Memo', 'Questions in the House', 'The Regional View', 'The Small Print',
-  'Missing the Point', 'The Official Line', 'The Backlash', 'Read Between the Lines', 'The Deadline Looms',
-  'What They Did Not Say', 'Counting the Cost', 'The Expert View', 'The Letters Page', 'Overnight Developments',
-  'The Timeline', 'The Poll', 'The Promise', 'The Climbdown', 'Ministers Respond', 'The Opposition Responds',
-  'Local Reaction', 'The Statistics', 'The Inquiry', 'The Report', 'Back to Square One', 'The Long View',
-  'Fact Check', 'What It Means for You', 'The Morning After', 'The Compromise', 'Twelve Months On', 'The Hidden Cost',
+  'What Happens Next',
+  'The Numbers',
+  'Who Pays?',
+  'The Fallout',
+  'What the Papers Say',
+  'Five Things to Know',
+  'The Reaction',
+  'Behind the Headlines',
+  'The Vote',
+  'Winners and Losers',
+  'The U-Turn',
+  'A Week On',
+  'The Row Deepens',
+  'The Leaked Memo',
+  'Questions in the House',
+  'The Regional View',
+  'The Small Print',
+  'Missing the Point',
+  'The Official Line',
+  'The Backlash',
+  'Read Between the Lines',
+  'The Deadline Looms',
+  'What They Did Not Say',
+  'Counting the Cost',
+  'The Expert View',
+  'The Letters Page',
+  'Overnight Developments',
+  'The Timeline',
+  'The Poll',
+  'The Promise',
+  'The Climbdown',
+  'Ministers Respond',
+  'The Opposition Responds',
+  'Local Reaction',
+  'The Statistics',
+  'The Inquiry',
+  'The Report',
+  'Back to Square One',
+  'The Long View',
+  'Fact Check',
+  'What It Means for You',
+  'The Morning After',
+  'The Compromise',
+  'Twelve Months On',
+  'The Hidden Cost',
 ]
 const morningTopics = combine(newsTopics, morningAngles)
 const historySeries = [
-  ['Augustus', 4], ['The Plantagenets', 6], ['The Spanish Armada', 3], ['Alfred the Great', 4], ['The Crusades', 7],
-  ['The Wars of the Roses', 6], ['Charlemagne', 4], ['The Glorious Revolution', 3], ['Hannibal', 4], ['The Black Death', 3],
-  ['Elizabeth I', 5], ['The Normans', 5], ['Rome and Carthage', 4], ['The Tudors', 6], ['Athens and Sparta', 5],
-  ['The Stuarts', 4], ['Alexander the Great', 5], ['The Vikings', 5], ['The Reformation', 4], ['Constantinople Falls', 3],
-  ['Henry VIII', 7], ['The Anglo-Saxons', 5], ['The Fall of the Republic', 5], ['Roman Resurgence', 4], ["The Hundred Years' War", 3],
+  ['Augustus', 4],
+  ['The Plantagenets', 6],
+  ['The Spanish Armada', 3],
+  ['Alfred the Great', 4],
+  ['The Crusades', 7],
+  ['The Wars of the Roses', 6],
+  ['Charlemagne', 4],
+  ['The Glorious Revolution', 3],
+  ['Hannibal', 4],
+  ['The Black Death', 3],
+  ['Elizabeth I', 5],
+  ['The Normans', 5],
+  ['Rome and Carthage', 4],
+  ['The Tudors', 6],
+  ['Athens and Sparta', 5],
+  ['The Stuarts', 4],
+  ['Alexander the Great', 5],
+  ['The Vikings', 5],
+  ['The Reformation', 4],
+  ['Constantinople Falls', 3],
+  ['Henry VIII', 7],
+  ['The Anglo-Saxons', 5],
+  ['The Fall of the Republic', 5],
+  ['Roman Resurgence', 4],
+  ["The Hundred Years' War", 3],
 ]
 // Each part's own title, shown before the series name:
 // "Chronos #275 | Justinian's Gamble | Roman Resurgence, Part 2".
 const partTitles = {
   Augustus: ['Octavian, Heir of Caesar', 'The Triumvirs', 'Actium', 'The First Emperor'],
-  'The Plantagenets': ['Henry II and the Angevin Empire', 'Becket', 'Richard the Lionheart', 'Bad King John', 'Magna Carta', 'Edward I, Hammer of the Scots'],
+  'The Plantagenets': [
+    'Henry II and the Angevin Empire',
+    'Becket',
+    'Richard the Lionheart',
+    'Bad King John',
+    'Magna Carta',
+    'Edward I, Hammer of the Scots',
+  ],
   'The Spanish Armada': ["Philip's Grand Design", 'Fireships at Calais', 'The Protestant Wind'],
   'Alfred the Great': ['The Great Heathen Army', 'Retreat to Athelney', 'Edington', 'Burhs and Books'],
-  'The Crusades': ['Deus Vult', 'The Fall of Jerusalem', 'The Crusader States', 'Saladin', 'The Third Crusade', 'The Sack of Constantinople', 'Acre, the Last Stand'],
-  'The Wars of the Roses': ['A Weak King', 'York Claims the Crown', 'Towton', 'The Kingmaker', 'The Princes in the Tower', 'Bosworth Field'],
+  'The Crusades': [
+    'Deus Vult',
+    'The Fall of Jerusalem',
+    'The Crusader States',
+    'Saladin',
+    'The Third Crusade',
+    'The Sack of Constantinople',
+    'Acre, the Last Stand',
+  ],
+  'The Wars of the Roses': [
+    'A Weak King',
+    'York Claims the Crown',
+    'Towton',
+    'The Kingmaker',
+    'The Princes in the Tower',
+    'Bosworth Field',
+  ],
   Charlemagne: ["Pepin's Son", 'The Saxon Wars', 'Christmas Day, 800', 'The Carolingian Renaissance'],
   'The Glorious Revolution': ['James II', 'The Invitation', 'The Bill of Rights'],
   Hannibal: ['Over the Alps', 'Trebia and Trasimene', 'Cannae', 'Zama'],
   'The Black Death': ['Out of the East', 'The Great Mortality', 'A World Turned Upside Down'],
-  'Elizabeth I': ['The Lady Elizabeth', 'The Religious Settlement', 'Mary, Queen of Scots', 'Spain and the Sea Dogs', 'Gloriana'],
+  'Elizabeth I': [
+    'The Lady Elizabeth',
+    'The Religious Settlement',
+    'Mary, Queen of Scots',
+    'Spain and the Sea Dogs',
+    'Gloriana',
+  ],
   'The Normans': ['Rollo and Normandy', 'The Bastard Duke', 'Hastings', 'The Harrying of the North', 'Domesday'],
   'Rome and Carthage': ['Two Powers, One Sea', 'The First Punic War', "Hannibal's War", 'Carthago Delenda Est'],
-  'The Tudors': ['From Bosworth to the Throne', 'Henry VII, the Miser King', 'The Young Henry VIII', 'Edward VI', 'Bloody Mary', 'The Last Tudor'],
-  'Athens and Sparta': ['Two Cities', 'Marathon and Thermopylae', 'The Delian League', 'The Peloponnesian War', 'The Sicilian Disaster'],
+  'The Tudors': [
+    'From Bosworth to the Throne',
+    'Henry VII, the Miser King',
+    'The Young Henry VIII',
+    'Edward VI',
+    'Bloody Mary',
+    'The Last Tudor',
+  ],
+  'Athens and Sparta': [
+    'Two Cities',
+    'Marathon and Thermopylae',
+    'The Delian League',
+    'The Peloponnesian War',
+    'The Sicilian Disaster',
+  ],
   'The Stuarts': ['James VI and I', 'Charles I and Parliament', 'Civil War', 'Restoration'],
   'Alexander the Great': ['Philip of Macedon', 'The Granicus', 'Issus', 'Gaugamela', 'To the Edge of the World'],
   'The Vikings': ['Raiders from the North', 'Lindisfarne', 'Settlers and Traders', 'Vinland', 'Stamford Bridge'],
   'The Reformation': ['Ninety-Five Theses', 'Luther at Worms', "Calvin's Geneva", 'The Counter-Reformation'],
   'Constantinople Falls': ['The City Besieged', "Mehmed's Guns", 'The Last Emperor'],
-  'Henry VIII': ['The Golden Prince', 'Wolsey', "The King's Great Matter", 'The Break with Rome', 'Dissolution', 'Six Wives', 'The Tyrant'],
+  'Henry VIII': [
+    'The Golden Prince',
+    'Wolsey',
+    "The King's Great Matter",
+    'The Break with Rome',
+    'Dissolution',
+    'Six Wives',
+    'The Tyrant',
+  ],
   'The Anglo-Saxons': ['After Rome', 'Sutton Hoo', 'Conversion', "Offa's Dyke", 'The Kingdom of England'],
-  'The Fall of the Republic': ['The Gracchi', 'Marius and Sulla', 'Pompey the Great', 'Crossing the Rubicon', 'The Ides of March'],
-  'Roman Resurgence': ["Constantine's New Rome", "Justinian's Gamble", 'Belisarius Takes Italy', 'Heraclius and the Persian War'],
+  'The Fall of the Republic': [
+    'The Gracchi',
+    'Marius and Sulla',
+    'Pompey the Great',
+    'Crossing the Rubicon',
+    'The Ides of March',
+  ],
+  'Roman Resurgence': [
+    "Constantine's New Rome",
+    "Justinian's Gamble",
+    'Belisarius Takes Italy',
+    'Heraclius and the Persian War',
+  ],
   "The Hundred Years' War": ['A Disputed Crown', 'Crécy and Poitiers', 'Agincourt'],
 }
 for (const [name, parts] of historySeries) {
@@ -208,42 +478,216 @@ for (const [name, parts] of historySeries) {
 }
 
 const historyExtras = [
-  'How Empires Decline', 'Reading the Ancients', 'Questions from Members', "The Historian's Toolkit", 'Myths of the Middle Ages',
-  'The Art of the Archive', 'Castles Explained', 'Coins and Kings', 'The Great Libraries', 'Mapping the Medieval World',
-  'Why Rome Fell (Again)', 'Siege Warfare', 'Saints and Relics', 'How We Date the Past', 'Lost Cities', 'Heralds and Heraldry',
-  'Monks and Manuscripts', 'The Roads of Empire', 'Plague, Famine and Weather', 'Queens Who Ruled',
+  'How Empires Decline',
+  'Reading the Ancients',
+  'Questions from Members',
+  "The Historian's Toolkit",
+  'Myths of the Middle Ages',
+  'The Art of the Archive',
+  'Castles Explained',
+  'Coins and Kings',
+  'The Great Libraries',
+  'Mapping the Medieval World',
+  'Why Rome Fell (Again)',
+  'Siege Warfare',
+  'Saints and Relics',
+  'How We Date the Past',
+  'Lost Cities',
+  'Heralds and Heraldry',
+  'Monks and Manuscripts',
+  'The Roads of Empire',
+  'Plague, Famine and Weather',
+  'Queens Who Ruled',
 ]
 const geoTopics = [
-  'The Great Energy Crunch', 'Elections Across the Gulf', "China's Long Game", 'The Arctic Scramble', 'Sanctions That Backfired',
-  'Water Wars', 'The Shipping Lanes', "Africa's New Partners", 'The Balkan Question', 'Taiwan and the Strait',
-  'The Sahel', 'Oil and OPEC', 'The Caucasus', 'India Rising', 'The Pacific Islands', 'Latin America Shifts',
-  'The Baltic Front', 'Iran and the Bomb', 'The Red Sea', 'Turkey Between Worlds', 'The New Silk Road', 'Rare Earths',
+  'The Great Energy Crunch',
+  'Elections Across the Gulf',
+  "China's Long Game",
+  'The Arctic Scramble',
+  'Sanctions That Backfired',
+  'Water Wars',
+  'The Shipping Lanes',
+  "Africa's New Partners",
+  'The Balkan Question',
+  'Taiwan and the Strait',
+  'The Sahel',
+  'Oil and OPEC',
+  'The Caucasus',
+  'India Rising',
+  'The Pacific Islands',
+  'Latin America Shifts',
+  'The Baltic Front',
+  'Iran and the Bomb',
+  'The Red Sea',
+  'Turkey Between Worlds',
+  'The New Silk Road',
+  'Rare Earths',
 ]
-const geoAngles = ['Who Holds the Cards?', 'The Map Explained', 'What Happens Next', 'Follow the Money', 'The View from London', 'Flashpoints', 'A Short History', 'The Players', 'Ten Years On', 'What the West Gets Wrong']
+const geoAngles = [
+  'Who Holds the Cards?',
+  'The Map Explained',
+  'What Happens Next',
+  'Follow the Money',
+  'The View from London',
+  'Flashpoints',
+  'A Short History',
+  'The Players',
+  'Ten Years On',
+  'What the West Gets Wrong',
+]
 const econTopics = [
-  'The Petrodollar Explained', 'Why Rents Keep Rising', 'Debt, Deficits and You', 'The Pension Problem', "Inflation's Long Tail",
-  'What Productivity Means', 'Gold Standard Myths', 'Tax Code Tangles', 'The Basis of Empire', 'Big Ideas', 'Housing Supply',
-  'The Bond Market', 'Central Banks', 'The Gig Economy', 'Trade and Tariffs', 'Wages and Migration', 'The Welfare Bill',
-  'Energy Economics', 'Money Printing', 'The Stock Market', 'Small Business Britain', 'Austerity Revisited',
+  'The Petrodollar Explained',
+  'Why Rents Keep Rising',
+  'Debt, Deficits and You',
+  'The Pension Problem',
+  "Inflation's Long Tail",
+  'What Productivity Means',
+  'Gold Standard Myths',
+  'Tax Code Tangles',
+  'The Basis of Empire',
+  'Big Ideas',
+  'Housing Supply',
+  'The Bond Market',
+  'Central Banks',
+  'The Gig Economy',
+  'Trade and Tariffs',
+  'Wages and Migration',
+  'The Welfare Bill',
+  'Energy Economics',
+  'Money Printing',
+  'The Stock Market',
+  'Small Business Britain',
+  'Austerity Revisited',
 ]
-const econAngles = ['Who Blinks First?', 'The Numbers', 'Myths and Facts', 'What It Means for You', 'A Short History', 'The Winners', 'The Losers', 'The Case Against', 'Where Next?', 'Explained Simply']
+const econAngles = [
+  'Who Blinks First?',
+  'The Numbers',
+  'Myths and Facts',
+  'What It Means for You',
+  'A Short History',
+  'The Winners',
+  'The Losers',
+  'The Case Against',
+  'Where Next?',
+  'Explained Simply',
+]
 const forumTopics = [
-  'Who Would Win?', 'Films We Will Defend', 'The Best Decade for Music', 'Desert Island Books', 'Ranking Prime Ministers',
-  'Underrated Inventions', 'The Great Debate Night', 'Worst Haircuts in History', 'Fantasy Cabinet', 'The Perfect Pub',
-  'Board Games Tournament', 'Childhood TV', 'Best Battles in Film', 'Food Fight', 'The Ultimate Road Trip', 'Monty Python',
+  'Who Would Win?',
+  'Films We Will Defend',
+  'The Best Decade for Music',
+  'Desert Island Books',
+  'Ranking Prime Ministers',
+  'Underrated Inventions',
+  'The Great Debate Night',
+  'Worst Haircuts in History',
+  'Fantasy Cabinet',
+  'The Perfect Pub',
+  'Board Games Tournament',
+  'Childhood TV',
+  'Best Battles in Film',
+  'Food Fight',
+  'The Ultimate Road Trip',
+  'Monty Python',
 ]
-const forumEditions = ['The Eighties Edition', 'Listener Picks', 'Christmas Special', 'Grudge Match', 'The Rematch', 'Summer Special', 'Lightning Round', 'Members Choose', 'The Final', 'Away Day', 'Late Night', 'Rapid Fire']
+const forumEditions = [
+  'The Eighties Edition',
+  'Listener Picks',
+  'Christmas Special',
+  'Grudge Match',
+  'The Rematch',
+  'Summer Special',
+  'Lightning Round',
+  'Members Choose',
+  'The Final',
+  'Away Day',
+  'Late Night',
+  'Rapid Fire',
+]
 // Conversations: a field and a framing, with a guest made from English first and last names.
 const interviewFields = [
-  'Archaeology', 'Farming', 'Biography', 'Publishing', 'Sleep', 'the Railways', 'Map-Making', 'Architecture', 'Shipbuilding',
-  'Brewing', 'Beekeeping', 'Forestry', 'Medicine', 'Policing', 'Journalism', 'the Law', 'Teaching', 'Engineering', 'Fishing',
-  'Astronomy', 'Church Music', 'Theatre', 'Translation', 'Diplomacy', 'Mining', 'Clockmaking', 'Bookbinding', 'Falconry',
-  'Cartooning', 'Stonemasonry',
+  'Archaeology',
+  'Farming',
+  'Biography',
+  'Publishing',
+  'Sleep',
+  'the Railways',
+  'Map-Making',
+  'Architecture',
+  'Shipbuilding',
+  'Brewing',
+  'Beekeeping',
+  'Forestry',
+  'Medicine',
+  'Policing',
+  'Journalism',
+  'the Law',
+  'Teaching',
+  'Engineering',
+  'Fishing',
+  'Astronomy',
+  'Church Music',
+  'Theatre',
+  'Translation',
+  'Diplomacy',
+  'Mining',
+  'Clockmaking',
+  'Bookbinding',
+  'Falconry',
+  'Cartooning',
+  'Stonemasonry',
 ]
-const interviewFramings = [(f) => `A Life in ${f}`, (f) => `The Future of ${f}`, (f) => `Why ${f} Matters`, (f) => `The Trouble with ${f}`, (f) => `Inside ${f}`]
+const interviewFramings = [
+  (f) => `A Life in ${f}`,
+  (f) => `The Future of ${f}`,
+  (f) => `Why ${f} Matters`,
+  (f) => `The Trouble with ${f}`,
+  (f) => `Inside ${f}`,
+]
 const interviewTopics = interviewFields.flatMap((f) => interviewFramings.map((frame) => frame(f)))
-const guestFirst = ['Peter', 'Joanne', 'Mark', 'Susan', 'Colin', 'Diane', 'Keith', 'Alan', 'Margaret', 'Graham', 'Ruth', 'Barry', 'Janet', 'Stephen', 'Pauline', 'Roger', 'Gillian', 'Martin', 'Carol', 'Derek']
-const guestLast = ['Ridley', 'Hartley', 'Brindley', 'Elwood', 'Ashby', 'Marsh', 'Rowntree', 'Croft', 'Lyle', 'Pell', 'Ormerod', 'Holt', 'Fairclough', 'Bramwell', 'Catterall', 'Dunstan', 'Pickles', 'Whitworth', 'Sowerby', 'Heald']
+const guestFirst = [
+  'Peter',
+  'Joanne',
+  'Mark',
+  'Susan',
+  'Colin',
+  'Diane',
+  'Keith',
+  'Alan',
+  'Margaret',
+  'Graham',
+  'Ruth',
+  'Barry',
+  'Janet',
+  'Stephen',
+  'Pauline',
+  'Roger',
+  'Gillian',
+  'Martin',
+  'Carol',
+  'Derek',
+]
+const guestLast = [
+  'Ridley',
+  'Hartley',
+  'Brindley',
+  'Elwood',
+  'Ashby',
+  'Marsh',
+  'Rowntree',
+  'Croft',
+  'Lyle',
+  'Pell',
+  'Ormerod',
+  'Holt',
+  'Fairclough',
+  'Bramwell',
+  'Catterall',
+  'Dunstan',
+  'Pickles',
+  'Whitworth',
+  'Sowerby',
+  'Heald',
+]
 const guests = combine(guestFirst, guestLast, (f, l) => `${f} ${l}`)
 
 // ---------- episodes ----------
@@ -297,10 +741,26 @@ const nextMorning = deck('morning-brief', morningTopics)
     const edition = views(800, ageDays)
     // Sally covers some mornings.
     const presenter = rota() < 0.85 ? ['danny'] : ['sally']
-    add('morning-brief', { edition: true, hostIds: presenter, publishedAt: at(date, slot.hour, slot.minute), durationMin: 22, access: 'free', views: edition, comments: comments(edition, 0.008) })
+    add('morning-brief', {
+      edition: true,
+      hostIds: presenter,
+      publishedAt: at(date, slot.hour, slot.minute),
+      durationMin: 22,
+      access: 'free',
+      views: edition,
+      comments: comments(edition, 0.008),
+    })
     segments.forEach((topic, j) => {
       const v = views(350, ageDays)
-      add('morning-brief', { title: `Morning Brief | ${topic}`, hostIds: presenter, publishedAt: at(date, slot.hour, slot.minute + 30 + j * 15), durationMin: between(6, 12), access: 'free', views: v, comments: comments(v, 0.006) })
+      add('morning-brief', {
+        title: `Morning Brief | ${topic}`,
+        hostIds: presenter,
+        publishedAt: at(date, slot.hour, slot.minute + 30 + j * 15),
+        durationMin: between(6, 12),
+        access: 'free',
+        views: v,
+        comments: comments(v, 0.006),
+      })
     })
   })
 }
@@ -313,7 +773,8 @@ const nextMorning = deck('morning-brief', morningTopics)
   const nextExtra = deck('chronos-extras', historyExtras)
   const plan = []
   for (const [name, parts] of historySeries) {
-    for (let p = 1; p <= parts; p++) plan.push({ series: { name, part: p, of: parts }, partTitle: partTitles[name][p - 1] })
+    for (let p = 1; p <= parts; p++)
+      plan.push({ series: { name, part: p, of: parts }, partTitle: partTitles[name][p - 1] })
     if (planRandom() < 0.4) plan.push({ extra: nextExtra() })
   }
   const slot = slotOf('chronos')
@@ -325,7 +786,9 @@ const nextMorning = deck('morning-brief', morningTopics)
     const isExtra = !item.series
     add('chronos', {
       number,
-      title: isExtra ? `Chronos #${number} | ${item.extra}` : `Chronos #${number} | ${item.partTitle} | ${item.series.name}, Part ${item.series.part}`,
+      title: isExtra
+        ? `Chronos #${number} | ${item.extra}`
+        : `Chronos #${number} | ${item.partTitle} | ${item.series.name}, Part ${item.series.part}`,
       series: item.series,
       hostIds: ['helen'],
       publishedAt: at(dates[i], slot.hour, slot.minute),
@@ -362,7 +825,19 @@ const nextEcon = deck('ledger', combine(econTopics, econAngles))
 const nextForum = deck('the-forum', combine(forumTopics, forumEditions))
 weekly('statecraft', 200, (n) => ({ number: n, title: `Statecraft #${n} | ${nextGeo()}` }), 2300, [60, 85], 15)
 weekly('ledger', 200, (n) => ({ number: n, title: `Ledger #${n} | ${nextEcon()}` }), 2100, [45, 65], 15)
-weekly('the-forum', 200, (n, preview) => ({ number: n, title: preview ? `The Forum #${n} | The Best Bits of #${n - 1}` : `The Forum #${n} | ${nextForum()}`, live: !preview, hostIds: lineup(['andrew', 'tom', 'danny', 'neil', 'gary', 'sally'], 4, 'tom', 0.8) }), 3800, [95, 125], 20)
+weekly(
+  'the-forum',
+  200,
+  (n, preview) => ({
+    number: n,
+    title: preview ? `The Forum #${n} | The Best Bits of #${n - 1}` : `The Forum #${n} | ${nextForum()}`,
+    live: !preview,
+    hostIds: lineup(['andrew', 'tom', 'danny', 'neil', 'gary', 'sally'], 4, 'tom', 0.8),
+  }),
+  3800,
+  [95, 125],
+  20,
+)
 
 // Conversations: long interviews, every week or so.
 {
@@ -377,7 +852,15 @@ weekly('the-forum', 200, (n, preview) => ({ number: n, title: preview ? `The For
     const v = views(1100, ageDays)
     const r = rota()
     const interviewer = r < 0.8 ? 'richard' : r < 0.9 ? 'helen' : 'andrew'
-    add('conversations', { title: `${topic} | Interview with ${guest}`, hostIds: [interviewer], publishedAt: at(date, slot.hour, slot.minute), durationMin: between(55, 85), access: 'free', views: v, comments: comments(v, 0.008) })
+    add('conversations', {
+      title: `${topic} | Interview with ${guest}`,
+      hostIds: [interviewer],
+      publishedAt: at(date, slot.hour, slot.minute),
+      durationMin: between(55, 85),
+      access: 'free',
+      views: v,
+      comments: comments(v, 0.008),
+    })
   })
 }
 
@@ -411,11 +894,17 @@ for (const e of [...byShow.get('chronos')].reverse()) {
   s.episodes.push(card(e))
 }
 const descriptions = {
-  'The Fall of the Republic': 'How the Roman Republic tore itself apart, from the Gracchi brothers to the Ides of March.',
+  'The Fall of the Republic':
+    'How the Roman Republic tore itself apart, from the Gracchi brothers to the Ides of March.',
   'Roman Resurgence': 'The eastern empire that outlived Rome by a thousand years, and the gambles that kept it alive.',
   "The Hundred Years' War": 'A century of war between England and France over one disputed crown.',
 }
-const slugify = (name) => name.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+const slugify = (name) =>
+  name
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
 for (const s of series) {
   s.slug = slugify(s.name)
   s.description = descriptions[s.name] ?? `${s.name}, told in ${s.episodes.length} parts.`
@@ -433,7 +922,8 @@ const articles = articleSources
     const reach = mood === 'quiet' ? 0.2 : 1
     const articleViews = Math.round((2500 + engagement() * 9000) * Math.min(1, 0.35 + daysAgo / 10) * reach)
     const reactions = Math.round(articleViews * (0.04 + engagement() * 0.03))
-    const dislikeShare = mood === 'divisive' || mood === 'quiet' ? 0.42 + engagement() * 0.14 : 0.05 + engagement() * 0.15
+    const dislikeShare =
+      mood === 'divisive' || mood === 'quiet' ? 0.42 + engagement() * 0.14 : 0.05 + engagement() * 0.15
     const words = a.body.join(' ').split(/\s+/).length
     const match = byShow
       .get(watchNext.show)
@@ -458,7 +948,12 @@ const articles = articleSources
 const allEpisodes = [...byShow.values()].flat()
 const extras = buildExtras({ episodes: allEpisodes, articles, now: generatedAt, seededRandom: seeded })
 // Where each episode is published (Rumble, Odysee, BitChute, VOD).
-const sources = buildSources({ episodes: allEpisodes, liveShowIds: shows.filter((s) => s.slot.live).map((s) => s.id), now: generatedAt, seededRandom: seeded })
+const sources = buildSources({
+  episodes: allEpisodes,
+  liveShowIds: shows.filter((s) => s.slot.live).map((s) => s.id),
+  now: generatedAt,
+  seededRandom: seeded,
+})
 
 // ---------- write the seed data ----------
 // This script only invents the catalogue. Laravel is the source of truth:
@@ -477,7 +972,14 @@ write('hosts.json', hosts)
 // Series in display order (newest first), with their episodes listed by id, oldest part first.
 write(
   'series.json',
-  series.map((s, position) => ({ slug: s.slug, name: s.name, showId: s.showId, description: s.description, position, episodeIds: s.episodes.map((e) => e.id) })),
+  series.map((s, position) => ({
+    slug: s.slug,
+    name: s.name,
+    showId: s.showId,
+    description: s.description,
+    position,
+    episodeIds: s.episodes.map((e) => e.id),
+  })),
 )
 write('episodes.json', allEpisodes)
 write('articles.json', articles)
@@ -513,6 +1015,16 @@ write('live.json', {
 const counts = Object.fromEntries(shows.map((s) => [s.id, byShow.get(s.id).length]))
 console.log('Episodes:', episodes.length, counts)
 console.log('Series:', series.length, '| Articles:', articles.length)
-console.log('Sources:', Object.entries(sources.reduce((n, s) => ({ ...n, [s.status]: (n[s.status] ?? 0) + 1 }), {})).map(([k, v]) => `${k} ${v}`).join(', '))
-console.log('Comments:', extras.threads.reduce((n, t) => n + t.comments.reduce((m, c) => m + 1 + c.replies.length, 0), 0), '| Reading list items:', extras.lists.reduce((n, l) => n + l.items.length, 0))
+console.log(
+  'Sources:',
+  Object.entries(sources.reduce((n, s) => ({ ...n, [s.status]: (n[s.status] ?? 0) + 1 }), {}))
+    .map(([k, v]) => `${k} ${v}`)
+    .join(', '),
+)
+console.log(
+  'Comments:',
+  extras.threads.reduce((n, t) => n + t.comments.reduce((m, c) => m + 1 + c.replies.length, 0), 0),
+  '| Reading list items:',
+  extras.lists.reduce((n, l) => n + l.items.length, 0),
+)
 console.log('Seed data written to', OUT)

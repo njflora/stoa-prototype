@@ -28,7 +28,8 @@ const items = computed(() => {
   return out
 })
 
-const arrow = 'inline-flex min-h-9 items-center gap-1 rounded-lg px-3 text-sm font-medium ring-1 ring-white/10 hover:bg-white/10 [&>svg]:size-4'
+const arrow =
+  'inline-flex min-h-9 items-center gap-1 rounded-lg px-3 text-sm font-medium ring-1 ring-white/10 hover:bg-white/10 [&>svg]:size-4'
 const number = 'grid min-h-9 min-w-9 place-items-center rounded-lg px-2 text-sm tabular-nums'
 </script>
 

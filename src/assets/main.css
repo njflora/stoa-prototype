@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /*
   Design tokens. Each variable here becomes a set of Tailwind classes,
@@ -16,8 +16,8 @@
   --color-gold: #d5b720;
   --color-live: #e53935;
 
-  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "PT Serif", ui-serif, Georgia, serif;
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'PT Serif', ui-serif, Georgia, serif;
 }
 
 /*

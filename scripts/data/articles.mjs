@@ -25,7 +25,13 @@ export const articles = [
       src('Book', 'The Disappearing Middle: Party Loyalty in Decline', 'M. T. Garside', 2022),
       src('Data', 'Constituency Results, 1979 to 2024', 'Electoral Records Unit', 2025),
       src('Report', 'Who Switches, and Why', 'Centre for Voter Studies', 2026),
-      src('Article', 'Local Elections Are Telling Us Something', 'Gary Lowther, Stoa', 2026, '/articles/local-elections'),
+      src(
+        'Article',
+        'Local Elections Are Telling Us Something',
+        'Gary Lowther, Stoa',
+        2026,
+        '/articles/local-elections',
+      ),
     ],
     body: [
       'For most of the last century, British politics was a contest for the middle. Two large parties, each with a loyal base, fought over a band of floating voters who decided elections. Win them and you won the country. That arrangement is quietly coming apart.',
@@ -52,7 +58,13 @@ export const articles = [
       src('Report', 'Household Energy Costs: A Winter Outlook', 'Domestic Energy Institute', 2026),
       src('Data', 'Wholesale Gas Prices, Monthly Series', 'Energy Markets Monitor', 2026),
       src('Book', 'Power Lines: How Britain Keeps the Lights On', 'C. A. Fenwick', 2021),
-      src('Article', 'The Shipping Lanes Nobody Talks About', 'Rachel Ashworth, Stoa', 2026, '/articles/shipping-lanes'),
+      src(
+        'Article',
+        'The Shipping Lanes Nobody Talks About',
+        'Rachel Ashworth, Stoa',
+        2026,
+        '/articles/shipping-lanes',
+      ),
     ],
     body: [
       'Every autumn the same question comes round: what will heating the house cost this winter? The answer depends on forces a long way from your front door, and on a regulated limit that is often misunderstood.',
@@ -158,7 +170,13 @@ export const articles = [
       src('Data', 'Council By-Election Results, 2020 to 2026', 'Local Elections Archive', 2026),
       src('Book', 'Town Hall: A History of Local Government', 'R. G. Pemberton', 2016),
       src('Report', 'Turnout and Trust in Local Democracy', 'Civic Participation Unit', 2025),
-      src('Article', 'The Quiet Collapse of the Centre Ground', 'Andrew Pickering, Stoa', 2026, '/articles/centre-ground'),
+      src(
+        'Article',
+        'The Quiet Collapse of the Centre Ground',
+        'Andrew Pickering, Stoa',
+        2026,
+        '/articles/centre-ground',
+      ),
     ],
     body: [
       'Local elections rarely make the front pages for long. Turnout is low, the issues are bins and potholes, and national commentators treat the results as a rough opinion poll. That is a mistake. Read carefully, they often show change before it reaches Westminster.',
@@ -183,7 +201,13 @@ export const articles = [
       src('Book', 'Choke Points: The Narrow Seas That Run the World', 'A. J. Thornbury', 2022),
       src('Data', 'Global Container Traffic by Route', 'Maritime Trade Observatory', 2026),
       src('Report', 'Insurance Costs and Conflict at Sea', 'Marine Risk Council', 2025),
-      src('Article', 'What the Energy Crunch Means for Winter Bills', 'Rachel Ashworth, Stoa', 2026, '/articles/winter-bills'),
+      src(
+        'Article',
+        'What the Energy Crunch Means for Winter Bills',
+        'Rachel Ashworth, Stoa',
+        2026,
+        '/articles/winter-bills',
+      ),
     ],
     body: [
       'Look at the label on almost anything in your house and it probably crossed an ocean to reach you. What few people realise is how much of that trade squeezes through a small number of narrow passages, any one of which can be closed by war, piracy or accident.',
@@ -235,7 +259,13 @@ export const articles = [
       src('Book', 'Crowns and Longbows', 'H. P. Ashcombe', 2014),
       src('Book', 'The Disputed Crown', 'S. L. Marlowe', 2018),
       src('Data', 'Battlefields of France: A Gazetteer', 'Historical Maps Project', 2021),
-      src('Article', 'Why the Romans Feared Their Own Generals', 'Helen Thwaite, Stoa', 2026, '/articles/roman-generals'),
+      src(
+        'Article',
+        'Why the Romans Feared Their Own Generals',
+        'Helen Thwaite, Stoa',
+        2026,
+        '/articles/roman-generals',
+      ),
     ],
     body: [
       'Few battles are as wrapped in legend as Agincourt. On 25 October 1415, a tired English army under Henry V defeated a much larger French force in northern France. Shakespeare turned it into a story of a band of brothers. The sources tell a messier and more interesting tale.',
@@ -316,7 +346,13 @@ export const articles = [
       src('Book', 'Scrutiny: How Parliament Holds Power to Account', 'D. M. Fairley', 2020),
       src('Report', 'Committee Recommendations and Government Responses', 'Parliamentary Studies Centre', 2025),
       src('Data', 'Select Committee Inquiries, 2010 to 2026', 'Commons Records Office', 2026),
-      src('Article', 'Local Elections Are Telling Us Something', 'Gary Lowther, Stoa', 2026, '/articles/local-elections'),
+      src(
+        'Article',
+        'Local Elections Are Telling Us Something',
+        'Gary Lowther, Stoa',
+        2026,
+        '/articles/local-elections',
+      ),
     ],
     body: [
       'Prime Minister’s Questions gets the headlines, but it is mostly theatre. Some of the most effective work in Parliament happens in smaller rooms, where a dozen MPs question ministers, officials and experts for hours at a time.',

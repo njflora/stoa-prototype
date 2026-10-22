@@ -11,28 +11,28 @@ How this prototype is protected, what is demo-only, and what a production launch
 
 ### The Laravel API
 
-| Protection | Where |
-|---|---|
-| Access is decided on the server. Members-only threads, reading lists and streams never leave it for anyone else. | `app/Policies`, `app/Discussion/Discussions.php`, proved by `tests/Feature/AccessTest.php` |
-| Every change needs a signed-in account, and carries a CSRF token. | `routes/api.php`, Sanctum's SPA mode in `bootstrap/app.php` |
-| Every input is validated: lengths, allowed values, and that what it points to exists. | Each controller in `app/Http/Controllers` |
-| The content desk is for staff only. | The `use-desk` gate in `app/Providers/AppServiceProvider.php` |
-| Rate limits: 300 requests a minute, 60 searches, and 20 changes, per account or per address. | `AppServiceProvider.php`, proved by `tests/Feature/SecurityTest.php` |
-| Security headers on every response: nosniff, a strict referrer policy, no framing, no camera or location, HSTS over HTTPS. The API's Content Security Policy allows nothing to load from it. | `app/Http/Middleware/SecurityHeaders.php` |
-| Each model lists the fields a request may set. Tier and staff are never among them. Outside production, setting any other field is an error, so a mistake fails the tests. | `app/Models`, `SecurityTest.php` |
-| The password-less demo sign-in exists only in local and testing. | `routes/api.php`, proved by `tests/Feature/ProductionTest.php` |
-| Locally, Docker serves the API and Meilisearch to this computer only (127.0.0.1), not to the rest of the network. | `backend/compose.yaml` |
-| Session cookies are hidden from JavaScript, and other sites' form posts and background requests do not carry them. | `config/session.php` |
+| Protection                                                                                                                                                                                   | Where                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Access is decided on the server. Members-only threads, reading lists and streams never leave it for anyone else.                                                                             | `app/Policies`, `app/Discussion/Discussions.php`, proved by `tests/Feature/AccessTest.php` |
+| Every change needs a signed-in account, and carries a CSRF token.                                                                                                                            | `routes/api.php`, Sanctum's SPA mode in `bootstrap/app.php`                                |
+| Every input is validated: lengths, allowed values, and that what it points to exists.                                                                                                        | Each controller in `app/Http/Controllers`                                                  |
+| The content desk is for staff only.                                                                                                                                                          | The `use-desk` gate in `app/Providers/AppServiceProvider.php`                              |
+| Rate limits: 300 requests a minute, 60 searches, and 20 changes, per account or per address.                                                                                                 | `AppServiceProvider.php`, proved by `tests/Feature/SecurityTest.php`                       |
+| Security headers on every response: nosniff, a strict referrer policy, no framing, no camera or location, HSTS over HTTPS. The API's Content Security Policy allows nothing to load from it. | `app/Http/Middleware/SecurityHeaders.php`                                                  |
+| Each model lists the fields a request may set. Tier and staff are never among them. Outside production, setting any other field is an error, so a mistake fails the tests.                   | `app/Models`, `SecurityTest.php`                                                           |
+| The password-less demo sign-in exists only in local and testing.                                                                                                                             | `routes/api.php`, proved by `tests/Feature/ProductionTest.php`                             |
+| Locally, Docker serves the API and Meilisearch to this computer only (127.0.0.1), not to the rest of the network.                                                                            | `backend/compose.yaml`                                                                     |
+| Session cookies are hidden from JavaScript, and other sites' form posts and background requests do not carry them.                                                                           | `config/session.php`                                                                       |
 
 ### The site
 
-| Protection | Where |
-|---|---|
-| Vue escapes all text. No data is inserted as raw HTML. | All components |
-| A Content Security Policy in every built page: scripts, data and media only from the site itself, and frames only from Rumble, Odysee and BitChute. | `vite.config.ts` |
-| Embed addresses are accepted only on each platform's own embed path. | `src/data/streams.ts` |
-| The offline cache keeps only the site's own files. Third-party players are never cached. | `vite.config.ts` (the PWA settings) |
-| No secrets in the code. Test embed addresses live in `.env.local`, which git ignores. | `.gitignore`, `.env.example` |
+| Protection                                                                                                                                          | Where                               |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| Vue escapes all text. No data is inserted as raw HTML.                                                                                              | All components                      |
+| A Content Security Policy in every built page: scripts, data and media only from the site itself, and frames only from Rumble, Odysee and BitChute. | `vite.config.ts`                    |
+| Embed addresses are accepted only on each platform's own embed path.                                                                                | `src/data/streams.ts`               |
+| The offline cache keeps only the site's own files. Third-party players are never cached.                                                            | `vite.config.ts` (the PWA settings) |
+| No secrets in the code. Test embed addresses live in `.env.local`, which git ignores.                                                               | `.gitignore`, `.env.example`        |
 
 ## Checked automatically
 

@@ -73,9 +73,7 @@ export interface Rendition {
 
 /** What the player shows for a source. */
 export type Playable =
-  | { kind: 'iframe'; url: string }
-  | { kind: 'video'; renditions: Rendition[] }
-  | { kind: 'placeholder' }
+  { kind: 'iframe'; url: string } | { kind: 'video'; renditions: Rendition[] } | { kind: 'placeholder' }
 
 const single = (files: VideoFile[]): Playable => ({ kind: 'video', renditions: [{ label: 'Auto', files }] })
 

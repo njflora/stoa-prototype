@@ -33,10 +33,7 @@ const watched = computed(() => props.series.episodes.filter((e) => isWatched(e.i
 <template>
   <div class="relative" :class="fluid ? 'min-w-0' : 'w-60 flex-none snap-start sm:w-72'" v-on="handlers">
     <PreviewSoundButton v-if="previewing" />
-    <RouterLink
-      :to="`/series/${series.slug}`"
-      class="group block outline-none"
-    >
+    <RouterLink :to="`/series/${series.slug}`" class="group block outline-none">
       <div
         ref="root"
         class="relative aspect-video overflow-hidden rounded-lg ring-1 ring-white/10 transition duration-300 group-hover:ring-white/30 group-focus-visible:ring-2 group-focus-visible:ring-accent-bright"
@@ -70,9 +67,7 @@ const watched = computed(() => props.series.episodes.filter((e) => isWatched(e.i
         <p class="line-clamp-2 text-sm leading-snug font-medium text-white/90 group-hover:text-white">
           {{ series.name }}
         </p>
-        <p class="mt-0.5 truncate text-xs text-muted">
-          {{ show.name }} · {{ hostNames(series.episodes[0]!.hostIds) }}
-        </p>
+        <p class="mt-0.5 truncate text-xs text-muted">{{ show.name }} · {{ hostNames(series.episodes[0]!.hostIds) }}</p>
       </div>
     </RouterLink>
   </div>

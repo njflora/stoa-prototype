@@ -61,7 +61,10 @@ const kindStyle = {
       >
         <div class="flex items-start justify-between gap-3">
           <div class="flex flex-wrap items-center gap-2">
-            <span class="rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase" :class="kindStyle[note.kind]">
+            <span
+              class="rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase"
+              :class="kindStyle[note.kind]"
+            >
               {{ kindNames[note.kind] }}
             </span>
             <span class="text-xs text-muted">{{ note.source }}</span>

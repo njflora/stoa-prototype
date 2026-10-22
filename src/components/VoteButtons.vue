@@ -66,8 +66,12 @@ const wrapper = computed(() => {
     </template>
 
     <template v-else>
-      <span v-if="!compact || up" :aria-label="`${up} likes`"><span aria-hidden="true">▲ {{ up }}</span></span>
-      <span v-if="!compact || down" :aria-label="`${down} dislikes`"><span aria-hidden="true">▼ {{ down }}</span></span>
+      <span v-if="!compact || up" :aria-label="`${up} likes`"
+        ><span aria-hidden="true">▲ {{ up }}</span></span
+      >
+      <span v-if="!compact || down" :aria-label="`${down} dislikes`"
+        ><span aria-hidden="true">▼ {{ down }}</span></span
+      >
     </template>
   </span>
 </template>

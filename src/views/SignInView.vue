@@ -19,7 +19,9 @@ const current = computed(() => viewerTypes.find((v) => v.id === viewer.value)?.l
 const choices = viewerTypes.filter((v) => v.id !== 'signed-out')
 
 /** Where to go afterwards: back where they came from, or the homepage. */
-const next = computed(() => (typeof route.query.next === 'string' && route.query.next.startsWith('/') ? route.query.next : '/'))
+const next = computed(() =>
+  typeof route.query.next === 'string' && route.query.next.startsWith('/') ? route.query.next : '/',
+)
 
 async function continueAs(id: ViewerType) {
   await setViewer(id)
@@ -35,16 +37,21 @@ async function continueAs(id: ViewerType) {
       <p class="flex items-center gap-2 font-semibold [&>svg]:size-5"><AppIcon name="info" /> This is a demo</p>
       <p class="mt-2 text-sm text-white/85">
         {{ brand.name }} has no passwords and no real accounts. The easiest way to try it is the
-        <strong>demo panel</strong>, at the bottom left of every page: it switches between a visitor, a free account, a member and
-        staff wherever you are.
+        <strong>demo panel</strong>, at the bottom left of every page: it switches between a visitor, a free account, a
+        member and staff wherever you are.
       </p>
       <p class="mt-2 text-sm text-white/70">
-        {{ API_MODE === 'laravel' ? 'In this version, choosing one signs in to a demo account on the server, so its rules apply for real.' : 'In this preview, the choice is kept in this browser.' }}
+        {{
+          API_MODE === 'laravel'
+            ? 'In this version, choosing one signs in to a demo account on the server, so its rules apply for real.'
+            : 'In this preview, the choice is kept in this browser.'
+        }}
       </p>
     </div>
 
     <p class="mt-6 text-sm text-white/80">
-      You are viewing as <strong class="text-white">{{ current }}</strong>. Or continue here as:
+      You are viewing as <strong class="text-white">{{ current }}</strong
+      >. Or continue here as:
     </p>
     <div class="mt-3 flex flex-wrap gap-2">
       <button
@@ -70,7 +77,10 @@ async function continueAs(id: ViewerType) {
     </div>
 
     <p class="mt-8 text-sm text-muted">
-      Not a member yet? <RouterLink to="/join" class="font-semibold text-white underline underline-offset-2">See what membership includes</RouterLink>.
+      Not a member yet?
+      <RouterLink to="/join" class="font-semibold text-white underline underline-offset-2"
+        >See what membership includes</RouterLink
+      >.
     </p>
   </main>
 </template>

@@ -84,8 +84,18 @@ const H = 800
 const SEAL = { x: 600, y: 400 } // the vanishing point: the middle of the box
 const BAND = { w: 1200, h: 64, sky: 50 } // the top band: sky from 0 to 50, then the lintel
 const topStars = [
-  [60, 14, 1.2], [150, 34, 0.9], [240, 10, 1.1], [330, 28, 0.8], [420, 16, 1], [780, 20, 1], [870, 36, 0.9],
-  [960, 12, 1.2], [1050, 30, 0.8], [1140, 18, 1.1], [500, 40, 0.7], [700, 8, 0.8],
+  [60, 14, 1.2],
+  [150, 34, 0.9],
+  [240, 10, 1.1],
+  [330, 28, 0.8],
+  [420, 16, 1],
+  [780, 20, 1],
+  [870, 36, 0.9],
+  [960, 12, 1.2],
+  [1050, 30, 0.8],
+  [1140, 18, 1.1],
+  [500, 40, 0.7],
+  [700, 8, 0.8],
 ] as const
 const screen = ref({ w: window.innerWidth, h: window.innerHeight })
 function measure() {
@@ -142,9 +152,27 @@ function column(side: -1 | 1, d: number) {
     key: `${side}${d}`,
     d,
     shaft: [at(x - 38, FLOOR, d), at(x + 38, FLOOR, d), at(x + 30, SHAFT_TOP, d), at(x - 30, SHAFT_TOP, d)].join(' '),
-    echinus: [at(x - 30, SHAFT_TOP, d), at(x + 30, SHAFT_TOP, d), at(x + 48, ECHINUS_TOP, d), at(x - 48, ECHINUS_TOP, d)].join(' '),
-    abacus: [at(x - 50, ECHINUS_TOP, d), at(x + 50, ECHINUS_TOP, d), at(x + 50, ABACUS_TOP, d), at(x - 50, ABACUS_TOP, d)].join(' '),
-    flutes: d > 0.3 ? [-19, -6, 6, 19].map((f) => ({ x1: VP.x + (x + f) * d, x2: VP.x + (x + f * 0.8) * d, y1: VP.y + FLOOR * d, y2: VP.y + SHAFT_TOP * d })) : [],
+    echinus: [
+      at(x - 30, SHAFT_TOP, d),
+      at(x + 30, SHAFT_TOP, d),
+      at(x + 48, ECHINUS_TOP, d),
+      at(x - 48, ECHINUS_TOP, d),
+    ].join(' '),
+    abacus: [
+      at(x - 50, ECHINUS_TOP, d),
+      at(x + 50, ECHINUS_TOP, d),
+      at(x + 50, ABACUS_TOP, d),
+      at(x - 50, ABACUS_TOP, d),
+    ].join(' '),
+    flutes:
+      d > 0.3
+        ? [-19, -6, 6, 19].map((f) => ({
+            x1: VP.x + (x + f) * d,
+            x2: VP.x + (x + f * 0.8) * d,
+            y1: VP.y + FLOOR * d,
+            y2: VP.y + SHAFT_TOP * d,
+          }))
+        : [],
   }
 }
 // Columns at evenly spaced steps down the corridor, drawn far to near so
@@ -226,7 +254,12 @@ const DELPHIC_E = [
     >
       <!-- Everything that moves together as the view passes between the columns: the scene and the seal. -->
       <div class="scene absolute inset-0" :style="{ transformOrigin: `${placement.x}px ${placement.y}px` }">
-        <svg :viewBox="`0 0 ${W} ${H}`" preserveAspectRatio="xMidYMid slice" class="absolute inset-0 size-full" aria-hidden="true">
+        <svg
+          :viewBox="`0 0 ${W} ${H}`"
+          preserveAspectRatio="xMidYMid slice"
+          class="absolute inset-0 size-full"
+          aria-hidden="true"
+        >
           <defs>
             <linearGradient :id="id('sky')" x1="0" x2="0" y1="0" y2="1">
               <stop offset="0" stop-color="#1e0838" />
@@ -272,7 +305,14 @@ const DELPHIC_E = [
           <!-- The far end: sunset sky and a striped sun, glowing behind the seal -->
           <rect :width="W" :height="H" :fill="`url(#${id('sky')})`" />
           <circle class="halo" :cx="VP.x" :cy="VP.y" r="190" :fill="`url(#${id('halo')})`" />
-          <circle class="sun" :cx="VP.x" :cy="SUN_Y" r="66" :fill="`url(#${id('sun')})`" :mask="`url(#${id('stripes')})`" />
+          <circle
+            class="sun"
+            :cx="VP.x"
+            :cy="SUN_Y"
+            r="66"
+            :fill="`url(#${id('sun')})`"
+            :mask="`url(#${id('stripes')})`"
+          />
 
           <!-- Walls, ceiling and floor of the stoa, running to the far end -->
           <polygon :points="leftWall" fill="#16051f" />
@@ -281,7 +321,14 @@ const DELPHIC_E = [
           <polygon :points="floor" :fill="`url(#${id('floor')})`" />
 
           <!-- The neon floor -->
-          <g class="grid" :clip-path="`url(#${id('floor-clip')})`" stroke="#ff4fd8" stroke-width="1.5" stroke-opacity="0.55" :filter="`url(#${id('glow')})`">
+          <g
+            class="grid"
+            :clip-path="`url(#${id('floor-clip')})`"
+            stroke="#ff4fd8"
+            stroke-width="1.5"
+            stroke-opacity="0.55"
+            :filter="`url(#${id('glow')})`"
+          >
             <line v-for="(r, i) in floorRays" :key="`r${i}`" :x1="r.x1" :y1="r.y1" :x2="r.x2" :y2="r.y2" />
             <line v-for="(y, i) in floorLines" :key="`l${i}`" x1="0" :x2="W" :y1="y" :y2="y" />
           </g>
@@ -308,7 +355,17 @@ const DELPHIC_E = [
           <g class="columns">
             <g v-for="c in columns" :key="c.key">
               <polygon :points="c.shaft" :fill="`url(#${id('column')})`" />
-              <line v-for="(f, i) in c.flutes" :key="i" :x1="f.x1" :x2="f.x2" :y1="f.y1" :y2="f.y2" stroke="#3a0f4f" stroke-opacity="0.55" :stroke-width="3 * c.d" />
+              <line
+                v-for="(f, i) in c.flutes"
+                :key="i"
+                :x1="f.x1"
+                :x2="f.x2"
+                :y1="f.y1"
+                :y2="f.y2"
+                stroke="#3a0f4f"
+                stroke-opacity="0.55"
+                :stroke-width="3 * c.d"
+              />
               <polygon :points="c.echinus" fill="#8a3aa8" />
               <polygon :points="c.abacus" fill="#b06ad4" />
             </g>
@@ -321,7 +378,6 @@ const DELPHIC_E = [
             <polygon :points="rightBeam" stroke-width="2.5" />
             <rect :x="end.x" :y="end.y" :width="end.w" :height="end.h" stroke-width="1.5" />
           </g>
-
         </svg>
 
         <!-- The band at the top: a strip of night sky with the name in it, then a slim lintel -->
@@ -346,7 +402,16 @@ const DELPHIC_E = [
             </filter>
           </defs>
           <rect :width="BAND.w" :height="BAND.sky" :fill="`url(#${id('night')})`" />
-          <circle v-for="([x, y, r], i) in topStars" :key="i" class="star" :cx="x" :cy="y" :r="r" fill="#fff" :style="{ animationDelay: `${(i * 0.41) % 3}s` }" />
+          <circle
+            v-for="([x, y, r], i) in topStars"
+            :key="i"
+            class="star"
+            :cx="x"
+            :cy="y"
+            :r="r"
+            fill="#fff"
+            :style="{ animationDelay: `${(i * 0.41) % 3}s` }"
+          />
           <rect :y="BAND.sky" :width="BAND.w" :height="BAND.h - BAND.sky" fill="#4a1460" />
           <g stroke="#f472d0" :filter="`url(#${id('band-glow')})`">
             <line x1="0" :x2="BAND.w" :y1="BAND.sky" :y2="BAND.sky" stroke-width="1.5" />
@@ -362,7 +427,9 @@ const DELPHIC_E = [
             letter-spacing="6"
             fill="#ffd6f2"
             :filter="`url(#${id('band-glow')})`"
-          >{{ brand.intro.word }}</text>
+          >
+            {{ brand.intro.word }}
+          </text>
         </svg>
 
         <!-- The seal: a real button in the middle of the colonnade. Its halves fall away when it breaks. -->
@@ -370,7 +437,12 @@ const DELPHIC_E = [
           ref="seal"
           type="button"
           class="seal absolute -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-          :style="{ left: `${placement.x}px`, top: `${placement.y}px`, width: `${placement.size}px`, height: `${placement.size}px` }"
+          :style="{
+            left: `${placement.x}px`,
+            top: `${placement.y}px`,
+            width: `${placement.size}px`,
+            height: `${placement.size}px`,
+          }"
           :aria-label="brand.intro.prompt"
           @click="enter"
         >
@@ -399,7 +471,14 @@ const DELPHIC_E = [
                   :transform="`rotate(${angle})`"
                 />
                 <!-- The Delphic E, pressed into the wax: a shadow, then the mark -->
-                <path :d="DELPHIC_E" transform="translate(0 1.5)" fill="none" stroke="#3d0f2e" stroke-opacity="0.6" stroke-width="3.2" />
+                <path
+                  :d="DELPHIC_E"
+                  transform="translate(0 1.5)"
+                  fill="none"
+                  stroke="#3d0f2e"
+                  stroke-opacity="0.6"
+                  stroke-width="3.2"
+                />
                 <path :d="DELPHIC_E" fill="none" stroke="#f6c2de" stroke-width="3.2" />
               </g>
             </defs>
@@ -419,8 +498,12 @@ const DELPHIC_E = [
       </button>
       <PitchNote id="intro" class="absolute left-4" :style="{ top: `${placement.belowLintel}px` }" />
 
-      <div class="caption pointer-events-none absolute inset-x-0 bottom-[max(2rem,env(safe-area-inset-bottom))] px-4 text-center">
-        <h2 id="intro-title" class="font-serif text-4xl font-bold tracking-tight text-white drop-shadow sm:text-5xl">{{ brand.name }}</h2>
+      <div
+        class="caption pointer-events-none absolute inset-x-0 bottom-[max(2rem,env(safe-area-inset-bottom))] px-4 text-center"
+      >
+        <h2 id="intro-title" class="font-serif text-4xl font-bold tracking-tight text-white drop-shadow sm:text-5xl">
+          {{ brand.name }}
+        </h2>
         <p class="mt-1 text-sm text-white/80 drop-shadow">{{ brand.intro.prompt }}</p>
       </div>
     </div>

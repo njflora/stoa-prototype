@@ -23,8 +23,18 @@ const theme = computed<Theme>(() => themes[props.showId] ?? 'talk')
 
 // Fixed positions for drifting dust, so it looks the same every time.
 const dust = [
-  [12, 80, 0], [24, 65, 1.2], [37, 90, 2.4], [48, 70, 0.6], [59, 85, 1.8], [71, 60, 3],
-  [82, 78, 0.9], [90, 92, 2.1], [18, 95, 3.3], [65, 98, 1.5], [44, 55, 2.7], [78, 50, 0.3],
+  [12, 80, 0],
+  [24, 65, 1.2],
+  [37, 90, 2.4],
+  [48, 70, 0.6],
+  [59, 85, 1.8],
+  [71, 60, 3],
+  [82, 78, 0.9],
+  [90, 92, 2.1],
+  [18, 95, 3.3],
+  [65, 98, 1.5],
+  [44, 55, 2.7],
+  [78, 50, 0.3],
 ] as const
 </script>
 
@@ -59,7 +69,12 @@ const dust = [
     </template>
 
     <!-- Statecraft: routes drawing themselves across a map grid. -->
-    <svg v-else-if="theme === 'routes'" class="absolute inset-0 size-full" viewBox="0 0 160 90" preserveAspectRatio="none">
+    <svg
+      v-else-if="theme === 'routes'"
+      class="absolute inset-0 size-full"
+      viewBox="0 0 160 90"
+      preserveAspectRatio="none"
+    >
       <g stroke="rgb(255 255 255 / 0.12)" stroke-width="0.4">
         <line v-for="x in 7" :key="`x${x}`" :x1="x * 20" y1="0" :x2="x * 20" y2="90" />
         <line v-for="y in 4" :key="`y${y}`" x1="0" :y1="y * 18" x2="160" :y2="y * 18" />
@@ -71,7 +86,12 @@ const dust = [
     </svg>
 
     <!-- Ledger: a price line drawing itself. -->
-    <svg v-else-if="theme === 'market'" class="absolute inset-x-0 bottom-3 h-1/2 w-full" viewBox="0 0 160 50" preserveAspectRatio="none">
+    <svg
+      v-else-if="theme === 'market'"
+      class="absolute inset-x-0 bottom-3 h-1/2 w-full"
+      viewBox="0 0 160 50"
+      preserveAspectRatio="none"
+    >
       <path class="price" d="M0 38 L18 32 L32 36 L48 22 L62 27 L78 14 L94 20 L110 9 L126 16 L142 6 L160 11" />
     </svg>
 
@@ -94,8 +114,12 @@ const dust = [
   animation: level 0.9s ease-in-out infinite alternate;
 }
 @keyframes level {
-  from { transform: scaleY(0.15); }
-  to { transform: scaleY(1); }
+  from {
+    transform: scaleY(0.15);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
 
 /* Sunrise */
@@ -117,12 +141,22 @@ const dust = [
   animation: glow 6s ease-out infinite;
 }
 @keyframes rise {
-  from { transform: translateY(30%); opacity: 0.4; }
-  to { transform: translateY(-12%); opacity: 1; }
+  from {
+    transform: translateY(30%);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateY(-12%);
+    opacity: 1;
+  }
 }
 @keyframes glow {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Voices: ripples that take turns */
@@ -141,15 +175,34 @@ const dust = [
   opacity: 0;
   animation: ripple 2.4s ease-out infinite;
 }
-.voice span:nth-child(2) { animation-delay: 0.3s; }
-.voice span:nth-child(3) { animation-delay: 0.6s; }
-.voice-b span { animation-delay: 1.2s; }
-.voice-b span:nth-child(2) { animation-delay: 1.5s; }
-.voice-b span:nth-child(3) { animation-delay: 1.8s; }
+.voice span:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.voice span:nth-child(3) {
+  animation-delay: 0.6s;
+}
+.voice-b span {
+  animation-delay: 1.2s;
+}
+.voice-b span:nth-child(2) {
+  animation-delay: 1.5s;
+}
+.voice-b span:nth-child(3) {
+  animation-delay: 1.8s;
+}
 @keyframes ripple {
-  0% { transform: scale(0.4); opacity: 0.9; }
-  50% { transform: scale(1.8); opacity: 0; }
-  100% { transform: scale(1.8); opacity: 0; }
+  0% {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
 }
 
 /* History: candlelight and dust */
@@ -169,13 +222,25 @@ const dust = [
   animation: drift 4s linear infinite;
 }
 @keyframes sweep {
-  from { transform: translateX(-25%); }
-  to { transform: translateX(25%); }
+  from {
+    transform: translateX(-25%);
+  }
+  to {
+    transform: translateX(25%);
+  }
 }
 @keyframes drift {
-  0% { transform: translate(0, 0); opacity: 0; }
-  20% { opacity: 1; }
-  100% { transform: translate(12px, -60px); opacity: 0; }
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(12px, -60px);
+    opacity: 0;
+  }
 }
 
 /* Routes: dashed lines drawing themselves */
@@ -200,12 +265,21 @@ const dust = [
   animation-delay: 1s;
 }
 @keyframes draw {
-  from { stroke-dashoffset: 200; }
-  to { stroke-dashoffset: 0; }
+  from {
+    stroke-dashoffset: 200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 @keyframes blink {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* Market: a price line */
@@ -220,9 +294,18 @@ const dust = [
   filter: drop-shadow(0 0 3px rgb(170 230 140 / 0.8));
 }
 @keyframes chart {
-  0% { stroke-dashoffset: 220; opacity: 1; }
-  80% { stroke-dashoffset: 0; opacity: 1; }
-  100% { stroke-dashoffset: 0; opacity: 0; }
+  0% {
+    stroke-dashoffset: 220;
+    opacity: 1;
+  }
+  80% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
 }
 
 /* Stage: two spotlights */
@@ -243,7 +326,11 @@ const dust = [
   animation-direction: alternate-reverse;
 }
 @keyframes beam {
-  from { transform: rotate(-22deg); }
-  to { transform: rotate(22deg); }
+  from {
+    transform: rotate(-22deg);
+  }
+  to {
+    transform: rotate(22deg);
+  }
 }
 </style>

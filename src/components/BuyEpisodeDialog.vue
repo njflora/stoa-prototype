@@ -91,7 +91,11 @@ function onKeydown(event: KeyboardEvent) {
           <AppIcon name="info" /> Demo: no payment is taken.
         </p>
         <div class="mt-5 flex flex-wrap justify-end gap-3">
-          <button type="button" class="min-h-10 rounded-lg px-4 text-sm font-semibold text-white/80 ring-1 ring-white/15 hover:bg-white/10" @click="open = false">
+          <button
+            type="button"
+            class="min-h-10 rounded-lg px-4 text-sm font-semibold text-white/80 ring-1 ring-white/15 hover:bg-white/10"
+            @click="open = false"
+          >
             Cancel
           </button>
           <button

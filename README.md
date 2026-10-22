@@ -17,6 +17,7 @@ Open the demo panel (bottom left) to view the site as a visitor, a free account,
 The full version adds the server: real sign-in to demo accounts, members-only access enforced by the server, saving, the platform sync and server search. It runs in Docker, so nothing else needs installing.
 
 **You need:**
+
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/), installed and running (Windows or Mac)
 - [Node.js](https://nodejs.org/) 24 (24.12 or later) or 22 (22.18 or later)
 - [Git](https://git-scm.com/)
@@ -64,33 +65,33 @@ Open the address it prints, usually http://localhost:5173. The demo panel should
 
 **The demo accounts.** There are no passwords. Choose an account under "Viewing as" in the demo panel, or on the Sign in page:
 
-| Account | What it shows |
-|---|---|
-| Signed out | A visitor: free shows, previews, the members' gate |
-| Free account | Can post in open spaces and buy a single episode |
+| Account       | What it shows                                               |
+| ------------- | ----------------------------------------------------------- |
+| Signed out    | A visitor: free shows, previews, the members' gate          |
+| Free account  | Can post in open spaces and buy a single episode            |
 | Member (Gold) | Everything, including members' discussion and reading lists |
-| Staff | Everything members see, plus the content desk at `/desk` |
+| Staff         | Everything members see, plus the content desk at `/desk`    |
 
 **Useful commands** (from the `backend` folder):
 
-| Command | What it does |
-|---|---|
-| `docker compose run --rm app php artisan test` | Runs the 30 server tests |
-| `docker compose run --rm app php artisan migrate:fresh --seed` | Resets everything to the starting data |
-| `docker compose run --rm app php artisan stoa:sync --fixtures` | Runs the platform sync against the sample feeds |
-| `docker compose pull` then `docker compose up -d app` | Updates PHP and Meilisearch to their latest patched images |
-| `docker compose down` | Stops the server |
+| Command                                                        | What it does                                               |
+| -------------------------------------------------------------- | ---------------------------------------------------------- |
+| `docker compose run --rm app php artisan test`                 | Runs the 30 server tests                                   |
+| `docker compose run --rm app php artisan migrate:fresh --seed` | Resets everything to the starting data                     |
+| `docker compose run --rm app php artisan stoa:sync --fixtures` | Runs the platform sync against the sample feeds            |
+| `docker compose pull` then `docker compose up -d app`          | Updates PHP and Meilisearch to their latest patched images |
+| `docker compose down`                                          | Stops the server                                           |
 
 ## Read more
 
-| Document | What it covers |
-|---|---|
-| [SCOPE.md](SCOPE.md) | Every feature, page and capability, with what it answers and its status |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | How it fits together, and who may see what |
-| [SECURITY.md](SECURITY.md) | What protects it, what is demo-only, and the checklist for production |
-| [ROADMAP.md](ROADMAP.md) | What I would do if hired, week by week, with the content overhaul live by 18 April 2027 |
-| [CONSOLIDATION.md](CONSOLIDATION.md) | The plan for one source of truth across their platforms |
-| [BRANDING.md](BRANDING.md) | How it would take on their identity |
-| [docs/player-bug.md](docs/player-bug.md) | A bug report: the real site's Rumble player goes black after switching sources |
-| [docs/premium-access-bug.md](docs/premium-access-bug.md) | A bug report: a premium episode plays in full for a signed-out visitor |
-| [CREDITS.md](CREDITS.md) | Every image and video, with its licence |
+| Document                                                 | What it covers                                                                          |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| [SCOPE.md](SCOPE.md)                                     | Every feature, page and capability, with what it answers and its status                 |
+| [ARCHITECTURE.md](ARCHITECTURE.md)                       | How it fits together, and who may see what                                              |
+| [SECURITY.md](SECURITY.md)                               | What protects it, what is demo-only, and the checklist for production                   |
+| [ROADMAP.md](ROADMAP.md)                                 | What I would do if hired, week by week, with the content overhaul live by 18 April 2027 |
+| [CONSOLIDATION.md](CONSOLIDATION.md)                     | The plan for one source of truth across their platforms                                 |
+| [BRANDING.md](BRANDING.md)                               | How it would take on their identity                                                     |
+| [docs/player-bug.md](docs/player-bug.md)                 | A bug report: the real site's Rumble player goes black after switching sources          |
+| [docs/premium-access-bug.md](docs/premium-access-bug.md) | A bug report: a premium episode plays in full for a signed-out visitor                  |
+| [CREDITS.md](CREDITS.md)                                 | Every image and video, with its licence                                                 |

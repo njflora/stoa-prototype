@@ -29,7 +29,17 @@ export const brand = {
    * here so this file shows the whole identity. Tailwind turns each into
    * classes: --color-accent gives bg-accent, text-accent and so on.
    */
-  colourTokens: ['--color-ink', '--color-surface', '--color-raised', '--color-line', '--color-muted', '--color-accent', '--color-accent-bright', '--color-gold', '--color-live'],
+  colourTokens: [
+    '--color-ink',
+    '--color-surface',
+    '--color-raised',
+    '--color-line',
+    '--color-muted',
+    '--color-accent',
+    '--color-accent-bright',
+    '--color-gold',
+    '--color-live',
+  ],
 
   /** The wordmark or logo is a component: src/components/BrandLogo.vue. */
 } as const

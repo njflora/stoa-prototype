@@ -39,9 +39,7 @@ watchEffect(() => {
   if (phase.value === 'break' && now.value.getTime() >= breakEndsAt.value) setPhase('members')
 })
 
-const title = computed(() =>
-  phase.value === 'members' ? `${event.title}: Members' after-show` : event.title,
-)
+const title = computed(() => (phase.value === 'members' ? `${event.title}: Members' after-show` : event.title))
 
 const status = computed(() => {
   switch (phase.value) {
@@ -150,7 +148,13 @@ const flagship = computed(() => schedule.value.find((item) => item.id === show.i
           v-else-if="phase === 'members' && !isMember"
           class="relative aspect-video w-full overflow-hidden bg-black lg:rounded-xl"
         >
-          <TitleCard :show="show" :show-text="false" :animated="false" size="hero" class="scale-110 blur-xl brightness-75" />
+          <TitleCard
+            :show="show"
+            :show-text="false"
+            :animated="false"
+            size="hero"
+            class="scale-110 blur-xl brightness-75"
+          />
           <div class="absolute inset-0 grid place-items-center px-4 text-center">
             <div>
               <span class="mx-auto grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/20">
@@ -183,7 +187,9 @@ const flagship = computed(() => schedule.value.find((item) => item.id === show.i
           {{ title }}
         </p>
         <div class="flex items-center gap-2 lg:mt-1">
-          <p class="min-w-0 truncate text-xs text-muted lg:text-sm"><ContributorNames :ids="event.hostIds" /> · {{ status }}</p>
+          <p class="min-w-0 truncate text-xs text-muted lg:text-sm">
+            <ContributorNames :ids="event.hostIds" /> · {{ status }}
+          </p>
           <PitchNote id="live-phone" />
         </div>
       </div>

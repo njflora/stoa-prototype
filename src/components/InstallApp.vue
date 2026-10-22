@@ -19,7 +19,15 @@ async function onClick() {
 
 <template>
   <li v-if="canOffer">
-    <button type="button" :class="buttonClass" :aria-expanded="isIos ? showHint : undefined" :aria-controls="isIos ? hintId : undefined" @click="onClick">Install app</button>
+    <button
+      type="button"
+      :class="buttonClass"
+      :aria-expanded="isIos ? showHint : undefined"
+      :aria-controls="isIos ? hintId : undefined"
+      @click="onClick"
+    >
+      Install app
+    </button>
     <p v-if="showHint" :id="hintId" class="mt-1 max-w-56 text-xs text-white/75">
       Tap <span class="font-semibold">Share</span>, then <span class="font-semibold">Add to Home Screen</span>.
     </p>

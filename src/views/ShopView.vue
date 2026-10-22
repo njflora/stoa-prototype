@@ -46,7 +46,9 @@ const categoryOptions = [
 const regionOptions = regions.map((r) => ({ value: r.id, label: r.label }))
 
 const shown = computed(() =>
-  products.filter((p) => category.value === 'all' || (category.value === 'mug' ? isMug(p.kind) : p.kind === category.value)),
+  products.filter(
+    (p) => category.value === 'all' || (category.value === 'mug' ? isMug(p.kind) : p.kind === category.value),
+  ),
 )
 const art = (id: string) => artworks.find((a) => a.id === id)
 
@@ -59,7 +61,9 @@ const tried = ref<string | null>(null)
       <h1 class="text-3xl font-bold sm:text-4xl">Shop</h1>
       <PitchNote id="shop-inside" />
     </div>
-    <p class="mt-2 max-w-2xl text-white/75">T-shirts and mugs, with designs from the paintings you see across the site.</p>
+    <p class="mt-2 max-w-2xl text-white/75">
+      T-shirts and mugs, with designs from the paintings you see across the site.
+    </p>
 
     <div class="mt-6 flex flex-wrap items-start gap-x-8 gap-y-4">
       <div>
@@ -73,14 +77,27 @@ const tried = ref<string | null>(null)
     </div>
 
     <div class="mt-6 grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      <article v-for="product in shown" :key="product.id" class="flex min-w-0 flex-col overflow-hidden rounded-xl bg-surface ring-1 ring-white/10">
+      <article
+        v-for="product in shown"
+        :key="product.id"
+        class="flex min-w-0 flex-col overflow-hidden rounded-xl bg-surface ring-1 ring-white/10"
+      >
         <div class="grid aspect-square place-items-center bg-raised p-6">
           <!-- The design shown as a print on the product, framed simply. -->
           <div
             class="overflow-hidden shadow-xl shadow-black/50"
-            :class="product.kind === 'tshirt' ? 'aspect-[4/5] w-3/5 rounded-sm' : 'aspect-[4/3] w-4/5 rounded-2xl ring-8 ring-white/90'"
+            :class="
+              product.kind === 'tshirt'
+                ? 'aspect-[4/5] w-3/5 rounded-sm'
+                : 'aspect-[4/3] w-4/5 rounded-2xl ring-8 ring-white/90'
+            "
           >
-            <img :src="mediaUrl(art(product.artId)!.card)" :alt="art(product.artId)?.alt ?? ''" class="size-full object-cover" loading="lazy" />
+            <img
+              :src="mediaUrl(art(product.artId)!.card)"
+              :alt="art(product.artId)?.alt ?? ''"
+              class="size-full object-cover"
+              loading="lazy"
+            />
           </div>
         </div>
         <div class="flex flex-1 flex-col p-4">
@@ -96,7 +113,9 @@ const tried = ref<string | null>(null)
             <AppIcon name="shop" />
             Add to basket
           </button>
-          <p v-if="tried === product.id" class="mt-2 text-xs text-white/75" role="status">Checkout is not part of this demo.</p>
+          <p v-if="tried === product.id" class="mt-2 text-xs text-white/75" role="status">
+            Checkout is not part of this demo.
+          </p>
         </div>
       </article>
     </div>

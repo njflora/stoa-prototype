@@ -39,7 +39,10 @@ const { progressFor, setProgress, markWatched } = useWatchProgress()
 const { autoplay, finishSignal } = usePlayback()
 
 // Fetched by id: the page holding it is worked out from the id (see src/api/catalogue.ts).
-const episodeQuery = useQuery(() => route.params.id, () => getEpisode(String(route.params.id)))
+const episodeQuery = useQuery(
+  () => route.params.id,
+  () => getEpisode(String(route.params.id)),
+)
 const episode = computed(() => episodeQuery.data.value)
 const show = computed(() => (episode.value ? getShow(episode.value.showId) : undefined))
 const series = computed(() => {
@@ -142,7 +145,11 @@ watchEffect(() => {
   <main v-if="episode && show">
     <div
       class="lg:grid lg:items-start lg:justify-center lg:gap-x-6 lg:px-8 lg:pt-6"
-      :class="sideColumn ? 'lg:grid-cols-[minmax(0,var(--player-max-w))_360px]' : 'lg:grid-cols-[minmax(0,var(--player-max-w))]'"
+      :class="
+        sideColumn
+          ? 'lg:grid-cols-[minmax(0,var(--player-max-w))_360px]'
+          : 'lg:grid-cols-[minmax(0,var(--player-max-w))]'
+      "
     >
       <div>
         <!-- The player: every platform this episode is on, in one frame. -->
@@ -159,18 +166,13 @@ watchEffect(() => {
           </template>
           <template v-if="ended" #overlay>
             <!-- Up next, once the episode ends. -->
-            <div
-              class="absolute inset-0 grid place-items-center bg-black/70 px-4 text-center"
-              role="status"
-            >
+            <div class="absolute inset-0 grid place-items-center bg-black/70 px-4 text-center" role="status">
               <div v-if="nextPart && canWatch(nextPart)">
                 <p class="text-xs font-semibold tracking-widest text-accent-bright uppercase">Up next</p>
                 <p class="mt-2 text-lg font-semibold sm:text-2xl">
                   Part {{ toRoman(nextPart.series!.part) }}: {{ nextPart.title }}
                 </p>
-                <p v-if="counting" class="mt-1 text-sm text-white/75 tabular-nums">
-                  Playing in {{ secondsLeft }}s
-                </p>
+                <p v-if="counting" class="mt-1 text-sm text-white/75 tabular-nums">Playing in {{ secondsLeft }}s</p>
                 <div class="mt-4 flex justify-center gap-2">
                   <button
                     type="button"
@@ -226,7 +228,9 @@ watchEffect(() => {
           <div class="absolute inset-0 grid place-items-center px-4 text-center">
             <div>
               <!-- Phones: compact, so everything fits in a 16:9 frame 320px wide. -->
-              <span class="mx-auto grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/20 max-sm:hidden">
+              <span
+                class="mx-auto grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/20 max-sm:hidden"
+              >
                 <AppIcon name="lock" />
               </span>
               <p class="text-base font-semibold sm:mt-3 sm:text-2xl">This episode is for members</p>
@@ -305,12 +309,7 @@ watchEffect(() => {
         class="mx-4 mt-6 h-[440px] rounded-xl ring-1 ring-white/10 lg:sticky lg:top-[calc(var(--header-h,4rem)+1.5rem)] lg:mx-0 lg:mt-0 lg:h-[calc(100svh-var(--header-h,4rem)-3rem)]"
       />
 
-      <SeriesQueue
-        v-if="series && partIndex >= 0"
-        :series="series"
-        :current-id="episode.id"
-        class="mt-6 lg:mt-0"
-      />
+      <SeriesQueue v-if="series && partIndex >= 0" :series="series" :current-id="episode.id" class="mt-6 lg:mt-0" />
     </div>
 
     <!-- Same as the live page: phones get the reading list first, large
@@ -351,8 +350,14 @@ watchEffect(() => {
   </main>
 
   <main v-else class="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-4 text-center">
-    <h1 class="font-serif text-4xl font-bold">{{ episodeQuery.error.value ? 'Could not load this episode' : 'Episode not found' }}</h1>
-    <button v-if="episodeQuery.error.value" type="button" class="mt-4 underline" @click="episodeQuery.reload()">Try again</button>
-    <RouterLink to="/" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink">Back to home</RouterLink>
+    <h1 class="font-serif text-4xl font-bold">
+      {{ episodeQuery.error.value ? 'Could not load this episode' : 'Episode not found' }}
+    </h1>
+    <button v-if="episodeQuery.error.value" type="button" class="mt-4 underline" @click="episodeQuery.reload()">
+      Try again
+    </button>
+    <RouterLink to="/" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+      >Back to home</RouterLink
+    >
   </main>
 </template>

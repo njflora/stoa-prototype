@@ -20,7 +20,11 @@ const model = defineModel<T>({ required: true })
     role="group"
     :aria-label="label"
     class="flex gap-1.5"
-    :class="scroll ? 'max-sm:-mx-4 max-sm:overflow-x-auto max-sm:px-4 max-sm:[scrollbar-width:none] sm:flex-wrap' : 'flex-wrap'"
+    :class="
+      scroll
+        ? 'max-sm:-mx-4 max-sm:overflow-x-auto max-sm:px-4 max-sm:[scrollbar-width:none] sm:flex-wrap'
+        : 'flex-wrap'
+    "
   >
     <button
       v-for="option in options"

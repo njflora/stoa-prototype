@@ -62,12 +62,16 @@ const typeStyles: Record<SourceType, string> = {
       </h2>
       <PitchNote :id="context === 'article' ? 'article-reading-lists' : 'reading-lists'" />
     </div>
-    <p class="text-sm text-muted">{{ context === 'article' ? 'The sources behind this article' : 'Sources mentioned in this episode' }}</p>
+    <p class="text-sm text-muted">
+      {{ context === 'article' ? 'The sources behind this article' : 'Sources mentioned in this episode' }}
+    </p>
 
     <p v-if="thread && loading && !data" class="mt-4 text-sm text-muted">Loading sources…</p>
     <div v-else-if="thread && error && !data" class="mt-4 flex items-center gap-3 text-sm text-muted">
       The sources could not load.
-      <button type="button" class="font-semibold text-white underline underline-offset-2" @click="reload">Try again</button>
+      <button type="button" class="font-semibold text-white underline underline-offset-2" @click="reload">
+        Try again
+      </button>
     </div>
 
     <!-- A members' list seen by a non-member. -->
@@ -79,15 +83,25 @@ const typeStyles: Record<SourceType, string> = {
       :detail="`${count} ${count === 1 ? 'source' : 'sources'} behind this episode. Join to see them.`"
     />
 
-
     <div v-else class="mt-4">
       <ol class="space-y-4">
-        <li v-for="item in items" :key="`${item.title}-${item.at}`" class="border-t border-white/5 pt-4 first:border-0 first:pt-0">
-          <span class="rounded px-1.5 py-px text-[10px] font-bold tracking-wide uppercase" :class="typeStyles[item.type]">
+        <li
+          v-for="item in items"
+          :key="`${item.title}-${item.at}`"
+          class="border-t border-white/5 pt-4 first:border-0 first:pt-0"
+        >
+          <span
+            class="rounded px-1.5 py-px text-[10px] font-bold tracking-wide uppercase"
+            :class="typeStyles[item.type]"
+          >
             {{ item.type }}
           </span>
           <p class="mt-1.5 text-sm leading-snug font-semibold">
-            <RouterLink v-if="item.to" :to="item.to" class="underline decoration-white/30 underline-offset-2 hover:decoration-white">
+            <RouterLink
+              v-if="item.to"
+              :to="item.to"
+              class="underline decoration-white/30 underline-offset-2 hover:decoration-white"
+            >
               {{ item.title }}
             </RouterLink>
             <template v-else>{{ item.title }}</template>

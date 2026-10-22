@@ -32,7 +32,11 @@ function fetchNoting(url: string, init: RequestInit): Promise<Response> {
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await fetchNoting(API_BASE + path, {
     ...init,
-    headers: { Accept: 'application/json', ...(init.body ? { 'Content-Type': 'application/json' } : {}), ...init.headers },
+    headers: {
+      Accept: 'application/json',
+      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
+      ...init.headers,
+    },
   })
   if (!response.ok) throw new ApiError(response.status, `Could not load ${path} (${response.status})`)
   return response.json() as Promise<T>

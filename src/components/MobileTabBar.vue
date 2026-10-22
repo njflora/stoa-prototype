@@ -31,7 +31,11 @@ const current = computed<TabId | null>(() => {
   if (path === '/') return 'home'
   if (path.startsWith('/live')) return 'live'
   if (path.startsWith('/shows') || path.startsWith('/series') || path.startsWith('/watch')) return 'shows'
-  if (['/articles', '/courses', '/shop', '/account', '/sign-in', '/join', '/pitch', '/credits', '/desk'].some((p) => path.startsWith(p)))
+  if (
+    ['/articles', '/courses', '/shop', '/account', '/sign-in', '/join', '/pitch', '/credits', '/desk'].some((p) =>
+      path.startsWith(p),
+    )
+  )
     return 'more'
   return null
 })
@@ -53,7 +57,10 @@ function closeSheet(returnFocus = true) {
 }
 
 // Going to another page closes the sheet.
-watch(() => route.fullPath, () => closeSheet(false))
+watch(
+  () => route.fullPath,
+  () => closeSheet(false),
+)
 
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') closeSheet()
@@ -120,7 +127,11 @@ const tabClass = 'flex h-full flex-col items-center justify-center gap-0.5 text-
         <button
           ref="moreButton"
           type="button"
-          :class="[tabClass, 'w-full', open || current === 'more' ? 'text-accent-bright' : 'text-white/65 hover:text-white']"
+          :class="[
+            tabClass,
+            'w-full',
+            open || current === 'more' ? 'text-accent-bright' : 'text-white/65 hover:text-white',
+          ]"
           :aria-expanded="open"
           aria-controls="more-sheet"
           @click="open ? closeSheet() : openSheet()"
@@ -179,7 +190,9 @@ const tabClass = 'flex h-full flex-col items-center justify-center gap-0.5 text-
             to="/account"
             class="mt-3 flex h-12 items-center gap-3 rounded-lg bg-white/5 px-3 hover:bg-white/10"
           >
-            <span class="grid size-8 place-items-center rounded-full bg-accent text-xs font-bold">{{ user.initials }}</span>
+            <span class="grid size-8 place-items-center rounded-full bg-accent text-xs font-bold">{{
+              user.initials
+            }}</span>
             <span class="font-medium">{{ user.name }}</span>
             <span
               v-if="user.tier"

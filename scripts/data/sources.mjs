@@ -48,7 +48,10 @@ function link(platform, episode, random) {
     case 'odysee': {
       const claim = token(random, 40, '0123456789abcdef')
       const slug = slugOf(episode)
-      return { externalId: `${slug}:${claim}`, embedUrl: `https://odysee.com/$/embed/@stoa:0/${slug}:${claim.slice(0, 1)}` }
+      return {
+        externalId: `${slug}:${claim}`,
+        embedUrl: `https://odysee.com/$/embed/@stoa:0/${slug}:${claim.slice(0, 1)}`,
+      }
     }
     case 'bitchute': {
       const id = token(random, 12, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
@@ -87,7 +90,10 @@ export function buildSources({ episodes, liveShowIds, now, seededRandom }) {
         status,
         ...found,
         // Linked: when the sync found it, a little after release. Otherwise: the last check.
-        syncedAt: status === 'linked' ? new Date(Math.min(published + (20 + random() * 100) * 60_000, now.getTime())).toISOString() : lastSync,
+        syncedAt:
+          status === 'linked'
+            ? new Date(Math.min(published + (20 + random() * 100) * 60_000, now.getTime())).toISOString()
+            : lastSync,
       })
     }
   }
@@ -112,7 +118,8 @@ export const liveSources = [
 // matcher has to normalise them.
 
 const MINUTE = 60_000
-const titleOf = (episode, shows) => episode.title ?? `${shows.get(episode.showId)} | ${new Date(episode.publishedAt).toUTCString().slice(0, 16)}`
+const titleOf = (episode, shows) =>
+  episode.title ?? `${shows.get(episode.showId)} | ${new Date(episode.publishedAt).toUTCString().slice(0, 16)}`
 const clips = ['Clip: Tom on the budget', 'Highlights of the week', 'Behind the scenes at Stoa']
 
 export function buildFeeds({ episodes, sources, shows, now, seededRandom }) {
@@ -122,7 +129,9 @@ export function buildFeeds({ episodes, sources, shows, now, seededRandom }) {
   const items = { rumble: [], odysee: [], bitchute: [], vod: [] }
 
   // Newest first, so "the newest uploads" are the first of each platform's rows.
-  const rows = [...sources].sort((a, b) => byId.get(b.episodeId).publishedAt.localeCompare(byId.get(a.episodeId).publishedAt))
+  const rows = [...sources].sort((a, b) =>
+    byId.get(b.episodeId).publishedAt.localeCompare(byId.get(a.episodeId).publishedAt),
+  )
   const taken = { rumble: 0, odysee: 0, bitchute: 0, vod: 0 }
   let missingSeen = 0
   for (const row of rows) {
@@ -144,9 +153,19 @@ export function buildFeeds({ episodes, sources, shows, now, seededRandom }) {
     videos: [
       ...items.rumble.map(({ episode, at, row }) => {
         const vid = row.externalId ?? `v${id(6)}`
-        return { id: vid, title: titleOf(episode, names), published_at: at.toISOString(), embed_url: `https://rumble.com/embed/${vid}/` }
+        return {
+          id: vid,
+          title: titleOf(episode, names),
+          published_at: at.toISOString(),
+          embed_url: `https://rumble.com/embed/${vid}/`,
+        }
       }),
-      ...clips.map((title, i) => ({ id: `v${id(6)}`, title, published_at: clipTimes[i].toISOString(), embed_url: null })),
+      ...clips.map((title, i) => ({
+        id: `v${id(6)}`,
+        title,
+        published_at: clipTimes[i].toISOString(),
+        embed_url: null,
+      })),
     ],
   }
   const odysee = {
@@ -156,11 +175,31 @@ export function buildFeeds({ episodes, sources, shows, now, seededRandom }) {
           // A link already made keeps its id; a new upload gets a new one.
           const [name, claim] = row.externalId
             ? row.externalId.split(':')
-            : [titleOf(episode, names).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60), id(40, '0123456789abcdef')]
+            : [
+                titleOf(episode, names)
+                  .toLowerCase()
+                  .replace(/[^a-z0-9]+/g, '-')
+                  .replace(/^-|-$/g, '')
+                  .slice(0, 60),
+                id(40, '0123456789abcdef'),
+              ]
           // Odysee titles here carry the channel's suffix, which the matcher strips.
-          return { claim_id: claim, name, canonical_url: `lbry://@stoa#0/${name}#${claim[0]}`, value: { title: `${titleOf(episode, names)} - Stoa`, release_time: String(Math.floor(at.getTime() / 1000)) } }
+          return {
+            claim_id: claim,
+            name,
+            canonical_url: `lbry://@stoa#0/${name}#${claim[0]}`,
+            value: {
+              title: `${titleOf(episode, names)} - Stoa`,
+              release_time: String(Math.floor(at.getTime() / 1000)),
+            },
+          }
         }),
-        ...clips.map((title, i) => ({ claim_id: id(40, '0123456789abcdef'), name: title.toLowerCase().replace(/[^a-z0-9]+/g, '-'), canonical_url: null, value: { title, release_time: String(Math.floor(clipTimes[i].getTime() / 1000)) } })),
+        ...clips.map((title, i) => ({
+          claim_id: id(40, '0123456789abcdef'),
+          name: title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          canonical_url: null,
+          value: { title, release_time: String(Math.floor(clipTimes[i].getTime() / 1000)) },
+        })),
       ],
     },
   }
@@ -174,7 +213,12 @@ export function buildFeeds({ episodes, sources, shows, now, seededRandom }) {
     ...items.bitchute.map(({ episode, at, row }) => {
       const vid = row.externalId ?? id(12, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
       // BitChute titles here use plain dashes and capitals, which the matcher normalises.
-      return rssItem(titleOf(episode, names).replace(/ \| /g, ' - ').toUpperCase(), `https://www.bitchute.com/video/${vid}/`, vid, at)
+      return rssItem(
+        titleOf(episode, names).replace(/ \| /g, ' - ').toUpperCase(),
+        `https://www.bitchute.com/video/${vid}/`,
+        vid,
+        at,
+      )
     }),
     ...clips.map((title, i) => rssItem(title, `https://www.bitchute.com/video/${id(12)}/`, id(12), clipTimes[i])),
     '  </channel>',
@@ -182,7 +226,11 @@ export function buildFeeds({ episodes, sources, shows, now, seededRandom }) {
     '',
   ].join('\n')
   const vod = {
-    assets: items.vod.map(({ episode, at }) => ({ path: `${episode.showId}/${episode.seq}`, file: 'media/hero-loop.webm', uploaded_at: at.toISOString() })),
+    assets: items.vod.map(({ episode, at }) => ({
+      path: `${episode.showId}/${episode.seq}`,
+      file: 'media/hero-loop.webm',
+      uploaded_at: at.toISOString(),
+    })),
   }
   return { rumble, odysee, bitchute, vod }
 }

@@ -25,7 +25,12 @@ const { isStaff, viewer } = useViewer()
 
 const PLATFORMS: Platform[] = ['rumble', 'odysee', 'bitchute', 'vod']
 const PROBLEMS: Exclude<SourceStatus, 'linked'>[] = ['pending', 'missing', 'failed']
-const statusNames: Record<SourceStatus, string> = { linked: 'Linked', pending: 'Processing', missing: 'Missing', failed: 'Failed' }
+const statusNames: Record<SourceStatus, string> = {
+  linked: 'Linked',
+  pending: 'Processing',
+  missing: 'Missing',
+  failed: 'Failed',
+}
 const statusStyles: Record<SourceStatus, string> = {
   linked: 'bg-[#2a9d8f]/20 text-[#7fd1c6]',
   pending: 'bg-gold/15 text-gold',
@@ -59,14 +64,16 @@ const filterOptions = computed(() => {
   if (summary) {
     for (const p of PLATFORMS) {
       for (const s of PROBLEMS) {
-        if (summary[p][s]) options.push({ value: `${p}-${s}`, label: `${statusNames[s]} on ${columnName(p)}`, count: summary[p][s] })
+        if (summary[p][s])
+          options.push({ value: `${p}-${s}`, label: `${statusNames[s]} on ${columnName(p)}`, count: summary[p][s] })
       }
     }
   }
   return options
 })
 
-const sourceOf = (row: DeskRow, platform: Platform): EpisodeSource | undefined => row.sources.find((s) => s.platform === platform)
+const sourceOf = (row: DeskRow, platform: Platform): EpisodeSource | undefined =>
+  row.sources.find((s) => s.platform === platform)
 const titleOf = (row: DeskRow) =>
   row.title ?? `${getShow(row.showId)?.name ?? ''} | ${formatEditionDate(new Date(row.publishedAt))}`
 
@@ -99,8 +106,8 @@ async function runSync() {
       <PitchNote id="one-source" />
     </div>
     <p class="mt-1 max-w-2xl text-sm text-muted">
-      Every episode, and where it is published. One record per episode is the source of truth; the platform sync
-      keeps its links current every hour.
+      Every episode, and where it is published. One record per episode is the source of truth; the platform sync keeps
+      its links current every hour.
     </p>
 
     <!-- Staff only. -->
@@ -114,7 +121,9 @@ async function runSync() {
       <ul class="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <li v-for="p in PLATFORMS" :key="p" class="rounded-xl bg-surface p-4 ring-1 ring-white/10">
           <p class="font-semibold">{{ columnName(p) }}</p>
-          <p class="mt-1 text-2xl font-bold tabular-nums">{{ desk.data.value?.summary[p].linked.toLocaleString('en-GB') ?? '…' }}</p>
+          <p class="mt-1 text-2xl font-bold tabular-nums">
+            {{ desk.data.value?.summary[p].linked.toLocaleString('en-GB') ?? '…' }}
+          </p>
           <p class="text-xs text-muted">linked</p>
           <div v-if="desk.data.value" class="mt-2 flex flex-wrap gap-1.5">
             <button
@@ -149,7 +158,10 @@ async function runSync() {
         <section aria-labelledby="desk-episodes">
           <h2 id="desk-episodes" class="sr-only">Episodes</h2>
           <p v-if="desk.loading.value && !desk.data.value" class="text-sm text-muted">Loading…</p>
-          <p v-else-if="desk.data.value && !desk.data.value.items.length" class="rounded-xl bg-surface p-6 text-sm ring-1 ring-white/10">
+          <p
+            v-else-if="desk.data.value && !desk.data.value.items.length"
+            class="rounded-xl bg-surface p-6 text-sm ring-1 ring-white/10"
+          >
             Nothing here: every link in this view is in order.
           </p>
 
@@ -166,7 +178,9 @@ async function runSync() {
               <tbody>
                 <tr v-for="row in desk.data.value.items" :key="row.id" class="border-b border-white/5 align-top">
                   <td class="py-2.5 pr-3">
-                    <RouterLink :to="`/watch/${row.id}`" class="font-medium hover:underline">{{ titleOf(row) }}</RouterLink>
+                    <RouterLink :to="`/watch/${row.id}`" class="font-medium hover:underline">{{
+                      titleOf(row)
+                    }}</RouterLink>
                     <p class="text-xs text-muted">
                       {{ getShow(row.showId)?.name }} · {{ formatPublished(row.publishedAt) }}
                       <span v-if="row.access === 'premium'" class="text-gold">· Members</span>
@@ -174,7 +188,10 @@ async function runSync() {
                   </td>
                   <td v-for="p in PLATFORMS" :key="p" class="px-2 py-2.5">
                     <template v-if="sourceOf(row, p)">
-                      <span class="rounded px-1.5 py-0.5 text-[11px] font-semibold whitespace-nowrap" :class="statusStyles[sourceOf(row, p)!.status]">
+                      <span
+                        class="rounded px-1.5 py-0.5 text-[11px] font-semibold whitespace-nowrap"
+                        :class="statusStyles[sourceOf(row, p)!.status]"
+                      >
                         {{ statusNames[sourceOf(row, p)!.status] }}
                       </span>
                       <p v-if="sourceOf(row, p)!.syncedAt" class="mt-1 text-[11px] text-muted">
@@ -189,11 +206,22 @@ async function runSync() {
 
             <!-- Phones: a card per episode. -->
             <ul class="space-y-3 md:hidden">
-              <li v-for="row in desk.data.value.items" :key="row.id" class="rounded-xl bg-surface p-3 ring-1 ring-white/10">
+              <li
+                v-for="row in desk.data.value.items"
+                :key="row.id"
+                class="rounded-xl bg-surface p-3 ring-1 ring-white/10"
+              >
                 <RouterLink :to="`/watch/${row.id}`" class="font-medium">{{ titleOf(row) }}</RouterLink>
-                <p class="text-xs text-muted">{{ getShow(row.showId)?.name }} · {{ formatPublished(row.publishedAt) }}</p>
+                <p class="text-xs text-muted">
+                  {{ getShow(row.showId)?.name }} · {{ formatPublished(row.publishedAt) }}
+                </p>
                 <ul class="mt-2 flex flex-wrap gap-1.5">
-                  <li v-for="s in row.sources" :key="s.platform" class="rounded px-1.5 py-0.5 text-[11px] font-semibold" :class="statusStyles[s.status]">
+                  <li
+                    v-for="s in row.sources"
+                    :key="s.platform"
+                    class="rounded px-1.5 py-0.5 text-[11px] font-semibold"
+                    :class="statusStyles[s.status]"
+                  >
                     {{ columnName(s.platform) }}: {{ statusNames[s.status] }}
                   </li>
                 </ul>
@@ -215,10 +243,18 @@ async function runSync() {
           <h2 id="desk-runs" class="font-semibold">Latest syncs</h2>
           <p class="text-xs text-muted">
             Hourly, and on Re-sync.
-            {{ API_MODE === 'laravel' ? 'Reading the sample feeds while the live ones are connected.' : 'Re-sync here replays the export\'s sync, saved in this browser.' }}
+            {{
+              API_MODE === 'laravel'
+                ? 'Reading the sample feeds while the live ones are connected.'
+                : "Re-sync here replays the export's sync, saved in this browser."
+            }}
           </p>
           <ol class="mt-3 space-y-3">
-            <li v-for="run in desk.data.value?.runs ?? []" :key="run.id" class="border-t border-white/5 pt-3 text-sm first:border-0 first:pt-0">
+            <li
+              v-for="run in desk.data.value?.runs ?? []"
+              :key="run.id"
+              class="border-t border-white/5 pt-3 text-sm first:border-0 first:pt-0"
+            >
               <p class="flex items-center justify-between gap-2">
                 <span class="font-medium">{{ columnName(run.platform) }}</span>
                 <span class="text-xs text-muted">{{ formatTimeAgo(run.startedAt) }}</span>
@@ -230,7 +266,11 @@ async function runSync() {
                   <span :class="run.linked ? 'font-semibold text-[#7fd1c6]' : ''">{{ run.linked }} newly linked</span>
                 </template>
               </p>
-              <p v-if="run.status !== 'failed' && run.unmatched" class="text-xs text-muted" :title="run.notes.join(', ')">
+              <p
+                v-if="run.status !== 'failed' && run.unmatched"
+                class="text-xs text-muted"
+                :title="run.notes.join(', ')"
+              >
                 {{ run.unmatched }} not episodes, such as “{{ run.notes[0] }}”
               </p>
             </li>

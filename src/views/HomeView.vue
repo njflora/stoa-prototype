@@ -45,7 +45,11 @@ const rowFor = (showId: string) => home.data.value?.rows[showId] ?? []
     <h1 class="sr-only">{{ brand.name }}</h1>
     <HeroBanner :featured="home.data.value?.featured ?? []" />
 
-    <div v-if="home.error.value" class="mx-4 mt-6 rounded-lg bg-surface p-4 text-sm ring-1 ring-white/10 sm:mx-8" role="alert">
+    <div
+      v-if="home.error.value"
+      class="mx-4 mt-6 rounded-lg bg-surface p-4 text-sm ring-1 ring-white/10 sm:mx-8"
+      role="alert"
+    >
       The latest episodes could not load.
       <button type="button" class="ml-2 min-h-6 font-semibold underline" @click="home.reload()">Try again</button>
     </div>
@@ -96,7 +100,10 @@ const rowFor = (showId: string) => home.data.value?.rows[showId] ?? []
 
       <ContentRow title="Latest articles" subtitle="Free to read" pitch="latest-articles">
         <template #action>
-          <RouterLink to="/articles" class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white">
+          <RouterLink
+            to="/articles"
+            class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white"
+          >
             See all
           </RouterLink>
         </template>
@@ -112,8 +119,7 @@ const rowFor = (showId: string) => home.data.value?.rows[showId] ?? []
         <div>
           <p class="text-lg font-semibold">Free gets you the daily shows. Members get everything.</p>
           <p class="mt-1 text-sm text-white/75">
-            Full history series, geopolitics, economics and the live panel show, plus the
-            back catalogue.
+            Full history series, geopolitics, economics and the live panel show, plus the back catalogue.
           </p>
         </div>
         <RouterLink
@@ -139,7 +145,11 @@ const rowFor = (showId: string) => home.data.value?.rows[showId] ?? []
           >
             Unlock {{ show.name }}
           </RouterLink>
-          <RouterLink v-else :to="`/shows/${show.id}`" class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white">
+          <RouterLink
+            v-else
+            :to="`/shows/${show.id}`"
+            class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white"
+          >
             See all
           </RouterLink>
         </template>
@@ -155,7 +165,10 @@ const rowFor = (showId: string) => home.data.value?.rows[showId] ?? []
 
       <ContentRow :title="getShow('conversations').name" subtitle="Long-form interviews, free for everyone">
         <template #action>
-          <RouterLink to="/shows/conversations" class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white">
+          <RouterLink
+            to="/shows/conversations"
+            class="inline-flex min-h-6 items-center shrink-0 text-sm text-muted hover:text-white"
+          >
             See all
           </RouterLink>
         </template>

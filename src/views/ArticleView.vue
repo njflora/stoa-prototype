@@ -24,7 +24,10 @@ const route = useRoute()
 const { canWatch } = useViewer()
 
 const id = computed(() => String(route.params.id))
-const article = useQuery(() => id.value, () => getArticle(id.value))
+const article = useQuery(
+  () => id.value,
+  () => getArticle(id.value),
+)
 const piece = computed(() => article.data.value)
 
 const blocks = computed(() =>
@@ -61,11 +64,19 @@ watchEffect(() => {
           <h1 class="mt-3 font-serif text-3xl leading-tight font-bold text-balance sm:text-5xl">{{ piece.title }}</h1>
           <p class="mt-4 text-lg text-white/85 sm:text-xl">{{ piece.standfirst }}</p>
           <p class="mt-4 text-sm text-white/70">
-            <ContributorNames :ids="[piece.authorId]" /> · {{ piece.readMin }} min read · {{ formatPublished(piece.publishedAt) }}
+            <ContributorNames :ids="[piece.authorId]" /> · {{ piece.readMin }} min read ·
+            {{ formatPublished(piece.publishedAt) }}
           </p>
-          <p v-if="piece.views !== undefined" class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/70 [&_svg]:size-4">
-            <span class="inline-flex items-center gap-1"><AppIcon name="eye" /> {{ formatCount(piece.views) }} views</span>
-            <span class="inline-flex items-center gap-1"><AppIcon name="chat" /> {{ formatCount(piece.comments ?? 0) }} comments</span>
+          <p
+            v-if="piece.views !== undefined"
+            class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/70 [&_svg]:size-4"
+          >
+            <span class="inline-flex items-center gap-1"
+              ><AppIcon name="eye" /> {{ formatCount(piece.views) }} views</span
+            >
+            <span class="inline-flex items-center gap-1"
+              ><AppIcon name="chat" /> {{ formatCount(piece.comments ?? 0) }} comments</span
+            >
             <span>{{ formatCount(piece.likes ?? 0) }} likes · {{ formatCount(piece.dislikes ?? 0) }} dislikes</span>
           </p>
         </div>
@@ -97,11 +108,7 @@ watchEffect(() => {
       />
     </div>
 
-    <ContentRow
-      v-if="moreFromAuthor.length"
-      :title="`More from ${hostNames([piece.authorId])}`"
-      class="mt-12"
-    >
+    <ContentRow v-if="moreFromAuthor.length" :title="`More from ${hostNames([piece.authorId])}`" class="mt-12">
       <ArticleCard v-for="a in moreFromAuthor" :key="a.id" :article="a" />
     </ContentRow>
   </main>
@@ -120,6 +127,8 @@ watchEffect(() => {
   <main v-else class="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-4 text-center">
     <h1 class="font-serif text-4xl font-bold">Article not found</h1>
     <p class="mt-3 text-muted">There is no article at this address.</p>
-    <RouterLink to="/articles" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink">All articles</RouterLink>
+    <RouterLink to="/articles" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+      >All articles</RouterLink
+    >
   </main>
 </template>

@@ -22,9 +22,7 @@ const router = useRouter()
 const categories: ArticleCategory[] = ['Politics', 'Analysis', 'History', 'Culture', 'Economics']
 type Choice = 'all' | ArticleCategory
 
-const category = computed<Choice>(
-  () => categories.find((c) => c.toLowerCase() === route.query.category) ?? 'all',
-)
+const category = computed<Choice>(() => categories.find((c) => c.toLowerCase() === route.query.category) ?? 'all')
 const page = computed(() => Math.max(0, (Number(route.query.page) || 1) - 1))
 const sort = computed<ArticleSort>(() =>
   route.query.sort === 'popular' || route.query.sort === 'controversial' ? route.query.sort : 'newest',
@@ -82,7 +80,9 @@ const rest = computed(() => (articles.data.value?.items ?? []).slice(lead.value 
 <template>
   <main class="px-4 pt-8 sm:px-8">
     <h1 class="text-3xl font-bold sm:text-4xl">Articles <PitchNote id="articles-index" class="align-middle" /></h1>
-    <p class="mt-2 max-w-2xl text-white/75">Written pieces from the presenters, each ending with its sources. Free to read.</p>
+    <p class="mt-2 max-w-2xl text-white/75">
+      Written pieces from the presenters, each ending with its sources. Free to read.
+    </p>
 
     <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
       <FilterChips v-model="sortModel" label="Sort" :options="sortOptions" />
@@ -92,12 +92,16 @@ const rest = computed(() => (articles.data.value?.items ?? []).slice(lead.value 
       Pieces with at least 100 reactions and comments, ranked by how evenly readers split between likes and dislikes.
     </p>
     <FilterChips v-model="categoryModel" label="Category" :options="options" scroll class="mt-3" />
-    <p
-      v-if="articles.data.value && !articles.data.value.items.length"
-      class="mt-6 text-sm text-white/80"
-    >
+    <p v-if="articles.data.value && !articles.data.value.items.length" class="mt-6 text-sm text-white/80">
       Nothing here yet with these filters.
-      <button v-if="sort === 'popular'" type="button" class="ml-1 min-h-6 font-semibold underline" @click="periodModel = 'all'">See all time</button>
+      <button
+        v-if="sort === 'popular'"
+        type="button"
+        class="ml-1 min-h-6 font-semibold underline"
+        @click="periodModel = 'all'"
+      >
+        See all time
+      </button>
     </p>
 
     <div v-if="articles.error.value" class="mt-6 rounded-lg bg-surface p-4 text-sm ring-1 ring-white/10" role="alert">
@@ -112,23 +116,34 @@ const rest = computed(() => (articles.data.value?.items ?? []).slice(lead.value 
       :style="{ backgroundColor: articleCategoryColours[lead.category].base }"
     >
       <div class="relative min-h-44 p-5 sm:p-8">
-        <div class="absolute inset-y-0 left-0 w-2" :style="{ backgroundColor: articleCategoryColours[lead.category].accent }" />
+        <div
+          class="absolute inset-y-0 left-0 w-2"
+          :style="{ backgroundColor: articleCategoryColours[lead.category].accent }"
+        />
         <span
           class="pointer-events-none absolute top-0 right-4 font-serif text-[9rem] leading-none font-bold opacity-20 select-none"
           :style="{ color: articleCategoryColours[lead.category].accent }"
           aria-hidden="true"
-        >&ldquo;</span>
-        <p class="text-xs font-bold tracking-widest uppercase" :style="{ color: articleCategoryColours[lead.category].accent }">
+          >&ldquo;</span
+        >
+        <p
+          class="text-xs font-bold tracking-widest uppercase"
+          :style="{ color: articleCategoryColours[lead.category].accent }"
+        >
           Latest · {{ lead.category }}
         </p>
-        <h2 class="relative mt-3 font-serif text-2xl leading-tight font-bold text-balance sm:text-4xl">{{ lead.title }}</h2>
+        <h2 class="relative mt-3 font-serif text-2xl leading-tight font-bold text-balance sm:text-4xl">
+          {{ lead.title }}
+        </h2>
       </div>
       <div class="flex flex-col justify-end bg-black/25 p-5 sm:p-8">
         <p class="text-lg text-white/90">{{ lead.standfirst }}</p>
         <p class="mt-3 text-sm text-white/70">
           {{ hostNames([lead.authorId]) }} · {{ lead.readMin }} min read · {{ formatPublished(lead.publishedAt) }}
         </p>
-        <span class="mt-4 text-sm font-semibold text-white underline decoration-white/40 underline-offset-4 group-hover:decoration-white">
+        <span
+          class="mt-4 text-sm font-semibold text-white underline decoration-white/40 underline-offset-4 group-hover:decoration-white"
+        >
           Read the article
         </span>
       </div>

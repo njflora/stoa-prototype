@@ -49,13 +49,20 @@ const access = computed<AccessFilter>(() => {
   return mixed.value && (value === 'free' || value === 'members') ? value : 'all'
 })
 const host = computed(() =>
-  filterable.value ? contributors.value.find((h) => h.id === route.query.host)?.id ?? 'all' : 'all',
+  filterable.value ? (contributors.value.find((h) => h.id === route.query.host)?.id ?? 'all') : 'all',
 )
 const page = computed(() => Math.max(0, (Number(route.query.page) || 1) - 1))
 
 type View = { page: number; sort: SortOrder; period: Period; access: AccessFilter; host: string }
 function query(changes: Partial<View>): LocationQueryRaw {
-  const next: View = { page: page.value, sort: sort.value, period: period.value, access: access.value, host: host.value, ...changes }
+  const next: View = {
+    page: page.value,
+    sort: sort.value,
+    period: period.value,
+    access: access.value,
+    host: host.value,
+    ...changes,
+  }
   return {
     ...(next.page > 0 ? { page: String(next.page + 1) } : {}),
     ...(next.sort !== 'newest' ? { sort: next.sort } : {}),
@@ -114,7 +121,12 @@ const sortOptions: { value: SortOrder; label: string }[] = [
   { value: 'oldest', label: 'Oldest' },
   { value: 'popular', label: 'Popular' },
 ]
-const periodLabels: Record<Period, string> = { week: 'This week', month: 'This month', year: 'This year', all: 'All time' }
+const periodLabels: Record<Period, string> = {
+  week: 'This week',
+  month: 'This month',
+  year: 'This year',
+  all: 'All time',
+}
 const periodOptions = periods.map((p) => ({ value: p, label: periodLabels[p] }))
 const hostOptions = computed(() => [
   { value: 'all', label: 'Everyone' },
@@ -123,7 +135,10 @@ const hostOptions = computed(() => [
 const activeHost = computed(() => contributors.value.find((h) => h.id === host.value))
 
 const heading = computed(() => {
-  const base = sort.value === 'popular' ? `Most watched ${period.value === 'all' ? 'of all time' : periodLabels[period.value].toLowerCase()}` : 'All episodes'
+  const base =
+    sort.value === 'popular'
+      ? `Most watched ${period.value === 'all' ? 'of all time' : periodLabels[period.value].toLowerCase()}`
+      : 'All episodes'
   return activeHost.value ? `${base}, with ${activeHost.value.name}` : base
 })
 const accessOptions = computed(() => [
@@ -166,7 +181,9 @@ watchEffect(() => {
         <h1 class="mt-2 text-3xl leading-tight font-bold text-balance sm:text-5xl">{{ show.name }}</h1>
         <p class="mt-2 text-white/85">{{ show.tagline }}</p>
         <p class="mt-2 text-sm text-white/70">
-          {{ show.episodeCount?.toLocaleString('en-GB') }} episodes<template v-if="show.schedule"> · {{ show.schedule }}</template>
+          {{ show.episodeCount?.toLocaleString('en-GB') }} episodes<template v-if="show.schedule">
+            · {{ show.schedule }}</template
+          >
         </p>
         <!-- Clicking a name filters this show's archive to them. -->
         <div v-if="filterable" class="mt-3 flex flex-wrap items-center gap-1.5 text-sm">
@@ -177,7 +194,11 @@ watchEffect(() => {
             type="button"
             :aria-pressed="host === h.id"
             class="inline-flex min-h-7 items-center rounded-full px-2.5 font-medium ring-1 backdrop-blur transition"
-            :class="host === h.id ? 'bg-accent text-white ring-accent' : 'bg-white/10 text-white/90 ring-white/15 hover:bg-white/20'"
+            :class="
+              host === h.id
+                ? 'bg-accent text-white ring-accent'
+                : 'bg-white/10 text-white/90 ring-white/15 hover:bg-white/20'
+            "
             @click="filterBy(host === h.id ? 'all' : h.id)"
           >
             {{ h.name }}
@@ -185,7 +206,10 @@ watchEffect(() => {
         </div>
         <p v-else-if="contributors[0]" class="mt-2 text-sm text-white/70">
           With
-          <RouterLink :to="`/contributors/${contributors[0].id}`" class="font-medium text-white underline decoration-white/30 underline-offset-2 hover:decoration-white">
+          <RouterLink
+            :to="`/contributors/${contributors[0].id}`"
+            class="font-medium text-white underline decoration-white/30 underline-offset-2 hover:decoration-white"
+          >
             {{ contributors[0].name }}
           </RouterLink>
         </p>
@@ -228,7 +252,12 @@ watchEffect(() => {
       </div>
     </section>
 
-    <ContentRow v-if="series.length" title="Series" :subtitle="`${series.length} multi-part series, played in order`" class="mt-2">
+    <ContentRow
+      v-if="series.length"
+      title="Series"
+      :subtitle="`${series.length} multi-part series, played in order`"
+      class="mt-2"
+    >
       <SeriesCard v-for="s in series" :key="s.slug" :series="s" />
     </ContentRow>
 
@@ -242,7 +271,13 @@ watchEffect(() => {
         <FilterChips v-model="sortModel" label="Sort" :options="sortOptions" />
         <FilterChips v-if="mixed" v-model="accessModel" label="Show" :options="accessOptions" />
       </div>
-      <FilterChips v-if="sort === 'popular'" v-model="periodModel" label="Published" :options="periodOptions" class="mt-3" />
+      <FilterChips
+        v-if="sort === 'popular'"
+        v-model="periodModel"
+        label="Published"
+        :options="periodOptions"
+        class="mt-3"
+      />
       <div v-if="filterable" class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
         <FilterChips v-model="hostModel" label="Contributor" :options="hostOptions" scroll class="max-w-full" />
         <RouterLink
@@ -265,7 +300,9 @@ watchEffect(() => {
         class="mt-4 text-sm text-white/80"
       >
         Nothing published {{ periodLabels[period].toLowerCase() }} with these filters.
-        <button type="button" class="ml-1 min-h-6 font-semibold underline" @click="periodModel = 'all'">See all time</button>
+        <button type="button" class="ml-1 min-h-6 font-semibold underline" @click="periodModel = 'all'">
+          See all time
+        </button>
       </p>
 
       <div class="mt-4 grid grid-cols-1 gap-x-4 gap-y-8 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -294,6 +331,8 @@ watchEffect(() => {
   <main v-else class="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-4 text-center">
     <h1 class="font-serif text-4xl font-bold">Show not found</h1>
     <p class="mt-3 text-muted">There is no show at this address.</p>
-    <RouterLink to="/shows" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink">All shows</RouterLink>
+    <RouterLink to="/shows" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+      >All shows</RouterLink
+    >
   </main>
 </template>

@@ -16,9 +16,15 @@ const { needRefresh, updateServiceWorker } = useRegisterSW()
     :style="{ bottom: 'calc(var(--tabbar-h) + 1rem)' }"
   >
     <span>Update available</span>
-    <button type="button" class="rounded-md bg-accent px-3 py-1 text-xs font-semibold text-white hover:bg-accent-bright" @click="updateServiceWorker(true)">
+    <button
+      type="button"
+      class="rounded-md bg-accent px-3 py-1 text-xs font-semibold text-white hover:bg-accent-bright"
+      @click="updateServiceWorker(true)"
+    >
       Reload
     </button>
-    <button type="button" class="text-xs text-muted underline hover:text-white" @click="needRefresh = false">Later</button>
+    <button type="button" class="text-xs text-muted underline hover:text-white" @click="needRefresh = false">
+      Later
+    </button>
   </div>
 </template>

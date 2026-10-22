@@ -30,9 +30,7 @@ const props = withDefaults(
 
 const show = computed(() => getShow(props.episode.showId))
 
-const caption = computed(() =>
-  props.variant === 'show' ? `Start with: ${props.episode.title}` : props.episode.title,
-)
+const caption = computed(() => (props.variant === 'show' ? `Start with: ${props.episode.title}` : props.episode.title))
 
 const { isOwned } = usePurchases()
 const { isMember, isSignedIn } = useViewer()
@@ -41,8 +39,7 @@ const badge = computed(() => {
   if (props.episode.access === 'premium' && !isMember.value && isSignedIn.value && isOwned(props.episode.id))
     return { text: 'Owned', class: 'bg-[#2a9d8f] text-white' }
   if (props.episode.access === 'freemium') return { text: 'Free preview', class: 'bg-accent text-white' }
-  if (props.episode.access === 'premium' && !props.locked)
-    return { text: 'Members', class: 'bg-gold text-ink' }
+  if (props.episode.access === 'premium' && !props.locked) return { text: 'Members', class: 'bg-gold text-ink' }
   if (isNew(props.episode)) return { text: 'New', class: 'bg-white text-ink' }
   return null
 })
@@ -55,9 +52,7 @@ const to = computed(() => {
   const path = `/watch/${props.episode.id}`
   return series.value ? { path, query: { series: series.value.slug } } : path
 })
-const label = computed(() =>
-  props.locked ? `${caption.value}. Members only. Join or buy to watch.` : undefined,
-)
+const label = computed(() => (props.locked ? `${caption.value}. Members only. Join or buy to watch.` : undefined))
 
 // Still at rest; plays a preview on hover, focus, or (on phones) when it
 // is the card in view. Locked cards never preview.
@@ -119,14 +114,25 @@ const { root, previewing, handlers } = usePreview(() => !props.locked)
       <p v-if="variant === 'show'" class="mt-0.5 truncate text-xs text-muted">{{ show.tagline }}</p>
       <p v-else class="mt-0.5 line-clamp-2 text-xs text-muted"><ContributorNames :ids="episode.hostIds" /></p>
       <!-- The reference site's card line: when it was published, views and comments. -->
-      <p v-if="variant === 'episode'" class="mt-0.5 flex items-center gap-2 truncate text-[11px] text-muted [&_svg]:size-3.5">
-          <span>{{ formatPublished(episode.publishedAt) }}</span>
-          <span v-if="episode.views !== undefined" class="inline-flex items-center gap-0.5" :aria-label="`${episode.views} views`">
-            <AppIcon name="eye" /> {{ formatCount(episode.views) }}
-          </span>
-          <span v-if="episode.comments !== undefined" class="inline-flex items-center gap-0.5" :aria-label="`${episode.comments} comments`">
-            <AppIcon name="chat" /> {{ formatCount(episode.comments) }}
-          </span>
+      <p
+        v-if="variant === 'episode'"
+        class="mt-0.5 flex items-center gap-2 truncate text-[11px] text-muted [&_svg]:size-3.5"
+      >
+        <span>{{ formatPublished(episode.publishedAt) }}</span>
+        <span
+          v-if="episode.views !== undefined"
+          class="inline-flex items-center gap-0.5"
+          :aria-label="`${episode.views} views`"
+        >
+          <AppIcon name="eye" /> {{ formatCount(episode.views) }}
+        </span>
+        <span
+          v-if="episode.comments !== undefined"
+          class="inline-flex items-center gap-0.5"
+          :aria-label="`${episode.comments} comments`"
+        >
+          <AppIcon name="chat" /> {{ formatCount(episode.comments) }}
+        </span>
       </p>
     </div>
     <RouterLink

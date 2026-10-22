@@ -73,11 +73,17 @@ onUnmounted(() => {
         @click="open = false"
       >
         <span class="size-2 animate-pulse rounded-full bg-live motion-reduce:animate-none" />
-        <span><span class="font-semibold">{{ getShow(liveEvent.showId).name }}</span> is live now</span>
+        <span
+          ><span class="font-semibold">{{ getShow(liveEvent.showId).name }}</span> is live now</span
+        >
       </RouterLink>
 
       <ul v-if="items.length" class="mt-2 space-y-1">
-        <li v-for="item in items" :key="item.id" class="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 hover:bg-white/5">
+        <li
+          v-for="item in items"
+          :key="item.id"
+          class="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 hover:bg-white/5"
+        >
           <span class="flex min-w-0 items-center gap-2 text-sm">
             <AppIcon name="check" class="!size-4 text-accent-bright" />
             <span class="truncate">{{ item.name }}</span>

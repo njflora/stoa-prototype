@@ -6,15 +6,15 @@ It is built to take on their identity quickly if the proposal is accepted. The s
 
 ## Where the identity lives
 
-| What | Where | What it controls |
-|---|---|---|
-| Name and wording | `src/config/brand.ts` | The header, the footer, page titles, the page description, notifications, the name of the site's own video player, the welcome animation's words, and the installed app's name |
-| Logo | `src/components/BrandLogo.vue` | The wordmark in the header and the footer |
-| Colours | `src/assets/main.css`, the `@theme` block | Every colour on the site, through Tailwind classes such as `bg-accent` and `text-gold`, and the installed app's colours |
-| Fonts | `src/main.ts` (the font files) and the `--font-sans` and `--font-serif` tokens in `src/assets/main.css` | All text |
-| Browser tab icon | `public/favicon.ico` | The icon in tabs and bookmarks |
-| App icons | `public/icons/`, drawn by `scripts/icons/make_icons.py` | The installed app's icon and the iPhone Home Screen icon |
-| The server's name | `APP_NAME` in `backend/.env` | Emails and anything Laravel names itself |
+| What              | Where                                                                                                   | What it controls                                                                                                                                                               |
+| ----------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Name and wording  | `src/config/brand.ts`                                                                                   | The header, the footer, page titles, the page description, notifications, the name of the site's own video player, the welcome animation's words, and the installed app's name |
+| Logo              | `src/components/BrandLogo.vue`                                                                          | The wordmark in the header and the footer                                                                                                                                      |
+| Colours           | `src/assets/main.css`, the `@theme` block                                                               | Every colour on the site, through Tailwind classes such as `bg-accent` and `text-gold`, and the installed app's colours                                                        |
+| Fonts             | `src/main.ts` (the font files) and the `--font-sans` and `--font-serif` tokens in `src/assets/main.css` | All text                                                                                                                                                                       |
+| Browser tab icon  | `public/favicon.ico`                                                                                    | The icon in tabs and bookmarks                                                                                                                                                 |
+| App icons         | `public/icons/`, drawn by `scripts/icons/make_icons.py`                                                 | The installed app's icon and the iPhone Home Screen icon                                                                                                                       |
+| The server's name | `APP_NAME` in `backend/.env`                                                                            | Emails and anything Laravel names itself                                                                                                                                       |
 
 `index.html` takes its title and description from `brand.ts` when the site is built, through a small step in `vite.config.ts`. The installable app's manifest takes its name from `brand.ts` and its colours from the theme tokens in the same way.
 

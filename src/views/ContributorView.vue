@@ -31,7 +31,13 @@ function showLink(showId: string) {
   const many = reference.hosts.filter((h) => h.showIds?.includes(showId)).length > 1
   return { path: `/shows/${showId}`, query: many ? { host: person.value!.id } : {} }
 }
-const initials = computed(() => person.value?.name.split(' ').map((w) => w[0]).join('').slice(0, 2))
+const initials = computed(() =>
+  person.value?.name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2),
+)
 
 const page = computed(() => Math.max(0, (Number(route.query.page) || 1) - 1))
 const episodes = useQuery(
@@ -58,14 +64,21 @@ watchEffect(() => {
   <main v-if="person">
     <section class="border-b border-white/5 bg-surface/60">
       <div class="flex max-w-4xl flex-col gap-5 px-4 pt-10 pb-8 sm:flex-row sm:items-center sm:px-8">
-        <span class="grid size-24 shrink-0 place-items-center rounded-full bg-accent text-3xl font-bold">{{ initials }}</span>
+        <span class="grid size-24 shrink-0 place-items-center rounded-full bg-accent text-3xl font-bold">{{
+          initials
+        }}</span>
         <div>
-          <RouterLink to="/contributors" class="inline-flex min-h-6 items-center text-sm text-white/70 hover:text-white">All contributors</RouterLink>
-          <h1 class="text-3xl font-bold sm:text-4xl">{{ person.name }} <PitchNote id="contributor-profiles" class="align-middle" /></h1>
+          <RouterLink to="/contributors" class="inline-flex min-h-6 items-center text-sm text-white/70 hover:text-white"
+            >All contributors</RouterLink
+          >
+          <h1 class="text-3xl font-bold sm:text-4xl">
+            {{ person.name }} <PitchNote id="contributor-profiles" class="align-middle" />
+          </h1>
           <p class="mt-1 text-white/80">{{ person.role }}</p>
           <p class="mt-1 text-sm text-muted">
             {{ (person.episodeCount ?? 0).toLocaleString('en-GB') }} episodes<template v-if="person.articleCount">
-              · {{ person.articleCount }} {{ person.articleCount === 1 ? 'article' : 'articles' }}</template>
+              · {{ person.articleCount }} {{ person.articleCount === 1 ? 'article' : 'articles' }}</template
+            >
           </p>
         </div>
       </div>
@@ -86,7 +99,12 @@ watchEffect(() => {
       </ul>
     </section>
 
-    <ContentRow v-if="series.length" title="Series" :subtitle="`${series.length} series with ${person.name}`" class="mt-10">
+    <ContentRow
+      v-if="series.length"
+      title="Series"
+      :subtitle="`${series.length} series with ${person.name}`"
+      class="mt-10"
+    >
       <SeriesCard v-for="s in series" :key="s.slug" :series="s" />
     </ContentRow>
 
@@ -125,6 +143,8 @@ watchEffect(() => {
 
   <main v-else class="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-4 text-center">
     <h1 class="font-serif text-4xl font-bold">Contributor not found</h1>
-    <RouterLink to="/contributors" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink">All contributors</RouterLink>
+    <RouterLink to="/contributors" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+      >All contributors</RouterLink
+    >
   </main>
 </template>

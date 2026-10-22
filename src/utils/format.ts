@@ -57,7 +57,10 @@ export function formatClock(totalSeconds: number): string {
 
 /** "1:00 pm", the site's time style (as in "Published 3:00 pm"). */
 export function formatTime(date: Date): string {
-  return date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }).replace(/\s/g, ' ').toLowerCase()
+  return date
+    .toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true })
+    .replace(/\s/g, ' ')
+    .toLowerCase()
 }
 
 /** "1h 25m", "45m", or "7h" for whole hours. */

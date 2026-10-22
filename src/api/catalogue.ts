@@ -101,7 +101,8 @@ async function staticReference(): Promise<Reference> {
 
 /** GET /api/reference: shows, hosts, series and the live event. Called once, before the app mounts. */
 export async function loadReference(): Promise<void> {
-  const { meta, shows, hosts, series, live } = API_MODE === 'laravel' ? await getJson<Reference>('reference') : await staticReference()
+  const { meta, shows, hosts, series, live } =
+    API_MODE === 'laravel' ? await getJson<Reference>('reference') : await staticReference()
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   shiftMs = Math.max(0, Math.floor((today.getTime() - new Date(meta.generatedAt).getTime()) / WEEK_MS)) * WEEK_MS
@@ -126,7 +127,10 @@ export async function getHome(): Promise<Home> {
   }
 }
 
-const normaliseArticle = <T extends Article>(article: T): T => ({ ...article, publishedAt: shiftDate(article.publishedAt) })
+const normaliseArticle = <T extends Article>(article: T): T => ({
+  ...article,
+  publishedAt: shiftDate(article.publishedAt),
+})
 
 export type ArticleSort = 'newest' | 'popular' | 'controversial'
 export type ArticlePeriod = 'week' | 'month' | 'all'
@@ -146,9 +150,13 @@ export async function listArticles(
   }: { category?: ArticleCategory; authorId?: string; sort?: ArticleSort; period?: ArticlePeriod } = {},
 ): Promise<ArticlePage> {
   const base = authorId ? `author-${authorId}` : category ? category.toLowerCase() : 'all'
-  const folder = authorId || sort === 'newest' ? base : sort === 'popular' ? `${base}/popular-${period}` : `${base}/controversial`
+  const folder =
+    authorId || sort === 'newest' ? base : sort === 'popular' ? `${base}/popular-${period}` : `${base}/controversial`
   const data = await getJson<ArticlePage>(
-    pick(`articles?${query({ category, author: authorId, sort, period, page })}`, `articles/pages/${folder}/${page}.json`),
+    pick(
+      `articles?${query({ category, author: authorId, sort, period, page })}`,
+      `articles/pages/${folder}/${page}.json`,
+    ),
   )
   return { ...data, items: data.items.map(normaliseArticle) }
 }
@@ -228,7 +236,9 @@ export async function listEpisodes(
 
 /** GET /api/episodes?host={hostId}&page={page}: one contributor's episodes across every show. */
 export async function listEpisodesByHost(hostId: string, page = 0): Promise<EpisodePage> {
-  const data = await getJson<EpisodePage>(pick(`episodes?${query({ host: hostId, page })}`, `episodes/by-host/${hostId}/${page}.json`))
+  const data = await getJson<EpisodePage>(
+    pick(`episodes?${query({ host: hostId, page })}`, `episodes/by-host/${hostId}/${page}.json`),
+  )
   return { ...data, items: data.items.map(normalise) }
 }
 
@@ -267,7 +277,8 @@ export function storedPageOf(id: string): { showId: string; page: number } | und
   const showId = id.slice(0, split)
   const sequence = Number(id.slice(split + 1))
   const show = reference.shows.find((s) => s.id === showId)
-  if (!show?.episodeCount || !Number.isInteger(sequence) || sequence < 1 || sequence > show.episodeCount) return undefined
+  if (!show?.episodeCount || !Number.isInteger(sequence) || sequence < 1 || sequence > show.episodeCount)
+    return undefined
   return { showId, page: Math.floor((show.episodeCount - sequence) / reference.pageSize) }
 }
 

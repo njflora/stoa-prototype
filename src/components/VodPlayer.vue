@@ -39,7 +39,9 @@ const probe = document.createElement('video')
 const canPlay = (rendition: Rendition) => rendition.files.some((file) => probe.canPlayType(file.type) !== '')
 const qualities = computed(() => props.renditions.filter(canPlay).map((r) => r.label))
 const quality = ref('Auto')
-const files = computed(() => (props.renditions.find((r) => r.label === quality.value) ?? props.renditions[0])?.files ?? [])
+const files = computed(
+  () => (props.renditions.find((r) => r.label === quality.value) ?? props.renditions[0])?.files ?? [],
+)
 /** Where to pick up after a switch. */
 let resumeAt: { time: number; play: boolean } | null = null
 // Speed: a live stream plays in real time, so it has no speed setting.
@@ -188,10 +190,10 @@ onUnmounted(() => {
       :loop="live"
       :aria-label="label"
       @click="settingsOpen ? (settingsOpen = false) : toggle()"
-      @play="(playing = true), wake(), report()"
-      @pause="(playing = false), (shown = true), report()"
+      @play="((playing = true), wake(), report())"
+      @pause="((playing = false), (shown = true), report())"
       @volumechange="muted = video!.muted"
-      @timeupdate="(current = video!.currentTime), report()"
+      @timeupdate="((current = video!.currentTime), report())"
       @seeking="report"
       @ratechange="report"
       @loadedmetadata="onLoaded"
@@ -221,16 +223,35 @@ onUnmounted(() => {
       @pointerdown.stop
     >
       <template v-if="view === 'main'">
-        <button type="button" class="flex w-full items-center justify-between rounded-md px-3 py-2 hover:bg-white/10" @click="openView('quality')">
-          Quality <span class="flex items-center gap-1 text-white/70">{{ quality }}<AppIcon name="chevron-right" class="size-4" /></span>
+        <button
+          type="button"
+          class="flex w-full items-center justify-between rounded-md px-3 py-2 hover:bg-white/10"
+          @click="openView('quality')"
+        >
+          Quality
+          <span class="flex items-center gap-1 text-white/70"
+            >{{ quality }}<AppIcon name="chevron-right" class="size-4"
+          /></span>
         </button>
-        <button v-if="!live" type="button" class="flex w-full items-center justify-between rounded-md px-3 py-2 hover:bg-white/10" @click="openView('speed')">
-          Speed <span class="flex items-center gap-1 text-white/70">{{ speedName(speed) }}<AppIcon name="chevron-right" class="size-4" /></span>
+        <button
+          v-if="!live"
+          type="button"
+          class="flex w-full items-center justify-between rounded-md px-3 py-2 hover:bg-white/10"
+          @click="openView('speed')"
+        >
+          Speed
+          <span class="flex items-center gap-1 text-white/70"
+            >{{ speedName(speed) }}<AppIcon name="chevron-right" class="size-4"
+          /></span>
         </button>
       </template>
 
       <template v-else>
-        <button type="button" class="flex w-full items-center gap-1 rounded-md px-2 py-2 font-semibold hover:bg-white/10" @click="openView('main')">
+        <button
+          type="button"
+          class="flex w-full items-center gap-1 rounded-md px-2 py-2 font-semibold hover:bg-white/10"
+          @click="openView('main')"
+        >
           <AppIcon name="chevron-left" class="size-4" /> {{ view === 'quality' ? 'Quality' : 'Speed' }}
         </button>
         <div class="my-1 border-t border-white/10" />
@@ -262,7 +283,12 @@ onUnmounted(() => {
           <!-- Any speed from 0.25 to 3 times. -->
           <label class="block px-3 pt-2 pb-1.5">
             <span class="flex justify-between text-xs text-white/70">
-              Custom <span class="font-semibold text-white tabular-nums" :class="speeds.includes(speed) ? '' : 'text-accent-bright'">{{ speed }}×</span>
+              Custom
+              <span
+                class="font-semibold text-white tabular-nums"
+                :class="speeds.includes(speed) ? '' : 'text-accent-bright'"
+                >{{ speed }}×</span
+              >
             </span>
             <input
               type="range"
@@ -286,7 +312,9 @@ onUnmounted(() => {
     >
       <!-- Progress: pink, with a round handle. A live stream is always at the end. -->
       <!-- The slider itself is invisible, so its keyboard focus shows on this row. -->
-      <div class="relative flex h-4 items-center rounded has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-white">
+      <div
+        class="relative flex h-4 items-center rounded has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-white"
+      >
         <div class="h-1 w-full rounded-full bg-white/25">
           <div class="h-full rounded-full bg-accent-bright" :style="{ width: `${progress}%` }" />
         </div>
@@ -308,7 +336,9 @@ onUnmounted(() => {
         />
       </div>
 
-      <div class="mt-1 flex items-center gap-1 text-white [&_button]:grid [&_button]:size-9 [&_button]:place-items-center [&_button]:rounded-md [&_button]:transition [&_button:hover]:text-accent-bright [&_svg]:size-5">
+      <div
+        class="mt-1 flex items-center gap-1 text-white [&_button]:grid [&_button]:size-9 [&_button]:place-items-center [&_button]:rounded-md [&_button]:transition [&_button:hover]:text-accent-bright [&_svg]:size-5"
+      >
         <button type="button" :aria-label="playing ? 'Pause' : 'Play'" @click="toggle">
           <AppIcon :name="playing ? 'pause' : 'play'" />
         </button>

@@ -76,7 +76,10 @@ interface Doc {
 
 /** Lower case, accents removed: "Crécy" and "crecy" match. */
 export function normalise(term: string): string {
-  return term.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
+  return term
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
 }
 
 let index: Promise<MiniSearch<Doc>> | null = null
@@ -90,7 +93,18 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
   const docs: Doc[] = raw.map((e): Doc => {
     if (e.k === 'a') {
       const category = e.s as ArticleCategory
-      return { id: `article:${e.i}`, kind: 'article', title: e.t, show: category, hosts: hostNames(e.h), text: e.x, to: `/articles/${e.i}`, publishedAt: shiftDate(e.d), hostIds: e.h, category }
+      return {
+        id: `article:${e.i}`,
+        kind: 'article',
+        title: e.t,
+        show: category,
+        hosts: hostNames(e.h),
+        text: e.x,
+        to: `/articles/${e.i}`,
+        publishedAt: shiftDate(e.d),
+        hostIds: e.h,
+        category,
+      }
     }
     // By the slug stored with the episode, never guessed from its text (review note 10).
     const series = e.sl ? reference.series.find((s) => s.slug === e.sl) : undefined
@@ -113,15 +127,43 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
   })
 
   for (const s of reference.series) {
-    docs.push({ id: `series:${s.slug}`, kind: 'series', title: s.name, show: showName(s.showId), hosts: hostNames(s.episodes[0]?.hostIds ?? []), text: s.description, to: `/series/${s.slug}`, showId: s.showId, seriesName: s.name })
+    docs.push({
+      id: `series:${s.slug}`,
+      kind: 'series',
+      title: s.name,
+      show: showName(s.showId),
+      hosts: hostNames(s.episodes[0]?.hostIds ?? []),
+      text: s.description,
+      to: `/series/${s.slug}`,
+      showId: s.showId,
+      seriesName: s.name,
+    })
   }
   for (const s of reference.shows) {
-    docs.push({ id: `show:${s.id}`, kind: 'show', title: s.name, show: s.name, hosts: hostNames(s.hostIds), text: s.tagline, to: `/shows/${s.id}`, showId: s.id })
+    docs.push({
+      id: `show:${s.id}`,
+      kind: 'show',
+      title: s.name,
+      show: s.name,
+      hosts: hostNames(s.hostIds),
+      text: s.tagline,
+      to: `/shows/${s.id}`,
+      showId: s.id,
+    })
   }
   for (const h of reference.hosts) {
     // Every show they appear on, not only those they present regularly (review note 9).
     const presents = reference.shows.filter((s) => h.showIds?.includes(s.id)).map((s) => s.name)
-    docs.push({ id: `host:${h.id}`, kind: 'host', title: h.name, show: presents.join(' '), hosts: h.name, text: '', to: `/contributors/${h.id}`, hostIds: [h.id] })
+    docs.push({
+      id: `host:${h.id}`,
+      kind: 'host',
+      title: h.name,
+      show: presents.join(' '),
+      hosts: h.name,
+      text: '',
+      to: `/contributors/${h.id}`,
+      hostIds: [h.id],
+    })
   }
 
   const times = docs.filter((d) => d.publishedAt).map((d) => new Date(d.publishedAt!).getTime())
@@ -137,7 +179,13 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
   return search
 }
 
-const emptyGroups = (): Record<ResultKind, SearchHit[]> => ({ episode: [], series: [], show: [], host: [], article: [] })
+const emptyGroups = (): Record<ResultKind, SearchHit[]> => ({
+  episode: [],
+  series: [],
+  show: [],
+  host: [],
+  article: [],
+})
 
 /**
  * The server's answer, with dates moved forward like the rest of the API, and
@@ -151,7 +199,8 @@ async function searchOnServer(query: string): Promise<SearchResults> {
   for (const hits of Object.values(results.groups)) {
     for (const hit of hits) {
       if (hit.publishedAt) hit.publishedAt = shiftDate(hit.publishedAt)
-      if (hit.edition && hit.publishedAt) hit.title = `${showName(hit.showId)} | ${formatEditionDate(new Date(hit.publishedAt))}`
+      if (hit.edition && hit.publishedAt)
+        hit.title = `${showName(hit.showId)} | ${formatEditionDate(new Date(hit.publishedAt))}`
     }
   }
   return { ...results, query }
@@ -203,4 +252,3 @@ export async function search(query: string): Promise<SearchResults> {
   }
   return { query, total: results.length, tookMs, groups }
 }
-

@@ -28,7 +28,8 @@ window.addEventListener('appinstalled', () => {
 standalone.addEventListener('change', (event) => (installed.value = event.matches))
 
 /** iPhone or iPad, in Safari or another iOS browser (all use Safari's engine). */
-const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+const isIos =
+  /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 
 export function useInstall() {
   /** Show the option: the browser offers install, or it is iOS, and the app is not installed yet. */

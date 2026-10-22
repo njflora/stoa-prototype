@@ -11,7 +11,10 @@ const { missedOffline } = useOnline()
 const route = useRoute()
 
 // Each page starts fresh: the notice returns only if that page also misses.
-watch(() => route.path, () => (missedOffline.value = false))
+watch(
+  () => route.path,
+  () => (missedOffline.value = false),
+)
 
 function retry() {
   window.location.reload()
@@ -27,11 +30,16 @@ function retry() {
   >
     <h2 id="offline-heading" class="font-serif text-2xl font-bold">You're offline</h2>
     <p class="mx-auto mt-2 max-w-md text-sm text-white/75">
-      This page hasn't been saved for offline use yet. Pages you have already opened still work. It will load when you're back online.
+      This page hasn't been saved for offline use yet. Pages you have already opened still work. It will load when
+      you're back online.
     </p>
     <div class="mt-4 flex justify-center gap-3">
-      <button type="button" class="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-ink" @click="retry">Try again</button>
-      <RouterLink to="/" class="rounded-lg px-4 py-2 text-sm font-semibold ring-1 ring-white/25 hover:bg-white/10">Home</RouterLink>
+      <button type="button" class="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-ink" @click="retry">
+        Try again
+      </button>
+      <RouterLink to="/" class="rounded-lg px-4 py-2 text-sm font-semibold ring-1 ring-white/25 hover:bg-white/10"
+        >Home</RouterLink
+      >
     </div>
   </section>
 </template>

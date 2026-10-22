@@ -153,7 +153,12 @@ async function vote(id: string, direction: Vote) {
         {{ open ? 'Open to all accounts' : 'Members only' }}
         <PitchNote id="open-spaces" class="ml-1 align-middle" />
       </p>
-      <div v-if="!locked" class="inline-flex rounded-lg bg-surface p-1 ring-1 ring-white/10" role="group" aria-label="Sort comments">
+      <div
+        v-if="!locked"
+        class="inline-flex rounded-lg bg-surface p-1 ring-1 ring-white/10"
+        role="group"
+        aria-label="Sort comments"
+      >
         <button
           v-for="option in sortOptions"
           :key="option.id"
@@ -171,7 +176,9 @@ async function vote(id: string, direction: Vote) {
     <p v-if="loading && !data" class="mt-4 text-sm text-muted">Loading comments…</p>
     <div v-else-if="error && !data" class="mt-4 flex items-center gap-3 text-sm text-muted">
       Comments could not load.
-      <button type="button" class="font-semibold text-white underline underline-offset-2" @click="reload">Try again</button>
+      <button type="button" class="font-semibold text-white underline underline-offset-2" @click="reload">
+        Try again
+      </button>
     </div>
 
     <!-- Anyone allowed to post here: write a comment. -->
@@ -209,7 +216,6 @@ async function vote(id: string, direction: Vote) {
       :detail="`${total} ${total === 1 ? 'comment' : 'comments'} from members. Join to read them and have your say.`"
     />
 
-
     <!-- Signed out, in an open space. -->
     <div
       v-else-if="data"
@@ -228,13 +234,7 @@ async function vote(id: string, direction: Vote) {
 
     <ol v-if="!locked" class="mt-6 space-y-6">
       <li v-for="c in visible" :key="c.id">
-        <CommentItem
-          :comment="c"
-          :vote="voteFor(c.id)"
-          :can-interact="canPost"
-          @vote="vote"
-          @reply="startReply"
-        />
+        <CommentItem :comment="c" :vote="voteFor(c.id)" :can-interact="canPost" @vote="vote" @reply="startReply" />
 
         <form v-if="replyingTo === c.id" class="mt-3 ml-12" @submit.prevent="postReply(c)">
           <label :for="`reply-${c.id}`" class="sr-only">Reply to {{ c.user }}</label>
@@ -261,13 +261,7 @@ async function vote(id: string, direction: Vote) {
 
         <ol v-if="c.replies.length" class="mt-4 ml-12 space-y-4 border-l border-white/10 pl-4">
           <li v-for="r in c.replies" :key="r.id">
-            <CommentItem
-              :comment="r"
-              :vote="voteFor(r.id)"
-              :can-interact="canPost"
-              is-reply
-              @vote="vote"
-            />
+            <CommentItem :comment="r" :vote="voteFor(r.id)" :can-interact="canPost" is-reply @vote="vote" />
           </li>
         </ol>
       </li>

@@ -43,14 +43,16 @@ const latest = useQuery(
 <template>
   <main class="pt-8">
     <div class="px-4 sm:px-8">
-      <h1 class="text-3xl font-bold sm:text-4xl">Shows <PitchNote v-if="isMember" id="members-shows" class="align-middle" /></h1>
+      <h1 class="text-3xl font-bold sm:text-4xl">
+        Shows <PitchNote v-if="isMember" id="members-shows" class="align-middle" />
+      </h1>
       <p v-if="isMember" class="mt-2 max-w-2xl text-white/75">
-        Everything is unlocked with your {{ tierName }} membership. Pick up where you left off, see what everyone is watching, or
-        browse {{ total.toLocaleString('en-GB') }} episodes across {{ listShows().length }} shows.
+        Everything is unlocked with your {{ tierName }} membership. Pick up where you left off, see what everyone is
+        watching, or browse {{ total.toLocaleString('en-GB') }} episodes across {{ listShows().length }} shows.
       </p>
       <p v-else class="mt-2 max-w-2xl text-white/75">
-        {{ listShows().length }} shows and {{ total.toLocaleString('en-GB') }} episodes. Every episode of every show is one click
-        away, sorted and filtered the way you want.
+        {{ listShows().length }} shows and {{ total.toLocaleString('en-GB') }} episodes. Every episode of every show is
+        one click away, sorted and filtered the way you want.
       </p>
     </div>
 
@@ -74,7 +76,9 @@ const latest = useQuery(
     </div>
 
     <section class="mt-10 px-4 sm:px-8" aria-labelledby="free-shows">
-      <h2 id="free-shows" class="text-lg font-semibold sm:text-xl">{{ isMember ? 'The daily shows' : 'Free to watch' }}</h2>
+      <h2 id="free-shows" class="text-lg font-semibold sm:text-xl">
+        {{ isMember ? 'The daily shows' : 'Free to watch' }}
+      </h2>
       <p v-if="isMember" class="mt-1 text-sm text-muted">Free for everyone, and part of your day.</p>
       <div class="mt-4 grid grid-cols-1 gap-x-4 gap-y-8 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <ShowCard v-for="show in free" :key="show.id" :show="show" />
@@ -82,9 +86,15 @@ const latest = useQuery(
     </section>
 
     <section class="mt-12 px-4 sm:px-8" aria-labelledby="member-shows">
-      <h2 id="member-shows" class="text-lg font-semibold sm:text-xl">{{ isMember ? "Members' shows" : 'For members' }}</h2>
+      <h2 id="member-shows" class="text-lg font-semibold sm:text-xl">
+        {{ isMember ? "Members' shows" : 'For members' }}
+      </h2>
       <p class="mt-1 text-sm text-muted">
-        {{ isMember ? `All unlocked with your ${tierName} membership.` : 'Each has free previews, so you can try before you join.' }}
+        {{
+          isMember
+            ? `All unlocked with your ${tierName} membership.`
+            : 'Each has free previews, so you can try before you join.'
+        }}
       </p>
       <div class="mt-4 grid grid-cols-1 gap-x-4 gap-y-8 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <ShowCard v-for="show in members" :key="show.id" :show="show" />

@@ -22,11 +22,7 @@ defineProps<{
     <div class="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
       <p class="font-serif text-sm font-bold tracking-widest text-white/75 uppercase">{{ show.name }}</p>
       <p class="mt-3 text-sm text-white/85 sm:text-base">{{ kicker }}</p>
-      <p
-        class="mt-1 text-4xl font-bold tabular-nums sm:text-6xl"
-        role="timer"
-        aria-live="off"
-      >
+      <p class="mt-1 text-4xl font-bold tabular-nums sm:text-6xl" role="timer" aria-live="off">
         {{ countdown }}
       </p>
       <p v-if="note" class="mt-2 text-xs text-white/70 sm:text-sm">{{ note }}</p>

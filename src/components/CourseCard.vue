@@ -14,14 +14,15 @@ const props = defineProps<{ course: Course }>()
 
 const art = (id: string) => artworks.find((a) => a.id === id)
 const images = computed(() =>
-  props.course.includes
-    ? props.course.includes.map((id) => art(getCourse(id)!.artId))
-    : [art(props.course.artId)],
+  props.course.includes ? props.course.includes.map((id) => art(getCourse(id)!.artId)) : [art(props.course.artId)],
 )
 </script>
 
 <template>
-  <RouterLink :to="`/courses/${course.id}`" class="group flex min-w-0 flex-col overflow-hidden rounded-xl bg-surface ring-1 ring-white/10 outline-none hover:ring-white/30 focus-visible:ring-2 focus-visible:ring-accent-bright">
+  <RouterLink
+    :to="`/courses/${course.id}`"
+    class="group flex min-w-0 flex-col overflow-hidden rounded-xl bg-surface ring-1 ring-white/10 outline-none hover:ring-white/30 focus-visible:ring-2 focus-visible:ring-accent-bright"
+  >
     <div class="flex aspect-video overflow-hidden">
       <img
         v-for="(image, i) in images"
@@ -43,7 +44,9 @@ const images = computed(() =>
       <p v-if="course.community" class="mt-auto pt-3 text-lg font-bold">
         Free <span class="text-sm font-normal text-muted">· {{ course.community.members }} members</span>
       </p>
-      <p v-else-if="course.price !== undefined" class="mt-auto pt-3 text-lg font-bold">{{ formatPrice(course.price) }}</p>
+      <p v-else-if="course.price !== undefined" class="mt-auto pt-3 text-lg font-bold">
+        {{ formatPrice(course.price) }}
+      </p>
     </div>
   </RouterLink>
 </template>

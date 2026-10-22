@@ -28,7 +28,9 @@ const links = [
     <nav aria-label="Footer" class="md:pt-1">
       <ul class="grid grid-cols-2 gap-x-8 sm:grid-cols-3 gap-y-1 text-sm">
         <li v-for="link in links" :key="link.label">
-          <RouterLink :to="link.to" class="inline-flex min-h-6 items-center text-white/75 hover:text-white">{{ link.label }}</RouterLink>
+          <RouterLink :to="link.to" class="inline-flex min-h-6 items-center text-white/75 hover:text-white">{{
+            link.label
+          }}</RouterLink>
         </li>
         <InstallApp button-class="inline-flex min-h-6 items-center text-white/75 hover:text-white" />
       </ul>
@@ -38,7 +40,9 @@ const links = [
       <PitchNote id="footer" class="mb-2 block" />
       <BrandLogo class="text-sm text-white" />
       {{ brand.footerLine }}
-      <RouterLink to="/credits" class="mt-1 inline-flex min-h-6 items-center underline hover:text-white">Image and video credits</RouterLink>
+      <RouterLink to="/credits" class="mt-1 inline-flex min-h-6 items-center underline hover:text-white"
+        >Image and video credits</RouterLink
+      >
     </p>
     <NewsletterSignup class="md:w-96" />
   </footer>

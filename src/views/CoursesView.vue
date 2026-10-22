@@ -27,9 +27,7 @@ const shown = computed(() => (choice.value === 'all' ? courses : courses.filter(
       <h1 class="text-3xl font-bold sm:text-4xl">Courses</h1>
       <PitchNote id="courses-inside" />
     </div>
-    <p class="mt-2 max-w-2xl text-white/75">
-      Structured courses taught by the presenters, at your own pace.
-    </p>
+    <p class="mt-2 max-w-2xl text-white/75">Structured courses taught by the presenters, at your own pace.</p>
 
     <FilterChips v-model="choice" label="Type" :options="options" class="mt-6" />
 

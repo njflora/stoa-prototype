@@ -81,7 +81,9 @@ function choose(next: Platform) {
 }
 /** Up and down move between the platforms; Escape and Tab close the menu. */
 function onMenuKeydown(event: KeyboardEvent) {
-  const items = [...(menu.value?.querySelectorAll<HTMLElement>('[role="menuitemradio"]:not([aria-disabled="true"])') ?? [])]
+  const items = [
+    ...(menu.value?.querySelectorAll<HTMLElement>('[role="menuitemradio"]:not([aria-disabled="true"])') ?? []),
+  ]
   const at = items.indexOf(document.activeElement as HTMLElement)
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault()
@@ -157,7 +159,9 @@ async function share() {
           <div>
             <p class="font-serif text-2xl font-bold sm:text-4xl">{{ show.name }}</p>
             <p class="mt-2 text-[11px] tracking-widest text-white/70 uppercase">
-              {{ active ? `Placeholder ${mode === 'live' ? 'stream' : 'video'} · ${label}` : 'Not available to watch yet' }}
+              {{
+                active ? `Placeholder ${mode === 'live' ? 'stream' : 'video'} · ${label}` : 'Not available to watch yet'
+              }}
             </p>
           </div>
         </div>
@@ -171,7 +175,10 @@ async function share() {
           <span class="size-1.5 animate-pulse rounded-full bg-white motion-reduce:animate-none" />
           Live
         </span>
-        <span v-else-if="mode === 'recording'" class="rounded bg-black/60 px-2 py-0.5 font-semibold tracking-wide uppercase">
+        <span
+          v-else-if="mode === 'recording'"
+          class="rounded bg-black/60 px-2 py-0.5 font-semibold tracking-wide uppercase"
+        >
           Recording
         </span>
         <span v-if="mode === 'live' && viewers" class="rounded bg-black/60 px-2 py-0.5">
@@ -184,7 +191,9 @@ async function share() {
     </div>
 
     <div class="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 lg:px-0">
-      <p v-if="active" class="text-xs text-muted">Playing on <span class="font-semibold text-white">{{ label }}</span></p>
+      <p v-if="active" class="text-xs text-muted">
+        Playing on <span class="font-semibold text-white">{{ label }}</span>
+      </p>
 
       <div v-if="canChange" class="relative">
         <button
@@ -223,7 +232,12 @@ async function share() {
             </button>
           </li>
           <li v-for="source in processing" :key="source.platform" role="none">
-            <span role="menuitemradio" aria-checked="false" aria-disabled="true" class="flex w-full items-center justify-between px-3 py-2 text-sm text-white/40">
+            <span
+              role="menuitemradio"
+              aria-checked="false"
+              aria-disabled="true"
+              class="flex w-full items-center justify-between px-3 py-2 text-sm text-white/40"
+            >
               {{ platformLabels[source.platform] }}
               <span class="text-xs">Processing</span>
             </span>

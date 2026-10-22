@@ -31,8 +31,7 @@ export type Thread =
 export type PlayAnswer = { locked: true } | { locked: false; sources: EpisodeSource[] }
 
 export type ReadingListAnswer =
-  | { locked: true; open: boolean; count: number }
-  | { locked: false; open: boolean; count: number; items: ReadingItem[] }
+  { locked: true; open: boolean; count: number } | { locked: false; open: boolean; count: number; items: ReadingItem[] }
 
 /** Who is posting, for posts saved in the browser. */
 export interface Author {
@@ -112,7 +111,9 @@ function normaliseThread(thread: Thread, ref: ThreadRef): Thread {
   // now: the newest comment a few minutes old.
   let moveBy = 0
   if (ref.type === 'live' && thread.comments.length) {
-    const newest = Math.max(...thread.comments.flatMap((c) => [c, ...c.replies]).map((c) => new Date(shiftDate(c.postedAt)).getTime()))
+    const newest = Math.max(
+      ...thread.comments.flatMap((c) => [c, ...c.replies]).map((c) => new Date(shiftDate(c.postedAt)).getTime()),
+    )
     moveBy = Math.max(0, Date.now() - 8 * 60_000 - newest)
   }
   return { ...thread, comments: thread.comments.map((c) => normaliseComment(c, moveBy)) }

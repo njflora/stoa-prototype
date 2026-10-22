@@ -23,7 +23,8 @@ const separator = (i: number) => (i === people.value.length - 1 ? '' : i === peo
       <RouterLink
         :to="`/contributors/${person.id}`"
         class="underline decoration-current/30 underline-offset-2 hover:text-white hover:decoration-current"
-      >{{ person.name }}</RouterLink>{{ separator(i) }}
+        >{{ person.name }}</RouterLink
+      >{{ separator(i) }}
     </template>
   </span>
 </template>

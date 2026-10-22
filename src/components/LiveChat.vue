@@ -56,9 +56,7 @@ let liveTimer: ReturnType<typeof setInterval> | undefined
 
 function addLiveMessage() {
   const source =
-    nextIndex < firstPass.length
-      ? firstPass[nextIndex]!
-      : loop[(nextIndex - firstPass.length) % loop.length]!
+    nextIndex < firstPass.length ? firstPass[nextIndex]! : loop[(nextIndex - firstPass.length) % loop.length]!
   nextIndex++
   sent++
   liveMessages.value = [
@@ -205,9 +203,7 @@ onUnmounted(() => {
           class="group/msg"
           :class="m.question ? 'my-2 rounded-lg bg-gold/10 p-2.5 ring-1 ring-gold/40' : 'py-1'"
         >
-          <p v-if="m.question" class="mb-1 text-[10px] font-bold tracking-widest text-gold uppercase">
-            Gold question
-          </p>
+          <p v-if="m.question" class="mb-1 text-[10px] font-bold tracking-widest text-gold uppercase">Gold question</p>
           <p class="text-sm leading-snug">
             <span v-if="mode === 'replay'" class="mr-1.5 text-[11px] text-muted tabular-nums">
               {{ formatClock(m.at) }}
@@ -221,7 +217,9 @@ onUnmounted(() => {
             </span>
             <span class="font-semibold" :class="m.tier === 'staff' ? 'text-accent-bright' : 'text-white/90'"
               >{{ m.user }}:</span
-            >{{ ' ' }}<span class="text-white/80">{{ m.text }}</span>{{ ' ' }}<VoteButtons
+            >{{ ' ' }}<span class="text-white/80">{{ m.text }}</span
+            >{{ ' '
+            }}<VoteButtons
               :likes="m.likes"
               :dislikes="m.dislikes"
               :vote="voteFor(m.id)"
@@ -240,14 +238,24 @@ onUnmounted(() => {
           <button
             type="button"
             class="inline-flex min-h-6 items-center gap-1.5 rounded-md px-2 font-semibold ring-1 transition"
-            :class="synced ? 'text-accent-bright ring-accent-bright/80 hover:bg-accent-bright/10' : 'text-white/70 ring-white/20 hover:text-white'"
+            :class="
+              synced
+                ? 'text-accent-bright ring-accent-bright/80 hover:bg-accent-bright/10'
+                : 'text-white/70 ring-white/20 hover:text-white'
+            "
             :aria-pressed="synced"
             @click="synced = !synced"
           >
-            <span class="size-1.5 rounded-full" :class="synced ? 'bg-accent-bright' : 'bg-white/30'" aria-hidden="true" />
+            <span
+              class="size-1.5 rounded-full"
+              :class="synced ? 'bg-accent-bright' : 'bg-white/30'"
+              aria-hidden="true"
+            />
             Sync with player
           </button>
-          <span role="status">{{ synced ? 'The player and the chat move together' : 'Scanning the chat on its own' }}</span>
+          <span role="status">{{
+            synced ? 'The player and the chat move together' : 'Scanning the chat on its own'
+          }}</span>
         </div>
         <div v-if="mode === 'replay'" class="flex items-center gap-3">
           <button
@@ -272,9 +280,15 @@ onUnmounted(() => {
             :aria-valuetext="formatClock(position)"
             @input="onScrub"
           />
-          <span class="w-14 shrink-0 text-right text-xs text-muted tabular-nums">{{ formatClock(Math.floor(position)) }}</span>
+          <span class="w-14 shrink-0 text-right text-xs text-muted tabular-nums">{{
+            formatClock(Math.floor(position))
+          }}</span>
           <!-- While synced the player sets the speed; on its own, 10× scans quickly. -->
-          <span v-if="following && clock.rate !== 1" class="shrink-0 rounded bg-accent/30 px-1.5 py-px text-xs font-semibold text-accent-bright">{{ clock.rate }}×</span>
+          <span
+            v-if="following && clock.rate !== 1"
+            class="shrink-0 rounded bg-accent/30 px-1.5 py-px text-xs font-semibold text-accent-bright"
+            >{{ clock.rate }}×</span
+          >
           <button
             v-else-if="!following"
             type="button"

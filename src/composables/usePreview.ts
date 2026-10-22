@@ -1,14 +1,4 @@
-import {
-  computed,
-  inject,
-  onMounted,
-  onUnmounted,
-  provide,
-  ref,
-  useId,
-  type InjectionKey,
-  type Ref,
-} from 'vue'
+import { computed, inject, onMounted, onUnmounted, provide, ref, useId, type InjectionKey, type Ref } from 'vue'
 
 // Hover previews, as on YouTube: a card sits still until you rest on it,
 // then it "plays".

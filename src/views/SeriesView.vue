@@ -26,9 +26,7 @@ const series = computed(() => getSeries(String(route.params.slug)))
 const show = computed(() => (series.value ? getShow(series.value.showId) : undefined))
 const locked = computed(() => !!series.value && !series.value.episodes.every((e) => canWatch(e)))
 
-const watchedCount = computed(
-  () => series.value?.episodes.filter((e) => isWatched(e.id)).length ?? 0,
-)
+const watchedCount = computed(() => series.value?.episodes.filter((e) => isWatched(e.id)).length ?? 0)
 
 /** Where "play" should start, and what the button says. */
 const start = computed(() => {
@@ -67,9 +65,7 @@ function watchLink(episodeId: string) {
       <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink to-transparent" />
 
       <div class="relative max-w-2xl px-4 pt-16 pb-10 sm:px-8 sm:pt-24">
-        <p class="font-serif text-sm font-bold tracking-widest text-white/70 uppercase">
-          {{ show.name }} · Series
-        </p>
+        <p class="font-serif text-sm font-bold tracking-widest text-white/70 uppercase">{{ show.name }} · Series</p>
         <h1 class="mt-2 text-3xl leading-tight font-bold text-balance sm:text-5xl">{{ series.name }}</h1>
         <p class="mt-2 text-sm text-white/75">
           <ContributorNames :ids="series.episodes[0]!.hostIds" /> · {{ series.episodes.length }} parts ·
@@ -128,9 +124,7 @@ function watchLink(episodeId: string) {
             :to="canWatch(episode) ? watchLink(episode.id) : '/join'"
             class="group flex items-center gap-4 py-3 outline-none focus-visible:ring-2 focus-visible:ring-accent-bright"
             :aria-label="
-              canWatch(episode)
-                ? undefined
-                : `Part ${toRoman(episode.series!.part)}, ${episode.title}. Members only.`
+              canWatch(episode) ? undefined : `Part ${toRoman(episode.series!.part)}, ${episode.title}. Members only.`
             "
           >
             <span class="w-8 shrink-0 text-center font-serif text-xl font-bold text-white/50">
@@ -150,7 +144,10 @@ function watchLink(episodeId: string) {
                 </span>
               </span>
               <div v-else-if="progressFor(episode.id) > 0" class="absolute inset-x-0 bottom-0 h-1 bg-white/20">
-                <div class="h-full bg-accent-bright" :style="{ width: `${Math.round(progressFor(episode.id) * 100)}%` }" />
+                <div
+                  class="h-full bg-accent-bright"
+                  :style="{ width: `${Math.round(progressFor(episode.id) * 100)}%` }"
+                />
               </div>
             </div>
             <div class="min-w-0 flex-1">
@@ -175,6 +172,8 @@ function watchLink(episodeId: string) {
 
   <main v-else class="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-4 text-center">
     <h1 class="font-serif text-4xl font-bold">Series not found</h1>
-    <RouterLink to="/" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink">Back to home</RouterLink>
+    <RouterLink to="/" class="mt-6 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+      >Back to home</RouterLink
+    >
   </main>
 </template>

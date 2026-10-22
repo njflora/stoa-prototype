@@ -46,9 +46,7 @@ function subscribe() {
 
     <!-- Visitors and free accounts. -->
     <template v-else>
-      <p v-if="submitted" class="mt-3 text-sm font-medium text-white" role="status">
-        Thanks, you're on the list.
-      </p>
+      <p v-if="submitted" class="mt-3 text-sm font-medium text-white" role="status">Thanks, you're on the list.</p>
       <form v-else class="mt-3 flex max-w-sm gap-2" @submit.prevent="subscribe">
         <label :for="emailId" class="sr-only">Email address</label>
         <input

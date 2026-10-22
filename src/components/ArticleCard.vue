@@ -56,9 +56,18 @@ const colours = computed(() => articleCategoryColours[props.article.category])
       <ContributorNames :ids="[article.authorId]" /> · {{ article.readMin }} min read ·
       {{ formatPublished(article.publishedAt) }}
     </p>
-    <p v-if="article.views !== undefined" class="mt-0.5 flex items-center gap-2 px-0.5 text-[11px] text-muted [&_svg]:size-3.5">
-      <span class="inline-flex items-center gap-0.5" :aria-label="`${article.views} views`"><AppIcon name="eye" /> {{ formatCount(article.views) }}</span>
-      <span v-if="article.comments !== undefined" class="inline-flex items-center gap-0.5" :aria-label="`${article.comments} comments`">
+    <p
+      v-if="article.views !== undefined"
+      class="mt-0.5 flex items-center gap-2 px-0.5 text-[11px] text-muted [&_svg]:size-3.5"
+    >
+      <span class="inline-flex items-center gap-0.5" :aria-label="`${article.views} views`"
+        ><AppIcon name="eye" /> {{ formatCount(article.views) }}</span
+      >
+      <span
+        v-if="article.comments !== undefined"
+        class="inline-flex items-center gap-0.5"
+        :aria-label="`${article.comments} comments`"
+      >
         <AppIcon name="chat" /> {{ formatCount(article.comments) }}
       </span>
     </p>

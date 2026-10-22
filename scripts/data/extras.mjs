@@ -168,8 +168,20 @@ const source = (type, title, by, year, to) => ({
 
 const sourcePools = {
   'stoa-podcast': [
-    source('Article', 'Local Elections Are Telling Us Something', 'Gary Lowther, Stoa', 2026, '/articles/local-elections'),
-    source('Article', 'The Quiet Collapse of the Centre Ground', 'Andrew Pickering, Stoa', 2026, '/articles/centre-ground'),
+    source(
+      'Article',
+      'Local Elections Are Telling Us Something',
+      'Gary Lowther, Stoa',
+      2026,
+      '/articles/local-elections',
+    ),
+    source(
+      'Article',
+      'The Quiet Collapse of the Centre Ground',
+      'Andrew Pickering, Stoa',
+      2026,
+      '/articles/centre-ground',
+    ),
     source('Data', 'Public Attitudes Tracker, Autumn 2026', 'Civic Opinion Unit', 2026),
     source('Report', 'How Westminster Spends Its Week', 'Parliamentary Practice Review', 2025),
     source('Book', 'The Long Campaign', 'E. M. Talbot', 2022),
@@ -178,7 +190,13 @@ const sourcePools = {
   'morning-brief': [
     source('Data', 'Overnight Markets Summary', 'Daily Markets Digest', 2026),
     source('Report', 'Weekly Economic Calendar', 'Household Finance Monitor', 2026),
-    source('Article', 'What the Energy Crunch Means for Winter Bills', 'Rachel Ashworth, Stoa', 2026, '/articles/winter-bills'),
+    source(
+      'Article',
+      'What the Energy Crunch Means for Winter Bills',
+      'Rachel Ashworth, Stoa',
+      2026,
+      '/articles/winter-bills',
+    ),
     source('Data', 'Regional Weather and Travel Outlook', 'Met Desk', 2026),
   ],
   conversations: [
@@ -189,7 +207,13 @@ const sourcePools = {
     source('Article', 'What Happened to the British Sitcom?', 'Tom Heywood, Stoa', 2026, '/articles/british-sitcom'),
   ],
   chronos: [
-    source('Article', 'Why the Romans Feared Their Own Generals', 'Helen Thwaite, Stoa', 2026, '/articles/roman-generals'),
+    source(
+      'Article',
+      'Why the Romans Feared Their Own Generals',
+      'Helen Thwaite, Stoa',
+      2026,
+      '/articles/roman-generals',
+    ),
     source('Article', 'Agincourt Without the Myths', 'Helen Thwaite, Stoa', 2026, '/articles/agincourt-myths'),
     source('Book', 'The Last Republic', 'A. J. Wexley', 2016),
     source('Book', 'Empire of the East', 'C. R. Danvers', 2019),
@@ -198,7 +222,13 @@ const sourcePools = {
     source('Report', 'Coin Finds and Trade Routes', 'Society for Ancient Economies', 2022),
   ],
   statecraft: [
-    source('Article', 'The Shipping Lanes Nobody Talks About', 'Rachel Ashworth, Stoa', 2026, '/articles/shipping-lanes'),
+    source(
+      'Article',
+      'The Shipping Lanes Nobody Talks About',
+      'Rachel Ashworth, Stoa',
+      2026,
+      '/articles/shipping-lanes',
+    ),
     source('Report', 'Global Energy Outlook', 'International Energy Review', 2026),
     source('Data', 'World Shipping Chokepoints', 'Maritime Trade Monitor', 2026),
     source('Book', 'The Map and the Throne', 'L. K. Varga', 2021),
@@ -206,7 +236,13 @@ const sourcePools = {
   ],
   ledger: [
     source('Article', 'A Plain Guide to the National Debt', 'Sally Dunmore, Stoa', 2026, '/articles/national-debt'),
-    source('Article', 'Rents, Wages and the Missing Middle', 'Neil Barraclough, Stoa', 2026, '/articles/missing-middle'),
+    source(
+      'Article',
+      'Rents, Wages and the Missing Middle',
+      'Neil Barraclough, Stoa',
+      2026,
+      '/articles/missing-middle',
+    ),
     source('Data', 'Household Income Survey', 'Household Finance Monitor', 2026),
     source('Book', 'Money Without the Mystery', 'J. T. Hartnell', 2020),
     source('Report', 'Productivity Since 2008', 'Institute for Economic Review', 2025),
@@ -221,7 +257,13 @@ const sourcePools = {
 /** Sources for a series, so each part cites its own period. */
 const seriesSourcePools = {
   'The Fall of the Republic': [
-    source('Article', 'Why the Romans Feared Their Own Generals', 'Helen Thwaite, Stoa', 2026, '/articles/roman-generals'),
+    source(
+      'Article',
+      'Why the Romans Feared Their Own Generals',
+      'Helen Thwaite, Stoa',
+      2026,
+      '/articles/roman-generals',
+    ),
     source('Book', 'The Last Republic', 'A. J. Wexley', 2016),
     source('Data', 'Atlas of the Ancient Mediterranean', 'Historical Maps Project', 2020),
     source('Report', 'Coin Finds and Trade Routes', 'Society for Ancient Economies', 2022),
@@ -243,34 +285,119 @@ const seriesSourcePools = {
 
 // ---------- the live show (hand-written) ----------
 // Times are minutes before the catalogue was generated.
-const comment = (user, tier, minutes, [likes, dislikes], text, replies = []) => ({ user, tier, minutes, likes, dislikes, text, replies })
+const comment = (user, tier, minutes, [likes, dislikes], text, replies = []) => ({
+  user,
+  tier,
+  minutes,
+  likes,
+  dislikes,
+  text,
+  replies,
+})
 
 const liveThread = [
-  comment('MargaretH', 'silver', 12, [14, 1], 'The segment on council budgets was the clearest explanation I have heard anywhere. More of that please.', [
-    comment('GrumpyHistorian', 'silver', 8, [3, 0], 'Agreed. Tom had the figures ready, which helps.'),
-  ]),
-  comment('bookish_bill', 'gold', 25, [31, 2], 'Thanks for taking my question on the energy price cap. Answered better than I expected.', [
-    comment('Stoa_Producer', 'staff', 20, [9, 0], 'Glad it helped. The sources are in the reading list next to the comments.'),
-    comment('Wessex_Walker', 'gold', 18, [2, 0], 'Same question was on my list, so thank you both.'),
-  ]),
-  comment('teabreak_tim', 'bronze', 40, [9, 8], 'Could we get a follow-up on the housing figures? Felt like there was more to say.'),
-  comment('HollyFromHull', 'bronze', 55, [11, 0], 'First time watching live instead of catching up later. The chat makes a real difference.'),
-  comment('Brummie_Rob', 'bronze', 60, [40, 35], 'Hot take: the after-show should be free for everyone. The best discussion happens there.', [
-    comment('Wessex_Walker', 'gold', 58, [22, 6], 'Someone has to pay for it. The after-show is what the membership is for.'),
-    comment('NorthernLass', 'bronze', 50, [12, 9], 'A free taster once a month would be a fair middle ground.'),
-    comment('NorthernLad', 'bronze', 45, [31, 2], '@NorthernLass A free taster for everyone? Sounds a bit communist to me.'),
-  ]),
+  comment(
+    'MargaretH',
+    'silver',
+    12,
+    [14, 1],
+    'The segment on council budgets was the clearest explanation I have heard anywhere. More of that please.',
+    [comment('GrumpyHistorian', 'silver', 8, [3, 0], 'Agreed. Tom had the figures ready, which helps.')],
+  ),
+  comment(
+    'bookish_bill',
+    'gold',
+    25,
+    [31, 2],
+    'Thanks for taking my question on the energy price cap. Answered better than I expected.',
+    [
+      comment(
+        'Stoa_Producer',
+        'staff',
+        20,
+        [9, 0],
+        'Glad it helped. The sources are in the reading list next to the comments.',
+      ),
+      comment('Wessex_Walker', 'gold', 18, [2, 0], 'Same question was on my list, so thank you both.'),
+    ],
+  ),
+  comment(
+    'teabreak_tim',
+    'bronze',
+    40,
+    [9, 8],
+    'Could we get a follow-up on the housing figures? Felt like there was more to say.',
+  ),
+  comment(
+    'HollyFromHull',
+    'bronze',
+    55,
+    [11, 0],
+    'First time watching live instead of catching up later. The chat makes a real difference.',
+  ),
+  comment(
+    'Brummie_Rob',
+    'bronze',
+    60,
+    [40, 35],
+    'Hot take: the after-show should be free for everyone. The best discussion happens there.',
+    [
+      comment(
+        'Wessex_Walker',
+        'gold',
+        58,
+        [22, 6],
+        'Someone has to pay for it. The after-show is what the membership is for.',
+      ),
+      comment('NorthernLass', 'bronze', 50, [12, 9], 'A free taster once a month would be a fair middle ground.'),
+      comment(
+        'NorthernLad',
+        'bronze',
+        45,
+        [31, 2],
+        '@NorthernLass A free taster for everyone? Sounds a bit communist to me.',
+      ),
+    ],
+  ),
   comment('quietreader', 'bronze', 70, [4, 3], 'Richard was on good form today. Looking forward to the after-show.'),
-  comment('Wessex_Walker', 'gold', 95, [22, 4], 'Good to see the schedule on the site now. Much easier than checking three different places.', [
-    comment('MargaretH', 'silver', 90, [5, 0], 'The reminders are handy too.'),
-  ]),
-  comment('GrumpyHistorian', 'silver', 130, [18, 16], 'Small correction: the 1976 figure Andrew mentioned was for the year, not the quarter. Does not change the point.'),
+  comment(
+    'Wessex_Walker',
+    'gold',
+    95,
+    [22, 4],
+    'Good to see the schedule on the site now. Much easier than checking three different places.',
+    [comment('MargaretH', 'silver', 90, [5, 0], 'The reminders are handy too.')],
+  ),
+  comment(
+    'GrumpyHistorian',
+    'silver',
+    130,
+    [18, 16],
+    'Small correction: the 1976 figure Andrew mentioned was for the year, not the quarter. Does not change the point.',
+  ),
   comment('teabreak_tim', 'bronze', 180, [4, 6], 'Audio was a bit quiet for the first five minutes, fine after that.'),
-  comment('bookish_bill', 'gold', 240, [17, 15], 'Would happily pay for a longer version of the budget breakdown as its own episode.'),
-  comment('HollyFromHull', 'bronze', 300, [3, 0], 'Has anyone found the article Richard mentioned? The one on the long novel.', [
-    comment('quietreader', 'bronze', 295, [4, 0], 'It is on the homepage under Latest articles.'),
-  ]),
-  comment('MargaretH', 'silver', 420, [7, 5], 'Lovely to hear the producer laughing in the background. Keeps it human.'),
+  comment(
+    'bookish_bill',
+    'gold',
+    240,
+    [17, 15],
+    'Would happily pay for a longer version of the budget breakdown as its own episode.',
+  ),
+  comment(
+    'HollyFromHull',
+    'bronze',
+    300,
+    [3, 0],
+    'Has anyone found the article Richard mentioned? The one on the long novel.',
+    [comment('quietreader', 'bronze', 295, [4, 0], 'It is on the homepage under Latest articles.')],
+  ),
+  comment(
+    'MargaretH',
+    'silver',
+    420,
+    [7, 5],
+    'Lovely to hear the producer laughing in the background. Keeps it human.',
+  ),
   comment('Wessex_Walker', 'gold', 600, [1, 0], 'Early comment from the countdown. See you all at one.'),
 ]
 
@@ -366,7 +493,15 @@ function thread(seed, pool, publishedAt, discussed, now) {
     const replies = pickSome(random, replyPool, replyCount).map((reply) => {
       const [replyUser, replyTier] = commenters[randomInt(random, 0, commenters.length - 1)]
       const [replyLikes, replyDislikes] = votes(random)
-      return { user: replyUser, tier: replyTier, postedAt: postedAfter(random, postedAt, now), text: reply, likes: replyLikes, dislikes: replyDislikes, replies: [] }
+      return {
+        user: replyUser,
+        tier: replyTier,
+        postedAt: postedAfter(random, postedAt, now),
+        text: reply,
+        likes: replyLikes,
+        dislikes: replyDislikes,
+        replies: [],
+      }
     })
     return { user, tier, postedAt, text, likes, dislikes, replies }
   })
@@ -384,7 +519,13 @@ function readingList(episode) {
 
 const size = (comments) => comments.reduce((total, c) => total + 1 + c.replies.length, 0)
 const minutesBefore = (now, minutes) => new Date(now.getTime() - minutes * 60_000).toISOString()
-const fromMinutes = (now) => ({ minutes, replies, ...c }) => ({ ...c, postedAt: minutesBefore(now, minutes), replies: replies.map(fromMinutes(now)) })
+const fromMinutes =
+  (now) =>
+  ({ minutes, replies, ...c }) => ({
+    ...c,
+    postedAt: minutesBefore(now, minutes),
+    replies: replies.map(fromMinutes(now)),
+  })
 
 /**
  * Every thread and reading list. Each episode's and article's comment count
@@ -403,7 +544,13 @@ export function buildExtras({ episodes, articles, now, seededRandom }) {
     lists.push({ list: `episode:${episode.id}`, items: readingList(episode) })
   }
   for (const article of articles) {
-    const comments = thread(`article-${article.id}`, articleCommentPools[article.category], article.publishedAt, article.comments, now)
+    const comments = thread(
+      `article-${article.id}`,
+      articleCommentPools[article.category],
+      article.publishedAt,
+      article.comments,
+      now,
+    )
     article.comments = size(comments)
     threads.push({ thread: `article:${article.id}`, comments })
   }

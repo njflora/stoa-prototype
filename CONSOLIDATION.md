@@ -27,6 +27,7 @@ The prototype already runs this design end to end on invented data: the canonica
 **What.** Connect each platform's real feed to its adapter (`backend/app/Sources`), one platform at a time. The matcher links each upload to its episode by time (within 12 hours) and title, compared without the platform's habits. What it cannot match is listed on the desk for a person to decide.
 
 **To verify, per platform.** None of these has been tested against the real platform yet:
+
 - **Rumble:** what their account can use to list a channel's videos (an API with their account, or a feed). The prototype's Rumble format is a placeholder.
 - **Odysee:** whether its public API's channel search (the shape the prototype's Odysee adapter reads) covers their channel in full, and its limits.
 - **BitChute:** whether a channel RSS feed is available and how far back it goes. The prototype reads RSS.
@@ -64,13 +65,13 @@ The prototype already runs this design end to end on invented data: the canonica
 
 Each run is recorded and shown on the desk:
 
-| Field | Meaning |
-|---|---|
-| In the feed | Uploads the platform listed |
-| Matched | Uploads that are episodes |
-| Newly linked | Links that were new or changed |
+| Field        | Meaning                           |
+| ------------ | --------------------------------- |
+| In the feed  | Uploads the platform listed       |
+| Matched      | Uploads that are episodes         |
+| Newly linked | Links that were new or changed    |
 | Not episodes | Clips and extras, listed by title |
-| Status | Done, or failed with the reason |
+| Status       | Done, or failed with the reason   |
 
 The sync runs every hour, and on demand from the desk. Running it twice links nothing new, so it is safe to repeat.
 
