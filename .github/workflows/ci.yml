@@ -1,5 +1,6 @@
-# Checks every push and pull request: the site type-checks and builds, the
-# Laravel tests pass, and no installed package has a known security problem.
+# Checks every push and pull request: the site passes lint and the format
+# check, type-checks and builds, the Laravel tests pass, and no installed
+# package has a known security problem.
 # Actions are pinned to exact commits, as in deploy.yml.
 name: Checks
 
@@ -21,6 +22,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # Style and lint first, so a problem there fails fast.
+      - run: npm run format:check
+      - run: npm run lint
       - run: npm run build:pages
       # Fails on high or critical problems in any package.
       - run: npm audit --audit-level=high

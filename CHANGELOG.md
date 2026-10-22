@@ -17,6 +17,8 @@ v2 makes the code easier to maintain, better tested and more secure. It adds no 
 - The site and docs are formatted with Prettier. Layout only.
 - Two click handlers in the demo panel and the search panel are named functions. Prettier's layout drops the semicolon between their two statements, which Vue's template compiler needs.
 
+- The checks workflow (ci.yml) runs `npm run format:check` and `npm run lint` before the build, so a push with a lint error or unformatted code fails.
+
 #### Notes
 - The TypeScript and Vue rules are set up directly with typescript-eslint and eslint-plugin-vue. The usual wrapper package depends on a library with a high-severity advisory and no fix yet, which would fail the audit.
 
