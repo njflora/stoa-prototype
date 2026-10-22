@@ -27,6 +27,16 @@ export default defineConfig(
     },
   },
   {
+    rules: {
+      // A leading underscore marks a value left out on purpose, as in
+      // `const { id: _, ...rest } = item`. So do the other names in a rest pattern.
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', ignoreRestSiblings: true },
+      ],
+    },
+  },
+  {
     // Single-file components: the template uses vue-eslint-parser, and
     // the script inside it uses TypeScript's parser.
     files: ['**/*.vue'],

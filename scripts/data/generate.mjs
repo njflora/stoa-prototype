@@ -76,10 +76,6 @@ function at(date, hour, minute = 0) {
   d.setHours(hour, minute, 0, 0)
   return d.toISOString()
 }
-function isWeekday(date) {
-  const day = date.getDay()
-  return day !== 0 && day !== 6
-}
 /** Dates going back from yesterday, keeping only the given weekdays (0 is Sunday). */
 function datesBack(count, days, startOffset = 1) {
   const out = []
