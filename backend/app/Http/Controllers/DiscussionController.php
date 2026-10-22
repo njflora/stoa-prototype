@@ -7,7 +7,6 @@ use App\Discussion\Discussions;
 use App\Discussion\Thread;
 use App\Models\Comment;
 use App\Models\ForumTopic;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

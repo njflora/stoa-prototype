@@ -6,6 +6,14 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-22: Formatting for the back end
+
+#### Added
+- Pint formats the Laravel code with the Laravel preset (`backend/pint.json`). `composer lint` checks it and `composer format` applies it.
+
+#### Changed
+- Three files follow the preset: imports in order, an unused import removed from DiscussionController, and short class names in the search config.
+
 ### 2026-10-22: Linting and formatting for the site
 
 #### Added

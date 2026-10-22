@@ -1,5 +1,11 @@
 <?php
 
+use App\Models\Article;
+use App\Models\Contributor;
+use App\Models\Episode;
+use App\Models\Series;
+use App\Models\Show;
+
 return [
 
     /*
@@ -142,11 +148,11 @@ return [
         // Every index searches the same four fields, title first, and ranks
         // newer items ahead of older ones that match equally well.
         'index-settings' => array_fill_keys([
-            App\Models\Episode::class,
-            App\Models\Article::class,
-            App\Models\Series::class,
-            App\Models\Show::class,
-            App\Models\Contributor::class,
+            Episode::class,
+            Article::class,
+            Series::class,
+            Show::class,
+            Contributor::class,
         ], [
             'searchableAttributes' => ['title', 'show', 'hosts', 'text'],
             'rankingRules' => ['words', 'typo', 'proximity', 'attribute', 'sort', 'exactness', 'published_ts:desc'],
