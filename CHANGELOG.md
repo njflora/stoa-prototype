@@ -2,6 +2,15 @@
 
 All notable changes to this prototype are listed here. Newest first.
 
+## v2, in progress on the `refine` branch
+
+v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
+
+### 2026-10-22: Checks run on the refine branch
+
+#### Changed
+- The checks workflow (ci.yml) runs on every push to `refine`, as well as to `main` and on pull requests. The deploy workflow still runs only from `main`, so `refine` cannot change the live preview.
+
 ## 2026-10-21: A second bug report
 
 ### Added
