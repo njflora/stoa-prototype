@@ -15,9 +15,8 @@ An episode page shows the signs of members-only content: a title starting "PREMI
 ## Steps to reproduce
 
 1. Without signing in, open the episode's page.
-2. The title starts "PREMIUM:", and the page offers full access for £1.89.
-3. Press play.
-4. The video plays, although the page presents it as paid content.
+2. Press play.
+3. The video plays, although the page presents it as paid content.
 
 ## Expected result
 
