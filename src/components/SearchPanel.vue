@@ -101,7 +101,9 @@ function onPanelKeydown(event: KeyboardEvent) {
     return
   }
   if (event.key !== 'Tab' || !panel.value) return
-  const focusable = [...panel.value.querySelectorAll<HTMLElement>('input, button, a[href]')].filter((el) => el.offsetParent)
+  const focusable = [...panel.value.querySelectorAll<HTMLElement>('input, button, a[href]')].filter(
+    (el) => el.offsetParent,
+  )
   const first = focusable[0]
   const last = focusable.at(-1)
   if (event.shiftKey && document.activeElement === first) {
@@ -116,7 +118,10 @@ function onPanelKeydown(event: KeyboardEvent) {
 // Detail and artwork for each kind of result.
 function thumb(hit: SearchHit): string | undefined {
   if (hit.kind === 'episode' && hit.showId) {
-    return mediaUrl(artForEpisode({ id: hit.id, showId: hit.showId, series: hit.seriesName ? { name: hit.seriesName } : undefined }).card)
+    return mediaUrl(
+      artForEpisode({ id: hit.id, showId: hit.showId, series: hit.seriesName ? { name: hit.seriesName } : undefined })
+        .card,
+    )
   }
   if (hit.kind === 'series' && hit.seriesName) {
     const art = artForSeries(hit.seriesName) ?? (hit.showId ? artForShow(hit.showId)[0] : undefined)
@@ -155,6 +160,11 @@ function articleColour(hit: SearchHit): string | undefined {
 const locked = (hit: SearchHit) => hit.kind === 'episode' && hit.access === 'premium' && !isMember.value
 
 const suggestions = ['Rome', 'energy', 'Helen Thwaite', 'The Forum', '1530', 'Roman Resurgence']
+
+function searchFor(suggestion: string) {
+  query.value = suggestion
+  input.value?.focus()
+}
 </script>
 
 <template>
@@ -232,7 +242,7 @@ const suggestions = ['Rome', 'energy', 'Helen Thwaite', 'The Forum', '1530', 'Ro
             :key="s"
             type="button"
             class="min-h-9 rounded-full bg-white/10 px-4 text-sm ring-1 ring-white/10 hover:bg-white/20"
-            @click="query = s; input?.focus()"
+            @click="searchFor(s)"
           >
             {{ s }}
           </button>
@@ -256,13 +266,37 @@ const suggestions = ['Rome', 'energy', 'Helen Thwaite', 'The Forum', '1530', 'Ro
               @click="open(hit)"
               @mousemove="active = flat.indexOf(hit)"
             >
-              <span class="relative grid aspect-video w-20 shrink-0 place-items-center overflow-hidden rounded bg-white/10 ring-1 ring-white/10">
-                <img v-if="thumb(hit)" :src="thumb(hit)" alt="" class="size-full object-cover" :class="locked(hit) ? 'blur-[2px] brightness-75' : ''" loading="lazy" />
-                <span v-else-if="hit.kind === 'host'" class="grid size-9 place-items-center rounded-full bg-accent text-xs font-bold">
-                  {{ hit.title.split(' ').map((w) => w[0]).join('').slice(0, 2) }}
+              <span
+                class="relative grid aspect-video w-20 shrink-0 place-items-center overflow-hidden rounded bg-white/10 ring-1 ring-white/10"
+              >
+                <img
+                  v-if="thumb(hit)"
+                  :src="thumb(hit)"
+                  alt=""
+                  class="size-full object-cover"
+                  :class="locked(hit) ? 'blur-[2px] brightness-75' : ''"
+                  loading="lazy"
+                />
+                <span
+                  v-else-if="hit.kind === 'host'"
+                  class="grid size-9 place-items-center rounded-full bg-accent text-xs font-bold"
+                >
+                  {{
+                    hit.title
+                      .split(' ')
+                      .map((w) => w[0])
+                      .join('')
+                      .slice(0, 2)
+                  }}
                 </span>
-                <span v-else-if="hit.kind === 'article'" class="absolute inset-y-0 left-0 w-1.5" :style="{ backgroundColor: articleColour(hit) }" />
-                <span v-if="locked(hit)" class="absolute inset-0 grid place-items-center [&>svg]:size-4"><AppIcon name="lock" /></span>
+                <span
+                  v-else-if="hit.kind === 'article'"
+                  class="absolute inset-y-0 left-0 w-1.5"
+                  :style="{ backgroundColor: articleColour(hit) }"
+                />
+                <span v-if="locked(hit)" class="absolute inset-0 grid place-items-center [&>svg]:size-4"
+                  ><AppIcon name="lock"
+                /></span>
               </span>
               <span class="min-w-0 flex-1">
                 <!-- Two lines, not one: similar titles differ at the end. -->

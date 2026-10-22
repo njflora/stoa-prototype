@@ -43,6 +43,11 @@ const { enabled: pitchMode } = usePitchMode()
 const route = useRoute()
 const open = ref(false)
 
+function closeAndReplayIntro() {
+  open.value = false
+  replayIntro()
+}
+
 const segment = 'rounded-md px-3 py-1 text-xs font-medium transition'
 const on = 'bg-white text-ink'
 const off = 'text-white/70 hover:text-white'
@@ -86,7 +91,11 @@ const off = 'text-white/70 hover:text-white'
         </div>
       </div>
 
-      <RouterLink v-if="isStaff" to="/desk" class="block text-xs font-semibold text-accent-bright underline underline-offset-2">
+      <RouterLink
+        v-if="isStaff"
+        to="/desk"
+        class="block text-xs font-semibold text-accent-bright underline underline-offset-2"
+      >
         Open the content desk
       </RouterLink>
 
@@ -120,14 +129,26 @@ const off = 'text-white/70 hover:text-white'
         <p class="mb-1 text-xs font-semibold">Pitch mode</p>
         <div class="flex flex-wrap items-center gap-2">
           <div class="inline-flex rounded-lg bg-black/40 p-1" role="group" aria-label="Pitch mode">
-            <button type="button" :class="[segment, !pitchMode ? on : off]" :aria-pressed="!pitchMode" @click="pitchMode = false">
+            <button
+              type="button"
+              :class="[segment, !pitchMode ? on : off]"
+              :aria-pressed="!pitchMode"
+              @click="pitchMode = false"
+            >
               Off
             </button>
-            <button type="button" :class="[segment, pitchMode ? on : off]" :aria-pressed="pitchMode" @click="pitchMode = true">
+            <button
+              type="button"
+              :class="[segment, pitchMode ? on : off]"
+              :aria-pressed="pitchMode"
+              @click="pitchMode = true"
+            >
               On
             </button>
           </div>
-          <RouterLink to="/pitch" class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white">All notes</RouterLink>
+          <RouterLink to="/pitch" class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white"
+            >All notes</RouterLink
+          >
         </div>
       </div>
 
@@ -135,7 +156,7 @@ const off = 'text-white/70 hover:text-white'
         <button
           type="button"
           class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white"
-          @click="open = false; replayIntro()"
+          @click="closeAndReplayIntro"
         >
           Replay intro
         </button>
@@ -151,10 +172,18 @@ const off = 'text-white/70 hover:text-white'
       <div>
         <p class="mb-1 text-xs font-semibold">Watch progress</p>
         <div class="flex flex-wrap gap-x-3 gap-y-1">
-          <button type="button" class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white" @click="clearProgress">
+          <button
+            type="button"
+            class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white"
+            @click="clearProgress"
+          >
             Clear watch progress
           </button>
-          <button type="button" class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white" @click="restoreProgress">
+          <button
+            type="button"
+            class="inline-flex min-h-6 items-center text-xs text-muted underline hover:text-white"
+            @click="restoreProgress"
+          >
             Restore sample progress
           </button>
         </div>
