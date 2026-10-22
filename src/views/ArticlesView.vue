@@ -42,11 +42,11 @@ function query(changes: Partial<View>): LocationQueryRaw {
 }
 const sortModel = computed({
   get: () => sort.value,
-  set: (value: ArticleSort) => router.push({ query: query({ sort: value, page: 0 }) }),
+  set: (value: ArticleSort) => void router.push({ query: query({ sort: value, page: 0 }) }),
 })
 const periodModel = computed({
   get: () => period.value,
-  set: (value: ArticlePeriod) => router.push({ query: query({ period: value, page: 0 }) }),
+  set: (value: ArticlePeriod) => void router.push({ query: query({ period: value, page: 0 }) }),
 })
 const sortOptions: { value: ArticleSort; label: string }[] = [
   { value: 'newest', label: 'Newest' },
@@ -57,7 +57,7 @@ const periodLabels: Record<ArticlePeriod, string> = { week: 'This week', month: 
 const periodOptions = periods.map((p) => ({ value: p, label: periodLabels[p] }))
 const categoryModel = computed({
   get: () => category.value,
-  set: (value: Choice) => router.push({ query: query({ category: value, page: 0 }) }),
+  set: (value: Choice) => void router.push({ query: query({ category: value, page: 0 }) }),
 })
 const options = [{ value: 'all' as Choice, label: 'All' }, ...categories.map((c) => ({ value: c as Choice, label: c }))]
 

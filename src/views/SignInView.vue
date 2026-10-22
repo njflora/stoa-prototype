@@ -25,7 +25,7 @@ const next = computed(() =>
 
 async function continueAs(id: ViewerType) {
   await setViewer(id)
-  router.push(next.value)
+  void router.push(next.value)
 }
 </script>
 

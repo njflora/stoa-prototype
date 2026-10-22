@@ -74,16 +74,16 @@ async function move(step: 1 | -1) {
 function open(hit: SearchHit | undefined) {
   if (!hit) return
   // Going to another page closes the overlay, since the new address has no ?search.
-  router.push(hit.to)
+  void router.push(hit.to)
 }
 
 function onInputKeydown(event: KeyboardEvent) {
   if (event.key === 'ArrowDown') {
     event.preventDefault()
-    move(1)
+    void move(1)
   } else if (event.key === 'ArrowUp') {
     event.preventDefault()
-    move(-1)
+    void move(-1)
   } else if (event.key === 'Enter') {
     event.preventDefault()
     open(flat.value[active.value] ?? flat.value[0])

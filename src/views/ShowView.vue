@@ -76,19 +76,19 @@ const pageLink = (p: number) => ({ query: query({ page: p }) })
 // Changing sort or filter starts again from page 1, as a new history entry.
 const sortModel = computed({
   get: () => sort.value,
-  set: (value: SortOrder) => router.push({ query: query({ sort: value, page: 0 }) }),
+  set: (value: SortOrder) => void router.push({ query: query({ sort: value, page: 0 }) }),
 })
 const accessModel = computed({
   get: () => access.value,
-  set: (value: AccessFilter) => router.push({ query: query({ access: value, page: 0 }) }),
+  set: (value: AccessFilter) => void router.push({ query: query({ access: value, page: 0 }) }),
 })
 const periodModel = computed({
   get: () => period.value,
-  set: (value: Period) => router.push({ query: query({ period: value, page: 0 }) }),
+  set: (value: Period) => void router.push({ query: query({ period: value, page: 0 }) }),
 })
 const hostModel = computed({
   get: () => host.value,
-  set: (value: string) => router.push({ query: query({ host: value, page: 0 }) }),
+  set: (value: string) => void router.push({ query: query({ host: value, page: 0 }) }),
 })
 
 /** Filter by a contributor from the header, then bring the list into view. */

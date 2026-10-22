@@ -29,7 +29,7 @@ const base = computed(() =>
 
 function toggle() {
   if (on.value) turnOff(props.target.id)
-  else turnOn(props.target)
+  else void turnOn(props.target)
 }
 
 onMounted(() => restore(props.target))

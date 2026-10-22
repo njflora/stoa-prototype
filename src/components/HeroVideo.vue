@@ -39,19 +39,19 @@ function toggle() {
     pausedByViewer.value = true
   } else {
     pausedByViewer.value = false
-    play()
+    void play()
   }
 }
 
 onMounted(() => {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (reduceMotion) pausedByViewer.value = true
-  else play()
+  else void play()
 
   if (!video.value || !('IntersectionObserver' in window)) return
   observer = new IntersectionObserver(([entry]) => {
     if (!entry?.isIntersecting) video.value?.pause()
-    else if (!pausedByViewer.value) play()
+    else if (!pausedByViewer.value) void play()
   })
   observer.observe(video.value)
 })

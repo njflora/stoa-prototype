@@ -96,7 +96,7 @@ function stopCountdown() {
 function playNext() {
   stopCountdown()
   if (!nextPart.value || !series.value) return
-  router.push({ path: `/watch/${nextPart.value.id}`, query: { series: series.value.slug } })
+  void router.push({ path: `/watch/${nextPart.value.id}`, query: { series: series.value.slug } })
 }
 
 function cancelNext() {

@@ -22,7 +22,7 @@ export function useSearchOverlay() {
     }
     // The history entry remembers it was opened over a page, so closing
     // can step Back rather than leave an extra entry behind.
-    router.push({ query: { ...route.query, [SEARCH_PARAM]: query }, state: { searchOverPage: true } })
+    void router.push({ query: { ...route.query, [SEARCH_PARAM]: query }, state: { searchOverPage: true } })
   }
 
   function closeSearch() {
@@ -32,7 +32,7 @@ export function useSearchOverlay() {
       return
     }
     const { [SEARCH_PARAM]: _removed, ...rest } = route.query
-    router.replace({ query: rest })
+    void router.replace({ query: rest })
   }
 
   return { isOpen, openSearch, closeSearch }

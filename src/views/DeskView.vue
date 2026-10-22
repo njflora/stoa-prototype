@@ -41,7 +41,7 @@ const columnName = (p: Platform) => (p === 'vod' ? `${brand.playerName} (VOD)` :
 
 const filter = computed<DeskFilter>({
   get: () => (typeof route.query.filter === 'string' ? (route.query.filter as DeskFilter) : 'problems'),
-  set: (value) => router.replace({ query: { ...route.query, filter: value, page: undefined } }),
+  set: (value) => void router.replace({ query: { ...route.query, filter: value, page: undefined } }),
 })
 const page = computed(() => Math.max(0, Number(route.query.page ?? 0) || 0))
 

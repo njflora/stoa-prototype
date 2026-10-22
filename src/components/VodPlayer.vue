@@ -61,7 +61,7 @@ async function openView(next: typeof view.value) {
 }
 function toggleSettings() {
   settingsOpen.value = !settingsOpen.value
-  if (settingsOpen.value) openView('main')
+  if (settingsOpen.value) void openView('main')
 }
 function closeSettings() {
   settingsOpen.value = false
@@ -78,7 +78,7 @@ async function chooseQuality(choice: string) {
     await nextTick()
     video.value.load()
   }
-  openView('main')
+  void openView('main')
 }
 /** After a new file loads: the same moment, the same speed, and playing if it was. */
 function onLoaded() {
@@ -94,7 +94,7 @@ function onLoaded() {
 }
 function chooseSpeed(rate: number) {
   setSpeed(rate)
-  openView('main')
+  void openView('main')
 }
 
 let hideTimer: ReturnType<typeof setTimeout> | undefined

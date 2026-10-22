@@ -51,9 +51,9 @@ export function useSearch() {
         // Only while the overlay is open. Keeps the rest of the address; Vue
         // Router keeps the history entry's state (see useSearchOverlay).
         if (SEARCH_PARAM in route.query && value !== fromAddress()) {
-          router.replace({ query: { ...route.query, [SEARCH_PARAM]: value } })
+          void router.replace({ query: { ...route.query, [SEARCH_PARAM]: value } })
         }
-        run(value)
+        void run(value)
       }
       // The first run (from the address) happens straight away.
       if (previous === undefined) go()

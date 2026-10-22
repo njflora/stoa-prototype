@@ -81,7 +81,12 @@ export function useReminders() {
   async function turnOn(target: ReminderTarget) {
     if (permission.value === 'unsupported') return
     if (permission.value === 'default') {
-      permission.value = await Notification.requestPermission()
+      try {
+        permission.value = await Notification.requestPermission()
+      } catch {
+        // Some browsers refuse the request outright. Nothing is set.
+        return
+      }
     }
     if (permission.value !== 'granted') return
 
