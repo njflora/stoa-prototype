@@ -6,6 +6,15 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-24: One focus trap and one way to keep a view in the address
+
+#### Changed
+- The search panel, the buy-episode dialog and the phone's More sheet share one focus trap (`keepTabInside` in `src/utils/focus.ts`). Tab and Shift+Tab go round every visible link, button and field in them and bring stray focus back. The buy dialog's own version had counted buttons only.
+- The show page and the articles page keep their sort, filters and page in the address through one composable (`useAddressState`, with the field rules in `src/utils/address.ts`). Their addresses are unchanged, so existing links still work.
+
+#### Added
+- Tests for the focus trap, and for reading and writing a view in the address, including starting again from page 1 when a filter changes and Back undoing it.
+
 ### 2026-10-24: The welcome loads only when it shows
 
 #### Changed

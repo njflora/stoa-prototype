@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch, watchEffect } from 'vue'
-import { RouterLink, useRoute, useRouter, type LocationQueryRaw } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
 import CardSkeleton from '@/components/CardSkeleton.vue'
 import ContentRow from '@/components/ContentRow.vue'
@@ -12,10 +12,12 @@ import SeriesCard from '@/components/SeriesCard.vue'
 import TitleCard from '@/components/TitleCard.vue'
 import { listEpisodes, reference, type AccessFilter, type Period, type SortOrder } from '@/api/catalogue'
 import { listAllSeries } from '@/data/catalogue'
+import { useAddressState } from '@/composables/useAddressState'
 import { useQuery } from '@/composables/useQuery'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
 import { useViewer } from '@/composables/useViewer'
 import { pageTitle } from '@/config/brand'
+import { oneOf, pageField } from '@/utils/address'
 
 // One show: its header, its series, and every episode it has made,
 // 50 to a page, sorted and filtered (Finding 3). Sort by newest, oldest or
@@ -38,58 +40,35 @@ const mixed = computed(() => !!show.value?.freeCount && !!show.value?.membersCou
 const contributors = computed(() => reference.hosts.filter((h) => h.showIds?.includes(show.value?.id ?? '')))
 const filterable = computed(() => contributors.value.length > 1)
 
-// Read the view from the address. Pages count from 1 there, and from 0 in the API.
+// The view lives in the address (?sort=popular&period=week&access=free&host=helen&page=2).
+// Access and contributor filters apply only where the show offers them.
 const periods: Period[] = ['week', 'month', 'year', 'all']
-const sort = computed<SortOrder>(() =>
-  route.query.sort === 'oldest' || route.query.sort === 'popular' ? route.query.sort : 'newest',
-)
-const period = computed<Period>(() => periods.find((p) => p === route.query.period) ?? 'month')
-const access = computed<AccessFilter>(() => {
-  const value = route.query.access
-  return mixed.value && (value === 'free' || value === 'members') ? value : 'all'
-})
-const host = computed(() =>
-  filterable.value ? (contributors.value.find((h) => h.id === route.query.host)?.id ?? 'all') : 'all',
-)
-const page = computed(() => Math.max(0, (Number(route.query.page) || 1) - 1))
-
 type View = { page: number; sort: SortOrder; period: Period; access: AccessFilter; host: string }
-function query(changes: Partial<View>): LocationQueryRaw {
-  const next: View = {
-    page: page.value,
-    sort: sort.value,
-    period: period.value,
-    access: access.value,
-    host: host.value,
-    ...changes,
-  }
-  return {
-    ...(next.page > 0 ? { page: String(next.page + 1) } : {}),
-    ...(next.sort !== 'newest' ? { sort: next.sort } : {}),
-    ...(next.sort === 'popular' && next.period !== 'month' ? { period: next.period } : {}),
-    ...(next.access !== 'all' ? { access: next.access } : {}),
-    ...(next.host !== 'all' ? { host: next.host } : {}),
-  }
-}
+const { view, query, model } = useAddressState<View>({
+  page: pageField(),
+  sort: oneOf<SortOrder, View>(['newest', 'oldest', 'popular'], 'newest'),
+  period: oneOf<Period, View>(periods, 'month', (v) => v.sort === 'popular'),
+  access: {
+    read: (raw) => (mixed.value && (raw === 'free' || raw === 'members') ? raw : 'all'),
+    write: (value) => (value === 'all' ? undefined : value),
+  },
+  host: {
+    read: (raw) => (filterable.value ? (contributors.value.find((h) => h.id === raw)?.id ?? 'all') : 'all'),
+    write: (value) => (value === 'all' ? undefined : value),
+  },
+})
+const page = computed(() => view.value.page)
+const sort = computed(() => view.value.sort)
+const period = computed(() => view.value.period)
+const access = computed(() => view.value.access)
+const host = computed(() => view.value.host)
 const pageLink = (p: number) => ({ query: query({ page: p }) })
 
 // Changing sort or filter starts again from page 1, as a new history entry.
-const sortModel = computed({
-  get: () => sort.value,
-  set: (value: SortOrder) => void router.push({ query: query({ sort: value, page: 0 }) }),
-})
-const accessModel = computed({
-  get: () => access.value,
-  set: (value: AccessFilter) => void router.push({ query: query({ access: value, page: 0 }) }),
-})
-const periodModel = computed({
-  get: () => period.value,
-  set: (value: Period) => void router.push({ query: query({ period: value, page: 0 }) }),
-})
-const hostModel = computed({
-  get: () => host.value,
-  set: (value: string) => void router.push({ query: query({ host: value, page: 0 }) }),
-})
+const sortModel = model('sort')
+const accessModel = model('access')
+const periodModel = model('period')
+const hostModel = model('host')
 
 /** Filter by a contributor from the header, then bring the list into view. */
 async function filterBy(hostId: string) {

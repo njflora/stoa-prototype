@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink, useRoute, useRouter, type LocationQueryRaw } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
 import CardSkeleton from '@/components/CardSkeleton.vue'
 import FilterChips from '@/components/FilterChips.vue'
 import PageNav from '@/components/PageNav.vue'
 import { listArticles, type ArticlePeriod, type ArticleSort } from '@/api/catalogue'
 import { articleCategoryColours, hostNames } from '@/data/catalogue'
+import { useAddressState } from '@/composables/useAddressState'
 import { useQuery } from '@/composables/useQuery'
 import type { ArticleCategory } from '@/types/content'
+import { oneOf, pageField } from '@/utils/address'
 import { formatPublished } from '@/utils/format'
 import PitchNote from '@/pitch/PitchNote.vue'
 
@@ -16,38 +18,28 @@ import PitchNote from '@/pitch/PitchNote.vue'
 // controversial. The newest piece leads. Category, sort and page live in
 // the address (?category=history&sort=popular&period=week).
 
-const route = useRoute()
-const router = useRouter()
-
 const categories: ArticleCategory[] = ['Politics', 'Analysis', 'History', 'Culture', 'Economics']
 type Choice = 'all' | ArticleCategory
-
-const category = computed<Choice>(() => categories.find((c) => c.toLowerCase() === route.query.category) ?? 'all')
-const page = computed(() => Math.max(0, (Number(route.query.page) || 1) - 1))
-const sort = computed<ArticleSort>(() =>
-  route.query.sort === 'popular' || route.query.sort === 'controversial' ? route.query.sort : 'newest',
-)
 const periods: ArticlePeriod[] = ['week', 'month', 'all']
-const period = computed<ArticlePeriod>(() => periods.find((p) => p === route.query.period) ?? 'month')
 
-type View = { category: Choice; page: number; sort: ArticleSort; period: ArticlePeriod }
-function query(changes: Partial<View>): LocationQueryRaw {
-  const next: View = { category: category.value, page: page.value, sort: sort.value, period: period.value, ...changes }
-  return {
-    ...(next.category !== 'all' ? { category: next.category.toLowerCase() } : {}),
-    ...(next.sort !== 'newest' ? { sort: next.sort } : {}),
-    ...(next.sort === 'popular' && next.period !== 'month' ? { period: next.period } : {}),
-    ...(next.page > 0 ? { page: String(next.page + 1) } : {}),
-  }
-}
-const sortModel = computed({
-  get: () => sort.value,
-  set: (value: ArticleSort) => void router.push({ query: query({ sort: value, page: 0 }) }),
+type View = { category: Choice; sort: ArticleSort; period: ArticlePeriod; page: number }
+const { view, query, model } = useAddressState<View>({
+  // In the address in lower case: ?category=history.
+  category: {
+    read: (raw) => categories.find((c) => c.toLowerCase() === raw) ?? 'all',
+    write: (value) => (value === 'all' ? undefined : value.toLowerCase()),
+  },
+  sort: oneOf<ArticleSort, View>(['newest', 'popular', 'controversial'], 'newest'),
+  period: oneOf<ArticlePeriod, View>(periods, 'month', (v) => v.sort === 'popular'),
+  page: pageField(),
 })
-const periodModel = computed({
-  get: () => period.value,
-  set: (value: ArticlePeriod) => void router.push({ query: query({ period: value, page: 0 }) }),
-})
+const category = computed(() => view.value.category)
+const page = computed(() => view.value.page)
+const sort = computed(() => view.value.sort)
+const period = computed(() => view.value.period)
+
+const sortModel = model('sort')
+const periodModel = model('period')
 const sortOptions: { value: ArticleSort; label: string }[] = [
   { value: 'newest', label: 'Newest' },
   { value: 'popular', label: 'Popular' },
@@ -55,10 +47,7 @@ const sortOptions: { value: ArticleSort; label: string }[] = [
 ]
 const periodLabels: Record<ArticlePeriod, string> = { week: 'This week', month: 'This month', all: 'All time' }
 const periodOptions = periods.map((p) => ({ value: p, label: periodLabels[p] }))
-const categoryModel = computed({
-  get: () => category.value,
-  set: (value: Choice) => void router.push({ query: query({ category: value, page: 0 }) }),
-})
+const categoryModel = model('category')
 const options = [{ value: 'all' as Choice, label: 'All' }, ...categories.map((c) => ({ value: c, label: c }))]
 
 const articles = useQuery(
