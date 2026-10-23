@@ -11,6 +11,7 @@ import { useSearch } from '@/composables/useSearch'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
 import { useViewer } from '@/composables/useViewer'
 import { formatPublished } from '@/utils/format'
+import { keepTabInside } from '@/utils/focus'
 import { highlight } from '@/utils/highlight'
 
 // Instant search (Finding 9): results appear as you type, grouped by kind,
@@ -100,19 +101,7 @@ function onPanelKeydown(event: KeyboardEvent) {
     closeSearch()
     return
   }
-  if (event.key !== 'Tab' || !panel.value) return
-  const focusable = [...panel.value.querySelectorAll<HTMLElement>('input, button, a[href]')].filter(
-    (el) => el.offsetParent,
-  )
-  const first = focusable[0]
-  const last = focusable.at(-1)
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault()
-    last?.focus()
-  } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault()
-    first?.focus()
-  }
+  keepTabInside(event, panel.value)
 }
 
 // Detail and artwork for each kind of result.

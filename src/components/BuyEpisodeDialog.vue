@@ -5,6 +5,7 @@ import { getShow } from '@/data/catalogue'
 import { EPISODE_PRICE } from '@/data/membership'
 import { usePurchases } from '@/composables/usePurchases'
 import type { Episode } from '@/types/content'
+import { keepTabInside } from '@/utils/focus'
 import { formatPrice } from '@/utils/format'
 
 // Confirms buying one members' episode. The ARIA dialog pattern: focus
@@ -54,17 +55,7 @@ function onKeydown(event: KeyboardEvent) {
     open.value = false
     return
   }
-  if (event.key !== 'Tab' || !panel.value) return
-  const focusable = [...panel.value.querySelectorAll<HTMLElement>('button')]
-  const first = focusable[0]
-  const last = focusable.at(-1)
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault()
-    last?.focus()
-  } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault()
-    first?.focus()
-  }
+  keepTabInside(event, panel.value)
 }
 </script>
 
