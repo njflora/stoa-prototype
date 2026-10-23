@@ -30,6 +30,9 @@ class Show extends Model
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toSearchableArray(): array
     {
         return [
@@ -49,7 +52,11 @@ class Show extends Model
         return $this->hasMany(Episode::class);
     }
 
-    /** The fields the site reads, in its own naming. */
+    /**
+     * The fields the site reads, in its own naming.
+     *
+     * @return array<string, mixed>
+     */
     public function toData(): array
     {
         return [

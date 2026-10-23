@@ -26,6 +26,8 @@ class Contributor extends Model
      * What search indexes. Their shows are every show they appear on, not
      * only those they present regularly, so "Gary Forum" finds Gary
      * (review note 9).
+     *
+     * @return array<string, mixed>
      */
     public function toSearchableArray(): array
     {

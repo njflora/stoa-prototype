@@ -25,6 +25,9 @@ class Series extends Model
     // Filled by the seeder, never from a request: nothing is mass-assignable.
     protected $guarded = ['*'];
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toSearchableArray(): array
     {
         $first = $this->episodes()->with('contributors')->first();

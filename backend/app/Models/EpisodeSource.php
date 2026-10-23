@@ -21,6 +21,9 @@ class EpisodeSource extends Model
         return ['synced_at' => 'datetime'];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toData(): array
     {
         return array_filter([

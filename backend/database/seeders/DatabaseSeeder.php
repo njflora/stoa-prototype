@@ -147,7 +147,11 @@ class DatabaseSeeder extends Seeder
         $this->index();
     }
 
-    /** Name => user id, for the people who comment. */
+    /**
+     * Name => user id, for the people who comment.
+     *
+     * @var array<string, int>
+     */
     private array $userIds = [];
 
     /**
@@ -223,6 +227,10 @@ class DatabaseSeeder extends Seeder
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $c
+     * @return array<string, mixed>
+     */
     private function commentRow(int $id, string $thread, ?int $parentId, array $c): array
     {
         return [
@@ -245,6 +253,9 @@ class DatabaseSeeder extends Seeder
         }
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function read(string $name): array
     {
         return json_decode(file_get_contents(database_path("seed/{$name}.json")), true, flags: JSON_THROW_ON_ERROR);

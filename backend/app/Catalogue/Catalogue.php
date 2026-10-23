@@ -72,6 +72,9 @@ class Catalogue
 
     // ---------- reference data, loaded once when the site opens ----------
 
+    /**
+     * @return array<string, mixed>
+     */
     public function meta(): array
     {
         return [
@@ -82,7 +85,11 @@ class Catalogue
         ];
     }
 
-    /** Every show, with its counts and an episode anyone can watch. */
+    /**
+     * Every show, with its counts and an episode anyone can watch.
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function shows(): array
     {
         $counts = Episode::query()
@@ -109,7 +116,11 @@ class Catalogue
         })->all();
     }
 
-    /** Every contributor, with the shows they appear on and how much they have made. */
+    /**
+     * Every contributor, with the shows they appear on and how much they have made.
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function hosts(): array
     {
         $showOrder = Show::pluck('position', 'id');
@@ -134,7 +145,11 @@ class Catalogue
         ])->all();
     }
 
-    /** Every series, newest first, with its parts in order. */
+    /**
+     * Every series, newest first, with its parts in order.
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function series(): array
     {
         return Series::orderBy('position')
@@ -150,12 +165,19 @@ class Catalogue
             ])->all();
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function live(): ?array
     {
         return LiveEvent::first()?->toData();
     }
 
-    /** Everything above in one response, for the site to load before it opens. */
+    /**
+     * Everything above in one response, for the site to load before it opens.
+     *
+     * @return array<string, mixed>
+     */
     public function reference(): array
     {
         return [
@@ -169,7 +191,11 @@ class Catalogue
 
     // ---------- pages ----------
 
-    /** Everything the homepage shows first, in one response. */
+    /**
+     * Everything the homepage shows first, in one response.
+     *
+     * @return array<string, mixed>
+     */
     public function home(): array
     {
         $shows = Show::orderBy('position')->get();
@@ -196,7 +222,11 @@ class Catalogue
         ];
     }
 
-    /** The most-watched episodes of the last seven days, across every show. */
+    /**
+     * The most-watched episodes of the last seven days, across every show.
+     *
+     * @return array<string, mixed>
+     */
     public function trending(): array
     {
         return [
@@ -214,6 +244,7 @@ class Catalogue
      *
      * @param  'all'|'free'|'members'  $access
      * @param  'newest'|'oldest'|'popular'  $sort
+     * @return array<string, mixed>
      */
     public function episodes(
         ?string $showId = null,
@@ -250,6 +281,9 @@ class Catalogue
         ];
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function episode(string $id): ?array
     {
         return Episode::with(Episode::CARD_RELATIONS)->find($id)?->toCard();
@@ -260,6 +294,7 @@ class Catalogue
      * author. "Controversial" counts only pieces with enough engagement.
      *
      * @param  'newest'|'popular'|'controversial'  $sort
+     * @return array<string, mixed>
      */
     public function articles(
         int $page = 0,
@@ -293,6 +328,9 @@ class Catalogue
         ];
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function article(string $id): ?array
     {
         return Article::find($id)?->toDetail();
@@ -305,6 +343,8 @@ class Catalogue
      * or a standfirst), d: date, a: access, e: daily edition, sl: series slug,
      * k: "a" for an article. The Laravel version searches with Meilisearch
      * instead (App\Search\SiteSearch); the static preview searches these.
+     *
+     * @return list<array<string, mixed>>
      */
     public function searchDocs(): array
     {
@@ -354,6 +394,7 @@ class Catalogue
      * Runs a query and turns each episode into its card.
      *
      * @param  Builder<Episode>  $query
+     * @return array<int, array<string, mixed>>
      */
     private function cards(Builder $query): array
     {

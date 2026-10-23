@@ -12,6 +12,9 @@ class ReadingListItem extends Model
     // Filled by the seeder, never from a request: nothing is mass-assignable.
     protected $guarded = ['*'];
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toData(): array
     {
         return array_filter([

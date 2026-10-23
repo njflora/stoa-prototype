@@ -77,23 +77,37 @@ class Episode extends Model
         return $this->belongsToMany(Contributor::class)->withPivot('position')->orderByPivot('position');
     }
 
-    /** "Free to watch": free episodes and free previews. */
+    /**
+     * "Free to watch": free episodes and free previews.
+     *
+     * @param  Builder<Episode>  $query
+     */
     public function scopeFree(Builder $query): void
     {
         $query->where('access', '!=', 'premium');
     }
 
-    /** Members only. */
+    /**
+     * Members only.
+     *
+     * @param  Builder<Episode>  $query
+     */
     public function scopeMembers(Builder $query): void
     {
         $query->where('access', 'premium');
     }
 
+    /**
+     * @param  Builder<Episode>  $query
+     */
     public function scopeWithHost(Builder $query, string $hostId): void
     {
         $query->whereHas('contributors', fn (Builder $q) => $q->where('contributors.id', $hostId));
     }
 
+    /**
+     * @param  Builder<Episode>  $query
+     */
     public function scopeNewest(Builder $query): void
     {
         // Within a show, seq breaks a tie on the date.
@@ -104,6 +118,8 @@ class Episode extends Model
      * What search indexes, in the four fields every index shares (title,
      * show, hosts, text), plus what a result shows. A daily edition has no
      * title of its own, so it is found by show name and date.
+     *
+     * @return array<string, mixed>
      */
     public function toSearchableArray(): array
     {
@@ -123,7 +139,12 @@ class Episode extends Model
         ];
     }
 
-    /** Load what the search document needs, a chunk at a time. */
+    /**
+     * Load what the search document needs, a chunk at a time.
+     *
+     * @param  Builder<Episode>  $query
+     * @return Builder<Episode>
+     */
     protected function makeAllSearchableUsing(Builder $query): Builder
     {
         return $query->with(['show', 'contributors', 'series']);
@@ -133,6 +154,8 @@ class Episode extends Model
      * The JSON card the site reads. Fields an episode does not have are left
      * out rather than sent as null: daily editions have no number or title
      * (they are titled by date), and only series episodes have a series.
+     *
+     * @return array<string, mixed>
      */
     public function toCard(): array
     {

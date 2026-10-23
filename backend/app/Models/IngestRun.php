@@ -23,6 +23,9 @@ class IngestRun extends Model
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toData(): array
     {
         return [

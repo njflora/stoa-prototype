@@ -17,6 +17,9 @@ class LiveEvent extends Model
         return ['host_ids' => 'array', 'sources' => 'array'];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toData(): array
     {
         return [

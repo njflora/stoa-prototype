@@ -109,6 +109,9 @@ class DiscussionController extends Controller
         return Thread::find($type, $id) ?? abort(404);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function topic(ForumTopic $topic): array
     {
         return ['title' => $topic->title, 'by' => $topic->user->name, 'replies' => 0, 'createdAt' => Catalogue::iso($topic->created_at)];

@@ -24,6 +24,8 @@ class Desk
     /**
      * A page of episodes, newest first. `filter` is "all", "problems" (any
      * link not linked), or "{platform}-{status}", such as "bitchute-missing".
+     *
+     * @return array<string, mixed>
      */
     public function rows(string $filter = 'all', int $page = 0, ?string $showId = null): array
     {
@@ -53,7 +55,11 @@ class Desk
         ];
     }
 
-    /** How many links each platform has in each state. */
+    /**
+     * How many links each platform has in each state.
+     *
+     * @return array<string, array<string, int>>
+     */
     public function summary(): array
     {
         $counts = EpisodeSource::selectRaw('platform, status, count(*) as total')->groupBy('platform', 'status')->get();
@@ -67,13 +73,21 @@ class Desk
         return $summary;
     }
 
-    /** The latest syncs, newest first. */
+    /**
+     * The latest syncs, newest first.
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function runs(int $limit = 12): array
     {
         return IngestRun::orderByDesc('id')->limit($limit)->get()->map->toData()->all();
     }
 
-    /** Every filter worth a stored page in the static preview: all, problems, and each platform's problems that occur. */
+    /**
+     * Every filter worth a stored page in the static preview: all, problems, and each platform's problems that occur.
+     *
+     * @return list<string>
+     */
     public function filters(): array
     {
         $filters = ['all', 'problems'];

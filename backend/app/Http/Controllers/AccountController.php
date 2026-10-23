@@ -82,6 +82,9 @@ class AccountController extends Controller
         return response()->json($this->account($request->user()));
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function account(?User $user): array
     {
         if (! $user) {

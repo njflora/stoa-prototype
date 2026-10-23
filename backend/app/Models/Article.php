@@ -66,7 +66,11 @@ class Article extends Model
         return $this->belongsTo(Episode::class, 'watch_next_id');
     }
 
-    /** What search indexes: the category stands in for a show, the author for hosts. */
+    /**
+     * What search indexes: the category stands in for a show, the author for hosts.
+     *
+     * @return array<string, mixed>
+     */
     public function toSearchableArray(): array
     {
         return [
@@ -81,7 +85,11 @@ class Article extends Model
         ];
     }
 
-    /** What a list of articles shows. */
+    /**
+     * What a list of articles shows.
+     *
+     * @return array<string, mixed>
+     */
     public function toCard(): array
     {
         return [
@@ -99,7 +107,11 @@ class Article extends Model
         ];
     }
 
-    /** The full article: its card, the body, the reading list and an episode to watch next. */
+    /**
+     * The full article: its card, the body, the reading list and an episode to watch next.
+     *
+     * @return array<string, mixed>
+     */
     public function toDetail(): array
     {
         return [

@@ -29,6 +29,9 @@ class SiteSearch
         'article' => [Article::class, 20],
     ];
 
+    /**
+     * @return array<string, mixed>
+     */
     public function search(string $query): array
     {
         $groups = [];
@@ -63,6 +66,8 @@ class SiteSearch
      * One result, in the shape the search panel reads.
      *
      * @param  key-of<self::KINDS>  $kind
+     * @param  array<string, mixed>  $doc
+     * @return array<string, mixed>
      */
     private function hit(string $kind, array $doc): array
     {
@@ -91,7 +96,12 @@ class SiteSearch
         ], fn ($value) => $value !== null);
     }
 
-    /** The words that matched in the title, for highlighting. */
+    /**
+     * The words that matched in the title, for highlighting.
+     *
+     * @param  array<string, mixed>  $doc
+     * @return list<string>
+     */
     private function terms(array $doc): array
     {
         $title = $doc['title'];

@@ -19,11 +19,17 @@ use Illuminate\Support\Facades\Gate;
  */
 class Discussions
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function thread(Thread $thread, ?User $viewer): array
     {
         return $this->threads([$thread], $viewer)[$thread->key()];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function readingList(Thread $thread, ?User $viewer): array
     {
         return $this->readingLists([$thread], $viewer)[$thread->key()];
@@ -32,6 +38,7 @@ class Discussions
     /**
      * @param  Thread[]  $threads
      * @return array<string, array> by thread key ("episode:chronos-12")
+     * @return array<string, array<string, mixed>>
      */
     public function threads(array $threads, ?User $viewer): array
     {
@@ -75,6 +82,7 @@ class Discussions
      *
      * @param  Thread[]  $threads
      * @return array<string, array> by thread key
+     * @return array<string, array<string, mixed>>
      */
     public function readingLists(array $threads, ?User $viewer): array
     {

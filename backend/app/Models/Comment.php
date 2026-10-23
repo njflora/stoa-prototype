@@ -41,6 +41,7 @@ class Comment extends Model
      * asking, from the votes passed in.
      *
      * @param  array<int, string>  $myVotes  comment id => "up" or "down"
+     * @return array<string, mixed>
      */
     public function toData(?User $viewer, array $myVotes = []): array
     {
