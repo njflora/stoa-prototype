@@ -12,6 +12,9 @@ v2 makes the code easier to maintain, better tested and more secure. It adds no 
 - Larastan (PHPStan with Laravel's rules) checks the back end at level 8 (`backend/phpstan.neon`, run with `composer analyse`). It reads each model's `casts()` method, so dates are typed as dates.
 - The access-critical code is also checked at the strictest level (`backend/phpstan-access.neon`, run with `composer analyse:access`): the policies, discussions, watch and account controllers, the User and Purchase models, the security headers and the rate limits.
 
+- The checks workflow (ci.yml) runs `composer lint`, `composer analyse` and `composer analyse:access` before the back-end tests.
+- docs/decisions/0001-static-analysis-level.md records the two levels and why.
+
 #### Changed (strictest level)
 - Access settings are read with `Config::array()`, which fails loudly if a setting has the wrong shape.
 - Validated input is read with typed accessors, such as `$request->string('episodeId')`.
