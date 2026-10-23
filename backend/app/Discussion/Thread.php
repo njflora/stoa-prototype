@@ -4,6 +4,7 @@ namespace App\Discussion;
 
 use App\Models\Article;
 use App\Models\Episode;
+use Illuminate\Support\Facades\Config;
 
 /**
  * A place where people talk: an episode's comments, an article's, the live
@@ -23,11 +24,11 @@ final class Thread
     {
         return match ($type) {
             'episode' => ($showId = Episode::whereKey($id)->value('show_id'))
-                ? new self($type, $id, in_array($showId, config('stoa.open_shows'), true))
+                ? new self($type, $id, in_array($showId, Config::array('stoa.open_shows'), true))
                 : null,
             'article' => Article::whereKey($id)->exists() ? new self($type, $id, true) : null,
             'live' => $id === 'live-show' ? new self($type, $id, true) : null,
-            'forum' => array_key_exists($id, config('stoa.forums'))
+            'forum' => array_key_exists($id, Config::array('stoa.forums'))
                 ? new self($type, $id, config("stoa.forums.{$id}") === 'all')
                 : null,
             default => null,
@@ -37,7 +38,7 @@ final class Thread
     /** An episode's thread, when its show is already known (no query). */
     public static function forEpisode(string $episodeId, string $showId): self
     {
-        return new self('episode', $episodeId, in_array($showId, config('stoa.open_shows'), true));
+        return new self('episode', $episodeId, in_array($showId, Config::array('stoa.open_shows'), true));
     }
 
     /** How it is stored: "episode:chronos-12". */

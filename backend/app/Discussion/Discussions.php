@@ -5,6 +5,7 @@ namespace App\Discussion;
 use App\Models\Comment;
 use App\Models\ReadingListItem;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -37,39 +38,46 @@ class Discussions
 
     /**
      * @param  Thread[]  $threads
-     * @return array<string, array> by thread key ("episode:chronos-12")
-     * @return array<string, array<string, mixed>>
+     * @return array<string, array<string, mixed>> by thread key ("episode:chronos-12")
      */
     public function threads(array $threads, ?User $viewer): array
     {
         $gate = Gate::forUser($viewer);
         $keys = array_map(fn (Thread $t) => $t->key(), $threads);
-        $counts = Comment::whereIn('thread', $keys)->groupBy('thread')->selectRaw('thread, count(*) as total')->pluck('total', 'thread');
+        $counts = Comment::whereIn('thread', $keys)->groupBy('thread')->selectRaw('thread, count(*) as total')->pluck('total', 'thread')
+            ->map(fn (mixed $total): int => is_numeric($total) ? (int) $total : 0);
         $readable = array_values(array_map(fn (Thread $t) => $t->key(), array_filter($threads, fn (Thread $t) => $gate->allows('read', $t))));
 
+        // Top-level comments in the readable threads, newest first, with their replies.
         $comments = $readable
-            ? Comment::whereIn('thread', $readable)->whereNull('parent_id')->with(['user', 'replies.user'])->orderByDesc('posted_at')->get()->groupBy('thread')
-            : collect();
-        $myVotes = $viewer && $readable
-            ? DB::table('comment_votes')
+            ? Comment::whereIn('thread', $readable)->whereNull('parent_id')->with(['user', 'replies.user'])->orderByDesc('posted_at')->get()
+            : new EloquentCollection;
+        // The viewer's own votes, by comment id: "up" or "down".
+        $myVotes = [];
+        if ($viewer && $readable) {
+            $votes = DB::table('comment_votes')
                 ->join('comments', 'comments.id', '=', 'comment_votes.comment_id')
                 ->where('comment_votes.user_id', $viewer->id)
                 ->whereIn('comments.thread', $readable)
-                ->pluck('comment_votes.direction', 'comment_votes.comment_id')
-                ->all()
-            : [];
+                ->pluck('comment_votes.direction', 'comment_votes.comment_id');
+            foreach ($votes as $commentId => $direction) {
+                if (is_string($direction)) {
+                    $myVotes[(int) $commentId] = $direction;
+                }
+            }
+        }
 
         $answers = [];
         foreach ($threads as $thread) {
             $key = $thread->key();
-            $count = (int) ($counts[$key] ?? 0);
+            $count = $counts->get($key, 0);
             $answers[$key] = in_array($key, $readable, true)
                 ? [
                     'locked' => false,
                     'open' => $thread->open,
                     'count' => $count,
                     'canPost' => $gate->allows('post', $thread),
-                    'comments' => ($comments[$key] ?? collect())->map(fn (Comment $c) => $c->toData($viewer, $myVotes))->values()->all(),
+                    'comments' => $comments->where('thread', $key)->map(fn (Comment $c) => $c->toData($viewer, $myVotes))->values()->all(),
                 ]
                 : ['locked' => true, 'open' => $thread->open, 'count' => $count];
         }
@@ -81,8 +89,7 @@ class Discussions
      * Episodes' and the live show's reading lists, behind the same rule as their discussion.
      *
      * @param  Thread[]  $threads
-     * @return array<string, array> by thread key
-     * @return array<string, array<string, mixed>>
+     * @return array<string, array<string, mixed>> by thread key
      */
     public function readingLists(array $threads, ?User $viewer): array
     {

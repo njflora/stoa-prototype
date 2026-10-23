@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
@@ -33,7 +34,8 @@ class AccountController extends Controller
      */
     public function demoLogin(Request $request): JsonResponse
     {
-        $as = $request->validate(['as' => ['required', Rule::in(array_keys(self::DEMO_ACCOUNTS))]])['as'];
+        $request->validate(['as' => ['required', Rule::in(array_keys(self::DEMO_ACCOUNTS))]]);
+        $as = $request->string('as')->value();
         $user = User::where('email', self::DEMO_ACCOUNTS[$as])->firstOrFail();
         Auth::guard('web')->login($user);
         $request->session()->regenerate();
@@ -53,7 +55,8 @@ class AccountController extends Controller
     /** POST /api/purchases {episodeId}: buy one members' episode. No payment is taken in the demo. */
     public function purchase(Request $request): JsonResponse
     {
-        $id = (string) $request->validate(['episodeId' => ['required', 'string']])['episodeId'];
+        $request->validate(['episodeId' => ['required', 'string']]);
+        $id = $request->string('episodeId')->value();
         $episode = Episode::where('access', 'premium')->findOrFail($id);
         Purchase::firstOrCreate(['user_id' => $this->signedIn($request)->id, 'episode_id' => $episode->id]);
 
@@ -63,7 +66,7 @@ class AccountController extends Controller
     /** POST /api/communities/{id}: join a community, such as the Philosophy Circle. */
     public function join(Request $request, string $community): JsonResponse
     {
-        abort_unless(in_array($community, config('stoa.communities'), true), 404);
+        abort_unless(in_array($community, Config::array('stoa.communities'), true), 404);
         DB::table('community_members')->insertOrIgnore([
             'user_id' => $this->signedIn($request)->id,
             'community_id' => $community,

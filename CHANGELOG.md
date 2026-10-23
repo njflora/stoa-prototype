@@ -10,6 +10,12 @@ v2 makes the code easier to maintain, better tested and more secure. It adds no 
 
 #### Added
 - Larastan (PHPStan with Laravel's rules) checks the back end at level 8 (`backend/phpstan.neon`, run with `composer analyse`). It reads each model's `casts()` method, so dates are typed as dates.
+- The access-critical code is also checked at the strictest level (`backend/phpstan-access.neon`, run with `composer analyse:access`): the policies, discussions, watch and account controllers, the User and Purchase models, the security headers and the rate limits.
+
+#### Changed (strictest level)
+- Access settings are read with `Config::array()`, which fails loudly if a setting has the wrong shape.
+- Validated input is read with typed accessors, such as `$request->string('episodeId')`.
+- Comment counts and the viewer's votes are checked as numbers and text as they come from the database.
 
 #### Changed
 - Every Eloquent relation states what it returns, such as `BelongsTo<Show, $this>`, so code using it is checked against the right model.

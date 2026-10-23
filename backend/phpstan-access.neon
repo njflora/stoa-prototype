@@ -1,0 +1,20 @@
+# The strictest level, for the code that decides who may watch, read and
+# post, takes purchases, and sets the site's defences. Run with
+# `composer analyse:access`; phpstan.neon covers everything else at level 8.
+# See docs/decisions/0001-static-analysis-level.md.
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: max
+    parseModelCastsMethod: true
+    paths:
+        - app/Policies
+        - app/Discussion
+        - app/Http/Controllers/WatchController.php
+        - app/Http/Controllers/AccountController.php
+        - app/Http/Controllers/Controller.php
+        - app/Models/User.php
+        - app/Models/Purchase.php
+        - app/Http/Middleware/SecurityHeaders.php
+        - app/Providers/AppServiceProvider.php
