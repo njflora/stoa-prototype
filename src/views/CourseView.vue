@@ -2,6 +2,7 @@
 import ContributorNames from '@/components/ContributorNames.vue'
 import { computed, ref, watch, watchEffect } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { canPost } from '@/access/rules'
 import CourseCard from '@/components/CourseCard.vue'
 import { getCourse, lessonCount, separatePrice, type Forum } from '@/data/courses'
 import { artworks, mediaUrl } from '@/data/media'
@@ -26,15 +27,15 @@ const saving = computed(() => {
   return separate && course.value?.price ? separate - course.value.price : 0
 })
 
-const { viewer, isSignedIn, isMember, user } = useViewer()
+const { viewer, isSignedIn, access, user } = useViewer()
 
 // Starting threads: anyone signed in in open forums, members in members'
 // forums. New threads are saved: on the account in Laravel mode, where the
 // server enforces the same rule (backend/config/stoa.php), and in this
 // browser in the static preview.
 type ForumThread = NonNullable<Forum['threads']>[number] & { at?: string }
-const canPostIn = (forum: Forum) =>
-  forum.status === 'open' && (isMember.value || (forum.posting === 'all' && isSignedIn.value))
+// A forum open to "all" is an open thread; a members' forum is members-only.
+const canPostIn = (forum: Forum) => forum.status === 'open' && canPost(access.value, { open: forum.posting === 'all' })
 /** "philosophy-circle/general-discussion": how the server names a forum. */
 const forumId = (forum: Forum) => `${course.value?.id}/${forum.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
 const drafts = ref<Record<string, string>>({})

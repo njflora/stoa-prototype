@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 import PitchNote from './PitchNote.vue'
 import CommentItem from './CommentItem.vue'
 import MembersGate from './MembersGate.vue'
+import { canPost as canPostRule, canRead } from '@/access/rules'
 import { API_MODE } from '@/api/client'
 import { getThread, postComment, voteOnComment, type ThreadRef } from '@/api/discussion'
 import { countComments, type Comment } from '@/data/comments'
@@ -35,7 +36,7 @@ const props = defineProps<{
 
 const PAGE_SIZE = 5
 
-const { viewer, isMember, isSignedIn, user } = useViewer()
+const { viewer, access, user } = useViewer()
 const headingId = useId()
 
 // Asked again when the viewer changes: the answer depends on who is asking.
@@ -49,13 +50,13 @@ const open = computed(() => data.value?.open ?? false)
 const locked = computed(() => {
   const thread = data.value
   if (!thread) return false
-  return API_MODE === 'laravel' ? thread.locked : !thread.open && !isMember.value
+  return API_MODE === 'laravel' ? thread.locked : !canRead(access.value, thread)
 })
 /** Post, reply and vote. */
 const canPost = computed(() => {
   const thread = data.value
   if (!thread || thread.locked || locked.value) return false
-  return API_MODE === 'laravel' ? Boolean(thread.canPost) : isMember.value || (thread.open && isSignedIn.value)
+  return API_MODE === 'laravel' ? Boolean(thread.canPost) : canPostRule(access.value, thread)
 })
 
 // A copy, so posting here never changes the loaded data.

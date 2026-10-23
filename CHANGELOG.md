@@ -6,6 +6,15 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-23: Unit tests for the access rules
+
+#### Added
+- Vitest runs the site's unit tests (`npm run test:unit`, or `npm run test:unit:watch` while working). Tests sit beside the code they test, in `__tests__` folders, and are type-checked with the rest of the site. The checks workflow runs them before the build.
+- `src/access/__tests__/rules.spec.ts` tests who may watch, read and post, for a signed-out visitor, a free account, a free account that bought one episode, and a member.
+
+#### Changed
+- The browser's access rules live in one place, `src/access/rules.ts`, written to mirror the server's EpisodePolicy and ThreadPolicy. The watch check, the comment and reading-list gates and the forum posting check all use it. Behaviour is unchanged.
+
 ### 2026-10-23: Static analysis for the back end
 
 #### Added

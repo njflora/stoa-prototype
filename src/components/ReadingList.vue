@@ -3,6 +3,7 @@ import { computed, useId } from 'vue'
 import MembersGate from './MembersGate.vue'
 import PitchNote from './PitchNote.vue'
 import { RouterLink } from 'vue-router'
+import { canRead } from '@/access/rules'
 import { API_MODE } from '@/api/client'
 import { getReadingList, type ThreadRef } from '@/api/discussion'
 import type { ReadingItem, SourceType } from '@/data/readingLists'
@@ -26,7 +27,7 @@ const props = defineProps<{
   context?: 'episode' | 'article'
 }>()
 
-const { viewer, isMember } = useViewer()
+const { viewer, access } = useViewer()
 const headingId = useId()
 
 // Asked again when the viewer changes: the answer depends on who is asking.
@@ -38,7 +39,7 @@ const { data, loading, error, reload } = useQuery(
 const locked = computed(() => {
   const list = data.value
   if (!list) return false
-  return API_MODE === 'laravel' ? list.locked : !list.open && !isMember.value
+  return API_MODE === 'laravel' ? list.locked : !canRead(access.value, list)
 })
 const count = computed(() => (props.items ? props.items.length : (data.value?.count ?? 0)))
 const items = computed(() => {

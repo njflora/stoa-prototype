@@ -1,4 +1,5 @@
 import { computed, ref, watch } from 'vue'
+import { canWatch as canWatchRule, type AccessViewer } from '@/access/rules'
 import { account, signInAs } from '@/api/account'
 import { API_MODE } from '@/api/client'
 import type { ChatTier } from '@/data/chat'
@@ -93,14 +94,14 @@ export function useViewer() {
     return isSignedIn.value ? { name: 'chris_m', initials: 'CM', tier: isMember.value ? 'gold' : null } : null
   })
 
-  /**
-   * Free viewers can watch free episodes, free previews and members'
-   * episodes they have bought. Members watch everything.
-   */
+  /** This viewer, as the access rules (src/access/rules.ts) see them. */
   const { isOwned } = usePurchases()
-  function canWatch(episode: Episode): boolean {
-    return isMember.value || episode.access !== 'premium' || (isSignedIn.value && isOwned(episode.id))
-  }
+  const access = computed<AccessViewer>(() => ({
+    signedIn: isSignedIn.value,
+    member: isMember.value,
+    owns: isOwned,
+  }))
+  const canWatch = (episode: Episode): boolean => canWatchRule(access.value, episode)
 
   async function setViewer(next: ViewerType) {
     if (API_MODE !== 'laravel') {
@@ -119,5 +120,18 @@ export function useViewer() {
     state.value.phase = next
   }
 
-  return { viewer, isSignedIn, isMember, isStaff, isLive, phase, user, canWatch, setViewer, switching, setPhase }
+  return {
+    viewer,
+    isSignedIn,
+    isMember,
+    isStaff,
+    isLive,
+    phase,
+    user,
+    access,
+    canWatch,
+    setViewer,
+    switching,
+    setPhase,
+  }
 }

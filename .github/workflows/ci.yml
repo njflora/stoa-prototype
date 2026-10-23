@@ -25,6 +25,7 @@ jobs:
       # Style and lint first, so a problem there fails fast.
       - run: npm run format:check
       - run: npm run lint
+      - run: npm run test:unit
       - run: npm run build:pages
       # Fails on high or critical problems in any package.
       - run: npm audit --audit-level=high
