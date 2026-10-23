@@ -16,8 +16,9 @@ import { getShow, listShows } from '@/data/catalogue'
 import { useLiveStatus } from '@/composables/useLiveStatus'
 import { useViewer } from '@/composables/useViewer'
 import type { Show } from '@/types/content'
-import { formatCountdown, formatLongDate, formatTime } from '@/utils/format'
-import { nextOccurrence } from '@/utils/schedule'
+import { formatCountdown, formatTime } from '@/utils/format'
+import { liveChatMode, liveStatusText } from '@/utils/live'
+import { nextOccurrence, startsLabel } from '@/utils/schedule'
 
 // One page for the whole live show: countdown, the free stream, the break
 // with its route into the members' after-show, and the recording with its
@@ -41,37 +42,8 @@ watchEffect(() => {
 
 const title = computed(() => (phase.value === 'members' ? `${event.title}: Members' after-show` : event.title))
 
-const status = computed(() => {
-  switch (phase.value) {
-    case 'upcoming':
-      return `Starts ${startsLabel(nextStart.value)}`
-    case 'live':
-      return 'Live now. Free for everyone.'
-    case 'break':
-      return "The free stream has ended. The members' after-show is next."
-    case 'members':
-      return "Members' after-show, live now"
-    default:
-      return 'Recorded earlier today. Chat replay alongside.'
-  }
-})
-
-const chatMode = computed(() => {
-  if (phase.value === 'upcoming') return 'closed'
-  if (phase.value === 'ended') return 'replay'
-  if (phase.value === 'members' && !isMember.value) return 'locked'
-  return 'live'
-})
-
-function startsLabel(date: Date): string {
-  const today = new Date()
-  const tomorrow = new Date(today)
-  tomorrow.setDate(today.getDate() + 1)
-  const time = formatTime(date)
-  if (date.toDateString() === today.toDateString()) return `today at ${time}`
-  if (date.toDateString() === tomorrow.toDateString()) return `tomorrow at ${time}`
-  return `${formatLongDate(date)} at ${time}`
-}
+const status = computed(() => liveStatusText(phase.value, startsLabel(nextStart.value)))
+const chatMode = computed(() => liveChatMode(phase.value, isMember.value))
 
 interface ScheduleItem {
   id: string

@@ -4,6 +4,7 @@ import { account, signInAs } from '@/api/account'
 import { API_MODE } from '@/api/client'
 import type { ChatTier } from '@/data/chat'
 import type { Episode } from '@/types/content'
+import { livePhases, type LivePhase } from '@/utils/live'
 import { readJson, writeJson } from './storage'
 import { usePurchases } from './usePurchases'
 
@@ -23,19 +24,7 @@ export const viewerTypes: { id: ViewerType; label: string }[] = [
   { id: 'staff', label: 'Staff' },
 ]
 
-/**
- * The live show's phases, in order:
- * upcoming → live (free stream) → break → members (after-show) → ended.
- */
-export type LivePhase = 'upcoming' | 'live' | 'break' | 'members' | 'ended'
-
-export const livePhases: { id: LivePhase; label: string }[] = [
-  { id: 'upcoming', label: 'Upcoming' },
-  { id: 'live', label: 'Live' },
-  { id: 'break', label: 'Break' },
-  { id: 'members', label: "Members'" },
-  { id: 'ended', label: 'Ended' },
-]
+export { livePhases, type LivePhase }
 
 export interface DemoUser {
   name: string

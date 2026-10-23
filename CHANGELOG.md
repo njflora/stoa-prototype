@@ -6,6 +6,14 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-23: Unit tests for the live show and the schedule
+
+#### Added
+- Tests for when each show next airs (including across a month end and the clocks going back), the flagship's daily start, "today", "tomorrow" or a date in the start line, the countdown and the time format, and what each live phase means for members and non-members. They pass in any time zone.
+
+#### Changed
+- The live page's phase logic moves into `src/utils/live.ts`: the list of phases, the chat mode for each phase, and the status line. The start-time label and the flagship's next start join `src/utils/schedule.ts`. LiveView and useLiveStatus use them. Behaviour is unchanged.
+
 ### 2026-10-23: Unit tests for the access rules
 
 #### Added
