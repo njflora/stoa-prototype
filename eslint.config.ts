@@ -9,7 +9,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig(
-  globalIgnores(['dist/**', 'coverage/**', 'public/**', 'backend/**']),
+  globalIgnores(['dist/**', 'coverage/**', 'public/**', 'backend/**', 'test-results/**', 'playwright-report/**']),
 
   js.configs.recommended,
   // Rules that use type information, such as unhandled promises.

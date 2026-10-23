@@ -40,3 +40,8 @@ __screenshots__/
 
 # Raw media downloads (see scripts/media/fetch_media.py)
 scripts/media/.cache/
+
+# Playwright output
+/test-results/
+/playwright-report/
+/blob-report/

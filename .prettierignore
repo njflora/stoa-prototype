@@ -6,3 +6,6 @@ backend
 package-lock.json
 src/data/media.generated.json
 CHANGELOG.md
+test-results
+playwright-report
+blob-report

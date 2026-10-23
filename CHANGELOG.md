@@ -6,6 +6,13 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-23: Browser smoke tests
+
+#### Added
+- Playwright opens the static preview, built and served as GitHub Pages serves it, in Chromium (`npm run test:e2e`). Five checks: the homepage loads with something to watch; search finds an episode as you type; a locked episode shows the members' gate, with "Sign in to buy" for a visitor and "Buy this episode" for a free account; and on a 375 px phone the live page puts the video above the chat with no sideways scrolling. Each check also fails on any uncaught error in the page.
+- A separate `e2e` job in the checks workflow runs them. On a failure it keeps the report and traces for 14 days.
+- The first local run needs the browser: `npx playwright install chromium`.
+
 ### 2026-10-23: Unit tests for search
 
 #### Added
