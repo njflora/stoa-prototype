@@ -258,12 +258,12 @@ class Catalogue
             ->when($showId, fn (Builder $q) => $q->where('show_id', $showId))
             ->when($access === 'free', fn (Builder $q) => $q->free())
             ->when($access === 'members', fn (Builder $q) => $q->members())
-            ->when($hostId, fn (Builder $q) => $q->withHost($hostId));
+            ->when($hostId, fn (Builder $q, string $hostId) => $q->withHost($hostId));
 
         if ($sort === 'popular') {
             $days = self::PERIODS[$period];
             $items = $this->cards($query
-                ->when($days, fn (Builder $q) => $q->where('published_at', '>=', $this->now()->subDays($days)))
+                ->when($days, fn (Builder $q, int $days) => $q->where('published_at', '>=', $this->now()->subDays($days)))
                 ->orderByDesc('views')->orderByDesc('published_at')
                 ->limit(self::PAGE_SIZE));
 

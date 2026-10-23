@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
 
-/** A run of episodes told in parts, such as "The Fall of the Republic". */
+/**
+ * A run of episodes told in parts, such as "The Fall of the Republic".
+ *
+ * @property-read Show $show Required: show_id is a non-null foreign key.
+ */
 class Series extends Model
 {
     use Searchable;

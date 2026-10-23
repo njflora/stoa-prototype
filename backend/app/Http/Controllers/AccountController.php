@@ -53,9 +53,9 @@ class AccountController extends Controller
     /** POST /api/purchases {episodeId}: buy one members' episode. No payment is taken in the demo. */
     public function purchase(Request $request): JsonResponse
     {
-        $id = $request->validate(['episodeId' => ['required', 'string']])['episodeId'];
+        $id = (string) $request->validate(['episodeId' => ['required', 'string']])['episodeId'];
         $episode = Episode::where('access', 'premium')->findOrFail($id);
-        Purchase::firstOrCreate(['user_id' => $request->user()->id, 'episode_id' => $episode->id]);
+        Purchase::firstOrCreate(['user_id' => $this->signedIn($request)->id, 'episode_id' => $episode->id]);
 
         return response()->json($this->account($request->user()), 201);
     }
@@ -65,7 +65,7 @@ class AccountController extends Controller
     {
         abort_unless(in_array($community, config('stoa.communities'), true), 404);
         DB::table('community_members')->insertOrIgnore([
-            'user_id' => $request->user()->id,
+            'user_id' => $this->signedIn($request)->id,
             'community_id' => $community,
             'created_at' => now(),
             'updated_at' => now(),
@@ -77,7 +77,7 @@ class AccountController extends Controller
     /** DELETE /api/communities/{id}: leave it. */
     public function leave(Request $request, string $community): JsonResponse
     {
-        DB::table('community_members')->where(['user_id' => $request->user()->id, 'community_id' => $community])->delete();
+        DB::table('community_members')->where(['user_id' => $this->signedIn($request)->id, 'community_id' => $community])->delete();
 
         return response()->json($this->account($request->user()));
     }
@@ -106,7 +106,7 @@ class AccountController extends Controller
     /** "chris_m" becomes "CM", "GrumpyHistorian" becomes "GH". */
     private function initials(string $name): string
     {
-        $words = preg_split('/[^A-Za-z]+|(?=[A-Z])/', $name, -1, PREG_SPLIT_NO_EMPTY);
+        $words = preg_split('/[^A-Za-z]+|(?=[A-Z])/', $name, -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
         return strtoupper(implode('', array_map(fn ($word) => $word[0], array_slice($words, 0, 2))));
     }

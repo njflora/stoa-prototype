@@ -7,6 +7,7 @@ use App\Sources\EpisodeMatcher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Testing\PendingCommand;
 use Tests\TestCase;
 
 /**
@@ -53,13 +54,21 @@ class DeskTest extends TestCase
             XML);
         File::put("{$this->feeds}/odysee.json", json_encode(['result' => ['items' => [
             ['claim_id' => 'f00d', 'name' => 'morning-brief-tue-20-oct-2026', 'value' => ['title' => 'Morning Brief | Tue, 20 Oct 2026 - Stoa', 'release_time' => (string) strtotime('2026-10-20 07:40:00 UTC')]],
-        ]]]));
+        ]]], JSON_THROW_ON_ERROR));
     }
 
     protected function tearDown(): void
     {
         File::deleteDirectory($this->feeds);
         parent::tearDown();
+    }
+
+    /** Runs the sync for one platform from its sample feed, and expects it to succeed. */
+    private function sync(string $platform): void
+    {
+        $command = $this->artisan("stoa:sync {$platform} --fixtures");
+        $this->assertInstanceOf(PendingCommand::class, $command);
+        $command->assertSuccessful();
     }
 
     public function test_titles_are_compared_without_the_platforms_habits(): void
@@ -72,7 +81,7 @@ class DeskTest extends TestCase
 
     public function test_a_sync_links_a_missing_upload_and_leaves_clips_unmatched(): void
     {
-        $this->artisan('stoa:sync bitchute --fixtures')->assertSuccessful();
+        $this->sync('bitchute');
 
         $this->assertDatabaseHas('episode_sources', ['episode_id' => 'chronos-121', 'platform' => 'bitchute', 'status' => 'linked', 'external_id' => 'AbC123']);
         $this->assertDatabaseHas('ingest_runs', ['platform' => 'bitchute', 'status' => 'ok', 'fetched' => 2, 'matched' => 1, 'linked' => 1, 'unmatched' => 1]);
@@ -80,15 +89,15 @@ class DeskTest extends TestCase
 
     public function test_a_daily_edition_matches_by_show_and_date(): void
     {
-        $this->artisan('stoa:sync odysee --fixtures')->assertSuccessful();
+        $this->sync('odysee');
 
         $this->assertDatabaseHas('episode_sources', ['episode_id' => 'morning-brief-3120', 'platform' => 'odysee', 'status' => 'linked']);
     }
 
     public function test_syncing_twice_links_nothing_new(): void
     {
-        $this->artisan('stoa:sync bitchute --fixtures');
-        $this->artisan('stoa:sync bitchute --fixtures');
+        $this->sync('bitchute');
+        $this->sync('bitchute');
 
         $this->assertSame([1, 0], DB::table('ingest_runs')->orderBy('id')->pluck('linked')->all());
     }

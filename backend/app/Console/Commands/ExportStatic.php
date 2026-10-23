@@ -19,6 +19,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use LogicException;
 
 /**
  * Writes the static preview: every answer the API can give, as JSON files in
@@ -140,7 +141,9 @@ class ExportStatic extends Command
                 ));
         }
         foreach (Article::pluck('id') as $id) {
-            $this->write("extras/articles/{$id}.json", ['thread' => $discussions->thread(Thread::find('article', $id), $member)]);
+            // The id comes from the articles table, so its thread always exists.
+            $thread = Thread::find('article', $id) ?? throw new LogicException("No thread for article {$id}.");
+            $this->write("extras/articles/{$id}.json", ['thread' => $discussions->thread($thread, $member)]);
         }
         $live = $extras([Thread::find('live', 'live-show')])['live-show'];
         unset($live['play']); // the live stream's sources come with the reference data
@@ -181,7 +184,11 @@ class ExportStatic extends Command
         }
     }
 
-    /** Newest-first pages, and the popular list for each period. */
+    /**
+     * Newest-first pages, and the popular list for each period.
+     *
+     * @param  'all'|'free'|'members'  $access
+     */
     private function episodeFolder(Catalogue $catalogue, string $folder, string $showId, string $access, ?string $hostId = null): void
     {
         $this->pages($folder, fn (int $page) => $catalogue->episodes($showId, $page, $access, $hostId));

@@ -38,7 +38,7 @@ class DiscussionController extends Controller
         $comment = Comment::create([
             'thread' => $thread->key(),
             'parent_id' => $input['parentId'] ?? null,
-            'user_id' => $request->user()->id,
+            'user_id' => $this->signedIn($request)->id,
             'body' => trim($input['text']),
             'posted_at' => $this->catalogue->postingTime(),
         ]);
@@ -51,7 +51,7 @@ class DiscussionController extends Controller
     {
         Gate::authorize('post', $this->find(...explode(':', $comment->thread, 2)));
         $direction = $request->validate(['direction' => ['nullable', Rule::in(['up', 'down'])]])['direction'] ?? null;
-        $user = $request->user();
+        $user = $this->signedIn($request);
 
         DB::transaction(function () use ($comment, $user, $direction) {
             $votes = DB::table('comment_votes')->where(['user_id' => $user->id, 'comment_id' => $comment->id]);
@@ -99,7 +99,7 @@ class DiscussionController extends Controller
         $thread = $this->find('forum', "{$community}/{$forum}");
         Gate::authorize('post', $thread);
         $title = $request->validate(['title' => ['required', 'string', 'max:200']])['title'];
-        $topic = ForumTopic::create(['forum' => $thread->id, 'user_id' => $request->user()->id, 'title' => trim($title)]);
+        $topic = ForumTopic::create(['forum' => $thread->id, 'user_id' => $this->signedIn($request)->id, 'title' => trim($title)]);
 
         return response()->json($this->topic($topic->load('user')), 201);
     }
@@ -114,6 +114,10 @@ class DiscussionController extends Controller
      */
     private function topic(ForumTopic $topic): array
     {
-        return ['title' => $topic->title, 'by' => $topic->user->name, 'replies' => 0, 'createdAt' => Catalogue::iso($topic->created_at)];
+        // Laravel sets created_at on every insert; the column allows null only
+        // because timestamps() does, so the fallback is never expected.
+        $createdAt = $topic->created_at ?? now();
+
+        return ['title' => $topic->title, 'by' => $topic->user->name, 'replies' => 0, 'createdAt' => Catalogue::iso($createdAt)];
     }
 }

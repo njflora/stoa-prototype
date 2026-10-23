@@ -9,11 +9,15 @@ v2 makes the code easier to maintain, better tested and more secure. It adds no 
 ### 2026-10-23: Static analysis for the back end
 
 #### Added
-- Larastan (PHPStan with Laravel's rules) checks the back end at level 6 (`backend/phpstan.neon`, run with `composer analyse`). It reads each model's `casts()` method, so dates are typed as dates.
+- Larastan (PHPStan with Laravel's rules) checks the back end at level 8 (`backend/phpstan.neon`, run with `composer analyse`). It reads each model's `casts()` method, so dates are typed as dates.
 
 #### Changed
 - Every Eloquent relation states what it returns, such as `BelongsTo<Show, $this>`, so code using it is checked against the right model.
 - Methods that return arrays say what is in them: a record with named fields (`array<string, mixed>`), a list of records, or a list of strings. Query scopes take a builder of episodes.
+- Actions for signed-in accounts get the account through `signedIn()`, which answers 401 if a route ever loses its sign-in check, instead of failing on a missing account.
+- Relations that the database requires, such as an episode's show or a comment's author, are typed as always present.
+- A broken BitChute feed, or a missing sample feed, fails the sync run with a clear note instead of a PHP error.
+- The data export, the seeder and two config values handle the cases where PHP functions return false.
 - A search result's kind is typed from the list of kinds, so a new kind without a link is caught before it can fail a search.
 - Three nullsafe operators before `??` are plain `->`, since `??` already allows a missing value.
 

@@ -29,7 +29,12 @@ abstract class SourceAdapter
             throw new RuntimeException("The live {$this->platform()} feed is not connected yet. Run with --fixtures.");
         }
 
-        return $this->parse(file_get_contents($this->fixturePath()));
+        $body = file_get_contents($this->fixturePath());
+        if ($body === false) {
+            throw new RuntimeException("Cannot read the {$this->platform()} sample feed at {$this->fixturePath()}.");
+        }
+
+        return $this->parse($body);
     }
 
     protected function fixturePath(): string

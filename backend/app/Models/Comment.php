@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** One comment in a thread, or a reply to one. Threads are one level deep. */
+/**
+ * One comment in a thread, or a reply to one. Threads are one level deep.
+ *
+ * @property-read User $user Required: user_id is a non-null foreign key.
+ */
 class Comment extends Model
 {
     public $timestamps = false;

@@ -14,6 +14,8 @@ use Laravel\Scout\Searchable;
  * One episode, whichever platforms it is published on. Its id is
  * "{show}-{seq}", where seq counts up from the show's first episode, so ids
  * never change as new episodes arrive.
+ *
+ * @property-read Show $show Required: show_id is a non-null foreign key.
  */
 class Episode extends Model
 {
@@ -165,7 +167,7 @@ class Episode extends Model
             'edition' => $this->edition ?: null,
             'number' => $this->number,
             'title' => $this->title,
-            'series' => $this->series_slug ? [
+            'series' => $this->series ? [
                 'name' => $this->series->name,
                 'part' => $this->series_part,
                 'of' => $this->series_of,

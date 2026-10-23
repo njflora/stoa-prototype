@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Scout\Searchable;
 
+/**
+ * @property-read Episode $watchNext Required: watch_next_id is a non-null foreign key.
+ */
 class Article extends Model
 {
     use Searchable;

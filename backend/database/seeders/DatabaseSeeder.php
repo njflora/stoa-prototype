@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
  * Loads the demo catalogue from database/seed, which scripts/data/generate.mjs
@@ -249,7 +250,7 @@ class DatabaseSeeder extends Seeder
     private function index(): void
     {
         if (config('scout.driver') === 'meilisearch') {
-            $this->command->call('stoa:index');
+            $this->command?->call('stoa:index');
         }
     }
 
@@ -258,12 +259,22 @@ class DatabaseSeeder extends Seeder
      */
     private function read(string $name): array
     {
-        return json_decode(file_get_contents(database_path("seed/{$name}.json")), true, flags: JSON_THROW_ON_ERROR);
+        $json = file_get_contents(database_path("seed/{$name}.json"));
+        if ($json === false) {
+            throw new RuntimeException("Cannot read the seed file {$name}.json.");
+        }
+
+        return json_decode($json, true, flags: JSON_THROW_ON_ERROR);
     }
 
     /** "2026-10-19T12:00:00.000Z" as the database stores it, in UTC. */
     private function datetime(string $iso): string
     {
-        return gmdate('Y-m-d H:i:s', strtotime($iso));
+        $timestamp = strtotime($iso);
+        if ($timestamp === false) {
+            throw new RuntimeException("Not a date: {$iso}.");
+        }
+
+        return gmdate('Y-m-d H:i:s', $timestamp);
     }
 }
