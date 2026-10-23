@@ -6,6 +6,15 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-23: Unit tests for watch progress, purchases and saved data
+
+#### Added
+- Tests for the "Continue watching" rules (what counts as started, in progress and watched, newest first, at most 20), for reading and writing saved data when storage is missing, broken or blocked, and for watch progress and purchases surviving a reload. A purchase is tested through the real viewer and access rule: it unlocks that one episode for a free account, and nothing once signed out.
+- jsdom gives the tests that need one a simulated browser. Each such test file opts in on its first line; the rest run without it.
+
+#### Changed
+- The "Continue watching" rules move into `src/utils/progress.ts`, with their thresholds named. useWatchProgress uses them. Behaviour is unchanged.
+
 ### 2026-10-23: Unit tests for the live show and the schedule
 
 #### Added

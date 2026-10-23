@@ -1,18 +1,12 @@
 import { computed, ref, watch } from 'vue'
 import { readJson, writeJson } from './storage'
+import { inProgress, isWatchedFraction, type ProgressMap } from '@/utils/progress'
 
 // Remembers how far the viewer got in each episode. It powers
 // "Continue watching". Kept in the browser for the prototype; a real site
 // would sync it to the viewer's account. It stores only ids: the episodes
 // themselves are fetched when needed (getEpisodes in src/api/catalogue.ts).
-
-interface Progress {
-  /** 0 to 1. */
-  fraction: number
-  updatedAt: number
-}
-
-type ProgressMap = Record<string, Progress>
+// The rules for what counts as in progress or watched are in utils/progress.ts.
 
 const STORAGE_KEY = 'stoa-progress'
 const HOUR_MS = 3_600_000
@@ -36,13 +30,7 @@ watch(progress, (value) => writeJson(STORAGE_KEY, value), { deep: true })
 
 export function useWatchProgress() {
   /** Ids of started but unfinished episodes, most recent first (at most 20). */
-  const inProgressIds = computed(() =>
-    Object.entries(progress.value)
-      .filter(([, p]) => p.fraction > 0.02 && p.fraction < 0.95)
-      .sort(([, a], [, b]) => b.updatedAt - a.updatedAt)
-      .slice(0, 20)
-      .map(([id]) => id),
-  )
+  const inProgressIds = computed(() => inProgress(progress.value))
 
   function progressFor(id: string): number {
     return progress.value[id]?.fraction ?? 0
@@ -50,7 +38,7 @@ export function useWatchProgress() {
 
   /** Watched to the end, near enough. */
   function isWatched(id: string): boolean {
-    return progressFor(id) >= 0.95
+    return isWatchedFraction(progressFor(id))
   }
 
   function setProgress(id: string, fraction: number) {
