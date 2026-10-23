@@ -59,7 +59,11 @@ class SiteSearch
         return ['query' => $query, 'total' => $total, 'tookMs' => $took, 'groups' => $groups, 'counts' => $counts];
     }
 
-    /** One result, in the shape the search panel reads. */
+    /**
+     * One result, in the shape the search panel reads.
+     *
+     * @param  key-of<self::KINDS>  $kind
+     */
     private function hit(string $kind, array $doc): array
     {
         $id = (string) ($doc['id'] ?? $doc['slug']);

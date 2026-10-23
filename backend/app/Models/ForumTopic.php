@@ -10,6 +10,9 @@ class ForumTopic extends Model
 {
     protected $fillable = ['forum', 'user_id', 'title'];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

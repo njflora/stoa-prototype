@@ -20,11 +20,17 @@ class Comment extends Model
         return ['posted_at' => 'datetime'];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return HasMany<Comment, $this>
+     */
     public function replies(): HasMany
     {
         return $this->hasMany(Comment::class, 'parent_id')->orderBy('posted_at');

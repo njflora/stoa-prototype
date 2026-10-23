@@ -41,23 +41,37 @@ class Episode extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Show, $this>
+     */
     public function show(): BelongsTo
     {
         return $this->belongsTo(Show::class);
     }
 
-    /** Where it is published: one row per platform. */
+    /**
+     * Where it is published: one row per platform.
+     *
+     * @return HasMany<EpisodeSource, $this>
+     */
     public function sources(): HasMany
     {
         return $this->hasMany(EpisodeSource::class);
     }
 
+    /**
+     * @return BelongsTo<Series, $this>
+     */
     public function series(): BelongsTo
     {
         return $this->belongsTo(Series::class, 'series_slug');
     }
 
-    /** The people on the episode, in the order they are credited. */
+    /**
+     * The people on the episode, in the order they are credited.
+     *
+     * @return BelongsToMany<Contributor, $this>
+     */
     public function contributors(): BelongsToMany
     {
         return $this->belongsToMany(Contributor::class)->withPivot('position')->orderByPivot('position');
@@ -98,7 +112,7 @@ class Episode extends Model
             'title' => $this->title ?? "{$this->show->name} {$this->published_at->format('l j F')}",
             'show' => $this->show->name,
             'hosts' => $this->contributors->pluck('name')->implode(' '),
-            'text' => trim(implode(' ', [...($this->topics ?? []), $this->series?->name ?? ''])),
+            'text' => trim(implode(' ', [...($this->topics ?? []), $this->series->name ?? ''])),
             'published_ts' => $this->published_at->getTimestamp(),
             'showId' => $this->show_id,
             'access' => $this->access,

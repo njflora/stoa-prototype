@@ -60,7 +60,7 @@ class Desk
         $summary = [];
         foreach (self::PLATFORMS as $platform) {
             foreach (['linked', ...self::PROBLEMS] as $status) {
-                $summary[$platform][$status] = (int) ($counts->first(fn ($c) => $c->platform === $platform && $c->status === $status)?->total ?? 0);
+                $summary[$platform][$status] = (int) ($counts->first(fn ($c) => $c->platform === $platform && $c->status === $status)?->getAttribute('total') ?? 0);
             }
         }
 

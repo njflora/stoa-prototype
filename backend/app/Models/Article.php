@@ -50,11 +50,17 @@ class Article extends Model
         return ($likes + $dislikes) ** (min($likes, $dislikes) / max($likes, $dislikes));
     }
 
+    /**
+     * @return BelongsTo<Contributor, $this>
+     */
     public function author(): BelongsTo
     {
         return $this->belongsTo(Contributor::class, 'author_id');
     }
 
+    /**
+     * @return BelongsTo<Episode, $this>
+     */
     public function watchNext(): BelongsTo
     {
         return $this->belongsTo(Episode::class, 'watch_next_id');
@@ -67,7 +73,7 @@ class Article extends Model
             'id' => $this->id,
             'title' => $this->title,
             'show' => $this->category,
-            'hosts' => $this->author?->name ?? '',
+            'hosts' => $this->author->name ?? '',
             'text' => $this->standfirst,
             'published_ts' => $this->published_at->getTimestamp(),
             'category' => $this->category,

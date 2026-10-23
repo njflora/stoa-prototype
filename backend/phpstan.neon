@@ -1,0 +1,17 @@
+# Static analysis for the whole back end, with Larastan's Laravel rules.
+# Run with `composer analyse`. The level is raised step by step; see
+# docs/decisions/0001-static-analysis-level.md.
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    # Read each model's casts() method, so a 'datetime' cast is a Carbon date
+    # and an 'array' cast is an array, not the database column's raw type.
+    parseModelCastsMethod: true
+    paths:
+        - app
+        - config
+        - database
+        - routes
+        - tests

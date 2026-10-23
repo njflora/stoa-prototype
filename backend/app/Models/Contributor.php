@@ -46,11 +46,17 @@ class Contributor extends Model
         ];
     }
 
+    /**
+     * @return BelongsToMany<Episode, $this>
+     */
     public function episodes(): BelongsToMany
     {
         return $this->belongsToMany(Episode::class);
     }
 
+    /**
+     * @return HasMany<Article, $this>
+     */
     public function articles(): HasMany
     {
         return $this->hasMany(Article::class, 'author_id');

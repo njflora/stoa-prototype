@@ -45,6 +45,9 @@ class User extends Authenticatable
         return $this->is_staff ? 'staff' : ($this->tier ?? 'free');
     }
 
+    /**
+     * @return HasMany<Purchase, $this>
+     */
     public function purchases(): HasMany
     {
         return $this->hasMany(Purchase::class);

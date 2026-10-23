@@ -6,6 +6,19 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-23: Static analysis for the back end
+
+#### Added
+- Larastan (PHPStan with Laravel's rules) checks the back end at level 5 (`backend/phpstan.neon`, run with `composer analyse`). It reads each model's `casts()` method, so dates are typed as dates.
+
+#### Changed
+- Every Eloquent relation states what it returns, such as `BelongsTo<Show, $this>`, so code using it is checked against the right model.
+- A search result's kind is typed from the list of kinds, so a new kind without a link is caught before it can fail a search.
+- Three nullsafe operators before `??` are plain `->`, since `??` already allows a missing value.
+
+#### Removed
+- The placeholder unit test, which asserted that true is true. The Unit test suite returns with real unit tests.
+
 ### 2026-10-22: Formatting for the back end
 
 #### Added

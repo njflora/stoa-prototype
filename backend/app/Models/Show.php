@@ -41,6 +41,9 @@ class Show extends Model
         ];
     }
 
+    /**
+     * @return HasMany<Episode, $this>
+     */
     public function episodes(): HasMany
     {
         return $this->hasMany(Episode::class);

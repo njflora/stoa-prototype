@@ -39,12 +39,19 @@ class Series extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Show, $this>
+     */
     public function show(): BelongsTo
     {
         return $this->belongsTo(Show::class);
     }
 
-    /** The parts, first to last. */
+    /**
+     * The parts, first to last.
+     *
+     * @return HasMany<Episode, $this>
+     */
     public function episodes(): HasMany
     {
         return $this->hasMany(Episode::class, 'series_slug')->orderBy('series_part');

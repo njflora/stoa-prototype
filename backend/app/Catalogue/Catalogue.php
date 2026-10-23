@@ -313,7 +313,7 @@ class Catalogue
             't' => $e->title ?? '',
             's' => $e->show_id,
             'h' => $e->contributors->pluck('id')->all(),
-            'x' => trim(implode(' ', [...($e->topics ?? []), $e->series?->name ?? ''])),
+            'x' => trim(implode(' ', [...($e->topics ?? []), $e->series->name ?? ''])),
             'd' => self::iso($e->published_at),
             'a' => $e->access,
             ...($e->edition ? ['e' => 1] : []),
@@ -350,7 +350,11 @@ class Catalogue
         return Episode::with(Episode::CARD_RELATIONS)->where('show_id', $showId)->orderBy('seq')->first();
     }
 
-    /** Runs a query and turns each episode into its card. */
+    /**
+     * Runs a query and turns each episode into its card.
+     *
+     * @param  Builder<Episode>  $query
+     */
     private function cards(Builder $query): array
     {
         return $query->with(Episode::CARD_RELATIONS)->get()->map->toCard()->all();
