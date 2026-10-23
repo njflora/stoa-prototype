@@ -21,7 +21,15 @@ class BitChuteAdapter extends SourceAdapter
     protected function parse(string $body): array
     {
         // An external feed: a broken one fails the sync run with a clear note.
-        $feed = simplexml_load_string($body, options: LIBXML_NOCDATA);
+        // The parser collects its errors quietly, rather than raising PHP
+        // warnings, and never fetches anything over the network.
+        $quiet = libxml_use_internal_errors(true);
+        try {
+            $feed = simplexml_load_string($body, options: LIBXML_NOCDATA | LIBXML_NONET);
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($quiet);
+        }
         if ($feed === false) {
             throw new RuntimeException('The BitChute feed is not valid XML.');
         }

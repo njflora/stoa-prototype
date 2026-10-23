@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Purchase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -118,6 +119,47 @@ class AccessTest extends TestCase
         $this->actingAs($this->free)->postJson('/api/purchases', ['episodeId' => 'stoa-podcast-1'])->assertNotFound();
         $this->app['auth']->forgetGuards();
         $this->postJson('/api/purchases', ['episodeId' => 'chronos-1'])->assertUnauthorized();
+    }
+
+    public function test_buying_an_episode_twice_keeps_one_purchase(): void
+    {
+        $this->actingAs($this->free)->postJson('/api/purchases', ['episodeId' => 'chronos-1'])->assertCreated();
+        $this->actingAs($this->free)->postJson('/api/purchases', ['episodeId' => 'chronos-1'])
+            ->assertCreated()
+            ->assertJsonPath('purchases', ['chronos-1']);
+
+        $this->assertSame(1, Purchase::where('user_id', $this->free->id)->count());
+    }
+
+    public function test_a_purchase_needs_a_real_episode(): void
+    {
+        $this->actingAs($this->free)->postJson('/api/purchases', [])->assertUnprocessable();
+        $this->actingAs($this->free)->postJson('/api/purchases', ['episodeId' => ['chronos-1']])->assertUnprocessable();
+        $this->actingAs($this->free)->postJson('/api/purchases', ['episodeId' => 'no-such-episode'])->assertNotFound();
+
+        $this->assertSame(0, Purchase::count());
+    }
+
+    public function test_purchases_are_listed_newest_first(): void
+    {
+        $this->travelTo('2026-10-20 10:00');
+        $this->actingAs($this->free)->postJson('/api/purchases', ['episodeId' => 'chronos-1'])->assertCreated();
+        $this->travelTo('2026-10-21 10:00');
+        $this->actingAs($this->free)->postJson('/api/purchases', ['episodeId' => 'chronos-2'])->assertCreated();
+
+        $this->actingAs($this->free)->getJson('/api/me')->assertJsonPath('purchases', ['chronos-2', 'chronos-1']);
+    }
+
+    public function test_staff_watch_members_episodes(): void
+    {
+        $staff = User::factory()->create(['is_staff' => true]);
+
+        $this->actingAs($staff)->getJson('/api/episodes/chronos-1/play')->assertJsonPath('locked', false);
+    }
+
+    public function test_an_unknown_episode_cannot_be_played(): void
+    {
+        $this->actingAs($this->member)->getJson('/api/episodes/no-such-episode/play')->assertNotFound();
     }
 
     public function test_a_free_account_cannot_post_in_a_members_only_thread_or_forum(): void

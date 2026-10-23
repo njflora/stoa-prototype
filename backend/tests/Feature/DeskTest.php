@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\IngestRun;
 use App\Models\User;
 use App\Sources\EpisodeMatcher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -63,12 +64,19 @@ class DeskTest extends TestCase
         parent::tearDown();
     }
 
+    /** An Artisan command, ready for its expectations (assertSuccessful, assertFailed). */
+    private function command(string $command): PendingCommand
+    {
+        $pending = $this->artisan($command);
+        $this->assertInstanceOf(PendingCommand::class, $pending);
+
+        return $pending;
+    }
+
     /** Runs the sync for one platform from its sample feed, and expects it to succeed. */
     private function sync(string $platform): void
     {
-        $command = $this->artisan("stoa:sync {$platform} --fixtures");
-        $this->assertInstanceOf(PendingCommand::class, $command);
-        $command->assertSuccessful();
+        $this->command("stoa:sync {$platform} --fixtures")->assertSuccessful();
     }
 
     public function test_titles_are_compared_without_the_platforms_habits(): void
@@ -100,6 +108,32 @@ class DeskTest extends TestCase
         $this->sync('bitchute');
 
         $this->assertSame([1, 0], DB::table('ingest_runs')->orderBy('id')->pluck('linked')->all());
+    }
+
+    public function test_a_broken_feed_fails_the_run_with_a_clear_note_and_links_nothing(): void
+    {
+        File::put("{$this->feeds}/bitchute.xml", '<rss><channel><item>not closed');
+
+        $this->command('stoa:sync bitchute --fixtures')->assertFailed();
+
+        $run = IngestRun::sole();
+        $this->assertSame('failed', $run->status);
+        $this->assertSame(['The BitChute feed is not valid XML.'], $run->notes);
+        $this->assertDatabaseHas('episode_sources', ['episode_id' => 'chronos-121', 'platform' => 'bitchute', 'status' => 'missing']);
+    }
+
+    public function test_the_live_feeds_are_refused_until_they_are_connected(): void
+    {
+        $this->command('stoa:sync bitchute')->assertFailed();
+
+        $this->assertStringContainsString('--fixtures', implode(' ', IngestRun::sole()->notes ?? []));
+    }
+
+    public function test_an_unknown_platform_is_refused(): void
+    {
+        $this->command('stoa:sync youtube --fixtures')->assertFailed();
+
+        $this->assertSame(0, IngestRun::count());
     }
 
     public function test_the_desk_is_for_staff_only(): void

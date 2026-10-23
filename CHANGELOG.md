@@ -6,6 +6,19 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-23: Back-end tests for auth, purchases, rate limits and the sync
+
+#### Added
+- AuthTest: the account answer never includes the email or password; signing out ends the session; every API route that changes something requires sign-in, checked against the route list itself, so a new route that forgets it fails; and a signed-out visitor gets 401 from each one.
+- Purchases: buying twice keeps one, a missing or malformed id is refused, an unknown episode is not found, purchases are listed newest first, and staff watch members' episodes.
+- Rate limits: every API request counts towards 300 a minute per visitor, all kinds of change share one budget of 20, and answers say how many requests are left.
+- The sync: a broken feed fails the run with a clear note and links nothing, the live feeds are refused until connected, and an unknown platform is refused. A unit test reads every platform's sample feed and checks each embed address is HTTPS on that platform's own host.
+- HealthTest checks `/up`, the health check a host's monitoring calls. It replaces the placeholder test.
+
+#### Fixed
+- `php artisan stoa:sync` exits with a failure when a run fails, so the scheduler and monitoring notice. It reported success before.
+- A broken BitChute feed now gives the clear note "The BitChute feed is not valid XML." The XML parser's warning had been raised first. The parser also no longer fetches anything over the network while reading a feed.
+
 ### 2026-10-23: Browser smoke tests
 
 #### Added

@@ -28,6 +28,37 @@ class SecurityTest extends TestCase
         $this->actingAs(User::factory()->create())->postJson("/api/communities/{$community}")->assertOk();
     }
 
+    public function test_all_kinds_of_change_share_one_budget(): void
+    {
+        // Mixing kinds of change does not get round the limit.
+        $user = User::factory()->create();
+        $community = config('stoa.communities')[0];
+
+        for ($i = 0; $i < 10; $i++) {
+            $this->actingAs($user)->postJson("/api/communities/{$community}")->assertOk();
+            $this->actingAs($user)->deleteJson("/api/communities/{$community}")->assertOk();
+        }
+        $this->actingAs($user)->postJson('/api/purchases', ['episodeId' => 'any'])->assertTooManyRequests();
+    }
+
+    public function test_every_api_request_counts_towards_300_a_minute_per_visitor(): void
+    {
+        for ($i = 0; $i < 300; $i++) {
+            $this->getJson('/api/me')->assertOk();
+        }
+        $this->getJson('/api/me')->assertTooManyRequests();
+
+        // A visitor from another address has their own count.
+        $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.9'])->getJson('/api/me')->assertOk();
+    }
+
+    public function test_answers_say_how_many_requests_are_left(): void
+    {
+        $this->getJson('/api/me')
+            ->assertHeader('X-RateLimit-Limit', '300')
+            ->assertHeader('X-RateLimit-Remaining', '299');
+    }
+
     public function test_tier_and_staff_cannot_be_mass_assigned(): void
     {
         // Outside production, trying is an error, so the mistake shows up in tests.

@@ -15,6 +15,8 @@ class SyncPlatforms extends Command
     public function handle(): int
     {
         $platforms = $this->argument('platform') ? [$this->argument('platform')] : array_keys(SourceAdapter::all());
+        // Any failed run makes the command fail, so the scheduler and monitoring notice.
+        $failed = false;
         foreach ($platforms as $platform) {
             if (! array_key_exists($platform, SourceAdapter::all())) {
                 $this->error("Unknown platform: {$platform}");
@@ -27,8 +29,12 @@ class SyncPlatforms extends Command
                 '%-9s %-6s fetched %3d, matched %3d, newly linked %3d, unmatched %d',
                 $platform, $run->status, $run->fetched, $run->matched, $run->linked, $run->unmatched,
             ));
+            if ($run->status === 'failed') {
+                $this->error("{$platform}: ".implode(' ', $run->notes ?? []));
+                $failed = true;
+            }
         }
 
-        return self::SUCCESS;
+        return $failed ? self::FAILURE : self::SUCCESS;
     }
 }
