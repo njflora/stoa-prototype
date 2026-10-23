@@ -6,6 +6,15 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-24: The welcome loads only when it shows
+
+#### Changed
+- The welcome animation is loaded the first time it shows (a first visit, `?intro=1` or "Replay intro"), so returning visitors never download it. The code every visitor downloads first is about a fifth smaller (18.2 KB to 14.3 KB compressed). It looks and behaves as before.
+- It is split into its own folder, `src/components/intro/`: StoaIntro.vue (opening, skipping, keyboard and focus), scene.ts (the drawing's geometry), IntroColonnade, IntroBand and IntroSeal (the three drawings) and intro.css (the animation, kept to the welcome). No file is over 170 lines; the original was 653.
+
+#### Added
+- Tests that the seal stays centred and between 56 and 150 px on screens from a 320 px phone to a wide monitor, and that the band stays tall enough for the name.
+
 ### 2026-10-24: The pitch layer in its own folder
 
 #### Changed

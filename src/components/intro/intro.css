@@ -1,0 +1,145 @@
+/*
+ * The welcome's animation, shared by StoaIntro and its drawings. Every rule
+ * starts with .intro, the overlay's root, so nothing reaches the rest of
+ * the site. Loaded with the welcome, only when it shows.
+ */
+
+.intro {
+  background: #07021a;
+}
+
+/* Waiting: stars twinkle, the sun shimmers and the seal glows at the end of the corridor, inviting a click. */
+.intro .star {
+  animation: twinkle 3s ease-in-out infinite;
+}
+@keyframes twinkle {
+  50% {
+    opacity: 0.35;
+  }
+}
+.intro .sun,
+.intro .halo {
+  animation: shimmer 4s ease-in-out infinite;
+}
+@keyframes shimmer {
+  50% {
+    opacity: 0.85;
+  }
+}
+.intro .seal {
+  animation: glow 2.4s ease-in-out infinite;
+}
+@keyframes glow {
+  50% {
+    filter: drop-shadow(0 0 16px rgb(244 114 208 / 0.85));
+  }
+}
+
+/* SVG parts animate around their own box, or around the vanishing point. */
+.intro .half {
+  transform-box: fill-box;
+}
+.intro .columns,
+.intro .beams {
+  transform-box: view-box;
+  transform-origin: 600px 420px;
+}
+
+/* Opening, about two seconds in all. */
+.intro.is-opening .seal {
+  animation: none;
+}
+.intro.is-opening .skip,
+.intro.is-opening .caption {
+  transition: opacity 0.25s ease;
+  opacity: 0;
+}
+.intro.is-opening .half-left {
+  transform-origin: right center;
+  animation: fall-left 0.7s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+.intro.is-opening .half-right {
+  transform-origin: left center;
+  animation: fall-right 0.7s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+@keyframes fall-left {
+  to {
+    transform: translate(-28px, 150px) rotate(-38deg);
+    opacity: 0;
+  }
+}
+@keyframes fall-right {
+  to {
+    transform: translate(28px, 150px) rotate(38deg);
+    opacity: 0;
+  }
+}
+/* The neon flares as the seal breaks. */
+.intro.is-opening .neon {
+  animation: flare 0.6s ease-out 0.1s forwards;
+}
+@keyframes flare {
+  40% {
+    stroke: #fff;
+    stroke-width: 6;
+  }
+  to {
+    stroke: #ffb3ea;
+    stroke-width: 4.5;
+  }
+}
+/* The columns and beams start to rush past, as if walking down the colonnade... */
+.intro.is-opening .columns,
+.intro.is-opening .beams {
+  animation: rush 1.2s cubic-bezier(0.5, 0, 0.9, 0.4) 0.25s forwards;
+}
+@keyframes rush {
+  to {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+.intro.is-opening .halo {
+  animation: dawn 0.9s ease-out 0.2s forwards;
+}
+@keyframes dawn {
+  to {
+    transform: scale(2.2);
+    opacity: 1;
+  }
+}
+/* ...and the whole view moves down the corridor, into the light. */
+.intro.is-opening .scene {
+  animation: push 1.2s cubic-bezier(0.55, 0, 0.85, 0.35) 0.6s forwards;
+}
+@keyframes push {
+  to {
+    transform: scale(10);
+  }
+}
+.intro.is-opening {
+  animation: fade 0.5s ease 1.5s forwards;
+}
+@keyframes fade {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Reduce motion: nothing falls, flares, rushes or moves. A short fade only. */
+.intro.is-reduced.is-opening,
+.intro.is-reduced.is-opening * {
+  animation: none !important;
+}
+.intro.is-reduced.is-opening {
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro .star,
+  .intro .halo,
+  .intro .sun,
+  .intro .seal {
+    animation: none;
+  }
+}
