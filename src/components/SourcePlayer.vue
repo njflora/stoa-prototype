@@ -2,7 +2,7 @@
 import { computed, nextTick, onUnmounted, ref, useId, watch } from 'vue'
 import AppIcon from './AppIcon.vue'
 import HeroVideo from './HeroVideo.vue'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 import VodPlayer from './VodPlayer.vue'
 import { useOnline } from '@/composables/useOnline'
 import { heroVideo, mediaUrl } from '@/data/media'

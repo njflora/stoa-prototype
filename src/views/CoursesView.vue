@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import CourseCard from '@/components/CourseCard.vue'
 import FilterChips from '@/components/FilterChips.vue'
-import PitchNote from '@/components/PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 import { courses, type CourseType } from '@/data/courses'
 
 // The course shop, inside the main site rather than on a separate one.

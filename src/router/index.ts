@@ -124,7 +124,7 @@ const router = createRouter({
     {
       path: '/pitch',
       name: 'pitch',
-      component: () => import('../views/PitchView.vue'),
+      component: () => import('../pitch/PitchView.vue'),
       meta: { title: 'Pitch notes' },
     },
     {

@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import AppIcon from '@/components/AppIcon.vue'
 import FilterChips from '@/components/FilterChips.vue'
-import PitchNote from '@/components/PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 import { artworks, mediaUrl } from '@/data/media'
 import { productPrice, products, productTitle, regions, type Region } from '@/data/shop'
 import { formatPrice } from '@/utils/format'

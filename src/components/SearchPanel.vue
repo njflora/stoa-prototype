@@ -2,7 +2,7 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AppIcon from './AppIcon.vue'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 import type { ResultKind, SearchHit } from '@/api/search'
 import { reference } from '@/api/catalogue'
 import { articleCategoryColours, getShow, hostNames } from '@/data/catalogue'

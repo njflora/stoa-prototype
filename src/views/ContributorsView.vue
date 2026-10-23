@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { reference } from '@/api/catalogue'
-import PitchNote from '@/components/PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 
 // Everyone who presents, writes or appears regularly. Initials instead of
 // photos: the contributors are invented, and no real likeness is used.

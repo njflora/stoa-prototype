@@ -12,7 +12,7 @@ import { listAllSeries } from '@/data/catalogue'
 import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { pageTitle } from '@/config/brand'
-import PitchNote from '@/components/PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 
 // A contributor's profile: who they are, the shows they appear on (each
 // opening that show filtered to them), their series and articles, and

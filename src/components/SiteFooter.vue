@@ -4,7 +4,7 @@ import NewsletterSignup from './NewsletterSignup.vue'
 import { brand } from '@/config/brand'
 import BrandLogo from './BrandLogo.vue'
 import InstallApp from './InstallApp.vue'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 
 // The real site's footer links, in their order, plus Contributors and Pitch notes.
 const links = [

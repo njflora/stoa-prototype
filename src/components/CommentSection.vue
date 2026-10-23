@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useId, watch } from 'vue'
 import { RouterLink } from 'vue-router'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 import CommentItem from './CommentItem.vue'
 import MembersGate from './MembersGate.vue'
 import { canPost as canPostRule, canRead } from '@/access/rules'

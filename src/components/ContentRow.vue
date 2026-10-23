@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, useId } from 'vue'
 import AppIcon from './AppIcon.vue'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 import { provideRowPreview } from '@/composables/usePreview'
 
 // A horizontal row of cards. Swipe or scroll on any device; on larger

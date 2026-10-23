@@ -10,7 +10,7 @@ import { articleCategoryColours, hostNames } from '@/data/catalogue'
 import { useQuery } from '@/composables/useQuery'
 import type { ArticleCategory } from '@/types/content'
 import { formatPublished } from '@/utils/format'
-import PitchNote from '@/components/PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 
 // Every article, 24 to a page: newest, most read in a period, or most
 // controversial. The newest piece leads. Category, sort and page live in

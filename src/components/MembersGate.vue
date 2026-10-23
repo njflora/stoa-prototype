@@ -2,7 +2,7 @@
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import { useViewer } from '@/composables/useViewer'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 
 // Members-only content, seen by someone who is not a member: a blurred
 // glimpse behind an invitation, so it feels exclusive (a design decision). Used by

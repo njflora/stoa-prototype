@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { getPitchNote, pillLabel } from '@/data/pitchNotes'
-import { usePitchMode } from '@/composables/usePitchMode'
+import { pillLabel } from './types'
+import { usePitchMode } from './usePitchMode'
 
 // A small pitch-mode label on one improvement. It renders nothing unless
-// pitch mode is on, so it never changes the layout. The parent positions
+// pitch mode is on (and its note has loaded), so it never changes the layout. The parent positions
 // it with a class, for example "absolute top-3 left-3" over a card.
 
 const props = defineProps<{ id: string }>()
 
-const { enabled, openId, open } = usePitchMode()
-const note = computed(() => getPitchNote(props.id))
+const { enabled, noteFor, openId, open } = usePitchMode()
+const note = computed(() => noteFor(props.id))
 const button = ref<HTMLButtonElement>()
 
 const styles = {

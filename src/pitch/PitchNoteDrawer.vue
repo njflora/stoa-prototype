@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
-import AppIcon from './AppIcon.vue'
-import { getPitchNote, kindNames } from '@/data/pitchNotes'
-import { usePitchMode } from '@/composables/usePitchMode'
+import AppIcon from '@/components/AppIcon.vue'
+import { kindNames } from './types'
+import { usePitchMode } from './usePitchMode'
 
 // The detail panel for whichever pitch note is open. It sits at the bottom
 // of the screen, so it never runs off the edge on phones.
@@ -11,8 +11,8 @@ import { usePitchMode } from '@/composables/usePitchMode'
 // <Teleport to="body"> renders it at the end of the page instead of inside
 // the card or row that opened it, where overflow: hidden would clip it.
 
-const { openId, close } = usePitchMode()
-const note = computed(() => (openId.value ? getPitchNote(openId.value) : undefined))
+const { openId, noteFor, close } = usePitchMode()
+const note = computed(() => (openId.value ? noteFor(openId.value) : undefined))
 const panel = ref<HTMLElement>()
 const heading = ref<HTMLElement>()
 

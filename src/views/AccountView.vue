@@ -16,7 +16,7 @@ import { useReminders } from '@/composables/useReminders'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import { formatPrice } from '@/utils/format'
-import PitchNote from '@/components/PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 
 // The account page, built from the demo's real state: it changes as you
 // watch, set reminders or switch viewer in the demo panel. Billing, email

@@ -6,6 +6,16 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-24: The pitch layer in its own folder
+
+#### Changed
+- Everything that exists for the pitch, rather than for the product, lives in `src/pitch/`: the notes, the label and detail panel, pitch mode itself and the /pitch page. Product pages keep only the `<PitchNote id="…">` labels, which show nothing while pitch mode is off.
+- The notes are split into one file per section of the /pitch page (`src/pitch/notes/home.ts`, `live.ts` and so on), so each can be reviewed beside its page. The wording is unchanged, and /pitch keeps its order.
+- The notes load only when pitch mode is switched on, or /pitch is opened. Before, every visitor downloaded them on almost every page (about 6 KB compressed).
+
+#### Added
+- Tests for the pitch notes: unique ids, every label on the site has a note, every note is used, and the /pitch running order.
+
 ### 2026-10-23: Back-end tests for auth, purchases, rate limits and the sync
 
 #### Added

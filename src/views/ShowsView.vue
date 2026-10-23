@@ -10,7 +10,7 @@ import { tiers } from '@/data/membership'
 import { useQuery } from '@/composables/useQuery'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
-import PitchNote from '@/components/PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 
 // Every show, free ones first. Each card opens the show's page, with its
 // full archive, series and filters.

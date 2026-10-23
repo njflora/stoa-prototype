@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { kindNames, pillLabel, pitchNotes, type PitchNote } from '@/data/pitchNotes'
-import { usePitchMode } from '@/composables/usePitchMode'
+import { pitchNotes } from './notes'
+import { kindNames, pillLabel, type PitchNote } from './types'
+import { usePitchMode } from './usePitchMode'
 
 // Every pitch note in one place, grouped by page, with a link to where it
-// appears. Doubles as the running order for a walkthrough.
+// appears. Doubles as the running order for a walkthrough. This page is
+// loaded on its own, so the notes come with it.
 
 const { enabled } = usePitchMode()
 

@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 import NotificationBell from './NotificationBell.vue'
 import UserBadge from './UserBadge.vue'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'

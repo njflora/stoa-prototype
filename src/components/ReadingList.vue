@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
 import MembersGate from './MembersGate.vue'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 import { RouterLink } from 'vue-router'
 import { canRead } from '@/access/rules'
 import { API_MODE } from '@/api/client'

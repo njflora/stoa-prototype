@@ -6,7 +6,7 @@ import { tierStyles } from '@/data/chat'
 import { useSearchOverlay } from '@/composables/useSearchOverlay'
 import { useViewer } from '@/composables/useViewer'
 import InstallApp from './InstallApp.vue'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 
 // Phones only (below 768px): an app-style tab bar fixed to the bottom of
 // the screen, within reach of a thumb. "More" opens a sheet with the rest.

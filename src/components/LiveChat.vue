@@ -2,7 +2,7 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 import VoteButtons from './VoteButtons.vue'
 import { requestPlay, requestSeek, usePlayerClock } from '@/composables/usePlayerClock'
 import { chatMessages, showLengthSeconds, tierStyles, type ChatMessage } from '@/data/chat'

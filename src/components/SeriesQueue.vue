@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
-import PitchNote from './PitchNote.vue'
+import PitchNote from '@/pitch/PitchNote.vue'
 import TitleCard from './TitleCard.vue'
 import { getShow } from '@/data/catalogue'
 import { usePlayback } from '@/composables/usePlayback'
