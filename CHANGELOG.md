@@ -6,6 +6,15 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-23: Unit tests for search
+
+#### Added
+- Tests for the static preview's search, run over the real files in `public/data`. The first three mirror the Laravel search tests: results grouped by kind, an episode linked to its series from its record, and a guest contributor found by the shows they appear on. Others cover accents, typos, the start of a word, every word having to match, a blank search, and trying again after the search data fails to load.
+- Tests for highlighting matched words in results.
+
+#### Changed
+- The search term helper moves from `src/api/search.ts` to `src/utils/text.ts` (`normaliseTerm`), so the highlighter no longer pulls in the API client.
+
 ### 2026-10-23: Unit tests for watch progress, purchases and saved data
 
 #### Added

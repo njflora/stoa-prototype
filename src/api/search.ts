@@ -13,6 +13,7 @@ import { reference, shiftDate } from './catalogue'
 import { hostNames } from '@/data/catalogue'
 import type { Access, ArticleCategory } from '@/types/content'
 import { formatEditionDate } from '@/utils/format'
+import { normaliseTerm } from '@/utils/text'
 
 export type ResultKind = 'episode' | 'series' | 'show' | 'host' | 'article'
 
@@ -72,14 +73,6 @@ interface Doc {
   seriesName?: string
   hostIds?: string[]
   category?: ArticleCategory
-}
-
-/** Lower case, accents removed: "Crécy" and "crecy" match. */
-export function normalise(term: string): string {
-  return term
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .toLowerCase()
 }
 
 let index: Promise<MiniSearch<Doc>> | null = null
@@ -173,7 +166,7 @@ async function buildIndex(): Promise<MiniSearch<Doc>> {
   const search = new MiniSearch<Doc>({
     fields: ['title', 'show', 'hosts', 'text'],
     storeFields: ['kind', 'title', 'to', 'showId', 'publishedAt', 'access', 'seriesName', 'hostIds', 'category'],
-    processTerm: (term) => normalise(term),
+    processTerm: (term) => normaliseTerm(term),
   })
   search.addAll(docs)
   return search

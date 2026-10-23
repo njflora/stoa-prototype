@@ -1,4 +1,4 @@
-import { normalise } from '@/api/search'
+import { normaliseTerm } from './text'
 
 export interface TextPart {
   text: string
@@ -16,7 +16,7 @@ export function highlight(text: string, terms: string[]): TextPart[] {
     .split(/(\s+|[|,.:;!?()]+)/)
     .filter((part) => part !== '')
     .map((part) => {
-      const word = normalise(part)
+      const word = normaliseTerm(part)
       const match = /\w/.test(part) && terms.some((term) => word.startsWith(term))
       return { text: part, match }
     })
