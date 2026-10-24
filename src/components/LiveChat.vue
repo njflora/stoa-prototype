@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import PitchNote from '@/pitch/PitchNote.vue'
 import VoteButtons from './VoteButtons.vue'
-import { requestPlay, requestSeek, usePlayerClock } from '@/composables/usePlayerClock'
-import { chatMessages, showLengthSeconds, tierStyles, type ChatMessage } from '@/data/chat'
+import { useChatReplay, useLiveFeed } from '@/composables/useChatFeed'
+import { showLengthSeconds, tierStyles } from '@/data/chat'
 import { useVotes } from '@/composables/useVotes'
 import { formatClock } from '@/utils/format'
 
@@ -35,84 +35,19 @@ const props = defineProps<{
   autoplay?: boolean
 }>()
 
-const LIVE_START_SECONDS = 1800
-const LIVE_INTERVAL_MS = 2800
-const MAX_LIVE_MESSAGES = 150
-
 const list = ref<HTMLElement>()
 // Anyone signed in can like or dislike a message, as they can post.
 const { vote, voteFor } = useVotes()
 
-// Live mode: start part-way into the show, then add one message at a time.
-// The first pass stops before the closing sign-off. After that the mock
-// feed loops, skipping the opening welcome and the sign-off so it still
-// reads like the middle of a show.
-const firstPass = chatMessages.slice(0, -1)
-const loop = chatMessages.slice(1, -1)
-const liveMessages = ref<ChatMessage[]>(chatMessages.filter((m) => m.at <= LIVE_START_SECONDS))
-let nextIndex = liveMessages.value.length
-let sent = 0
-let liveTimer: ReturnType<typeof setInterval> | undefined
-
-function addLiveMessage() {
-  const source =
-    nextIndex < firstPass.length ? firstPass[nextIndex]! : loop[(nextIndex - firstPass.length) % loop.length]!
-  nextIndex++
-  sent++
-  liveMessages.value = [
-    ...liveMessages.value.slice(-MAX_LIVE_MESSAGES + 1),
-    // A brand new message has no votes yet.
-    { ...source, id: `${source.id}-${sent}`, likes: 0, dislikes: 0 },
-  ]
-}
-
-// Replay mode: a position in the recording, in seconds.
-const length = computed(() => props.lengthSeconds ?? showLengthSeconds)
-const position = ref(props.startAt ?? LIVE_START_SECONDS)
-const playing = ref(props.autoplay ?? false)
-
-// The mock chat was written for a 90 minute show. Stretch or squeeze its
-// timings to fit the recording being replayed.
-const replaySource = computed(() => {
-  const scale = length.value / showLengthSeconds
-  return chatMessages.map((m) => ({ ...m, at: Math.round(m.at * scale) }))
+// The messages: live (mocked), or the replay with its timeline and sync.
+const live = useLiveFeed(() => props.mode === 'live')
+const { length, position, fast, synced, following, isPlaying, clock, onScrub, togglePlay, ...replay } = useChatReplay({
+  active: () => props.mode === 'replay',
+  length: () => props.lengthSeconds ?? showLengthSeconds,
+  startAt: props.startAt,
+  autoplay: props.autoplay,
 })
-const fast = ref(false)
-
-// Synced with the site's own player, when it is showing the recording.
-const clock = usePlayerClock()
-const synced = ref(true)
-const following = computed(() => props.mode === 'replay' && clock.active && synced.value)
-/** Play state shown on the button: the player's while synced. */
-const isPlaying = computed(() => (following.value ? clock.playing : playing.value))
-watch(
-  () => [following.value, clock.time] as const,
-  ([on, time]) => {
-    if (!on) return
-    // Dragged past the end of a short recording: the player waits at its
-    // end, and the replay stays where it was dragged.
-    if (clock.duration && position.value > clock.duration + 0.5 && time >= clock.duration - 0.25) return
-    position.value = time
-  },
-)
-// Turning sync off leaves the replay paused where it is, on its own clock.
-watch(synced, (on) => {
-  if (!on) playing.value = false
-})
-
-/** The replay's timeline: while synced, moving it moves the player too. */
-function onScrub() {
-  if (following.value) requestSeek(position.value)
-}
-let replayTimer: ReturnType<typeof setInterval> | undefined
-
-const replayMessages = computed(() => replaySource.value.filter((m) => m.at <= position.value))
-const messages = computed(() => (props.mode === 'replay' ? replayMessages.value : liveMessages.value))
-
-function togglePlay() {
-  if (following.value) requestPlay(!clock.playing)
-  else playing.value = !playing.value
-}
+const messages = computed(() => (props.mode === 'replay' ? replay.messages.value : live.messages.value))
 
 // Keep the newest message in view, unless the viewer has scrolled up to read.
 const pinnedToBottom = ref(true)
@@ -130,21 +65,7 @@ watch(
   },
 )
 
-onMounted(() => {
-  list.value?.scrollTo({ top: list.value.scrollHeight })
-  liveTimer = setInterval(() => {
-    if (props.mode === 'live') addLiveMessage()
-  }, LIVE_INTERVAL_MS)
-  replayTimer = setInterval(() => {
-    if (props.mode !== 'replay' || !playing.value || following.value) return
-    position.value = Math.min(length.value, position.value + (fast.value ? 10 : 1))
-    if (position.value >= length.value) playing.value = false
-  }, 1000)
-})
-onUnmounted(() => {
-  clearInterval(liveTimer)
-  clearInterval(replayTimer)
-})
+onMounted(() => list.value?.scrollTo({ top: list.value.scrollHeight }))
 </script>
 
 <template>

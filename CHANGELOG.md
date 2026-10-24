@@ -6,6 +6,14 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-24: Smaller files: the live chat
+
+#### Changed
+- The live chat (LiveChat, 324 lines) is split into the component (245) and `useChatFeed.ts`: `useLiveFeed` (the mock live feed) and `useChatReplay` (the replay's own clock, its scaling to the recording, and syncing both ways with the site's player). Behaviour is unchanged.
+
+#### Added
+- Tests for both on a fake clock: the live feed's start, pace, loop and limit; the replay's position, 10×, stopping at the end, scaling to a shorter recording, following the site's player and playing on its own.
+
 ### 2026-10-24: Smaller files: the site's own player
 
 #### Changed
