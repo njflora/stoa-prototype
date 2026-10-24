@@ -6,6 +6,15 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-24: Smaller files: the site's own player
+
+#### Changed
+- The player (VodPlayer, 370 lines) is split into the player (248), `VodSettings.vue` (the quality and speed menu, with its keyboard handling) and `useSharedClock` in `usePlayerClock.ts` (sharing the recording's time with the chat replay and following its requests). Behaviour is unchanged.
+- Unit tests can mount a single-file component (the Vue plugin in `vitest.config.ts`).
+
+#### Added
+- Tests for the settings menu: its first level and focus, no speed for a live stream, choosing a quality or speed, the custom speed slider, and Escape.
+
 ### 2026-10-24: Smaller files: the episode page
 
 #### Changed

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import AppIcon from './AppIcon.vue'
+import VodSettings from './VodSettings.vue'
 import type { Rendition } from '@/data/streams'
-import { releaseClock, reportClock, usePlayerRequests } from '@/composables/usePlayerClock'
+import { useSharedClock } from '@/composables/usePlayerClock'
 
 // The site's own video player, for its own hosting (VOD). Custom controls in
 // the site's skin, after the reference site's player: a pink progress bar
@@ -31,7 +32,7 @@ const duration = ref(0)
 const fullscreen = ref(false)
 const shown = ref(true)
 
-// ---------- settings: quality and speed ----------
+// ---------- settings: quality and speed (the menu is VodSettings) ----------
 // Quality: the sizes this browser can play. Choosing one swaps the file and carries
 // on from the same moment, at the same speed. With real hosting the sizes
 // would come from the HLS stream, and "Auto" would follow the connection.
@@ -44,25 +45,11 @@ const files = computed(
 )
 /** Where to pick up after a switch. */
 let resumeAt: { time: number; play: boolean } | null = null
-// Speed: a live stream plays in real time, so it has no speed setting.
-const speeds = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2]
 const speed = ref(1)
-const speedName = (rate: number) => (rate === 1 ? 'Normal' : `${rate}×`)
 
 const settingsOpen = ref(false)
-const view = ref<'main' | 'quality' | 'speed'>('main')
 const settingsButton = ref<HTMLButtonElement>()
-const panel = ref<HTMLElement>()
 
-async function openView(next: typeof view.value) {
-  view.value = next
-  await nextTick()
-  panel.value?.querySelector<HTMLElement>('button, input')?.focus()
-}
-function toggleSettings() {
-  settingsOpen.value = !settingsOpen.value
-  if (settingsOpen.value) void openView('main')
-}
 function closeSettings() {
   settingsOpen.value = false
   settingsButton.value?.focus()
@@ -71,14 +58,12 @@ function setSpeed(rate: number) {
   speed.value = Math.round(rate * 100) / 100
   if (video.value) video.value.playbackRate = speed.value
 }
-async function chooseQuality(choice: string) {
-  if (choice !== quality.value && video.value) {
-    resumeAt = { time: video.value.currentTime, play: !video.value.paused }
-    quality.value = choice
-    await nextTick()
-    video.value.load()
-  }
-  void openView('main')
+async function setQuality(choice: string) {
+  if (!video.value) return
+  resumeAt = { time: video.value.currentTime, play: !video.value.paused }
+  quality.value = choice
+  await nextTick()
+  video.value.load()
 }
 /** After a new file loads: the same moment, the same speed, and playing if it was. */
 function onLoaded() {
@@ -91,10 +76,6 @@ function onLoaded() {
     if (resumeAt.play) v.play().catch(() => {})
     resumeAt = null
   }
-}
-function chooseSpeed(rate: number) {
-  setSpeed(rate)
-  void openView('main')
 }
 
 let hideTimer: ReturnType<typeof setTimeout> | undefined
@@ -140,35 +121,14 @@ function wake() {
 
 const onFullscreenChange = () => (fullscreen.value = document.fullscreenElement === root.value)
 onMounted(() => document.addEventListener('fullscreenchange', onFullscreenChange))
-// A recording shares its time, pause and speed, so the chat replay can follow it.
-function report() {
-  if (!props.live && video.value) reportClock(video.value)
-}
-onMounted(report)
-// Requests from the chat replay: seek (stopping at the end) and play or pause.
-const requests = usePlayerRequests()
-watch(
-  () => requests.seek.n,
-  () => {
-    const v = video.value
-    if (!v || props.live) return
-    v.currentTime = Math.min(requests.seek.to, v.duration || 0)
-  },
-)
-watch(
-  () => requests.play.n,
-  () => {
-    const v = video.value
-    if (!v || props.live) return
-    if (requests.play.on) v.play().catch(() => {})
-    else v.pause()
-  },
-)
 onUnmounted(() => {
-  if (!props.live) releaseClock()
   document.removeEventListener('fullscreenchange', onFullscreenChange)
   clearTimeout(hideTimer)
 })
+
+// A recording shares its time, pause and speed, so the chat replay can follow
+// it, and follows the replay's seek and play requests.
+const report = useSharedClock(video, () => props.live)
 </script>
 
 <template>
@@ -213,98 +173,16 @@ onUnmounted(() => {
     </button>
 
     <!-- Settings: quality and speed, one level at a time. Escape closes it. -->
-    <div
+    <VodSettings
       v-if="settingsOpen"
-      ref="panel"
-      role="group"
-      aria-label="Player settings"
-      class="absolute right-2 bottom-16 z-10 max-h-[calc(100%-5rem)] w-56 overflow-y-auto rounded-lg bg-ink/95 p-1 text-sm shadow-2xl ring-1 ring-white/10 backdrop-blur sm:right-3"
-      @keydown.esc.stop="closeSettings"
-      @pointerdown.stop
-    >
-      <template v-if="view === 'main'">
-        <button
-          type="button"
-          class="flex w-full items-center justify-between rounded-md px-3 py-2 hover:bg-white/10"
-          @click="openView('quality')"
-        >
-          Quality
-          <span class="flex items-center gap-1 text-white/70"
-            >{{ quality }}<AppIcon name="chevron-right" class="size-4"
-          /></span>
-        </button>
-        <button
-          v-if="!live"
-          type="button"
-          class="flex w-full items-center justify-between rounded-md px-3 py-2 hover:bg-white/10"
-          @click="openView('speed')"
-        >
-          Speed
-          <span class="flex items-center gap-1 text-white/70"
-            >{{ speedName(speed) }}<AppIcon name="chevron-right" class="size-4"
-          /></span>
-        </button>
-      </template>
-
-      <template v-else>
-        <button
-          type="button"
-          class="flex w-full items-center gap-1 rounded-md px-2 py-2 font-semibold hover:bg-white/10"
-          @click="openView('main')"
-        >
-          <AppIcon name="chevron-left" class="size-4" /> {{ view === 'quality' ? 'Quality' : 'Speed' }}
-        </button>
-        <div class="my-1 border-t border-white/10" />
-        <template v-if="view === 'quality'">
-          <button
-            v-for="choice in qualities"
-            :key="choice"
-            type="button"
-            class="flex w-full items-center justify-between rounded-md px-3 py-1.5 hover:bg-white/10"
-            :class="choice === quality ? 'text-accent-bright' : ''"
-            :aria-pressed="choice === quality"
-            @click="chooseQuality(choice)"
-          >
-            {{ choice }}<AppIcon v-if="choice === quality" name="check" class="size-4" />
-          </button>
-        </template>
-        <template v-else>
-          <button
-            v-for="rate in speeds"
-            :key="rate"
-            type="button"
-            class="flex w-full items-center justify-between rounded-md px-3 py-1.5 hover:bg-white/10"
-            :class="rate === speed ? 'text-accent-bright' : ''"
-            :aria-pressed="rate === speed"
-            @click="chooseSpeed(rate)"
-          >
-            {{ speedName(rate) }}<AppIcon v-if="rate === speed" name="check" class="size-4" />
-          </button>
-          <!-- Any speed from 0.25 to 3 times. -->
-          <label class="block px-3 pt-2 pb-1.5">
-            <span class="flex justify-between text-xs text-white/70">
-              Custom
-              <span
-                class="font-semibold text-white tabular-nums"
-                :class="speeds.includes(speed) ? '' : 'text-accent-bright'"
-                >{{ speed }}×</span
-              >
-            </span>
-            <input
-              type="range"
-              min="0.25"
-              max="3"
-              step="0.05"
-              :value="speed"
-              class="mt-1.5 w-full accent-[var(--color-accent-bright)]"
-              aria-label="Custom speed"
-              :aria-valuetext="`${speed} times`"
-              @input="setSpeed(Number(($event.target as HTMLInputElement).value))"
-            />
-          </label>
-        </template>
-      </template>
-    </div>
+      :qualities="qualities"
+      :quality="quality"
+      :speed="speed"
+      :live="live"
+      @quality="setQuality"
+      @speed="setSpeed"
+      @close="closeSettings"
+    />
 
     <div
       class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-3 pt-8 pb-2 transition-opacity duration-300 sm:px-4"
@@ -357,7 +235,7 @@ onUnmounted(() => {
           aria-label="Settings"
           aria-haspopup="true"
           :aria-expanded="settingsOpen"
-          @click="toggleSettings"
+          @click="settingsOpen = !settingsOpen"
         >
           <AppIcon name="settings" class="transition" :class="settingsOpen ? 'rotate-45 text-accent-bright' : ''" />
         </button>

@@ -1,4 +1,4 @@
-import { reactive, readonly } from 'vue'
+import { onMounted, onUnmounted, reactive, readonly, watch, type Ref } from 'vue'
 
 // The site's own player shares where it is, so other parts of the page can
 // follow it: the chat replay beside a recording shows the messages sent up
@@ -46,11 +46,6 @@ export function requestPlay(on: boolean) {
   requests.play = { on, n: requests.play.n + 1 }
 }
 
-/** For the site's own player: what has been asked of it. */
-export function usePlayerRequests() {
-  return readonly(requests)
-}
-
 /** For the site's own player: it has gone (another platform, or another page). */
 export function releaseClock() {
   clock.active = false
@@ -60,4 +55,38 @@ export function releaseClock() {
 /** For anything that follows the player. */
 export function usePlayerClock() {
   return readonly(clock)
+}
+
+/**
+ * For the site's own player, while it is on screen: share a recording's
+ * clock, follow the requests (seek, stopping at the end, and play or pause),
+ * and release the clock when it goes. A live stream shares nothing. Returns
+ * report(), to call when the video plays, pauses, moves or changes speed.
+ */
+export function useSharedClock(video: Ref<HTMLVideoElement | undefined>, live: () => boolean | undefined) {
+  const report = () => {
+    if (!live() && video.value) reportClock(video.value)
+  }
+  onMounted(report)
+  watch(
+    () => requests.seek.n,
+    () => {
+      const v = video.value
+      if (!v || live()) return
+      v.currentTime = Math.min(requests.seek.to, v.duration || 0)
+    },
+  )
+  watch(
+    () => requests.play.n,
+    () => {
+      const v = video.value
+      if (!v || live()) return
+      if (requests.play.on) v.play().catch(() => {})
+      else v.pause()
+    },
+  )
+  onUnmounted(() => {
+    if (!live()) releaseClock()
+  })
+  return report
 }
