@@ -6,6 +6,14 @@ All notable changes to this prototype are listed here. Newest first.
 
 v2 makes the code easier to maintain, better tested and more secure. It adds no new features. `main` and the live preview stay as they are until `refine` is merged.
 
+### 2026-10-24: Smaller files: the episode page
+
+#### Changed
+- The episode page (WatchView, 363 lines) is split into its page (246), `useUpNext` (the end-of-episode countdown), `UpNextCard.vue` (the card over the player) and `EpisodeGate.vue` (the members' gate with the buy dialog). Behaviour is unchanged.
+
+#### Added
+- Tests for the countdown with a fake clock: it plays the next part once, "Play now", "Cancel", no countdown without autoplay, a fresh count for each episode, and stopping when the page goes away.
+
 ### 2026-10-24: One focus trap and one way to keep a view in the address
 
 #### Changed

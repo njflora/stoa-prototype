@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import BuyEpisodeDialog from '@/components/BuyEpisodeDialog.vue'
 import ContributorNames from '@/components/ContributorNames.vue'
-import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
+import EpisodeGate from '@/components/EpisodeGate.vue'
+import UpNextCard from '@/components/UpNextCard.vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
 import PitchNote from '@/pitch/PitchNote.vue'
@@ -18,19 +19,17 @@ import { getPlay } from '@/api/discussion'
 import { getSeries, getShow, seriesOf } from '@/data/catalogue'
 import { useQuery } from '@/composables/useQuery'
 import { usePlayback } from '@/composables/usePlayback'
+import { useUpNext } from '@/composables/useUpNext'
 import { useViewer } from '@/composables/useViewer'
 import { useWatchProgress } from '@/composables/useWatchProgress'
 import { artForEpisode } from '@/data/media'
-import { EPISODE_PRICE } from '@/data/membership'
-import { formatDuration, formatPrice, formatPublished, toRoman } from '@/utils/format'
+import { formatDuration, formatPublished, toRoman } from '@/utils/format'
 import { pageTitle } from '@/config/brand'
 
 // An episode page. The player offers every platform the episode is on
 // (Rumble, Odysee, BitChute and the site's own VOD). Series episodes get
 // the series queue beside the player, and when a part ends the next one
 // plays after a short countdown, unless autoplay is off.
-
-const UP_NEXT_SECONDS = 8
 
 const route = useRoute()
 const router = useRouter()
@@ -50,7 +49,6 @@ const series = computed(() => {
   return fromLink ?? (episode.value ? seriesOf(episode.value) : undefined)
 })
 const locked = computed(() => !!episode.value && !canWatch(episode.value))
-const buying = ref(false)
 
 // Where to watch it: asked only when the viewer may watch, and again when
 // that changes (a purchase, or a different viewer).
@@ -81,60 +79,31 @@ const moreFromShow = computed(() =>
   (showPage.data.value?.items ?? []).filter((e) => e.id !== episode.value?.id).slice(0, 10),
 )
 
-// End of an episode: the up-next card, with its countdown.
-const ended = ref(false)
-const secondsLeft = ref(UP_NEXT_SECONDS)
-const counting = ref(false)
-let timer: ReturnType<typeof setInterval> | undefined
-
-function stopCountdown() {
-  clearInterval(timer)
-  timer = undefined
-  counting.value = false
-}
-
-function playNext() {
-  stopCountdown()
+// End of an episode: the up-next card. The next part plays after a
+// countdown, if autoplay is on and this viewer may watch it.
+const watchableNext = computed(() => (nextPart.value && canWatch(nextPart.value) ? nextPart.value : undefined))
+const { ended, secondsLeft, counting, end, next, dismiss } = useUpNext(() => {
   if (!nextPart.value || !series.value) return
   void router.push({ path: `/watch/${nextPart.value.id}`, query: { series: series.value.slug } })
-}
+})
 
-function cancelNext() {
-  stopCountdown()
-  ended.value = false
-}
-
-function finish() {
+watch(finishSignal, () => {
   if (!episode.value || locked.value) return
   markWatched(episode.value.id)
-  ended.value = true
-  secondsLeft.value = UP_NEXT_SECONDS
-  stopCountdown()
-  if (autoplay.value && nextPart.value && canWatch(nextPart.value)) {
-    counting.value = true
-    timer = setInterval(() => {
-      secondsLeft.value--
-      if (secondsLeft.value <= 0) playNext()
-    }, 1000)
-  }
-}
+  end(autoplay.value && !!watchableNext.value)
+})
 
-watch(finishSignal, finish)
-
-// A new episode: reset the end card and count it as started.
+// A new episode: no end card, and it counts as started.
 watch(
   () => episode.value?.id,
   () => {
-    stopCountdown()
-    ended.value = false
+    dismiss()
     chatOpen.value = false
     const current = episode.value
     if (current && !locked.value && progressFor(current.id) === 0) setProgress(current.id, 0.05)
   },
   { immediate: true },
 )
-
-onUnmounted(stopCountdown)
 
 watchEffect(() => {
   if (episode.value) document.title = pageTitle(episode.value.title)
@@ -165,105 +134,19 @@ watchEffect(() => {
             <TitleCard :show="show" :art="artForEpisode(episode)" :show-text="false" size="hero" :animated="!ended" />
           </template>
           <template v-if="ended" #overlay>
-            <!-- Up next, once the episode ends. -->
-            <div class="absolute inset-0 grid place-items-center bg-black/70 px-4 text-center" role="status">
-              <div v-if="nextPart && canWatch(nextPart)">
-                <p class="text-xs font-semibold tracking-widest text-accent-bright uppercase">Up next</p>
-                <p class="mt-2 text-lg font-semibold sm:text-2xl">
-                  Part {{ toRoman(nextPart.series!.part) }}: {{ nextPart.title }}
-                </p>
-                <p v-if="counting" class="mt-1 text-sm text-white/75 tabular-nums">Playing in {{ secondsLeft }}s</p>
-                <div class="mt-4 flex justify-center gap-2">
-                  <button
-                    type="button"
-                    class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
-                    @click="playNext"
-                  >
-                    <AppIcon name="play" />
-                    Play now
-                  </button>
-                  <button
-                    type="button"
-                    class="rounded-lg bg-white/15 px-5 py-2.5 text-sm font-semibold hover:bg-white/25"
-                    @click="cancelNext"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-              <div v-else-if="series">
-                <p class="text-lg font-semibold sm:text-2xl">You've finished {{ series.name }}</p>
-                <RouterLink
-                  :to="`/series/${series.slug}`"
-                  class="mt-4 inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
-                >
-                  Back to the series
-                </RouterLink>
-              </div>
-              <div v-else>
-                <p class="text-lg font-semibold sm:text-2xl">Thanks for watching</p>
-                <button
-                  type="button"
-                  class="mt-4 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-ink"
-                  @click="ended = false"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
+            <UpNextCard
+              :next="watchableNext"
+              :series="series"
+              :counting="counting"
+              :seconds-left="secondsLeft"
+              @play="next"
+              @dismiss="dismiss"
+            />
           </template>
         </SourcePlayer>
 
-        <!-- Members only: the artwork, blurred, and two ways in. No stream addresses are fetched. -->
-        <div v-else class="relative aspect-video w-full overflow-hidden bg-black lg:rounded-xl">
-          <TitleCard
-            :show="show"
-            :art="artForEpisode(episode)"
-            :show-text="false"
-            size="hero"
-            :animated="false"
-            class="scale-110 blur-xl brightness-75"
-          />
-
-          <div class="absolute inset-0 grid place-items-center px-4 text-center">
-            <div>
-              <!-- Phones: compact, so everything fits in a 16:9 frame 320px wide. -->
-              <span
-                class="mx-auto grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/20 max-sm:hidden"
-              >
-                <AppIcon name="lock" />
-              </span>
-              <p class="text-base font-semibold sm:mt-3 sm:text-2xl">This episode is for members</p>
-              <!-- Two ways in: join for everything, or buy just this one. -->
-              <div class="mt-2 flex flex-wrap justify-center gap-2 sm:mt-4 sm:gap-3">
-                <RouterLink
-                  to="/join"
-                  class="inline-flex items-center gap-2 rounded-lg bg-gold px-3 py-1.5 text-xs font-semibold sm:px-5 sm:py-2.5 sm:text-sm text-ink hover:brightness-110 [&>svg]:size-4"
-                >
-                  <AppIcon name="crown" />
-                  Upgrade to watch everything
-                </RouterLink>
-                <button
-                  v-if="isSignedIn"
-                  type="button"
-                  class="inline-flex items-center gap-2 rounded-lg bg-white/15 px-3 py-1.5 text-xs font-semibold sm:px-5 sm:py-2.5 sm:text-sm ring-1 ring-white/20 backdrop-blur hover:bg-white/25"
-                  @click="buying = true"
-                >
-                  Buy this episode, {{ formatPrice(EPISODE_PRICE) }}
-                </button>
-                <RouterLink
-                  v-else
-                  to="/sign-in"
-                  class="inline-flex items-center gap-2 rounded-lg bg-white/15 px-3 py-1.5 text-xs font-semibold sm:px-5 sm:py-2.5 sm:text-sm ring-1 ring-white/20 backdrop-blur hover:bg-white/25"
-                >
-                  Sign in to buy, {{ formatPrice(EPISODE_PRICE) }}
-                </RouterLink>
-              </div>
-              <PitchNote id="buy-episode" class="mt-2 sm:mt-3" />
-              <BuyEpisodeDialog v-if="episode" v-model="buying" :episode="episode" />
-            </div>
-          </div>
-        </div>
+        <!-- Members only: the artwork, blurred, and two ways in. -->
+        <EpisodeGate v-else :show="show" :episode="episode" />
 
         <!-- About this episode. -->
         <div class="px-4 pt-4 lg:px-0">
